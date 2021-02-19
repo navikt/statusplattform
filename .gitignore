@@ -1,0 +1,12 @@
+.idea
+*.iml
+target
+node_modules
+.cache
+dependency-reduced-pom.xml
+*/src/main/web/node
+/*.properties
+/*.crt
+/*.cer
+/logs
+generated/
