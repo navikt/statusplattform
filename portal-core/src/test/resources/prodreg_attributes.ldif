@@ -1,0 +1,353 @@
+dn: cn=schema
+changetype: modify
+add: attributeTypes
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.1 NAME ( 'fodselsnr' 'fodselsnummer' ) 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif')
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.2 NAME ( 'prodnr' 'produsentnr' 'produsentnummer' ) 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.3 NAME ( 'pid' 'produsentid' ) 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.4 NAME ( 'orgnr' 'organisasjonsnummer' ) 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.5 NAME ('orgnavn' 'organisasjonsnavn') 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.6 NAME 'epost' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.7 NAME ( 'mobil' 'mobiltlf' ) 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.8 NAME 'telefonJobb' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.9 NAME 'telefonPrivat' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.10 NAME 'telefax' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.11 NAME 'adresse1' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.12 NAME 'adresse2' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.13 NAME 'adresse3' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.14 NAME ( 'postnr' 'postnummer' ) 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.15 NAME 'poststed' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.16 NAME 'oauthsamtykke' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.17 NAME 'enhetstype' 
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.18 NAME ( 'komnr' 'kommunenummer' )
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.19 NAME ( 'gardsnr' 'gardsnummer' ) 
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.20 NAME ( 'bruksnr' 'bruksnummer' ) 
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.21 NAME ( 'festenr' 'festenummer' ) 
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.22 NAME 'bruksnavn' 
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.25 NAME 'samtykke' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.26 NAME 'samtykkedato' 
+    EQUALITY generalizedTimeMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.27 NAME 'samtykkeBrukerAgent' 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.28 NAME 'samtykkeBrukerIp' 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.29 NAME 'foretaksnavn' 
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: (  1.3.6.1.4.1.53391.1.1.30 NAME 'lbrAktiv' 
+    EQUALITY caseIgnoreMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.31 NAME 'utsendelse' 
+    EQUALITY integerMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: (  1.3.6.1.4.1.53391.1.1.32 NAME 'reklame' 
+    EQUALITY integerMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.33 NAME 'opprDatoTid' 
+    EQUALITY generalizedTimeMatch 
+    ORDERING generalizedTimeOrderingMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.34 NAME 'endrDatoTid' 
+    EQUALITY generalizedTimeMatch 
+    ORDERING generalizedTimeOrderingMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.35 NAME 'aktiv' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.36 NAME 'status' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.37 NAME 'etternavn' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.38 NAME 'fornavn' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.39 NAME 'kilde' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.40 NAME 'epostOk' 
+    EQUALITY caseIgnoreMatch  
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.41 NAME 'mobilOk' 
+    EQUALITY caseIgnoreMatch  
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.42 NAME 'lbrPerson' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.44 NAME 'brukernavn' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.51 NAME 'bankidOk' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.57 NAME 'confirmedEpost' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.58 NAME 'confirmedMobil' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.59 NAME 'userDataDato' 
+    EQUALITY generalizedTimeMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.43 NAME 'personRolle' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.43 NAME 'prodregRolle'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    USAGE userApplications
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.64 NAME 'code' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.65 NAME 'friendlyName' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: (1.3.6.1.4.1.53391.1.1.69 NAME 'secret'
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: (1.3.6.1.4.1.53391.1.1.70 NAME 'isAdminRole'
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: (1.3.6.1.4.1.53391.1.1.71 NAME 'createdBy'
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.52 NAME 'aktivForetaksrolle' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.53 NAME 'aktivForetakOrgnr' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.54 NAME 'aktivPid' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.55 NAME 'aktivForetaksrolleGyldigFra' 
+    EQUALITY generalizedTimeMatch 
+    ORDERING generalizedTimeOrderingMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.56 NAME 'aktivForetaksrolleGyldigTil' 
+    EQUALITY generalizedTimeMatch 
+    ORDERING generalizedTimeOrderingMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.60 NAME 'aktivForetakNavn' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.61 NAME 'aktivBedriftOrgnr' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.62 NAME 'aktivBedriftNavn' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )
+attributeTypes: ( 1.3.6.1.4.1.53391.1.1.63 NAME 'aktivProdusentnr' 
+    EQUALITY caseIgnoreMatch 
+    SUBSTR caseIgnoreSubstringsMatch 
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 
+    USAGE userApplications 
+    X-SCHEMA-FILE '99-user.ldif' )

@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  description: Documentation Nav portal REST API
+  version: '0.1'
+  title: Nav REST API
+tags:
+  - name: example-controller
+    description: ExampleEntity Controller
+servers:
+  - url: /rest/v0.1
+paths:
+  /examplePath:
+    get:
+      tags:
+        - example-controller
+      summary: Example
+      operationId: doesThisDoAnyTHnig
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: '#/components/schemas/ExampleData'
+        401:
+          description: Unauthorized
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+      security:
+        - ApiKeyAuth:
+            - global
+      deprecated: false
+components:
+  schemas:
+    ExampleData:
+      title: ExampleData
+      type: object
+      properties:
+        uid:
+          type: string
+        code:
+          type: integer
+          format: int32
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-ProdregApiKey
+      in: header
