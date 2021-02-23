@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import Image from 'next/image'
+import Panel from 'nav-frontend-paneler';
 
 export default function Home() {
     // List of apis that are loaded in index. Should be sent as props to children components.
@@ -34,6 +34,7 @@ export default function Home() {
                             Api #1
 					    </p>
                     </a>
+                    <Panel> sad</Panel>
                 </div>
             </main>
 
