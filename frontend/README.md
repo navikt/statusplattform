@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Setting up the project for development
 
-Install the following
+Install the following:
 
 ```
 Node version 14.15.5
@@ -12,7 +12,10 @@ Maven 3.6.3
 
 ## Frontend
 
+Create an empty tsconfig.json file in the root folder
+
 ```
+npm install --save-dev typescript @types/react @types/node
 npm install
 ```
 
