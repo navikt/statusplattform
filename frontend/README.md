@@ -12,10 +12,7 @@ Maven 3.6.3
 
 ## Frontend
 
-Create an empty tsconfig.json file in the root folder
-
 ```
-npm install --save-dev typescript @types/react @types/node
 npm install
 ```
 
