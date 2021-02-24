@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import '../styles/Home.css'
 import Panel from 'nav-frontend-paneler';
 
 export default function Home() {
@@ -7,7 +7,7 @@ export default function Home() {
     let apisToMonitor;
 
     return (
-        <div className={styles.container}>
+        <div className="container">
             <Head>
                 <title>Status digitale tjenester</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -15,19 +15,19 @@ export default function Home() {
             </Head>
 
             <main>
-                <h1 className={styles.title}>
+                <h1 className="title">
                     Status digitale tjenester
                 </h1>
-                <div className={styles.grid}>
+                <div className="grid">
                     <div
-                        className={styles.card}
+                        className="card"
                     >
                         <h3>Examples</h3>
                         <p>Discover and deploy boilerplate example Next.js projects.</p>
                     </div>
 
                     <a
-                        className={styles.card}
+                        className="card"
                     >
                         <h3>Arbeid</h3>
                         <p>
@@ -38,7 +38,7 @@ export default function Home() {
                 </div>
             </main>
 
-            <footer className={styles.footer}>
+            <footer className="footer">
                 <img src="/assets/nav-logo/png/black.png" alt="Logo" />
                 <ul>
                     <li>Arbeids- og velferdsetaten</li>
