@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/portal-core/portal-core.iml" filepath="$PROJECT_DIR$/portal-core/portal-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/portal-digitale-tjenester-2.iml" filepath="$PROJECT_DIR$/.idea/portal-digitale-tjenester-2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/portal-digitale-tjenester.iml" filepath="$PROJECT_DIR$/.idea/portal-digitale-tjenester.iml" />
       <module fileurl="file://$PROJECT_DIR$/portal-infrastructure/portal-infrastructure.iml" filepath="$PROJECT_DIR$/portal-infrastructure/portal-infrastructure.iml" />
       <module fileurl="file://$PROJECT_DIR$/portal-rest-api/portal-rest-api.iml" filepath="$PROJECT_DIR$/portal-rest-api/portal-rest-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/portal-server/portal-server.iml" filepath="$PROJECT_DIR$/portal-server/portal-server.iml" />

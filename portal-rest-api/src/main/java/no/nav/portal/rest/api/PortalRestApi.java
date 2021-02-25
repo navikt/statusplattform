@@ -4,7 +4,7 @@ import no.nav.portal.infrastructure.ApiFilter;
 import no.nav.portal.infrastructure.AuthenticationFilter;
 import no.nav.portal.infrastructure.ClasspathWebAppContext;
 import no.nav.portal.infrastructure.WebJarServlet;
-import no.nav.portal.rest.api.v3.controllers.ExampleController;
+import no.nav.portal.rest.api.v3.controllers.AreaController;
 import org.actioncontroller.servlet.ApiServlet;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -32,7 +32,7 @@ public class PortalRestApi extends ClasspathWebAppContext {
         super(context, "/webapp-web");
         addServlet(new ServletHolder(new WebJarServlet("swagger-ui")), "/swagger/*");
         addServlet(new ServletHolder(new ApiServlet(List.of(
-                new ExampleController(dbContext)
+                new AreaController(dbContext)
 
         ))), "/v0.1/*");
 

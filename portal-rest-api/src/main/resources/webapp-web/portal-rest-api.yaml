@@ -4,51 +4,61 @@ info:
   version: '0.1'
   title: Nav REST API
 tags:
-  - name: example-controller
-    description: ExampleEntity Controller
+  - name: area-controller
+    description: area Controller
 servers:
   - url: /rest/v0.1
 paths:
-  /examplePath:
+  /testAreas:
     get:
       tags:
-        - example-controller
-      summary: Example
+        - area-controller
+      summary: area
       operationId: doesThisDoAnyTHnig
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                type: '#/components/schemas/ExampleData'
-        401:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
           description: Unauthorized
           content: {}
-        403:
+        '403':
           description: Forbidden
           content: {}
-        404:
+        '404':
           description: Not Found
           content: {}
-      security:
-        - ApiKeyAuth:
-            - global
       deprecated: false
 components:
   schemas:
-    ExampleData:
-      title: ExampleData
+    Area:
+      title: Area
       type: object
       properties:
-        uid:
+        name:
           type: string
-        code:
+        status:
           type: integer
           format: int32
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+    Service:
+      title: Service
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+            - OK
+            - ISSUE
+            - DOWN
 
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      name: X-ProdregApiKey
-      in: header
