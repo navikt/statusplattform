@@ -1,4 +1,4 @@
-package no.nav.brukergrupper.server;
+package no.nav.server;
 
 
 import no.nav.portal.infrastructure.RedirectHandler;
