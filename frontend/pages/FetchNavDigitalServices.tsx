@@ -18,10 +18,10 @@ const PanelSetWidth = styled(Panel)`
 `;
 
 async function fetchData() {
-    console.log("fetch")
+    // console.log("fetch")
     const response = await fetch("http://localhost:3001/rest/testAreas");
     const data = await response.json()
-    console.log(data)
+    // console.log(data)
     // console.log(data.status)
     return data
 }

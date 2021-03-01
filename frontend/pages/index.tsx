@@ -9,8 +9,15 @@ import FetchNavDigitalServices from './FetchNavDigitalServices'
 
 
 const Header = styled.header`
+    display: flex;
+    /* justify-content: space-around; */
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+
     img {
-        width: 90px;
+        width: 63px;
+        height: 100%;
     }
 `;
 
@@ -45,14 +52,13 @@ const Footer = styled.footer`
     }
 `;
 
-
 export default function Home() {
     return (
         <div className="container">
             <Head>
                 <title>Status digitale tjenester</title>
                 <link rel="icon" href="/favicon.ico" />
-                <mta name="viewport" content="initial-scale=1.0, width=device-width" />
+                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
             <Header>
