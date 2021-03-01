@@ -3,6 +3,7 @@ package no.nav.server;
 
 import no.nav.portal.infrastructure.RedirectHandler;
 import no.nav.portal.rest.api.PortalRestApi;
+import no.nav.portal.rest.api.SwaggerDocumentation;
 import org.actioncontroller.config.ConfigObserver;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -21,6 +22,7 @@ public class PortalServer {
     private final Server server = new Server();
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
+    private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
 
     public PortalServer() {
         HttpConfiguration config = new HttpConfiguration();
@@ -29,8 +31,9 @@ public class PortalServer {
         config.setSendXPoweredBy(false);
         connector.addConnectionFactory(new HttpConnectionFactory(config));
         server.setHandler(new HandlerList(
-              new RedirectHandler("/", "/rest"),
-                portalRestApi
+              new RedirectHandler("/", "/doc"),
+                portalRestApi,
+                swaggerDocumentation
         ));
         setupConfiguration();
     }
