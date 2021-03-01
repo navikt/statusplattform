@@ -1,10 +1,23 @@
 import Head from 'next/head'
-import '../styles/Home.css'
 import Panel from 'nav-frontend-paneler';
+// import Lenkepanel from 'nav-frontend-lenkepanel';
+
+import '../styles/Home.css'
+import FetchNavDigitalServices from './FetchNavDigitalServices'
+
+
+async function fetchData() {
+    console.log("fetch")
+    const response = await fetch("http://localhost:3001/rest/v0.1/testAreas");
+    const data = await response.json()
+    return data
+}
 
 export default function Home() {
     // List of apis that are loaded in index. Should be sent as props to children components.
     let apisToMonitor;
+
+
 
     return (
         <div className="container">
@@ -15,15 +28,18 @@ export default function Home() {
             </Head>
 
             <main>
-                <h1 className="title">
+                <h1 className="title-container">
+                    <img src="/assets/nav-logo/png/red.png" alt="LogoRed" />
                     Status digitale tjenester
                 </h1>
                 <div className="grid">
-                    <div
+                    <FetchNavDigitalServices />
+
+                    {/* <div
                         className="card"
                     >
                         <h3>Examples</h3>
-                        <p>Discover and deploy boilerplate example Next.js projects.</p>
+                        <p>Discover and deploy boilerplate example Next.js projects. {fetchData}</p>
                     </div>
 
                     <a
@@ -34,12 +50,12 @@ export default function Home() {
                             Api #1
 					    </p>
                     </a>
-                    <Panel> sad</Panel>
+                    <Panel border> asd </Panel> */}
                 </div>
             </main>
 
             <footer className="footer">
-                <img src="/assets/nav-logo/png/black.png" alt="Logo" />
+                <img src="/assets/nav-logo/png/black.png" alt="LogoBlack" />
                 <ul>
                     <li>Arbeids- og velferdsetaten</li>
                     <li>Personvern og informasjonskapsler</li>

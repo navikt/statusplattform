@@ -3,7 +3,6 @@
   padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
@@ -13,17 +12,23 @@
   height: 75px;
 }
 
-.main {
+.container {
   padding: 5rem 0;
   flex: 1;
+  min-height: 100%;
+  margin-bottom: -100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
+.container img {
+  width: 90px;
+}
 
 .footer {
   width: 100%;
+  margin-top: auto; /*Footer always at bottom (if min.height of container is 100vh)*/
   height: 100px;
   border-top: 1px solid #eaeaea;
   display: flex;
@@ -85,6 +90,7 @@
   flex-wrap: wrap;
   max-width: 800px;
   margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
 .card {
