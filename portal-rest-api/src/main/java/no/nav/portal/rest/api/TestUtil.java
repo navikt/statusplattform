@@ -12,7 +12,14 @@ public class TestUtil {
     static{
         //Legg til område/area her
         AREAS.put("Arbeid", Arrays.asList("Arena","Meldekort", "Oppf. arbeid", "Søk Dagpenger"));
-        AREAS.put("Arbeid", Arrays.asList("Arena","Meldekort", "Oppf. arbeid", "Søk Dagpenger"));
+        AREAS.put("Helse", Arrays.asList("Sykmelding","Frikort", "eResept. arbeid", "Søk Dagpenger"));
+        AREAS.put("Familie", Arrays.asList("Bidrag","Engangsstønad", "Foreldrepenger"));
+        AREAS.put("Pensjon", Arrays.asList("Din Pensjon","Pesys"));
+        AREAS.put("Bruker", Arrays.asList("Dine Utbetalinger","DittNAV", "nav.no", "Søknadsdialoger"));
+        AREAS.put("Ansatt", Arrays.asList("Dokumentløsning","Gosys", "Modiabrukerdialog", "Navet","Personkortet","WinTid"));
+        AREAS.put("Lokasjon", Arrays.asList("Ok"));
+        AREAS.put("Informasjon", Arrays.asList("AAregister","AktørRegister", "Datavarehus","DKIF", "Enhetsregister","Henvendelse", "Inntektskomponenten","Joark","NORG","TPS","TSS"));
+        AREAS.put("EksterneTjenester", Arrays.asList("BankID-status","Google Cloud-status", "IDporten", "MS Azure-status"));
     }
 
 

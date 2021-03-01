@@ -7,7 +7,7 @@ tags:
   - name: area-controller
     description: area Controller
 servers:
-  - url: /rest/v0.1
+  - url: /rest
 paths:
   /testAreas:
     get:

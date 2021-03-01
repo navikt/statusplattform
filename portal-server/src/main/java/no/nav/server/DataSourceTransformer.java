@@ -1,4 +1,4 @@
-package no.nav.brukergrupper.server;
+package no.nav.server;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
