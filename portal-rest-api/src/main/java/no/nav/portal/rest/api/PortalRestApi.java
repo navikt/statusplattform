@@ -27,7 +27,7 @@ public class PortalRestApi extends ClasspathWebAppContext {
 
     public PortalRestApi(String context) {
         super(context, "/webapp-web");
-        //addFilter(new FilterHolder(new CORSFilter()),"/*", EnumSet.of(DispatcherType.REQUEST));
+        addFilter(new FilterHolder(new CORSFilter()),"/*", EnumSet.of(DispatcherType.REQUEST));
         addServlet(new ServletHolder(new WebJarServlet("swagger-ui")), "/swagger/*");
         addServlet(new ServletHolder(new ApiServlet(List.of(
                 new AreaController(dbContext)
