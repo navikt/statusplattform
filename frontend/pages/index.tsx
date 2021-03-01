@@ -1,68 +1,82 @@
 import Head from 'next/head'
 import Panel from 'nav-frontend-paneler';
 // import Lenkepanel from 'nav-frontend-lenkepanel';
+import styled from 'styled-components'
 
-import '../styles/Home.css'
+// import '../styles/Home.css'
 import FetchNavDigitalServices from './FetchNavDigitalServices'
 
 
-async function fetchData() {
-    console.log("fetch")
-    const response = await fetch("http://localhost:3001/rest/v0.1/testAreas");
-    const data = await response.json()
-    return data
-}
+
+const Header = styled.header`
+    img {
+        width: 90px;
+    }
+`;
+
+const MainContent = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+`;
+
+const Footer = styled.footer`
+    width: 100%;
+    margin-top: auto; /*Footer always at bottom (if min.height of container is 100vh)*/
+    height: 100px;
+    border-top: 1px solid #eaeaea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+         width: 90px;
+    }
+
+    a {
+        color: #0067c5;
+        background: none;
+        text-decoration: underline;
+        cursor: pointer;
+        margin: 20px;
+    }
+`;
+
 
 export default function Home() {
-    // List of apis that are loaded in index. Should be sent as props to children components.
-    let apisToMonitor;
-
-
-
     return (
         <div className="container">
             <Head>
                 <title>Status digitale tjenester</title>
                 <link rel="icon" href="/favicon.ico" />
-                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                <mta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
-            <main>
-                <h1 className="title-container">
-                    <img src="/assets/nav-logo/png/red.png" alt="LogoRed" />
+            <Header>
+                <img src="/assets/nav-logo/png/red.png" alt="LogoRed" />
+                <h1>
                     Status digitale tjenester
                 </h1>
-                <div className="grid">
+            </Header>
+            <main>
+                <MainContent>
                     <FetchNavDigitalServices />
-
-                    {/* <div
-                        className="card"
-                    >
-                        <h3>Examples</h3>
-                        <p>Discover and deploy boilerplate example Next.js projects. {fetchData}</p>
-                    </div>
-
-                    <a
-                        className="card"
-                    >
-                        <h3>Arbeid</h3>
-                        <p>
-                            Api #1
-					    </p>
-                    </a>
-                    <Panel border> asd </Panel> */}
-                </div>
+                </MainContent>
             </main>
 
-            <footer className="footer">
+            <Footer>
                 <img src="/assets/nav-logo/png/black.png" alt="LogoBlack" />
                 <ul>
-                    <li>Arbeids- og velferdsetaten</li>
-                    <li>Personvern og informasjonskapsler</li>
-                    <li>Tilgjengelighet</li>
-                    <li>Del skjerm med veileder</li>
+                    <p>Arbeids- og velferdsetaten</p>
+                    <a href="https://www.nav.no/no/nav-og-samfunn/om-nav/personvern-i-arbeids-og-velferdsetaten">Personvern og informasjonskapsler</a>
+                    <a href="https://www.nav.no/no/nav-og-samfunn/kontakt-nav/teknisk-brukerstotte/nyttig-a-vite/tilgjengelighet">Tilgjengelighet</a>
+                    <a href="https://www.nav.no/no/person#">Del skjerm med veileder</a>
                 </ul>
-            </footer>
+            </Footer>
         </div>
     )
 }
+

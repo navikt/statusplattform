@@ -1,7 +1,21 @@
 import { useEffect, useState } from "react";
 import Panel from 'nav-frontend-paneler';
+import styled from 'styled-components'
 
 
+const DigitalServicesContainer = styled.div`
+    display: flex;
+    flex: 1;
+    flex-flow: row wrap;
+    justify-content: center;
+    width: 90%;
+    white-space: normal;
+`;
+
+const PanelSetWidth = styled(Panel)`
+    width: 250px;
+    margin: 10px;
+`;
 
 async function fetchData() {
     console.log("fetch")
@@ -30,17 +44,18 @@ function FetchNavDigitalServices() {
     }
 
     return (
-        <div className="digital-services-container">
+        <DigitalServicesContainer>
             {areas.map(area => (
-                <Panel key={area.name}>
+                <PanelSetWidth border key={area.name}>
+                    <h3>{area.name}</h3>
                     <ul>
                         {area.services.map(service => (
                             <li key={service.name} > {service.name}: {service.status}</li>
                         ))}
                     </ul>
-                </Panel>
+                </PanelSetWidth>
             ))}
-        </div>
+        </DigitalServicesContainer>
 
     )
 }
