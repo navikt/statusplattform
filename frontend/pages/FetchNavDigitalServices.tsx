@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Panel from 'nav-frontend-paneler';
 import styled from 'styled-components'
 
-import { Bag, Folder, PensionBag, HealthCase } from '@navikt/ds-icons'
+import { Bag, Folder, PensionBag, HealthCase, SuccessFilled, ErrorFilled, WarningFilled } from '@navikt/ds-icons'
 
 const DigitalServicesContainer = styled.div`
     display: flex;
@@ -53,6 +53,36 @@ const ErrorParagraph = styled.p`
     border-radius: 5px;
 `;
 
+const SuccessFilledColored = styled(SuccessFilled)`
+    color: green;
+`;
+
+const ErrorFilledColored = styled(ErrorFilled)`
+    color: #d60000;
+`;
+
+const WarningFilledColored = styled(WarningFilled)`
+    color: #ff9900;
+`;
+
+const ServicesList = styled.ul`
+    padding: 0;
+    > li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        /* border: 1px solid; */
+        margin: 5px;
+        list-style-type: none;
+        section:first-child {
+            width: 90%;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+    }
+`;
+
+
 async function fetchData() {
     try {
         const response = await fetch("http://localhost:3001/rest/testAreas");
@@ -79,6 +109,19 @@ const handleAndSetNavIcon = (areaName: string) => {
         return <HealthCase />
     }
     return <Folder />
+}
+
+const handleAndSetStatusIcon = (status: string) => {
+    if (status == "OK") {
+        return <SuccessFilledColored />
+    }
+    if (status == "DOWN") {
+        return <ErrorFilledColored />
+    }
+    if (status == "ISSUE") {
+        return <WarningFilledColored />
+    }
+    return status
 }
 
 function FetchNavDigitalServices() {
@@ -112,11 +155,13 @@ function FetchNavDigitalServices() {
                             {" " + area.name}
                         </h3>
                         <HorizontalLine />
-                        <ul>
+                        <ServicesList>
                             {area.services.map(service => (
-                                <li key={service.name} > {service.name}: {service.status}</li>
+                                <li key={service.name}>
+                                    <section>{service.name}</section><section> {handleAndSetStatusIcon(service.status)}</section>
+                                </li>
                             ))}
-                        </ul>
+                        </ServicesList>
                         <ExpandDataButton>Se mer...</ExpandDataButton>
                     </div>
                 </PanelSetWidth>
