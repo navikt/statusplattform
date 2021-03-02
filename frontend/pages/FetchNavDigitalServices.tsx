@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Panel from 'nav-frontend-paneler';
 import styled from 'styled-components'
 
+import { Bag, Folder, PensionBag, HealthCase } from '@navikt/ds-icons'
 
 const DigitalServicesContainer = styled.div`
     display: flex;
@@ -15,15 +16,69 @@ const DigitalServicesContainer = styled.div`
 const PanelSetWidth = styled(Panel)`
     width: 250px;
     margin: 10px;
+    color: #0067C5;
+
+    > div {
+        width: 180px;
+        height: 100%;
+        padding-bottom: 16px;
+    }
+`;
+
+const ExpandDataButton = styled.button`
+    color: #0067C5;
+    width: 100px;
+    height: 25px;
+    border-color: #0067C5;
+    border-width: 1px;
+    border-radius: 5px;
+    outline: none;
+    &:active {
+        background-color: white;
+        border-color: #0067C5;
+    }
+`;
+
+const HorizontalLine = styled.div`
+    width: 100%;
+    background-color: #0067C5;
+    height: 1px;
+`;
+
+const ErrorParagraph = styled.p`
+    color: #ff4a4a;
+    /* background-color: grey; */
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
 `;
 
 async function fetchData() {
-    // console.log("fetch")
-    const response = await fetch("http://localhost:3001/rest/testAreas");
-    const data = await response.json()
-    // console.log(data)
-    // console.log(data.status)
-    return data
+    try {
+        const response = await fetch("http://localhost:3001/rest/testAreas");
+        if (response.ok) {
+            const data = await response.json()
+            return data
+        }
+        else {
+            throw Error(`Request rejected with error code:  + ${response.status}`)
+        }
+    } catch (error) {
+        console.error("Error is: " + error)
+    }
+}
+
+const handleAndSetNavIcon = (areaName: string) => {
+    if (areaName == "Arbeid") {
+        return <Bag />
+    }
+    if (areaName == "Pensjon") {
+        return <PensionBag />
+    }
+    if (areaName == "Helse") {
+        return <HealthCase />
+    }
+    return <Folder />
 }
 
 function FetchNavDigitalServices() {
@@ -39,6 +94,10 @@ function FetchNavDigitalServices() {
         })()
     }, [])
 
+    if (!areas) {
+        return <ErrorParagraph>Kunne ikke hente de digitale tjenestene. Hvis problemet vedvarer, kontakt support.</ErrorParagraph>
+    }
+
     if (isLoading) {
         return <p>Loading services...</p>
     }
@@ -47,18 +106,24 @@ function FetchNavDigitalServices() {
         <DigitalServicesContainer>
             {areas.map(area => (
                 <PanelSetWidth border key={area.name}>
-                    <h3>{area.name}</h3>
-                    <ul>
-                        {area.services.map(service => (
-                            <li key={service.name} > {service.name}: {service.status}</li>
-                        ))}
-                    </ul>
+                    <div>
+                        <h3>
+                            {handleAndSetNavIcon(area.name)}
+                            {" " + area.name}
+                        </h3>
+                        <HorizontalLine />
+                        <ul>
+                            {area.services.map(service => (
+                                <li key={service.name} > {service.name}: {service.status}</li>
+                            ))}
+                        </ul>
+                        <ExpandDataButton>Se mer...</ExpandDataButton>
+                    </div>
                 </PanelSetWidth>
             ))}
         </DigitalServicesContainer>
 
     )
 }
-{/* <ul>{areas.map((area) => <li key={area.name}>{area.name}: {area.status} -- {area.services.status}</li>)}</ul> */ }
 
 export default FetchNavDigitalServices

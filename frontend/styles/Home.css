@@ -1,19 +1,8 @@
-.container {
-  padding: 5rem 0;
-  flex: 1;
-  min-height: 100%;
-  margin-bottom: -100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
 .grid {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  /* max-width: 800px; */
   margin-top: 3rem;
   margin-bottom: 3rem;
 }

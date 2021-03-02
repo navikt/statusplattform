@@ -1,23 +1,26 @@
 import Head from 'next/head'
-import Panel from 'nav-frontend-paneler';
-// import Lenkepanel from 'nav-frontend-lenkepanel';
 import styled from 'styled-components'
 
-// import '../styles/Home.css'
+import '../styles/Home.css'
 import FetchNavDigitalServices from './FetchNavDigitalServices'
 
 
+const PortalDigitaleTjenesterContainer = styled.div`
+    min-height: 100vh;
+    margin-bottom: -100px;
+    display: flex;
+    flex-direction: column;
+`;
 
 const Header = styled.header`
     display: flex;
-    /* justify-content: space-around; */
     justify-content: flex-start;
     align-items: center;
-    padding: 20px;
+    padding-left: 20px;
+    height: 100%;
 
     img {
-        width: 63px;
-        height: 100%;
+        width: 84px;
     }
 `;
 
@@ -28,6 +31,7 @@ const MainContent = styled.div`
     flex-wrap: wrap;
     margin-top: 3rem;
     margin-bottom: 3rem;
+    color: #0067C5;
 `;
 
 const Footer = styled.footer`
@@ -40,7 +44,7 @@ const Footer = styled.footer`
     align-items: center;
 
     img {
-         width: 90px;
+         width: 63px;
     }
 
     a {
@@ -54,7 +58,7 @@ const Footer = styled.footer`
 
 export default function Home() {
     return (
-        <div className="container">
+        <PortalDigitaleTjenesterContainer>
             <Head>
                 <title>Status digitale tjenester</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -82,7 +86,7 @@ export default function Home() {
                     <a href="https://www.nav.no/no/person#">Del skjerm med veileder</a>
                 </ul>
             </Footer>
-        </div>
+        </PortalDigitaleTjenesterContainer>
     )
 }
 
