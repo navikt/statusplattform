@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Panel from 'nav-frontend-paneler';
 import styled from 'styled-components'
 
-import { Bag, Folder, PensionBag, HealthCase, SuccessFilled, ErrorFilled, WarningFilled, Employer, Information, People, Family } from '@navikt/ds-icons'
+import { Bag, Folder, PensionBag, HealthCase, SuccessFilled, ErrorFilled, WarningFilled, Employer, Information, People, Family, Service, Globe } from '@navikt/ds-icons'
 import { Undertittel } from "nav-frontend-typografi";
 
 const DigitalServicesContainer = styled.div`
@@ -124,11 +124,17 @@ const handleAndSetNavIcon = (areaName: string) => {
     if (areaName == "Informasjon") {
         return <Information />
     }
-    if (areaName == "Person") {
+    if (areaName == "Bruker") {
         return <People />
     }
     if (areaName == "Familie") {
         return <Family />
+    }
+    if (areaName == "EksterneTjenester") {
+        return <Service />
+    }
+    if (areaName == "Lokasjon") {
+        return <Globe />
     }
     return <Folder />
 }
