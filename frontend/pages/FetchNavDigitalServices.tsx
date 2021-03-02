@@ -2,26 +2,36 @@ import { useEffect, useState } from "react";
 import Panel from 'nav-frontend-paneler';
 import styled from 'styled-components'
 
-import { Bag, Folder, PensionBag, HealthCase, SuccessFilled, ErrorFilled, WarningFilled } from '@navikt/ds-icons'
+import { Bag, Folder, PensionBag, HealthCase, SuccessFilled, ErrorFilled, WarningFilled, Employer, Information, People, Family } from '@navikt/ds-icons'
+import { Undertittel } from "nav-frontend-typografi";
 
 const DigitalServicesContainer = styled.div`
-    display: flex;
     flex: 1;
-    flex-flow: row wrap;
-    justify-content: center;
     width: 90%;
-    white-space: normal;
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 15px;
+    @media (min-width: 768px) {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
 `;
 
 const PanelSetWidth = styled(Panel)`
-    width: 250px;
+    /* width: 250px; */
     margin: 10px;
     color: #0067C5;
-
     > div {
-        width: 180px;
+        /* width: 180px; */
         height: 100%;
         padding-bottom: 16px;
+        
+        
+        h2 svg:first-child {
+            width: 1.778rem;
+            height: 1.778rem;
+        }
     }
 `;
 
@@ -108,6 +118,18 @@ const handleAndSetNavIcon = (areaName: string) => {
     if (areaName == "Helse") {
         return <HealthCase />
     }
+    if (areaName == "Ansatt") {
+        return <Employer />
+    }
+    if (areaName == "Informasjon") {
+        return <Information />
+    }
+    if (areaName == "Person") {
+        return <People />
+    }
+    if (areaName == "Familie") {
+        return <Family />
+    }
     return <Folder />
 }
 
@@ -150,10 +172,10 @@ function FetchNavDigitalServices() {
             {areas.map(area => (
                 <PanelSetWidth border key={area.name}>
                     <div>
-                        <h3>
+                        <Undertittel>
                             {handleAndSetNavIcon(area.name)}
                             {" " + area.name}
-                        </h3>
+                        </Undertittel>
                         <HorizontalLine />
                         <ServicesList>
                             {area.services.map(service => (
