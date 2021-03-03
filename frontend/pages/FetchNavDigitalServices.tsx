@@ -14,12 +14,13 @@ const DigitalServicesContainer = styled.div`
     gap: 15px;
     @media (min-width: 768px) {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(5, 1fr);
     }
 `;
 
 const PanelSetWidth = styled(Panel)`
     /* width: 250px; */
+    background-color: #9BD0B0;
     margin: 10px;
     color: #0067C5;
     > div {
@@ -77,15 +78,23 @@ const WarningFilledColored = styled(WarningFilled)`
 
 const ServicesList = styled.ul`
     padding: 0;
+    color:black;
     > li {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
         /* border: 1px solid; */
         margin: 5px;
         list-style-type: none;
+        section {
+            text-align: left;
+        }
         section:first-child {
-            width: 90%;
+            width:14%;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        section:nth-child(2) {
             white-space: normal;
             word-wrap: break-word;
         }
@@ -176,21 +185,21 @@ function FetchNavDigitalServices() {
     return (
         <DigitalServicesContainer>
             {areas.map(area => (
-                <PanelSetWidth border key={area.name}>
+                <PanelSetWidth  key={area.name}>
                     <div>
                         <Undertittel>
                             {handleAndSetNavIcon(area.name)}
                             {" " + area.name}
                         </Undertittel>
-                        <HorizontalLine />
                         <ServicesList>
                             {area.services.map(service => (
                                 <li key={service.name}>
-                                    <section>{service.name}</section><section> {handleAndSetStatusIcon(service.status)}</section>
+                                    <section> {handleAndSetStatusIcon(service.status)}</section><section>{service.name}</section>
                                 </li>
                             ))}
+                            {/**/}
                         </ServicesList>
-                        <ExpandDataButton>Se mer...</ExpandDataButton>
+
                     </div>
                 </PanelSetWidth>
             ))}

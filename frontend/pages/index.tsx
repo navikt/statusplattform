@@ -29,9 +29,8 @@ const MainContent = styled.div`
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    margin-top: 3rem;
-    margin-bottom: 3rem;
     color: #0067C5;
+    background-color: #F1F1F1;
 `;
 
 const Footer = styled.footer`
