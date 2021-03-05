@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Panel from 'nav-frontend-paneler';
 import styled from 'styled-components'
 
-import { Bag, Folder, PensionBag, HealthCase, SuccessFilled, ErrorFilled, WarningFilled, Employer, Information, People, Family, Service, Globe } from '@navikt/ds-icons'
+import { Bag, Folder, PensionBag, HealthCase, ErrorFilled, WarningFilled, Employer, Information, People, Family, Service, Globe } from '@navikt/ds-icons'
 import { Undertittel } from "nav-frontend-typografi";
 
 const DigitalServicesContainer = styled.div`
@@ -18,16 +18,13 @@ const DigitalServicesContainer = styled.div`
     }
 `;
 
-const PanelSetWidth = styled(Panel)`
-    /* width: 250px; */
+const PanelCustomized = styled(Panel)`
     background-color: #bedeca;
     margin: 10px;
     color: #0067C5;
     > div {
-        /* width: 180px; */
         height: 100%;
         padding-bottom: 16px;
-        
         
         h2 svg:first-child {
             width: 1.778rem;
@@ -36,35 +33,22 @@ const PanelSetWidth = styled(Panel)`
     }
 `;
 
-const ExpandDataButton = styled.button`
-    color: #0067C5;
-    width: 100px;
-    height: 25px;
-    border-color: #0067C5;
-    border-width: 1px;
-    border-radius: 5px;
-    outline: none;
-    &:active {
-        background-color: white;
-        border-color: #0067C5;
+const UndertittelCustomized = styled(Undertittel)`
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    svg {
+        margin-right: 10px;
     }
 `;
 
-
-const HorizontalLine = styled.div`
-    width: 100%;
-    background-color: #0067C5;
-    height: 1px;
-`;
-
-const Dot = styled.span`
+const SuccessCircleGreen = styled.span`
     padding-top: 4px;
     height: 16px;
     width: 16px;
     background-color: #27c85de0;
     border-radius: 50%;
     display: inline-block;
-}
 `;
 
 const ErrorParagraph = styled.p`
@@ -73,12 +57,6 @@ const ErrorParagraph = styled.p`
     font-weight: bold;
     padding: 10px;
     border-radius: 5px;
-`;
-
-const SuccessFilledColored = styled(SuccessFilled)`
-    color: green;
-    position: relative;
-    bottom: 0;
 `;
 
 const ErrorFilledColored = styled(ErrorFilled)`
@@ -163,7 +141,7 @@ const handleAndSetNavIcon = (areaName: string) => {
 
 const handleAndSetStatusIcon = (status: string) => {
     if (status == "OK") {
-        return <Dot ></Dot>//<SuccessFilledColored />
+        return <SuccessCircleGreen ></SuccessCircleGreen>
     }
     if (status == "DOWN") {
         return <ErrorFilledColored />
@@ -198,12 +176,12 @@ function FetchNavDigitalServices() {
     return (
         <DigitalServicesContainer>
             {areas.map(area => (
-                <PanelSetWidth  key={area.name}>
+                <PanelCustomized  key={area.name}>
                     <div>
-                        <Undertittel>
+                        <UndertittelCustomized>
                             {handleAndSetNavIcon(area.name)}
-                            {" " + area.name}
-                        </Undertittel>
+                            {area.name}
+                        </UndertittelCustomized>
                         <ServicesList>
                             {area.services.map(service => (
                                 <li key={service.name}>
@@ -214,7 +192,7 @@ function FetchNavDigitalServices() {
                         </ServicesList>
 
                     </div>
-                </PanelSetWidth>
+                </PanelCustomized>
             ))}
         </DigitalServicesContainer>
 
