@@ -10,6 +10,8 @@ const PortalDigitaleTjenesterContainer = styled.div`
     margin-bottom: -100px;
     display: flex;
     flex-direction: column;
+    background-color: #F1F1F1;
+
 `;
 
 const Header = styled.header`
@@ -18,6 +20,8 @@ const Header = styled.header`
     align-items: center;
     padding-left: 20px;
     height: 100%;
+    background-color: white;
+    border-bottom: 1px solid grey;
 
     img {
         width: 84px;
@@ -30,13 +34,13 @@ const MainContent = styled.div`
     justify-content: center;
     flex-wrap: wrap;
     color: #0067C5;
-    background-color: #F1F1F1;
 `;
 
 const Footer = styled.footer`
     width: 100%;
     margin-top: auto; /*Footer always at bottom (if min.height of container is 100vh)*/
     border-top: 1px solid #eaeaea;
+    background-color: white;
     padding: 1rem;
     display: flex;
     flex-direction: column;
