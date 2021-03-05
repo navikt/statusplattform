@@ -20,7 +20,7 @@ const DigitalServicesContainer = styled.div`
 
 const PanelSetWidth = styled(Panel)`
     /* width: 250px; */
-    background-color: #9BD0B0;
+    background-color: #bedeca;
     margin: 10px;
     color: #0067C5;
     > div {
@@ -50,10 +50,21 @@ const ExpandDataButton = styled.button`
     }
 `;
 
+
 const HorizontalLine = styled.div`
     width: 100%;
     background-color: #0067C5;
     height: 1px;
+`;
+
+const Dot = styled.span`
+    padding-top: 4px;
+    height: 16px;
+    width: 16px;
+    background-color: #27c85de0;
+    border-radius: 50%;
+    display: inline-block;
+}
 `;
 
 const ErrorParagraph = styled.p`
@@ -66,6 +77,8 @@ const ErrorParagraph = styled.p`
 
 const SuccessFilledColored = styled(SuccessFilled)`
     color: green;
+    position: relative;
+    bottom: 0;
 `;
 
 const ErrorFilledColored = styled(ErrorFilled)`
@@ -150,7 +163,7 @@ const handleAndSetNavIcon = (areaName: string) => {
 
 const handleAndSetStatusIcon = (status: string) => {
     if (status == "OK") {
-        return <SuccessFilledColored />
+        return <Dot ></Dot>//<SuccessFilledColored />
     }
     if (status == "DOWN") {
         return <ErrorFilledColored />
