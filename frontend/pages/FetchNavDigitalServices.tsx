@@ -6,9 +6,9 @@ import { Bag, Folder, PensionBag, HealthCase, ErrorFilled, WarningFilled, Employ
 import { Undertittel } from "nav-frontend-typografi";
 
 const DigitalServicesContainer = styled.div`
-    flex: 1;
     width: 90%;
     padding: 30px;
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 15px;
@@ -42,6 +42,31 @@ const UndertittelCustomized = styled(Undertittel)`
     }
 `;
 
+const ServicesList = styled.ul`
+    padding: 0;
+    color:black;
+    > li {
+        display: flex;
+        justify-content: flex-start;
+        margin: 5px;
+        list-style-type: none;
+        section {
+            display: flex;
+            align-items: center;
+        }
+        section:first-child {
+            margin-right: 10px;
+        }
+        section:nth-child(2) {
+            white-space: normal;
+            word-wrap: break-word;
+        }
+    }
+`;
+
+
+
+//Element styles
 const SuccessCircleGreen = styled.span`
     padding-top: 4px;
     height: 16px;
@@ -67,30 +92,6 @@ const WarningFilledColored = styled(WarningFilled)`
     color: #ff9900;
 `;
 
-const ServicesList = styled.ul`
-    padding: 0;
-    color:black;
-    > li {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        /* border: 1px solid; */
-        margin: 5px;
-        list-style-type: none;
-        section {
-            text-align: left;
-        }
-        section:first-child {
-            width:14%;
-            white-space: normal;
-            word-wrap: break-word;
-        }
-        section:nth-child(2) {
-            white-space: normal;
-            word-wrap: break-word;
-        }
-    }
-`;
 
 
 async function fetchData() {
@@ -188,7 +189,6 @@ function FetchNavDigitalServices() {
                                     <section> {handleAndSetStatusIcon(service.status)}</section><section>{service.name}</section>
                                 </li>
                             ))}
-                            {/**/}
                         </ServicesList>
 
                     </div>
