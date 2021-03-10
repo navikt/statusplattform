@@ -1,6 +1,5 @@
 import Head from 'next/head'
-import '../styles/Home.css'
 
-export default function Nav() {
+export default function Navbar() {
   return <div className="nav"></div>
 }

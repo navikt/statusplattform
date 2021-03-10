@@ -14,4 +14,9 @@ a {
 
 * {
   box-sizing: border-box;
+
+  /* Nav Designsystem - navFarger, are saved here. The reason is that NextJs, along with other
+   React frameworks hardly support Less, thus this is the only appropriate work-around */
+  --navGraBakgrunn: #F1F1F1;
+  --navBakgrunn: #FFFFFF;
 }

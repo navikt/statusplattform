@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import {PortalServiceTile} from '../components/PortalServiceTile'
+
 import Panel from 'nav-frontend-paneler';
 import styled from 'styled-components'
 
@@ -6,15 +8,16 @@ import { Bag, Folder, PensionBag, HealthCase, ErrorFilled, WarningFilled, Employ
 import { Undertittel } from "nav-frontend-typografi";
 
 const DigitalServicesContainer = styled.div`
-    width: 90%;
+    width: 100%;
     padding: 30px;
-    flex: 1;
+    /* flex: 1; */
     display: grid;
+    justify-content: center;
     grid-template-columns: repeat(1, 1fr);
     gap: 15px;
     @media (min-width: 768px) {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(auto-fill, 250px);
     }
 `;
 
@@ -153,7 +156,7 @@ const handleAndSetStatusIcon = (status: string) => {
     return status
 }
 
-function FetchNavDigitalServices() {
+const DigitalServicesLandingPage = () => {
     const [areas, setAreas] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
@@ -161,6 +164,7 @@ function FetchNavDigitalServices() {
         (async function () {
             setIsLoading(true)
             const newAreas = await fetchData()
+            // const newAreas = await AsyncFetchNavDigitalServices
             setAreas(newAreas)
             setIsLoading(false)
         })()
@@ -176,27 +180,36 @@ function FetchNavDigitalServices() {
 
     return (
         <DigitalServicesContainer>
-            {areas.map(area => (
-                <PanelCustomized  key={area.name}>
-                    <div>
-                        <UndertittelCustomized>
-                            {handleAndSetNavIcon(area.name)}
-                            {area.name}
-                        </UndertittelCustomized>
-                        <ServicesList>
-                            {area.services.map(service => (
-                                <li key={service.name}>
-                                    <section> {handleAndSetStatusIcon(service.status)}</section><section>{service.name}</section>
-                                </li>
-                            ))}
-                        </ServicesList>
-
-                    </div>
-                </PanelCustomized>
-            ))}
+            {areas.map(area => {
+                return (
+                    <PortalServiceTile key={area.name} area={area}/>
+                )
+            })}
         </DigitalServicesContainer>
-
     )
+
+        // <DigitalServicesContainer>
+        //     {areas.map(area => (
+        //         <PanelCustomized  key={area.name}>
+        //             <div>
+        //                 <UndertittelCustomized>
+        //                     {handleAndSetNavIcon(area.name)}
+        //                     {area.name}
+        //                 </UndertittelCustomized>
+        //                 <ServicesList>
+        //                     {area.services.map(service => (
+        //                         <li key={service.name}>
+        //                             <section> {handleAndSetStatusIcon(service.status)}</section><section>{service.name}</section>
+        //                         </li>
+        //                     ))}
+        //                 </ServicesList>
+
+        //             </div>
+        //         </PanelCustomized>
+        //     ))}
+        // </DigitalServicesContainer>
+
+
 }
 
-export default FetchNavDigitalServices
+export default DigitalServicesLandingPage
