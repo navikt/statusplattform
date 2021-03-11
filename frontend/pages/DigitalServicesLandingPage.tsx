@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import {PortalServiceTile} from '../components/PortalServiceTile'
 
-import Panel from 'nav-frontend-paneler';
 import styled from 'styled-components'
-
-import { Bag, Folder, PensionBag, HealthCase, ErrorFilled, WarningFilled, Employer, Information, People, Family, Service, Globe } from '@navikt/ds-icons'
-import { Undertittel } from "nav-frontend-typografi";
 
 const DigitalServicesContainer = styled.div`
     width: 100%;
@@ -22,6 +18,14 @@ const DigitalServicesContainer = styled.div`
         display: grid;
         grid-template-columns: repeat(auto-fill, 250px);
     }
+`;
+
+const ErrorParagraph = styled.p`
+    color: #ff4a4a;
+    /* background-color: grey; */
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
 `;
 
 
