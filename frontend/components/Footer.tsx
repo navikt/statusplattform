@@ -26,7 +26,7 @@ const FooterCustomized = styled.footer`
     }
 
     a {
-        color: #0067c5;
+        color: var(--navBla);
         background: none;
         text-decoration: underline;
         margin: 20px;

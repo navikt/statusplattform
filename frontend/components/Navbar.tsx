@@ -23,7 +23,7 @@ const Nav = styled.div `
 		text-decoration: none;
 		color: black;
 		&active {
-			border-bottom: #0067c5 3px solid;
+			border-bottom: var(--navBla) 3px solid;
 		}
 	}
 	@media (min-width: 350px){
@@ -43,10 +43,10 @@ const Nav = styled.div `
 const LenkeCustomized = styled(Lenke)`
 	border-bottom: transparent 3px solid;
 	:hover {
-		border-bottom: #0067c5 2px solid;
+		border-bottom: var(--navBla) 2px solid;
 	}
 	:active {
-		border-bottom: #0067c5 3px solid;
+		border-bottom: var(--navBla) 3px solid;
 	}
 `;
 
