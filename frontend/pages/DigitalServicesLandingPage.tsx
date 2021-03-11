@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
-import {PortalServiceTile} from '../components/PortalServiceTile'
+
+import { PortalServiceTile } from '../components/PortalServiceTile'
 
 import styled from 'styled-components'
 
 const DigitalServicesContainer = styled.div`
     width: 100%;
-    padding: 30px;
     flex: 1;
     display: grid;
     justify-content: center;
     grid-template-columns: repeat(1, 1fr);
     gap: 15px;
-    @media (min-width: 250px){
-
+    @media (min-width: 468px){
+        grid-template-columns: repeat(2, 1fr);
     }
     @media (min-width: 768px) {
         display: grid;
         grid-template-columns: repeat(auto-fill, 250px);
+        padding: 30px;
     }
 `;
 

@@ -19,4 +19,10 @@ a {
    React frameworks hardly support Less, thus this is the only appropriate work-around */
   --navGraBakgrunn: #F1F1F1;
   --navBakgrunn: #FFFFFF;
+  --fokusFarge: #254B6D;
+  
+  /* Status codes */
+  --redError: #BA3A26;
+  --navOransje: #FF9100;
+  --navGronn: #06893A;
 }

@@ -4,14 +4,14 @@ import Lenke from 'nav-frontend-lenker';
 import { Normaltekst, } from "nav-frontend-typografi";
 
 const Nav = styled.div `
-    height: 2.75rem;
+	height: 3.75rem;
 	width: 100%;
     background-color: white;
-    /* border-bottom: #c6c2bf 1px solid; */
 	display: flex;
 	align-items: center;
 	> ul {
-		padding-left: 75px;
+		padding-left: 0;
+		margin: 0 auto;
 	}
 	> ul > li {
 		display: inline-block;
@@ -24,6 +24,18 @@ const Nav = styled.div `
 		color: black;
 		&active {
 			border-bottom: #0067c5 3px solid;
+		}
+	}
+	@media (min-width: 350px){
+		height: 2.75rem;
+		> ul {
+			margin: 0 auto;
+		}
+	}
+	@media (min-width: 468px) {
+		> ul {
+			margin: inherit;
+			padding-left: 112px;
 		}
 	}
 `
@@ -60,7 +72,6 @@ export default function Navbar() {
 				<li role="tab">
 					<LinkWrapper>
 						<LenkeCustomized href="/">
-
 							<NormalTekstCustomized>Privatperson</NormalTekstCustomized>
 						</LenkeCustomized>
 					</LinkWrapper>

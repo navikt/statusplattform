@@ -6,18 +6,23 @@ import { Undertittel } from "nav-frontend-typografi";
 
 
 const PanelCustomized = styled(Panel)`
-    /* background-color: #dddddd; */
-    margin: 10px;
     color: #0067C5;
-    width: 100%;
-    height: 100%;
+    h2 svg:first-child {
+        display: none;
+    }
     > div {
-        height: 100%;
-        padding-bottom: 16px;
-        
         h2 svg:first-child {
             width: 1.778rem;
             height: 1.778rem;
+        }
+        h2 {
+            word-break: break-all;
+            font-size: 1.25rem;
+        }
+    }
+    @media (min-width: 468px){
+        h2 svg:first-child {
+            display: block;
         }
     }
 `;
@@ -37,7 +42,6 @@ const ServicesList = styled.ul`
     > li {
         display: flex;
         justify-content: flex-start;
-        margin: 5px;
         list-style-type: none;
         section {
             display: flex;
@@ -49,6 +53,11 @@ const ServicesList = styled.ul`
         section:nth-child(2) {
             white-space: normal;
             word-wrap: break-word;
+        }
+    }
+    @media (min-width: 250px){
+        > li {
+            margin: 5px;
         }
     }
 `;
@@ -81,13 +90,6 @@ const ErrorCircleRed = styled.span`
     display: inline-block;
 `;
 
-const ErrorParagraph = styled.p`
-    color: #ff4a4a;
-    /* background-color: grey; */
-    font-weight: bold;
-    padding: 10px;
-    border-radius: 5px;
-`;
 // Remove if decided not to use nav-icons with exclamation-mark ++
 const ErrorFilledColored = styled(ErrorFilled)`
     color: #BA3A26;
