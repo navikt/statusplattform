@@ -6,7 +6,7 @@ import { Undertittel } from "nav-frontend-typografi";
 
 
 const PanelCustomized = styled(Panel)`
-    background-color: #dddddd;
+    /* background-color: #dddddd; */
     margin: 10px;
     color: #0067C5;
     width: 100%;
@@ -58,7 +58,25 @@ const SuccessCircleGreen = styled.span`
     padding-top: 4px;
     height: 16px;
     width: 16px;
-    background-color: #27c85de0;
+    background-color: #06893A;
+    border-radius: 50%;
+    display: inline-block;
+`;
+
+const WarningCircleOrange = styled.span`
+    padding-top: 4px;
+    height: 16px;
+    width: 16px;
+    background-color: #FF9100;
+    border-radius: 50%;
+    display: inline-block;
+`;
+
+const ErrorCircleRed = styled.span`
+    padding-top: 4px;
+    height: 16px;
+    width: 16px;
+    background-color: #BA3A26;
     border-radius: 50%;
     display: inline-block;
 `;
@@ -70,13 +88,13 @@ const ErrorParagraph = styled.p`
     padding: 10px;
     border-radius: 5px;
 `;
-
+// Remove if decided not to use nav-icons with exclamation-mark ++
 const ErrorFilledColored = styled(ErrorFilled)`
-    color: #d60000;
+    color: #BA3A26;
 `;
-
+// Remove if decided not to use nav-icons with exclamation-mark ++
 const WarningFilledColored = styled(WarningFilled)`
-    color: #ff9900;
+    color: #FF9100;
 `;
 
 const handleAndSetNavIcon = (areaName: string) => {
@@ -115,10 +133,12 @@ const handleAndSetStatusIcon = (status: string) => {
         return <SuccessCircleGreen ></SuccessCircleGreen>
     }
     if (status == "DOWN") {
-        return <ErrorFilledColored />
+        // return <ErrorFilledColored />
+        return <ErrorCircleRed/>
     }
     if (status == "ISSUE") {
-        return <WarningFilledColored />
+        // return <WarningFilledColored />
+        return <WarningCircleOrange />
     }
     return status
 }

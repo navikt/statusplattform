@@ -2,6 +2,8 @@ import styled from 'styled-components'
 import Navbar from './Navbar'
 import Head from 'next/head'
 
+import { Sidetittel } from 'nav-frontend-typografi'
+
 
 const MainContentContainer = styled.div`
     min-height: 100vh;
@@ -11,13 +13,22 @@ const MainContentContainer = styled.div`
     background-color: var(--navGraBakgrunn);
 `;
 const Header = styled.header`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
     padding-left: 20px;
+    min-height: 106px;
     height: 100%;
     background-color: white;
     border-bottom: 1px solid #c6c2bf;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+    > div {
+        padding-left: 20px;
+    }
+    > h1 {
+        font-size: 1.875rem;
+        font-weight: 600;
+    }
 
     img {
         width: 84px;
@@ -88,13 +99,15 @@ const MainContent = props => {
                 <link rel="icon" href="/favicon.ico" />
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
-            <Navbar/>
             <Header>
                 <img src="/assets/nav-logo/png/red.png" alt="LogoRed" />
-                <h1>
-                    Status digitale tjenester
-                </h1>
+                <div>
+                    <Sidetittel>
+                        Status digitale tjenester
+                    </Sidetittel>
+                </div>
             </Header>
+            <Navbar/>
 
             <Content>
                 {props.children}
