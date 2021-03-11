@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 import { Sidetittel } from 'nav-frontend-typografi'
 
-const Header = styled.header`
+const CustomHeader = styled.header`
     padding-left: 20px;
     min-height: 106px;
     height: 100%;
@@ -29,15 +29,17 @@ const Header = styled.header`
     }
 `;
 
-export default () => {
+const Header = () => {
     return (
-        <Header>
+        <CustomHeader>
             <img src="/assets/nav-logo/png/red.png" alt="LogoRed" />
             <div>
                 <Sidetittel>
                     Status digitale tjenester
                 </Sidetittel>
             </div>
-        </Header>
+        </CustomHeader>
     )
 }
+
+export default Header

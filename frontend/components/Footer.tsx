@@ -47,7 +47,7 @@ const FooterCustomized = styled.footer`
     }
 `;
 
-export default () => {
+const Footer = () => {
     return (
     <FooterCustomized>
         <a href="https://www.nav.no/no/person#">
@@ -62,3 +62,5 @@ export default () => {
     </FooterCustomized>
     )
 }
+
+export default Footer
