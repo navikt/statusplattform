@@ -24,7 +24,7 @@ const Content = styled.main`
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    color: #0067C5;
+    color: var(--navBla);
 `;
 
 

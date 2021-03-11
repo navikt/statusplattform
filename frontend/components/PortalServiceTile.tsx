@@ -6,7 +6,7 @@ import { Undertittel } from "nav-frontend-typografi";
 
 
 const PanelCustomized = styled(Panel)`
-    color: #0067C5;
+    color: var(--navBla);
     h2 svg:first-child {
         display: none;
     }
