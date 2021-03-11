@@ -67,7 +67,7 @@ const SuccessCircleGreen = styled.span`
     padding-top: 4px;
     height: 16px;
     width: 16px;
-    background-color: #06893A;
+    background-color: var(--navGronn);
     border-radius: 50%;
     display: inline-block;
 `;
@@ -76,7 +76,7 @@ const WarningCircleOrange = styled.span`
     padding-top: 4px;
     height: 16px;
     width: 16px;
-    background-color: #FF9100;
+    background-color: var(--navOransje);
     border-radius: 50%;
     display: inline-block;
 `;
@@ -85,18 +85,18 @@ const ErrorCircleRed = styled.span`
     padding-top: 4px;
     height: 16px;
     width: 16px;
-    background-color: #BA3A26;
+    background-color: var(--redError);
     border-radius: 50%;
     display: inline-block;
 `;
 
 // Remove if decided not to use nav-icons with exclamation-mark ++
 const ErrorFilledColored = styled(ErrorFilled)`
-    color: #BA3A26;
+    color: var(--redError);
 `;
 // Remove if decided not to use nav-icons with exclamation-mark ++
 const WarningFilledColored = styled(WarningFilled)`
-    color: #FF9100;
+    color: var(--navOransje);
 `;
 
 const handleAndSetNavIcon = (areaName: string) => {
