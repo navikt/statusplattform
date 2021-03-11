@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import Layout from '../components/Layout'
 
-// import 
 
 const ErrorTitle = styled.h1`
     color: var(--redError);
@@ -19,7 +18,7 @@ export default function Custom404() {
         <Layout>
             <ErrorWrapper>
                 <ErrorTitle>404 - Page Not Found</ErrorTitle>
-                <p>Denne siden eksiterer dessverre ikke :-(</p>
+                <p>Denne siden eksisterer dessverre ikke :-(</p>
             </ErrorWrapper>
         </Layout>
     )
