@@ -150,7 +150,6 @@ export interface PortalServiceTileProps {
 }
 
 export function PortalServiceTile({area}: PortalServiceTileProps) {
-
     return (
         <PanelCustomized>
             <div>

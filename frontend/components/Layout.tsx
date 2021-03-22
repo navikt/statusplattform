@@ -18,12 +18,10 @@ const MainContentContainer = styled.div`
 const Content = styled.main`
     width: 100%;
     min-height: 100%;
-	margin-top: 10px;
-    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-flow: column wrap;
     color: var(--navBla);
 `;
 

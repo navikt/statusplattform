@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
 
 import { PortalServiceTile } from '../components/PortalServiceTile'
+import StatusOverview from '../components/StatusOverview'
+
 
 import styled from 'styled-components'
 
 const DigitalServicesContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    @media only screen and (min-width: 64em){
+        padding: 2rem 3rem;
+    }
+`;
+const PortalServiceTileContainer = styled.div`
     width: 100%;
     flex: 1;
     display: grid;
@@ -16,7 +27,8 @@ const DigitalServicesContainer = styled.div`
     }
     @media (min-width: 768px) {
         display: grid;
-        grid-template-columns: repeat(auto-fill, 250px);
+        grid-template-columns: repeat(auto-fit, 250px);
+        grid-auto-flow: dense;
         padding: 30px;
     }
 `;
@@ -29,24 +41,21 @@ const ErrorParagraph = styled.p`
     border-radius: 5px;
 `;
 
-
-
-async function fetchData() {
-    try {
-        const response = await fetch("http://localhost:3001/rest/testAreas");
-        if (response.ok) {
-            const data = await response.json()
-            return data
-        }
-        else {
-            throw Error(`Request rejected with error code:  + ${response.status}`)
-        }
-    } catch (error) {
-        console.error("Error is: " + error)
+export class ResponseError extends Error {
+    public constructor (message: string, public response: Response) {
+        super(message)
     }
 }
 
-const DigitalServicesLandingPage = () => {
+const fetchData = async (): Promise<string[]> => {
+    const response = await fetch("http://localhost:3001/rest/testAreas");
+    if (response.ok) {
+        return response.json()
+    }
+    throw new ResponseError("Failed to fretch from server", response)
+}
+
+const DigitalServicesCards = () => {
     const [areas, setAreas] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
@@ -55,7 +64,8 @@ const DigitalServicesLandingPage = () => {
             setIsLoading(true)
             const newAreas = await fetchData()
             // const newAreas = await AsyncFetchNavDigitalServices
-            setAreas(newAreas)
+            const parsedAreas = [...newAreas]
+            setAreas(parsedAreas)
             setIsLoading(false)
         })()
     }, [])
@@ -67,16 +77,18 @@ const DigitalServicesLandingPage = () => {
     if (isLoading) {
         return <p>Loading services...</p>
     }
-
     return (
         <DigitalServicesContainer>
-            {areas.map(area => {
-                return (
-                    <PortalServiceTile key={area.name} area={area}/>
-                )
-            })}
+            <StatusOverview areas={areas} />
+            <PortalServiceTileContainer>
+                {areas.map(area => {
+                    return (
+                        <PortalServiceTile key={area.name} area={area}/>
+                    )
+                })}
+            </PortalServiceTileContainer>
         </DigitalServicesContainer>
     )
 }
 
-export default DigitalServicesLandingPage
+export default DigitalServicesCards

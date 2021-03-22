@@ -52,8 +52,13 @@ const LinkWrapper = styled.div`
 	justify-content: center;
 `;
 const LenkeCustomized = styled(Lenke)`
+	:focus {
+		background-color: transparent !important;
+	}
 	.active {
 		border-bottom-color: var(--fokusFarge) !important;
+		background-color: transparent;
+
 		> p {
 			font-weight: bold !important;
 			color: black !important;

@@ -1,10 +1,11 @@
 import Layout from '../components/Layout'
-import DigitalServicesLandingPage from './DigitalServicesLandingPage'
+import DigitalServicesCards from './DigitalServicesCards'
+
 
 export default function Home() {
     return (
         <Layout>
-            <DigitalServicesLandingPage />
+            <DigitalServicesCards />
         </Layout>
     )
 }
