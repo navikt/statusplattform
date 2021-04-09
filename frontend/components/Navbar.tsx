@@ -9,6 +9,7 @@ import { Normaltekst, } from "nav-frontend-typografi";
 const Nav = styled.div `
 	height: 3.75rem;
 	width: 100%;
+	margin: 0 auto;
     background-color: white;
 	display: flex;
 	align-items: center;
@@ -29,17 +30,12 @@ const Nav = styled.div `
 			border-bottom: var(--navBla) 3px solid;
 		}
 	}
-	@media (min-width: 350px){
+	@media (min-width: 250px){
 		height: 2.75rem;
-		> ul {
-			margin: 0 auto;
-		}
+		margin-bottom: 50px;
 	}
-	@media (min-width: 468px) {
-		> ul {
-			margin: inherit;
-			padding-left: 112px;
-		}
+	@media (min-width: 450px){
+		margin-bottom: 0;
 	}
 `
 

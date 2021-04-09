@@ -7,10 +7,13 @@ import NavInfoCircle from './NavInfoCircle'
 const StatusOverviewContainer = styled.div`
     max-width: 1080px;
     width: 100%;
-    padding: 0 1.5rem;
+    /* padding: 0 3rem; */
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    @media(min-width: 350px){
+        padding: 0 3rem;
+    }
 `;
 
 const StatusBannerWrapper = styled.div`
@@ -31,7 +34,7 @@ const LenkeCustomized = styled(Lenke)`
     border-radius: 15px;
     line-height: 35px;
     padding: 0 1.5rem;
-    height: 40px;
+    min-height: 40px;
     :hover {
         transition: 0.4s;
         background-color: var(--navBla);

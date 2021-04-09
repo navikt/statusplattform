@@ -49,7 +49,6 @@ const NavInfoCircle = (props) => {
     const centerTextRight: string = props.centerTextRight
     const bottomText: string = props.bottomText
 
-    console.log(centerTextRight)
     if (centerText !== undefined){
         return (
             <NavInfoCircleContent>

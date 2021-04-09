@@ -13,7 +13,12 @@ const IncidentsContainer = styled.div`
 const CenterContent = styled.div`
     margin: 0 auto;
     max-width: 1100px;
-    padding: 0 1.5rem;
+    padding: 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    @media(min-width:450px){
+        padding: 1rem 3rem;
+    }
 `
 
 const SectionContainer = styled.div`
@@ -34,7 +39,6 @@ const IconWrapper = styled.div`
 `
 
 const IncidentsWrapper = styled.div`
-    padding: 30px 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -54,7 +58,9 @@ const Incidents = () => {
         <Layout>
             <IncidentsContainer>
                 <CenterContent>
-                    <Link href="/"><Knapp mini><Back/>Gå tilbake</Knapp></Link>
+                    <span>
+                        <Link href="/"><Knapp mini><Back/>Gå tilbake</Knapp></Link>
+                    </span>
 
 
 

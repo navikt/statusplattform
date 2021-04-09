@@ -7,11 +7,12 @@ import StatusOverview from '../components/StatusOverview'
 import styled from 'styled-components'
 
 const DigitalServicesContainer = styled.div`
+    width: 100%;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    @media only screen and (min-width: 64em){
+    @media(min-width: 550px){
         padding: 2rem 3rem;
     }
 `;
