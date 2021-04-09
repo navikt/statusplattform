@@ -17,6 +17,8 @@ a {
 
   /* Nav Designsystem - navFarger, are saved here. The reason is that NextJs, along with other
    React frameworks hardly support Less, thus this is the only appropriate work-around */
+  /* Fargene må oppdateres manuelt fordi Next sin støtte for Less ikke er god nok.
+   Dette gjelder også mange andre rammeverk. Less brukes av for få til at det får støtte */
   --navGraBakgrunn: #F1F1F1;
   --navBakgrunn: #FFFFFF;
   

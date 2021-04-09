@@ -2,6 +2,8 @@ import Lenke from 'nav-frontend-lenker';
 import Link from 'next/link';
 import styled from 'styled-components'
 
+import NavInfoCircle from './NavInfoCircle'
+
 const StatusOverviewContainer = styled.div`
     max-width: 1080px;
     width: 100%;
@@ -12,7 +14,7 @@ const StatusOverviewContainer = styled.div`
 `;
 
 const StatusBannerWrapper = styled.div`
-    border-radius: 10px;
+    border-radius: 20px;
     background-color: white;    
     padding: 2rem 1rem;
     width: 100%;
@@ -52,41 +54,6 @@ const IncidentsAndStatusWrapper = styled.div`
 const MaintenanceStatusWrapper = styled.div`
 `;
 
-const NavInfoCircleContent = styled.div`
-    border: 2px solid;
-    border-radius: 50%;
-    min-height: 100px;
-    min-width: 8.188rem;
-    max-width: 14rem;
-    padding: 1.5rem 0;
-    text-align: center;
-    > span {
-        font-size: small;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    span:nth-child(2){
-        font-size: 2.5em;
-    }
-    @media (min-width: 560px) {
-        min-width: 11.35rem;
-        > span {
-            line-height: 1.5rem;
-            font-size: normal;
-            min-height: 2.7rem;
-        }
-        span:nth-child(2) {
-            font-size: 3.5em;
-        }
-    }
-`;
-
-let numberOfHealthyServices: number = 0;
-
 const mapStatusAndIncidentsToArray = (areas) => {
     let areasArray: Array<String> = []
     areas.map(area => {
@@ -94,17 +61,22 @@ const mapStatusAndIncidentsToArray = (areas) => {
     })
     return areasArray;
 }
+
 const countServicesInAreas = (mappedAreas) => {
     let numberOfServices: number = 0;
-    // console.log(mappedAreas)
     mappedAreas.forEach(function (area){
         numberOfServices += area.services.length
     })
+    return numberOfServices
+}
+
+const countHealthyServices = (mappedAreas) => {
+    let healthyServices: number = 0;
     mappedAreas.map(area => {
-        numberOfHealthyServices += area.services.filter(
+        healthyServices += area.services.filter(
             (service: any) => service.status !== "DOWN").length
     })
-    return numberOfServices
+    return healthyServices
 }
 
 //TODO Create Incidents handler and UI
@@ -114,6 +86,7 @@ const StatusOverview = (props: any) => {
     let areas: Object = props.areas
     const mappedAreas: Array<String> = mapStatusAndIncidentsToArray(areas)
     const numberOfServices: number = countServicesInAreas(mappedAreas)
+    const numberOfHealthyServices: number = countHealthyServices(mappedAreas)
 
     return (
         <StatusOverviewContainer>
@@ -123,7 +96,7 @@ const StatusOverview = (props: any) => {
                     <h2>Statusmessage here</h2>
                     <span>Last updated</span>
                 </div>
-                <Link href="/detailed-incidents">
+                <Link href="/Incidents">
                     <LenkeCustomized>
                         <span>Mer om hendelser</span>
                     </LenkeCustomized>
@@ -135,19 +108,11 @@ const StatusOverview = (props: any) => {
                 <CirclesContainer>
 
                     <IncidentsAndStatusWrapper>
-                        <NavInfoCircleContent>
-                            <span>Hendelser</span>
-                            <span>0/16</span>
-                            <span>Siste 24 timene</span>
-                        </NavInfoCircleContent>
+                        <NavInfoCircle topText="Hendelser" centerTextLeft="0" centerTextRight="16" bottomText="Siste 24 timene"/>
                     </IncidentsAndStatusWrapper>
 
                     <MaintenanceStatusWrapper>
-                        <NavInfoCircleContent>
-                            <span>Systemer</span>
-                            <span>{numberOfHealthyServices}/{numberOfServices}</span>
-                            <span>Oppe</span>
-                        </NavInfoCircleContent>
+                        <NavInfoCircle topText="Systemer" centerTextLeft={numberOfHealthyServices} centerTextRight={numberOfServices} bottomText="Oppe"/>
                     </MaintenanceStatusWrapper>
 
                 </CirclesContainer>
