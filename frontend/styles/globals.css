@@ -21,10 +21,15 @@ a {
    Dette gjelder også mange andre rammeverk. Less brukes av for få til at det får støtte */
   --navGraBakgrunn: #F1F1F1;
   --navBakgrunn: #FFFFFF;
+
+  /* Colors for basic things like background, boxes, etc */
+  --navGra80: #4F4F4F;
+  --navGra40: #A0A0A0;
   
   /* Interactive colors for items such as links, buttons, active, hover, etc */
   --fokusFarge: #254B6D;
   --navBla: #0067C5;
+  --navBlaLighten40: #66A4DC;
   
   /* Status codes */
   --redError: #BA3A26;

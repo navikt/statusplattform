@@ -9,7 +9,6 @@ import SubscribeModal from './SubscribeModal'
 const CustomHeader = styled.header`
     min-height: 106px;
     height: 100%;
-    /* padding: 0 1rem; */
     background-color: white;
     border-bottom: 1px solid #c6c2bf;
     display: flex;
@@ -83,13 +82,11 @@ const Header = () => {
                 <span>
                     <SubscribeButton mini onClick={onClickHandler}>Abonner</SubscribeButton>
                 </span>
-                {/* <div> */}
                 {subscribeModalHidden && 
                     <SubscribeModalWrapper>
                         <SubscribeModal/>
                     </SubscribeModalWrapper>
                 }
-                {/* </div> */}
             </HeaderContent>
         </CustomHeader>
     )

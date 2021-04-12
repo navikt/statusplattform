@@ -21,9 +21,15 @@ const StatusBannerWrapper = styled.div`
     background-color: white;    
     padding: 2rem 1rem;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    div:first-child {
+        padding-bottom: 1rem;
+    }
     @media (min-width: 45rem) {
         display: flex;
         justify-content: space-between;
+        flex-direction: row;
     }
     h2 {
         margin: 0 0 .5rem;
@@ -35,10 +41,17 @@ const LenkeCustomized = styled(Lenke)`
     line-height: 35px;
     padding: 0 1.5rem;
     min-height: 40px;
+    height: 100%;
+    max-width: 184px;
+    display: flex;
+    align-items: center;
     :hover {
         transition: 0.4s;
         background-color: var(--navBla);
         color: white;
+    }
+    @media(min-width: 45rem){
+        align-self: center;
     }
 `;
 const StatusContainer = styled.div`
