@@ -156,7 +156,7 @@ export function PortalServiceTile({area}: PortalServiceTileProps) {
             <div>
                 <UndertittelCustomized>
                     {handleAndSetNavIcon(area.name)}
-                    {area.name}
+                    <p>{area.name}</p>
                 </UndertittelCustomized>
                 <ServicesList>
                     {area.services.map(service => (

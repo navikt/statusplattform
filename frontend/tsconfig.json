@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "pages/ServiceCategoryData"  ],
   "exclude": [
     "node_modules"
   ]

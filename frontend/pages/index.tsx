@@ -1,11 +1,11 @@
 import Layout from '../components/Layout/Layout'
-import DigitalServicesCards from './DigitalServicesCards'
+import Dashboard from './Dashboard'
 
 
 export default function Home() {
     return (
         <Layout>
-            <DigitalServicesCards />
+            <Dashboard />
         </Layout>
     )
 }

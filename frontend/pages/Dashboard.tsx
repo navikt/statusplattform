@@ -5,6 +5,9 @@ import StatusOverview from '../components/StatusOverview/StatusOverview'
 import { fetchData } from '../utils/fetchServices'
 
 import styled from 'styled-components'
+import { LenkepanelBase } from "nav-frontend-lenkepanel";
+import Link from "next/link";
+import NavFrontendSpinner from "nav-frontend-spinner";
 
 const DigitalServicesContainer = styled.div`
     width: 100%;
@@ -23,6 +26,10 @@ const PortalServiceTileContainer = styled.div`
     justify-content: center;
     grid-template-columns: repeat(1, 1fr);
     gap: 15px;
+    a {
+        padding: 0;
+        margin: 0;
+    }
     @media (min-width: 468px){
         grid-template-columns: repeat(2, 1fr);
     }
@@ -34,23 +41,39 @@ const PortalServiceTileContainer = styled.div`
     }
 `;
 
+const PanelLenke = styled(LenkepanelBase)`
+    display: block;
+    > span {
+        display: none;
+    }
+    :hover {
+        p {
+            text-decoration: underline;
+        }
+    }
+`
+
 const ErrorParagraph = styled.p`
     color: #ff4a4a;
-    /* background-color: grey; */
     font-weight: bold;
     padding: 10px;
     border-radius: 5px;
 `;
+const SpinnerCentered = styled.div`
+    position: absolute;
+    top: 40%;
+`
 
-const DigitalServicesCards = () => {
+
+const Dashboard = () => {
     const [areas, setAreas] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+
 
     useEffect(() => {
         (async function () {
             setIsLoading(true)
             const newAreas = await fetchData()
-            // const newAreas = await AsyncFetchNavDigitalServices
             const parsedAreas = [...newAreas]
             setAreas(parsedAreas)
             setIsLoading(false)
@@ -62,7 +85,11 @@ const DigitalServicesCards = () => {
     }
 
     if (isLoading) {
-        return <p>Loading services...</p>
+        return (
+            <SpinnerCentered>
+                <NavFrontendSpinner type="XXL" />
+            </SpinnerCentered>
+        ) 
     }
     return (
         <DigitalServicesContainer>
@@ -70,7 +97,11 @@ const DigitalServicesCards = () => {
             <PortalServiceTileContainer>
                 {areas.map(area => {
                     return (
-                        <PortalServiceTile key={area.name} area={area}/>
+                        <Link href="/ServiceCategoryData" passHref key={area.name} >
+                            <PanelLenke href="/ServiceCategoryData" area={area}>
+                                <PortalServiceTile key={area.name} area={area}/>
+                            </PanelLenke>
+                        </Link>
                     )
                 })}
             </PortalServiceTileContainer>
@@ -78,4 +109,4 @@ const DigitalServicesCards = () => {
     )
 }
 
-export default DigitalServicesCards
+export default Dashboard

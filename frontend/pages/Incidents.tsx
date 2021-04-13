@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { Calender, Back, Vacation } from '@navikt/ds-icons'
 import { Knapp } from 'nav-frontend-knapper'
 import NavInfoCircle from '../components/NavInfoCircle/NavInfoCircle'
+import Alertstripe from 'nav-frontend-alertstriper'
 
 const IncidentsContainer = styled.div`
     margin: 20px 0;
@@ -88,10 +89,7 @@ const Incidents = () => {
                                         </ExistsIncidents>
                                     ) : (
                                         <CenterContent>
-                                            <Vacation/> 
-                                            <p>
-                                                Ingen hendelser registrert! Hurra!
-                                            </p>
+                                            <Alertstripe type="suksess">Ingen hendelser registrert!</Alertstripe>
                                         </CenterContent>
                                     )
                             }
