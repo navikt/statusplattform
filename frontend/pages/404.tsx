@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import Layout from '../components/Layout'
+import Layout from '../components/Layout/Layout'
 
 
 const ErrorTitle = styled.h1`

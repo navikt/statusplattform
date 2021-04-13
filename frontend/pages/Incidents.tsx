@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
-import Layout from '../components/Layout'
+import Layout from '../components/Layout/Layout'
 import styled from 'styled-components'
 import { Calender, Back, Vacation } from '@navikt/ds-icons'
 import { Knapp } from 'nav-frontend-knapper'
-import NavInfoCircle from '../components/NavInfoCircle'
+import NavInfoCircle from '../components/NavInfoCircle/NavInfoCircle'
 
 const IncidentsContainer = styled.div`
     margin: 20px 0;

@@ -5,7 +5,7 @@ import { Telephone, Email, List } from '@navikt/ds-icons'
 import { Input } from 'nav-frontend-skjema';
 import { Hovedknapp } from 'nav-frontend-knapper';
 import Lukknapp from 'nav-frontend-lukknapp';
-import { ISource, SourceType } from './source';
+import { ISource, SourceType } from '../../types/source';
 
 
 const SubscribeModalContainer = styled.div`

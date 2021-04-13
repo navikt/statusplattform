@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import Head from 'next/head'
 
-import Header from './Header'
-import Navbar from './Navbar'
-import Footer from './Footer'
+import Header from '../Header/Header'
+import Navbar from '../Navbar/Navbar'
+import Footer from '../Footer/Footer'
 
 
 const MainContentContainer = styled.div`
@@ -22,7 +22,6 @@ const Content = styled.main`
     align-items: center;
     justify-content: center;
     flex-flow: column wrap;
-    color: var(--navBla);
 `;
 
 

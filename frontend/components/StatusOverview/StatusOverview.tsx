@@ -2,16 +2,19 @@ import Lenke from 'nav-frontend-lenker';
 import Link from 'next/link';
 import styled from 'styled-components'
 
-import NavInfoCircle from './NavInfoCircle'
+import NavInfoCircle from '../NavInfoCircle/NavInfoCircle'
+import MaintenanceScheduling from '../MaintenanceScheduling/MaintenanceScheduling'
+import { Calender } from '@navikt/ds-icons';
+import { Systemtittel, Undertekst } from 'nav-frontend-typografi';
 
 const StatusOverviewContainer = styled.div`
     max-width: 1080px;
     width: 100%;
-    /* padding: 0 3rem; */
+    padding: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    @media(min-width: 350px){
+    @media(min-width: 500px){
         padding: 0 3rem;
     }
 `;
@@ -54,9 +57,31 @@ const LenkeCustomized = styled(Lenke)`
         align-self: center;
     }
 `;
-const StatusContainer = styled.div`
+const OverviewComponents = styled.div`
     padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    @media (min-width: 350px){
+        flex-direction: row;
+        justify-content: space-between;
+    }
 `;
+const StatusContainer = styled.div`
+    width: calc(50% - 1rem);
+    max-width: none;
+`
+
+const IconHeader = styled.div`
+    width: 100%;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    span {
+        margin-right: 10px;
+        font-size: 2rem;
+    }
+`
+
 const CirclesContainer = styled.div`
     max-width: 30rem;
     display: flex;
@@ -64,11 +89,20 @@ const CirclesContainer = styled.div`
     justify-content: space-between;
 `;
 
-const IncidentsAndStatusWrapper = styled.div`
+const IncidentsAndStatusCircleWrapper = styled.div`
+    border: 2px solid transparent;
+    border-radius: 50%;
 `;
 
-const MaintenanceStatusWrapper = styled.div`
+const MaintenanceStatusCircleWrapper = styled.div`
+    border: 2px solid transparent;
+    border-radius: 50%;
 `;
+
+const MaintenanceContainer = styled.div`
+    width: calc(50% - 1rem);
+    max-width: none;
+`
 
 const mapStatusAndIncidentsToArray = (areas) => {
     let areasArray: Array<String> = []
@@ -119,20 +153,36 @@ const StatusOverview = (props: any) => {
                 </Link>
             </StatusBannerWrapper>
 
-            <StatusContainer>
-                <p>Hendelser siste 48 timene</p>
-                <CirclesContainer>
+            <OverviewComponents>
+                <StatusContainer>
+                    <IconHeader>
+                        <span><Calender /></span>
+                        <div>
+                            <Systemtittel>
+                                Hendelser
+                                <Undertekst> siste 48 timene</Undertekst>
+                            </Systemtittel>
+                        </div>
+                    </IconHeader>
+                    <CirclesContainer>
 
-                    <IncidentsAndStatusWrapper>
-                        <NavInfoCircle topText="Hendelser" centerTextLeft="0" centerTextRight="16" bottomText="Siste 24 timene"/>
-                    </IncidentsAndStatusWrapper>
+                        <IncidentsAndStatusCircleWrapper>
+                            <NavInfoCircle topText="Hendelser" centerTextLeft="0" centerTextRight="16" bottomText="Siste 24 timene"/>
+                        </IncidentsAndStatusCircleWrapper>
 
-                    <MaintenanceStatusWrapper>
-                        <NavInfoCircle topText="Systemer" centerTextLeft={numberOfHealthyServices} centerTextRight={numberOfServices} bottomText="Oppe"/>
-                    </MaintenanceStatusWrapper>
+                        <MaintenanceStatusCircleWrapper>
+                            <NavInfoCircle topText="Systemer" centerTextLeft={numberOfHealthyServices} centerTextRight={numberOfServices} bottomText="Oppe"/>
+                        </MaintenanceStatusCircleWrapper>
 
-                </CirclesContainer>
-            </StatusContainer>
+                    </CirclesContainer>
+                </StatusContainer>
+                <MaintenanceContainer>
+                    <IconHeader>
+                        <MaintenanceScheduling />
+                    </IconHeader>
+                </MaintenanceContainer>
+
+            </OverviewComponents>
 
         </StatusOverviewContainer>
     )

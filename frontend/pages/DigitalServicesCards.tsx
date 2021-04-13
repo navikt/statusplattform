@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { PortalServiceTile } from '../components/PortalServiceTile'
-import StatusOverview from '../components/StatusOverview'
-
+import { PortalServiceTile } from '../components/PortalServiceTile/PortalServiceTile'
+import StatusOverview from '../components/StatusOverview/StatusOverview'
+import { fetchData } from '../utils/fetchServices'
 
 import styled from 'styled-components'
 
@@ -41,20 +41,6 @@ const ErrorParagraph = styled.p`
     padding: 10px;
     border-radius: 5px;
 `;
-
-export class ResponseError extends Error {
-    public constructor (message: string, public response: Response) {
-        super(message)
-    }
-}
-
-const fetchData = async (): Promise<string[]> => {
-    const response = await fetch("http://localhost:3001/rest/testAreas");
-    if (response.ok) {
-        return response.json()
-    }
-    throw new ResponseError("Failed to fretch from server", response)
-}
 
 const DigitalServicesCards = () => {
     const [areas, setAreas] = useState([])
