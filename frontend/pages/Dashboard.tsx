@@ -76,7 +76,7 @@ const Dashboard = () => {
             setIsLoading(true)
             const newAreas = await fetchData()
 
-            console.log(newAreas)
+            // console.log(newAreas)
 
             const parsedAreas = [...newAreas]
             setAreas(parsedAreas)
