@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { PortalServiceTile } from '../components/PortalServiceTile/PortalServiceTile'
-import StatusOverview from '../components/StatusOverview/StatusOverview'
-import { fetchData } from '../utils/fetchServices'
+import { PortalServiceTile } from 'components/PortalServiceTile'
+import StatusOverview from 'components/StatusOverview'
+import { fetchData } from 'utils/fetchServices'
+import { INavService, INavServicesList } from 'types/navServices'
 
 import styled from 'styled-components'
 import { LenkepanelBase } from "nav-frontend-lenkepanel";
@@ -74,6 +75,9 @@ const Dashboard = () => {
         (async function () {
             setIsLoading(true)
             const newAreas = await fetchData()
+
+            console.log(newAreas)
+
             const parsedAreas = [...newAreas]
             setAreas(parsedAreas)
             setIsLoading(false)
@@ -91,14 +95,15 @@ const Dashboard = () => {
             </SpinnerCentered>
         ) 
     }
+    // console.log(areas)
     return (
         <DigitalServicesContainer>
             <StatusOverview areas={areas} />
             <PortalServiceTileContainer>
                 {areas.map(area => {
                     return (
-                        <Link href="/ServiceCategoryData" passHref key={area.name} >
-                            <PanelLenke href="/ServiceCategoryData" area={area}>
+                        <Link href={"/ServiceCategoryData/" + area.name} passHref key={area.name}>
+                            <PanelLenke href={"/ServiceCategoryData/" + area.name} key={area.name} area={area}>
                                 <PortalServiceTile key={area.name} area={area}/>
                             </PanelLenke>
                         </Link>

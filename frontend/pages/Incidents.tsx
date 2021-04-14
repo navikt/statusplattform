@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
-import Layout from '../components/Layout/Layout'
+import Layout from 'components/Layout'
 import styled from 'styled-components'
 import { Calender, Back, Vacation } from '@navikt/ds-icons'
 import { Knapp } from 'nav-frontend-knapper'
-import NavInfoCircle from '../components/NavInfoCircle/NavInfoCircle'
+import NavInfoCircle from 'components/NavInfoCircle'
 import Alertstripe from 'nav-frontend-alertstriper'
 
 const IncidentsContainer = styled.div`

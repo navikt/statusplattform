@@ -2,10 +2,11 @@ import Lenke from 'nav-frontend-lenker';
 import Link from 'next/link';
 import styled from 'styled-components'
 
-import NavInfoCircle from '../NavInfoCircle/NavInfoCircle'
-import MaintenanceScheduling from '../MaintenanceScheduling/MaintenanceScheduling'
+import NavInfoCircle from 'components/NavInfoCircle'
+import MaintenanceScheduling from 'components/MaintenanceScheduling'
 import { Calender } from '@navikt/ds-icons';
 import { Systemtittel, Undertekst } from 'nav-frontend-typografi';
+import { countHealthyServices, countServicesInAreas, mapStatusAndIncidentsToArray } from 'utils/servicesOperations';
 
 const StatusOverviewContainer = styled.div`
     max-width: 1080px;
@@ -19,7 +20,7 @@ const StatusOverviewContainer = styled.div`
     }
 `;
 
-const StatusBannerWrapper = styled.div`
+const StatusBannerContainer = styled.div`
     border-radius: 20px;
     background-color: white;    
     padding: 2rem 1rem;
@@ -104,30 +105,6 @@ const MaintenanceContainer = styled.div`
     max-width: none;
 `
 
-const mapStatusAndIncidentsToArray = (areas) => {
-    let areasArray: Array<String> = []
-    areas.map(area => {
-        areasArray.push(area)
-    })
-    return areasArray;
-}
-
-const countServicesInAreas = (mappedAreas) => {
-    let numberOfServices: number = 0;
-    mappedAreas.forEach(function (area){
-        numberOfServices += area.services.length
-    })
-    return numberOfServices
-}
-
-const countHealthyServices = (mappedAreas) => {
-    let healthyServices: number = 0;
-    mappedAreas.map(area => {
-        healthyServices += area.services.filter(
-            (service: any) => service.status !== "DOWN").length
-    })
-    return healthyServices
-}
 
 //TODO Create Incidents handler and UI
 
@@ -141,17 +118,17 @@ const StatusOverview = (props: any) => {
     return (
         <StatusOverviewContainer>
 
-            <StatusBannerWrapper>
+            <StatusBannerContainer>
                 <div>
-                    <h2>Statusmessage here</h2>
-                    <span>Last updated</span>
+                    <h2>Status</h2>
+                    <Undertekst>Sist oppdatert: Aldri</Undertekst>
                 </div>
                 <Link href="/Incidents">
                     <LenkeCustomized>
                         <span>Mer om hendelser</span>
                     </LenkeCustomized>
                 </Link>
-            </StatusBannerWrapper>
+            </StatusBannerContainer>
 
             <OverviewComponents>
                 <StatusContainer>

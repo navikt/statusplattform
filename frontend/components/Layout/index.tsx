@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import Head from 'next/head'
 
-import Header from '../Header/Header'
-import Navbar from '../Navbar/Navbar'
-import Footer from '../Footer/Footer'
+import Header from 'components/Header'
+import Navbar from 'components/Navbar'
+import Footer from 'components/Footer'
 
 
 const MainContentContainer = styled.div`

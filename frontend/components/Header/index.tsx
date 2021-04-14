@@ -4,7 +4,7 @@ import React from 'react'
 import { Sidetittel } from 'nav-frontend-typografi'
 import { Knapp } from 'nav-frontend-knapper';
 
-import SubscribeModal from '../SubscribeModal/SubscribeModal'
+import SubscribeModal from 'components/SubscribeModal'
 
 const CustomHeader = styled.header`
     min-height: 106px;
