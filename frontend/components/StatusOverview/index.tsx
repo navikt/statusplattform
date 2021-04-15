@@ -47,6 +47,7 @@ const LenkeCustomized = styled(Lenke)`
     min-height: 40px;
     height: 100%;
     max-width: 184px;
+    transition: 0.4s;
     display: flex;
     align-items: center;
     :hover {

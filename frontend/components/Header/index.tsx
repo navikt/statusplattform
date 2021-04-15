@@ -51,6 +51,12 @@ const HeaderContent = styled.span`
 const SubscribeButton = styled(Knapp)`
     border-radius: 30px;
     height: 3rem;
+    transition: 0.4s;
+    :hover {
+        transition: 0.4s;
+        background-color: var(--navBla);
+        color: white;
+    }
 `
 const SubscribeModalWrapper = styled.div`
     right: 0;
