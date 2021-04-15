@@ -49,17 +49,17 @@ const FooterCustomized = styled.footer`
 
 const Footer = () => {
     return (
-    <FooterCustomized>
-        <a href="https://www.nav.no/no/person#">
-            <img src="/assets/nav-logo/png/black.png" alt="LogoBlack" ></img>
-        </a>
-            <p>Arbeids- og velferdsetaten</p>
-        <ul>
-            <a href="https://www.nav.no/no/nav-og-samfunn/om-nav/personvern-i-arbeids-og-velferdsetaten">Personvern og informasjonskapsler</a>
-            <a href="https://www.nav.no/no/nav-og-samfunn/kontakt-nav/teknisk-brukerstotte/nyttig-a-vite/tilgjengelighet">Tilgjengelighet</a>
-            <a href="https://www.nav.no/no/person#">Del skjerm med veileder</a>
-        </ul>
-    </FooterCustomized>
+        <FooterCustomized>
+            <a href="https://www.nav.no/no/person#">
+                <img src="/assets/nav-logo/png/black.png" alt="LogoBlack" ></img>
+            </a>
+                <p>Arbeids- og velferdsetaten</p>
+            <ul>
+                <a href="https://www.nav.no/no/nav-og-samfunn/om-nav/personvern-i-arbeids-og-velferdsetaten">Personvern og informasjonskapsler</a>
+                <a href="https://www.nav.no/no/nav-og-samfunn/kontakt-nav/teknisk-brukerstotte/nyttig-a-vite/tilgjengelighet">Tilgjengelighet</a>
+                <a href="https://www.nav.no/no/person#">Del skjerm med veileder</a>
+            </ul>
+        </FooterCustomized>
     )
 }
 

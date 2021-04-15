@@ -15,6 +15,9 @@ const CustomHeader = styled.header`
     flex-flow: column wrap;
     img {
         max-width: 84px;
+        :hover {
+            transform: scale(1.05)
+        }
     }
     
     > h1 {
@@ -80,7 +83,9 @@ const Header = () => {
 
     return (
         <CustomHeader>
-            <img src="/assets/nav-logo/png/red.png" alt="LogoRed" />
+            <a href="https://www.nav.no/no/person#">
+                <img src="/assets/nav-logo/png/red.png" alt="LogoRed" />
+            </a>
             <HeaderContent>
                 <SidetittelCustomized>
                     Status digitale tjenester
