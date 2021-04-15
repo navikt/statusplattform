@@ -7,7 +7,7 @@ import NavFrontendSpinner from 'nav-frontend-spinner';
 
 import { fetchData } from 'utils/fetchServices';
 import { retrieveFilteredServiceList } from 'utils/servicesOperations';
-import { Ingress, Innholdstittel, Undertittel } from 'nav-frontend-typografi';
+import { Ingress, Innholdstittel, Systemtittel, Undertittel } from 'nav-frontend-typografi';
 import { BackButton } from 'components/BackButton';
 import { ErrorFilled, SuccessFilled, WarningFilled } from '@navikt/ds-icons';
 
@@ -26,7 +26,6 @@ const SpinnerCentered = styled.div`
 const CategoryContainer = styled.div`
     width: 100%;
     padding: 1rem 3rem;
-    /* text-align: center; */
 `
 const ServiceContainer = styled.div`
     min-width: 100px;
@@ -41,8 +40,11 @@ const ServiceContainer = styled.div`
 `
 const ServiceWrapper = styled.div`
     width: 100%;
-    display: flex;
-    justify-content: space-between;
+    padding: 1rem 0;
+`
+const IncidentsWrapper = styled.span`
+    padding: 2rem;
+    width: 80%;
 `
 const StatusIcon = styled.span`
     .up {
@@ -55,7 +57,10 @@ const StatusIcon = styled.span`
         color: var(--navOransje)
     }
 `
-const CenterContent = styled.div`text-align: center;`
+const CenterContent = styled.div`
+    text-align: center;
+    padding: 1rem;
+`
 
 const formatStatusMessage = (serviceToFormat) =>   {
     switch (serviceToFormat.status) {
@@ -113,8 +118,17 @@ const ServiceCategoryFunctionality = () => {
                 {filteredArea.services.map(service => {
                     return (
                         <ServiceWrapper key={service.name}>
-                            <span><Undertittel>Tjenestenavn: <Ingress>{service.name}</Ingress></Undertittel></span>
-                            <StatusIcon>{formatStatusMessage(service)}</StatusIcon>
+                            <Systemtittel>
+                                    <StatusIcon>{formatStatusMessage(service)} </StatusIcon>
+                                    Tjenestenavn
+                                    <Ingress>{service.name}</Ingress>
+                            </Systemtittel>
+                            <IncidentsWrapper>
+                                <Undertittel>Hendelsesrapport siste 90 dagene</Undertittel>
+                                <div>
+                                    Ikke implementert
+                                </div>
+                            </IncidentsWrapper>
                         </ServiceWrapper>
                     )
                 })}
