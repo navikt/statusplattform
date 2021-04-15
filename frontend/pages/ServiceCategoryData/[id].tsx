@@ -1,13 +1,12 @@
 import Layout from 'components/Layout'
+import ServiceCategoryFunctionality from './ServiceCategoryFunctionality'
+
 
 const AreaData = () => {
+
     return (
         <Layout>
-            <div>
-                <h1>
-                    Area
-                </h1>
-            </div>
+            <ServiceCategoryFunctionality />
         </Layout>
     )
 }

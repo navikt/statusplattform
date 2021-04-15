@@ -1,3 +1,5 @@
+import Alertstripe from 'nav-frontend-alertstriper'
+
 import { fetchData } from './fetchServices'
 
 export const mapStatusAndIncidentsToArray = (areas) => {
@@ -6,6 +8,13 @@ export const mapStatusAndIncidentsToArray = (areas) => {
         areasArray.push(area)
     })
     return areasArray;
+}
+
+export const retrieveFilteredServiceList = (areas, areaName) => {
+    const filteredArea = areas.find(
+        area => area.name == areaName
+    )
+    return filteredArea
 }
 
 export const countServicesInAreas = (mappedAreas) => {
@@ -23,13 +32,5 @@ export const countHealthyServices = (mappedAreas) => {
             (service: any) => service.status !== "DOWN").length
     })
     return healthyServices
-}
-
-
-export const checkStatus = () =>   {
-    const areas: any = fetchData
-    areas.map((area) => {
-
-    })
 }
 

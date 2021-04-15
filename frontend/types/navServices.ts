@@ -1,5 +1,5 @@
 
-export interface INavServicesList {
+export interface INavAreaServicesList {
     AreaServices: INavService[]
     name: string
 }

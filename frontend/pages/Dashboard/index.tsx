@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { PortalServiceTile } from 'components/PortalServiceTile'
 import StatusOverview from 'components/StatusOverview'
 import { fetchData } from 'utils/fetchServices'
-import { INavService, INavServicesList } from 'types/navServices'
 
 import styled from 'styled-components'
 import { LenkepanelBase } from "nav-frontend-lenkepanel";
@@ -95,7 +94,7 @@ const Dashboard = () => {
             </SpinnerCentered>
         ) 
     }
-    // console.log(areas)
+    
     return (
         <DigitalServicesContainer>
             <StatusOverview areas={areas} />
