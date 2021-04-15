@@ -6,6 +6,7 @@ import { Calender, Back } from '@navikt/ds-icons'
 import { Knapp } from 'nav-frontend-knapper'
 import NavInfoCircle from 'components/NavInfoCircle'
 import Alertstripe from 'nav-frontend-alertstriper'
+import { BackButton } from 'components/BackButton'
 
 const IncidentsContainer = styled.div`
     margin: 20px 0;
@@ -60,10 +61,7 @@ const Incidents = () => {
         <Layout>
             <IncidentsContainer>
                 <CenterContent>
-                    <span>
-                        <Link href="/"><KnappCustomized mini><Back/>Gå tilbake</KnappCustomized></Link>
-                    </span>
-
+                    <Link href="/"><span><BackButton/></span></Link>
 
 
                     <SectionContainer>
