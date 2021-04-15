@@ -3,7 +3,6 @@ import ServiceCategoryFunctionality from './ServiceCategoryFunctionality'
 
 
 const AreaData = () => {
-
     return (
         <Layout>
             <ServiceCategoryFunctionality />

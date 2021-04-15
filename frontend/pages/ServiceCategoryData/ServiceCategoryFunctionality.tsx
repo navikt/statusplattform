@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -77,14 +77,13 @@ const formatStatusMessage = (serviceToFormat) =>   {
 
 const ServiceCategoryFunctionality = () => {
     const [areas, setAreas] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     
     const router = useRouter()
     const categoryId: string[] | string = router.query.id
 
     useEffect(() => {
         (async function () {
-            setIsLoading(true)
             const newAreas = await fetchData()
             const parsedAreas = [...newAreas]
             setAreas(parsedAreas)
@@ -92,14 +91,8 @@ const ServiceCategoryFunctionality = () => {
         })()
     }, [])
     
-    
     if (!areas) {
         return <ErrorParagraph>Kunne ikke hente de digitale tjenestene. Hvis problemet vedvarer, kontakt support.</ErrorParagraph>
-    }
-
-    let filteredArea = retrieveFilteredServiceList(areas, categoryId)
-    if(filteredArea === undefined) {
-        return <ErrorParagraph>Kategorien eksisterer ikke. Hvis du mener dette er feil, ta kontakt med kundeservice.</ErrorParagraph>
     }
 
     if (isLoading) {
@@ -110,6 +103,13 @@ const ServiceCategoryFunctionality = () => {
         ) 
     }
 
+    let filteredArea = retrieveFilteredServiceList(areas, categoryId)
+    if(filteredArea === undefined) {
+        return <ErrorParagraph>Kategorien eksisterer ikke. Hvis du mener dette er feil, ta kontakt med kundeservice.</ErrorParagraph>
+    }
+
+    
+
     return (
         <CategoryContainer>
             <Link href="/"><span><BackButton /></span></Link>
@@ -119,9 +119,8 @@ const ServiceCategoryFunctionality = () => {
                     return (
                         <ServiceWrapper key={service.name}>
                             <Systemtittel>
-                                    <StatusIcon>{formatStatusMessage(service)} </StatusIcon>
-                                    Tjenestenavn
-                                    <Ingress>{service.name}</Ingress>
+                                <StatusIcon>{formatStatusMessage(service)} </StatusIcon>
+                                Tjenestenavn - {service.name}
                             </Systemtittel>
                             <IncidentsWrapper>
                                 <Undertittel>Hendelsesrapport siste 90 dagene</Undertittel>

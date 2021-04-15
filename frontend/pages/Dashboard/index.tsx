@@ -67,21 +67,18 @@ const SpinnerCentered = styled.div`
 
 const Dashboard = () => {
     const [areas, setAreas] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
-
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         (async function () {
-            setIsLoading(true)
             const newAreas = await fetchData()
-
-            // console.log(newAreas)
-
             const parsedAreas = [...newAreas]
             setAreas(parsedAreas)
             setIsLoading(false)
         })()
     }, [])
+
+
 
     if (!areas) {
         return <ErrorParagraph>Kunne ikke hente de digitale tjenestene. Hvis problemet vedvarer, kontakt support.</ErrorParagraph>
@@ -94,23 +91,25 @@ const Dashboard = () => {
             </SpinnerCentered>
         ) 
     }
-    
-    return (
-        <DigitalServicesContainer>
-            <StatusOverview areas={areas} />
-            <PortalServiceTileContainer>
-                {areas.map(area => {
-                    return (
-                        <Link href={"/ServiceCategoryData/" + area.name} passHref key={area.name}>
-                            <PanelLenke href={"/ServiceCategoryData/" + area.name} key={area.name} area={area}>
-                                <PortalServiceTile key={area.name} area={area}/>
-                            </PanelLenke>
-                        </Link>
-                    )
-                })}
-            </PortalServiceTileContainer>
-        </DigitalServicesContainer>
-    )
+    if(!isLoading && areas){
+        return (
+            <DigitalServicesContainer>
+                <StatusOverview areas={areas} />
+                <PortalServiceTileContainer>
+                    {areas.map(area => {
+                        return (
+                            <Link href={"/ServiceCategoryData/" + area.name} passHref key={area.name}>
+                                <PanelLenke href={"/ServiceCategoryData/" + area.name} key={area.name} area={area}>
+                                    <PortalServiceTile key={area.name} area={area}/>
+                                </PanelLenke>
+                            </Link>
+                        )
+                    })}
+                </PortalServiceTileContainer>
+            </DigitalServicesContainer>
+        )
+    }
+
 }
 
 export default Dashboard

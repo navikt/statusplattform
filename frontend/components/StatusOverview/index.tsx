@@ -121,8 +121,8 @@ const StatusOverview = (props: any) => {
 
             <StatusBannerContainer>
                 <div>
-                    <h2>Status</h2>
-                    <Undertekst>Sist oppdatert: Aldri</Undertekst>
+                    <h2>Status: Ikke implementert</h2>
+                    <Undertekst>Sist oppdatert: Ikke implementert</Undertekst>
                 </div>
                 <Link href="/Incidents">
                     <LenkeCustomized>
