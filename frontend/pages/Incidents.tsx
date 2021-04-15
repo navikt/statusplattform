@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 import Layout from 'components/Layout'
 import styled from 'styled-components'
-import { Calender, Back, Vacation } from '@navikt/ds-icons'
+import { Calender, Back } from '@navikt/ds-icons'
 import { Knapp } from 'nav-frontend-knapper'
 import NavInfoCircle from 'components/NavInfoCircle'
 import Alertstripe from 'nav-frontend-alertstriper'
@@ -21,6 +21,7 @@ const CenterContent = styled.div`
         padding: 1rem 3rem;
     }
 `
+const KnappCustomized = styled(Knapp)`transition: 0.4s;`
 
 const SectionContainer = styled.div`
     display: flex;
@@ -60,7 +61,7 @@ const Incidents = () => {
             <IncidentsContainer>
                 <CenterContent>
                     <span>
-                        <Link href="/"><Knapp mini><Back/>Gå tilbake</Knapp></Link>
+                        <Link href="/"><KnappCustomized mini><Back/>Gå tilbake</KnappCustomized></Link>
                     </span>
 
 
