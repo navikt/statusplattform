@@ -14,7 +14,7 @@ paths:
       tags:
         - area-controller
       summary: area
-      operationId: doesThisDoAnyTHnig
+      operationId: areas
       responses:
         '200':
           description: OK
@@ -34,8 +34,43 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
+  /testStatus:
+    get:
+      tags:
+        - status
+      summary: Status og hendelser
+      operationId: status
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusAndIncidents'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
 components:
   schemas:
+    StatusAndIncidents:
+      title: Area
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/SandIelement'
+    SandIelement:
+      type: string
     Area:
       title: Area
       type: object
@@ -43,8 +78,7 @@ components:
         name:
           type: string
         status:
-          type: integer
-          format: int32
+          $ref: '#/components/schemas/Status'
         services:
           type: array
           items:
@@ -56,9 +90,12 @@ components:
         name:
           type: string
         status:
-          type: string
-          enum:
-            - OK
-            - ISSUE
-            - DOWN
+          $ref: '#/components/schemas/Status'
+
+    Status:
+      type: string
+      enum:
+        - OK
+        - ISSUE
+        - DOWN
 
