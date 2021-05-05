@@ -130,7 +130,7 @@ const StatusOverview = (props: any) => {
                     </LenkeCustomized>
                 </Link>
             </StatusBannerContainer>
-
+            {/*
             <OverviewComponents>
                 <StatusContainer>
                     <IconHeader>
@@ -142,7 +142,7 @@ const StatusOverview = (props: any) => {
                             </Systemtittel>
                         </div>
                     </IconHeader>
-                    <CirclesContainer>
+                   <CirclesContainer>
 
                         <IncidentsAndStatusCircleWrapper>
                             <NavInfoCircle topText="Hendelser" centerTextLeft="0" centerTextRight="16" bottomText="Siste 24 timene"/>
@@ -160,7 +160,7 @@ const StatusOverview = (props: any) => {
                     </IconHeader>
                 </MaintenanceContainer>
 
-            </OverviewComponents>
+            </OverviewComponents>*/}
 
         </StatusOverviewContainer>
     )

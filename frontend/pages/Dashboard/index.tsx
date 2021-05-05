@@ -25,6 +25,8 @@ const PortalServiceTileContainer = styled.div`
     display: grid;
     justify-content: center;
     grid-template-columns: repeat(1, 1fr);
+    grid-auto-rows: auto;
+    //grid-template-rows: 1fr 1fr 1fr ;
     gap: 15px;
     a {
         padding: 0;
@@ -41,17 +43,7 @@ const PortalServiceTileContainer = styled.div`
     }
 `;
 
-const PanelLenke = styled(LenkepanelBase)`
-    display: block;
-    > span {
-        display: none;
-    }
-    :hover {
-        p {
-            text-decoration: underline;
-        }
-    }
-`
+
 
 const ErrorParagraph = styled.p`
     color: #ff4a4a;
@@ -98,11 +90,8 @@ const Dashboard = () => {
                 <PortalServiceTileContainer>
                     {areas.map(area => {
                         return (
-                            <Link href={"/ServiceCategoryData/" + area.name} passHref key={area.name}>
-                                <PanelLenke href={"/ServiceCategoryData/" + area.name} key={area.name} area={area}>
-                                    <PortalServiceTile key={area.name} area={area}/>
-                                </PanelLenke>
-                            </Link>
+                            <PortalServiceTile key={area.name} area={area} expanded={true}/>
+                            
                         )
                     })}
                 </PortalServiceTileContainer>

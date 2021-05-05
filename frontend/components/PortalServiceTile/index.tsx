@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import { useState } from "react";
+
 
 import { Bag, Folder, PensionBag, HealthCase, ErrorFilled, WarningFilled, Employer, Information, People, Family, Service, Globe } from '@navikt/ds-icons'
 import Panel from 'nav-frontend-paneler';
@@ -7,7 +9,9 @@ import { Undertittel } from "nav-frontend-typografi";
 
 const PanelCustomized = styled(Panel)`
     color: var(--navBla);
-    border-radius: 20px;
+    background-color: var(--navGraBakgrunn);
+  
+
     h2 svg:first-child {
         display: none;
     }
@@ -26,20 +30,42 @@ const PanelCustomized = styled(Panel)`
             display: block;
         }
     }
+    :hover {
+        p {
+            text-decoration: underline;
+        }
+        cursor: pointer;
+    }
+    ${({ expanded }) => expanded && `
+       
+        
+    `}
+
 `;
 
 const UndertittelCustomized = styled(Undertittel)`
     display: flex;
     align-items: center;
     flex-direction: row;
+    border-radius: 10px;
+    background-color:white;
+    //justify-content: space-between;
+    >section:first-child {
+            margin-right: 10px;
+        }
+    padding: 10%;
     svg {
         margin-right: 10px;
     }
 `;
 
 const ServicesList = styled.ul`
-    padding: 0;
+    padding: 10%;
+    margin-top: -10%;
+    margin-left:0;
+    border-radius:0 0 10px 10px;
     color:black;
+    background-color:white;
     > li {
         display: flex;
         justify-content: flex-start;
@@ -48,9 +74,6 @@ const ServicesList = styled.ul`
             display: flex;
             align-items: center;
         }
-        section:first-child {
-            margin-right: 10px;
-        }
         section:nth-child(2) {
             white-space: normal;
             word-wrap: break-word;
@@ -58,14 +81,14 @@ const ServicesList = styled.ul`
     }
     @media (min-width: 250px){
         > li {
-            margin: 5px;
+            margin: 5px 0px 5px 0px;
         }
     }
 `;
 
 //Element styles
 const SuccessCircleGreen = styled.span`
-    padding-top: 4px;
+    margin-right: 10px;
     height: 16px;
     width: 16px;
     background-color: var(--navGronn);
@@ -74,7 +97,7 @@ const SuccessCircleGreen = styled.span`
 `;
 
 const WarningCircleOrange = styled.span`
-    padding-top: 4px;
+    margin-right: 10px;
     height: 16px;
     width: 16px;
     background-color: var(--navOransje);
@@ -83,7 +106,7 @@ const WarningCircleOrange = styled.span`
 `;
 
 const ErrorCircleRed = styled.span`
-    padding-top: 4px;
+    margin-right: 10px;
     height: 16px;
     width: 16px;
     background-color: var(--redError);
@@ -133,7 +156,7 @@ const handleAndSetNavIcon = (areaName: string) => {
 
 const handleAndSetStatusIcon = (status: string) => {
     if (status == "OK") {
-        return <SuccessCircleGreen ></SuccessCircleGreen>
+        return <SuccessCircleGreen />
     }
     if (status == "DOWN") {
         // return <ErrorFilledColored />
@@ -148,18 +171,27 @@ const handleAndSetStatusIcon = (status: string) => {
 
 export interface PortalServiceTileProps {
     area: any;
+    expanded:boolean;
 }
 
 
 
-export const PortalServiceTile = ({area}: PortalServiceTileProps) => {
+export const PortalServiceTile = ({area }: PortalServiceTileProps) => {
+    const [expanded, setExpanded] = useState(false)
+    const handleExpand = () => {
+        setExpanded(!expanded);
+   
+    }
     return (
-        <PanelCustomized>
+        <PanelCustomized expanded={expanded} onClick={() => handleExpand()}>
             <div>
+                
                 <UndertittelCustomized>
-                    {handleAndSetNavIcon(area.name)}
-                    <p>{area.name}</p>
-                </UndertittelCustomized>
+                    { handleAndSetStatusIcon(area.status)}
+                    <section> {handleAndSetNavIcon(area.name)}</section>
+                    <section>{area.name}</section>
+                </UndertittelCustomized> 
+                {expanded &&
                 <ServicesList>
                     {area.services.map(service => (
                         <li key={service.name}>
@@ -167,6 +199,7 @@ export const PortalServiceTile = ({area}: PortalServiceTileProps) => {
                         </li>
                     ))}
                 </ServicesList>
+                }
 
             </div>
         </PanelCustomized>

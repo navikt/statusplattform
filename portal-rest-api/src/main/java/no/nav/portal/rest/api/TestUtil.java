@@ -3,7 +3,7 @@ package no.nav.portal.rest.api;
 import nav.portal.core.util.Status;
 import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.ServiceDto.StatusEnum;
+import no.portal.web.generated.api.StatusDto;
 
 import java.util.*;
 
@@ -49,16 +49,16 @@ public class TestUtil {
         return services;
     }
 
-    public static StatusEnum getRandomStatus(){
+    public static StatusDto getRandomStatus(){
         Random rand = new Random();
         int randInt = rand.nextInt(100);
-        if(randInt < 10){
-            return StatusEnum.DOWN;
+        if(randInt < 5){
+            return StatusDto.DOWN;
         }
-        if (randInt <  30 ){
-            return StatusEnum.ISSUE;
+        if (randInt <  15 ){
+            return StatusDto.ISSUE;
         }
-        return  StatusEnum.OK;
+        return  StatusDto.OK;
     }
 
 
