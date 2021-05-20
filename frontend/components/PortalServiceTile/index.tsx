@@ -49,11 +49,7 @@ const UndertittelCustomized = styled(Undertittel)`
     flex-direction: row;
     border-radius: 10px;
     background-color:white;
-    //justify-content: space-between;
-    >section:first-child {
-            margin-right: 10px;
-        }
-    padding: 10%;
+    padding: 1.4rem;
     svg {
         margin-right: 10px;
     }
@@ -187,7 +183,7 @@ export const PortalServiceTile = ({area }: PortalServiceTileProps) => {
             <div>
                 
                 <UndertittelCustomized>
-                    { handleAndSetStatusIcon(area.status)}
+                    <section>{ handleAndSetStatusIcon(area.status)}</section>
                     <section> {handleAndSetNavIcon(area.name)}</section>
                     <section>{area.name}</section>
                 </UndertittelCustomized> 
