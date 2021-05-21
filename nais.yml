@@ -11,6 +11,6 @@ spec:
     protocol: http
     port: 8080
   ingresses:
-      - https://portalserver.nav.no
+      - https://portalserver.dev.nav.no/
   #image: ghcr.io/navikt/myapplication:417dcaa2c839b9da72e0189e2cfdd4e90e9cc6fd
   #       ^--- interpolated from the ${{ env.docker_image }} variable in the action
