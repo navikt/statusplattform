@@ -9,6 +9,6 @@ spec:
   image: {{ image }}
   port: 3001
   ingresses:
-      - https://portalserver.dev.nav.no
+      - https://portalserver.labs.nais.io
   #image: ghcr.io/navikt/myapplication:417dcaa2c839b9da72e0189e2cfdd4e90e9cc6fd
   #       ^--- interpolated from the ${{ env.docker_image }} variable in the action
