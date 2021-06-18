@@ -59,6 +59,53 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
+  /adminAreas:
+    get:
+      tags:
+        - AdminArea
+      summary: Mulige områder tjenester kan legges i
+      operationId: AdminArea
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminArea'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      summary: Legg til ett nytt område
+      requestBody:
+        description:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminArea'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
 components:
   schemas:
     StatusAndIncidents:
@@ -83,6 +130,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Service'
+    AdminArea:
+      title: Area
+      type: object
+      properties:
+        name:
+          type: string
+        Id:
+          type: string
+        beskrivelse:
+          type: string
+        rangering:
+          type: integer
     Service:
       title: Service
       type: object

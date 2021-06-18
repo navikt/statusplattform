@@ -6,10 +6,7 @@ import nav.portal.core.entities.ExampleEntity;
 import nav.portal.core.repositories.ExampleRepository;
 
 import no.nav.portal.rest.api.TestUtil;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.StatusAndIncidentsDto;
-import no.portal.web.generated.api.StatusDto;
+import no.portal.web.generated.api.*;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -20,9 +17,11 @@ import java.util.stream.Collectors;
 public class AreaController {
 
    private final ExampleRepository exampleRepo;
+   private TestUtil testUtil; //TODO DENNE SKAL IKKE BO HER FINN UT ANNEN LØSNING
 
 
    public AreaController(DbContext dbContext) {
+      this.testUtil = new TestUtil();
       this.exampleRepo = new ExampleRepository(dbContext);
    }
 
@@ -32,6 +31,21 @@ public class AreaController {
    public List<AreaDto> getTestData() {
       return setAreaStatus(TestUtil.getAllAreasWithRandomStatuses());
    }
+
+   @GET("/adminAreas")
+   @JsonBody
+   public List<AdminAreaDto> getAreas() {
+      return  testUtil.getAdminAreaDtos();
+   }
+
+   @POST("/adminAreas")
+   @JsonBody
+   public List<AdminAreaDto> newAreas(@RequestParam("AdminAreaDto") AdminAreaDto adminAreaDto) {
+      testUtil.addAdminArea(adminAreaDto);
+      return testUtil.getAdminAreaDtos();
+   }
+
+
 
    @GET("/testStatus")
    @JsonBody
@@ -46,7 +60,6 @@ public class AreaController {
       }
       return statusAndIncidentsDtos;
    }
-
 
    private List<AreaDto> setAreaStatus(List<AreaDto> dtos){
       dtos.forEach(dto -> dto.setStatus(getAreaStatus(dto)));

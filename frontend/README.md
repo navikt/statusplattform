@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Setting up the project for development
 
+Generate sources openAPi:
+ mvn generate-sources
+
 Install the following:
 
 ```
