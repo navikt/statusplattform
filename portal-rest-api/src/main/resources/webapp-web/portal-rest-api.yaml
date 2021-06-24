@@ -23,7 +23,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Area'
+                  $ref: '#/components/schemas/AreaInstance'
         '401':
           description: Unauthorized
           content: {}
@@ -55,44 +55,11 @@ paths:
         '403':
           description: Forbidden
           content: {}
-        '404':
-          description: Not Found
-          content: {}
-      deprecated: false
-  /adminAreas:
-    get:
-      tags:
-        - AdminArea
-      summary: Mulige områder tjenester kan legges i
-      operationId: AdminArea
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AdminArea'
-        '401':
-          description: Unauthorized
-          content: { }
-        '403':
-          description: Forbidden
-          content: { }
-        '404':
-          description: Not Found
-          content: { }
-      deprecated: false
-    post:
-      summary: Legg til ett nytt område
-      requestBody:
-        description:
-        required: true
+        '404':  e
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminArea'
+              $ref: '#/components/schemas/Area'
           text/plain:
             schema:
               type: string
@@ -118,19 +85,19 @@ components:
           $ref: '#/components/schemas/SandIelement'
     SandIelement:
       type: string
-    Area:
-      title: Area
+    AreaInstance:
+      title: AreaInstance
       type: object
       properties:
-        name:
-          type: string
+        area:
+          $ref: '#/components/schemas/Area'
         status:
           $ref: '#/components/schemas/Status'
         services:
           type: array
           items:
             $ref: '#/components/schemas/Service'
-    AdminArea:
+    Area:
       title: Area
       type: object
       properties:

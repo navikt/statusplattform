@@ -1,8 +1,6 @@
 
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.ExampleEntity;
-
 import nav.portal.core.repositories.ExampleRepository;
 
 import no.nav.portal.rest.api.TestUtil;
@@ -28,21 +26,21 @@ public class AreaController {
 
    @GET("/testAreas")
    @JsonBody
-   public List<AreaDto> getTestData() {
+   public List<AreaInstanceDto> getTestData() {
       return setAreaStatus(TestUtil.getAllAreasWithRandomStatuses());
    }
 
    @GET("/adminAreas")
    @JsonBody
-   public List<AdminAreaDto> getAreas() {
-      return  testUtil.getAdminAreaDtos();
+   public List<AreaDto> getAreas() {
+      return  testUtil.getAreaDtos();
    }
 
    @POST("/adminAreas")
    @JsonBody
-   public List<AdminAreaDto> newAreas(@RequestParam("AdminAreaDto") AdminAreaDto adminAreaDto) {
-      testUtil.addAdminArea(adminAreaDto);
-      return testUtil.getAdminAreaDtos();
+   public List<AreaDto> newAreas(@RequestParam("AdminAreaDto") AreaDto areaDto) {
+      testUtil.addAdminArea(areaDto);
+      return testUtil.getAreaDtos();
    }
 
 
@@ -61,13 +59,14 @@ public class AreaController {
       return statusAndIncidentsDtos;
    }
 
-   private List<AreaDto> setAreaStatus(List<AreaDto> dtos){
+   //TODO METODEN UNDER SKAL IKKE BO HER
+   private List<AreaInstanceDto> setAreaStatus(List<AreaInstanceDto> dtos){
       dtos.forEach(dto -> dto.setStatus(getAreaStatus(dto)));
       return dtos;
 
    }
-
-   private StatusDto getAreaStatus(AreaDto dto){
+   //TODO METODEN UNDER SKAL IKKE BO HER
+   private StatusDto getAreaStatus(AreaInstanceDto dto){
       if(dto.getServices()
               .stream()
               .map(s -> s.getStatus())

@@ -1,38 +1,37 @@
+
 package no.nav.portal.rest.api;
 
-import nav.portal.core.util.Status;
-import no.portal.web.generated.api.AdminAreaDto;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.StatusDto;
+import no.portal.web.generated.api.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TestUtil {
-    private static HashMap<String,List<String>> AREAS = new HashMap<>();
+    private static HashMap<AreaDto,List<String>> AREAS_INSTANCES = new HashMap<>();
     private static List<AreaDto> currentStatus = Collections.emptyList();
-    private static List<AdminAreaDto> DEFAULT_ADMIN_AREAS = new ArrayList<>();
-    private List<AdminAreaDto> adminAreaDtos = Collections.emptyList();
+
+    private static HashMap<String, AreaDto> DEFAULT_AREAS = new HashMap<>();
+    private List<AreaDto> areaDtos = Collections.emptyList();
 
     static{
-        //Legg til område/area her
-        AREAS.put("Arbeidssøker eller permitert", Arrays.asList("Arena","Meldekort", "Oppf. arbeid", "Søk Dagpenger"));
-        AREAS.put("Pensjon", Arrays.asList("Sykmelding","Frikort", "eResept. arbeid", "Søk Dagpenger"));
-        AREAS.put("Venter barn", Arrays.asList("Bidrag","Engangsstønad", "Foreldrepenger"));
-        AREAS.put("Alene med barn", Arrays.asList("Din Pensjon","Pesys"));
-        AREAS.put("Sykmeldt", Arrays.asList("Dine Utbetalinger","DittNAV", "nav.no", "Søknadsdialoger"));
-        AREAS.put("Skal søke AAP", Arrays.asList("Dokumentløsning","Gosys", "Modiabrukerdialog", "Navet","Personkortet","WinTid"));
-        AREAS.put("Har sykdom i familien", Arrays.asList("Ok"));
-        AREAS.put("Trenger tilrettelegging", Arrays.asList("AAregister","AktørRegister", "Datavarehus","DKIF", "Enhetsregister","Henvendelse", "Inntektskomponenten","Joark","NORG","TPS","TSS"));
-        AREAS.put("Trenger økonomisk sosialhjelp", Arrays.asList("BankID-status","Google Cloud-status", "IDporten", "MS Azure-status"));
-
-        DEFAULT_ADMIN_AREAS.add(new AdminAreaDto().name("Arbeidssøker eller permitert")
+        DEFAULT_AREAS.put("ARBD",new AreaDto().name("Arbeidssøker eller permitert")
                 .beskrivelse("Arbeidssøker ...").id("ARBD").rangering(1));
-        DEFAULT_ADMIN_AREAS.add(new AdminAreaDto().name("Pensjon")
+        DEFAULT_AREAS.put("PENS",new AreaDto().name("Pensjon")
                 .beskrivelse("Pensjon ...").id("PENS").rangering(2));
-        DEFAULT_ADMIN_AREAS.add(new AdminAreaDto().name("Venter barn")
+        DEFAULT_AREAS.put("BARN",new AreaDto().name("Venter barn")
                 .beskrivelse("Venter barn  ...").id("BARN").rangering(3));
+        //Legg til område/area her
+        AREAS_INSTANCES.put(DEFAULT_AREAS.get("ARBD"), Arrays.asList("Arena","Meldekort", "Oppf. arbeid", "Søk Dagpenger"));
+        AREAS_INSTANCES.put(DEFAULT_AREAS.get("PENS"), Arrays.asList("Sykmelding","Frikort", "eResept. arbeid", "Søk Dagpenger"));
+        AREAS_INSTANCES.put(DEFAULT_AREAS.get("BARN"), Arrays.asList("Bidrag","Engangsstønad", "Foreldrepenger"));
+        /*AREAS_INSTANCES.put("Alene med barn", Arrays.asList("Din Pensjon","Pesys"));
+        AREAS_INSTANCES.put("Sykmeldt", Arrays.asList("Dine Utbetalinger","DittNAV", "nav.no", "Søknadsdialoger"));
+        AREAS_INSTANCES.put("Skal søke AAP", Arrays.asList("Dokumentløsning","Gosys", "Modiabrukerdialog", "Navet","Personkortet","WinTid"));
+        AREAS_INSTANCES.put("Har sykdom i familien", Arrays.asList("Ok"));
+        AREAS_INSTANCES.put("Trenger tilrettelegging", Arrays.asList("AAregister","AktørRegister", "Datavarehus","DKIF", "Enhetsregister","Henvendelse", "Inntektskomponenten","Joark","NORG","TPS","TSS"));
+        AREAS_INSTANCES.put("Trenger økonomisk sosialhjelp", Arrays.asList("BankID-status","Google Cloud-status", "IDporten", "MS Azure-status"));
+    */
+
 
     }
 
@@ -42,16 +41,16 @@ public class TestUtil {
     }
 */
 
-    public List<AdminAreaDto> getAdminAreaDtos(){
-        if(adminAreaDtos.isEmpty()){
-            this.adminAreaDtos = DEFAULT_ADMIN_AREAS;
+    public List<AreaDto> getAreaDtos(){
+        if(areaDtos.isEmpty()){
+            this.areaDtos = DEFAULT_AREAS.values().stream().collect(Collectors.toList());
         }
-        return this.adminAreaDtos;
+        return this.areaDtos;
     }
 
-    public boolean addAdminArea(AdminAreaDto adminAreaDto){
-        if(adminAreaDtos.stream().filter(dto -> dto.getId().equals(adminAreaDto.getId())).findFirst().isEmpty()){
-            adminAreaDtos.add(adminAreaDto);
+    public boolean addAdminArea(AreaDto areaDto){
+        if(areaDtos.stream().filter(dto -> dto.getId().equals(areaDto.getId())).findFirst().isEmpty()){
+            areaDtos.add(areaDto);
             return true;
         }
         return false;
@@ -59,24 +58,24 @@ public class TestUtil {
     }
 
 
-    public static List<AreaDto> getAllAreasWithRandomStatuses(){
-        ArrayList<AreaDto> areaDtos = new ArrayList<>();
-        for (String key: AREAS.keySet()){
-            areaDtos.add(getOne(key));
+    public static List<AreaInstanceDto> getAllAreasWithRandomStatuses(){
+        ArrayList<AreaInstanceDto> areaInstanceDtos = new ArrayList<>();
+        for (AreaDto key: AREAS_INSTANCES.keySet()){
+            areaInstanceDtos.add(getOne(key));
         }
-        return areaDtos;
+        return areaInstanceDtos;
     }
-    public static AreaDto getOne(String areaName){
-        AreaDto areaDto = new AreaDto();
-        areaDto.setName(areaName);
-        areaDto.setServices(getServicesRandomStatus(areaName));
-        return areaDto;
+    public static AreaInstanceDto getOne(AreaDto areaDto){
+        AreaInstanceDto areaInstanceDto = new AreaInstanceDto();
+        areaInstanceDto.setArea(areaDto);
+        areaInstanceDto.setServices(getServicesRandomStatus(areaDto));
+        return areaInstanceDto;
     }
 
 
-    public static List<ServiceDto> getServicesRandomStatus(String area){
+    public static List<ServiceDto> getServicesRandomStatus(AreaDto areaDto){
         ArrayList<ServiceDto> services = new ArrayList<>();
-        for (String service:AREAS.get(area)) {
+        for (String service: AREAS_INSTANCES.get(areaDto)) {
             ServiceDto serviceDto = new ServiceDto();
             serviceDto.setName(service);
             serviceDto.setStatus(getRandomStatus());
