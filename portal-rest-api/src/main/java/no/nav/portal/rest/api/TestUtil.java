@@ -28,11 +28,11 @@ public class TestUtil {
         AREAS.put("Trenger økonomisk sosialhjelp", Arrays.asList("BankID-status","Google Cloud-status", "IDporten", "MS Azure-status"));
 
         DEFAULT_ADMIN_AREAS.add(new AdminAreaDto().name("Arbeidssøker eller permitert")
-                .beskrivelse("Arbeidssøker ...").id("ARBD").rangering(0));
+                .beskrivelse("Arbeidssøker ...").id("ARBD").rangering(1));
         DEFAULT_ADMIN_AREAS.add(new AdminAreaDto().name("Pensjon")
-                .beskrivelse("Pensjon .....").id("PENS").rangering(1));
+                .beskrivelse("Pensjon ...").id("PENS").rangering(2));
         DEFAULT_ADMIN_AREAS.add(new AdminAreaDto().name("Venter barn")
-                .beskrivelse("Venter barn  .....").id("BARN").rangering(2));
+                .beskrivelse("Venter barn  ...").id("BARN").rangering(3));
 
     }
 
