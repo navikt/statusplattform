@@ -3,18 +3,15 @@ info:
   description: Documentation Nav portal REST API
   version: '0.1'
   title: Nav REST API
-tags:
-  - name: area-controller
-    description: area Controller
 servers:
   - url: /rest
 paths:
-  /testAreas:
+  /tiles:
     get:
       tags:
-        - area-controller
-      summary: area
-      operationId: areas
+        - Tiles
+      summary: Tiles
+      operationId: Tiles
       responses:
         '200':
           description: OK
@@ -23,7 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AreaInstance'
+                  $ref: '#/components/schemas/Tile'
         '401':
           description: Unauthorized
           content: {}
@@ -55,7 +52,42 @@ paths:
         '403':
           description: Forbidden
           content: {}
-        '404':  e
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /Areas:
+    get:
+      tags:
+        - Area
+      summary: Mulige områder tjenester kan legges i
+      operationId: Area
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - Area
+      summary: Legg til ett nytt område
+      requestBody:
+        description: Legg til ett nytt område
+        required: true
         content:
           application/json:
             schema:
@@ -85,8 +117,8 @@ components:
           $ref: '#/components/schemas/SandIelement'
     SandIelement:
       type: string
-    AreaInstance:
-      title: AreaInstance
+    Tile:
+      title: Tile
       type: object
       properties:
         area:

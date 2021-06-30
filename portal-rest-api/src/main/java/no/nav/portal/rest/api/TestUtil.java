@@ -58,18 +58,18 @@ public class TestUtil {
     }
 
 
-    public static List<AreaInstanceDto> getAllAreasWithRandomStatuses(){
-        ArrayList<AreaInstanceDto> areaInstanceDtos = new ArrayList<>();
+    public static List<TileDto> getAllTilesWithRandomStatuses(){
+        ArrayList<TileDto> tileDtos = new ArrayList<>();
         for (AreaDto key: AREAS_INSTANCES.keySet()){
-            areaInstanceDtos.add(getOne(key));
+            tileDtos.add(getOne(key));
         }
-        return areaInstanceDtos;
+        return tileDtos;
     }
-    public static AreaInstanceDto getOne(AreaDto areaDto){
-        AreaInstanceDto areaInstanceDto = new AreaInstanceDto();
-        areaInstanceDto.setArea(areaDto);
-        areaInstanceDto.setServices(getServicesRandomStatus(areaDto));
-        return areaInstanceDto;
+    public static TileDto getOne(AreaDto areaDto){
+        TileDto tileDto = new TileDto();
+        tileDto.setArea(areaDto);
+        tileDto.setServices(getServicesRandomStatus(areaDto));
+        return tileDto;
     }
 
 

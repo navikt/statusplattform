@@ -24,21 +24,21 @@ public class AreaController {
    }
 
 
-   @GET("/testAreas")
+   @GET("/Tiles")
    @JsonBody
-   public List<AreaInstanceDto> getTestData() {
-      return setAreaStatus(TestUtil.getAllAreasWithRandomStatuses());
+   public List<TileDto> getTestData() {
+      return setAreaStatus(TestUtil.getAllTilesWithRandomStatuses());
    }
 
-   @GET("/adminAreas")
+   @GET("/Areas")
    @JsonBody
    public List<AreaDto> getAreas() {
       return  testUtil.getAreaDtos();
    }
 
-   @POST("/adminAreas")
+   @POST("/Areas")
    @JsonBody
-   public List<AreaDto> newAreas(@RequestParam("AdminAreaDto") AreaDto areaDto) {
+   public List<AreaDto> newAreas(@JsonBody AreaDto areaDto) {
       testUtil.addAdminArea(areaDto);
       return testUtil.getAreaDtos();
    }
@@ -60,13 +60,13 @@ public class AreaController {
    }
 
    //TODO METODEN UNDER SKAL IKKE BO HER
-   private List<AreaInstanceDto> setAreaStatus(List<AreaInstanceDto> dtos){
-      dtos.forEach(dto -> dto.setStatus(getAreaStatus(dto)));
+   private List<TileDto> setAreaStatus(List<TileDto> dtos){
+      dtos.forEach(dto -> dto.setStatus(getTileStatus(dto)));
       return dtos;
 
    }
    //TODO METODEN UNDER SKAL IKKE BO HER
-   private StatusDto getAreaStatus(AreaInstanceDto dto){
+   private StatusDto getTileStatus(TileDto dto){
       if(dto.getServices()
               .stream()
               .map(s -> s.getStatus())
