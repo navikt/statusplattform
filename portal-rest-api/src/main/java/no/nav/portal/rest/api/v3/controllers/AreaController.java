@@ -33,13 +33,20 @@ public class AreaController {
    @GET("/Areas")
    @JsonBody
    public List<AreaDto> getAreas() {
-      return  testUtil.getAreaDtos();
+      return testUtil.getAreaDtos();
    }
 
    @POST("/Areas")
    @JsonBody
    public List<AreaDto> newAreas(@JsonBody AreaDto areaDto) {
       testUtil.addAdminArea(areaDto);
+      return testUtil.getAreaDtos();
+   }
+
+   @DELETE("/Areas")
+   @JsonBody
+   public List<AreaDto> deleteArea(@JsonBody AreaDto areaDto) {
+         testUtil.deleteAdminArea(areaDto);
       return testUtil.getAreaDtos();
    }
 

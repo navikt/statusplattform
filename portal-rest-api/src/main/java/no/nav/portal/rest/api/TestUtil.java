@@ -57,6 +57,14 @@ public class TestUtil {
 
     }
 
+    public boolean deleteAdminArea(AreaDto areaDto) {
+        if(areaDtos.stream().filter(dto -> dto.getId().equals(areaDto.getId())).findFirst().isPresent()){
+            areaDtos.remove(areaDto);
+            return true;
+        }
+        return false;
+    }
+
 
     public static List<TileDto> getAllTilesWithRandomStatuses(){
         ArrayList<TileDto> tileDtos = new ArrayList<>();
