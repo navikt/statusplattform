@@ -135,7 +135,7 @@ components:
       properties:
         name:
           type: string
-        Id:
+        id:
           type: string
         beskrivelse:
           type: string

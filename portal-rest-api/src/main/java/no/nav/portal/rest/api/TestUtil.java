@@ -68,8 +68,9 @@ public class TestUtil {
 
     public static List<TileDto> getAllTilesWithRandomStatuses(){
         ArrayList<TileDto> tileDtos = new ArrayList<>();
-        for (AreaDto key: AREAS_INSTANCES.keySet()){
-            tileDtos.add(getOne(key));
+        for (AreaDto areaDto: AREAS_INSTANCES.keySet()){
+            tileDtos.add(getOne(areaDto));
+
         }
         return tileDtos;
     }
