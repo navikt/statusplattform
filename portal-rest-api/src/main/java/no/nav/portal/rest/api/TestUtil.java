@@ -7,15 +7,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TestUtil {
-    private static HashMap<AreaDto,List<String>> AREAS_INSTANCES = new HashMap<>();
-    private static List<AreaDto> currentStatus = Collections.emptyList();
-
     private static HashMap<String, AreaDto> DEFAULT_AREAS = new HashMap<>();
+    private static HashMap<AreaDto,List<String>> AREAS_INSTANCES = new HashMap<>();
+
+    //private static List<DashboardDto> DASHBOARDS = Collections.emptyList();
     private List<AreaDto> areaDtos = Collections.emptyList();
 
     static{
+
         DEFAULT_AREAS.put("ARBD",new AreaDto().name("Arbeidssøker eller permitert")
-                .beskrivelse("Arbeidssøker ...").id("ARBD").rangering(1));
+                .beskrivelse("Arbeidssøker ...").id("ARBD").ikon("0001").rangering(1));
         DEFAULT_AREAS.put("PENS",new AreaDto().name("Pensjon")
                 .beskrivelse("Pensjon ...").id("PENS").rangering(2));
         DEFAULT_AREAS.put("BARN",new AreaDto().name("Venter barn")
@@ -59,13 +60,15 @@ public class TestUtil {
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("BEOS"), Arrays.asList("Ok"));
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("MNIF"), Arrays.asList("AAregister","AktørRegister", "Datavarehus","DKIF", "Enhetsregister","Henvendelse", "Inntektskomponenten","Joark","NORG","TPS","TSS"));
 
+        /*
+        DASHBOARDS.add(new DashboardDto().name("Privatperson").id("1"));
+        DASHBOARDS.add(new DashboardDto().name("Intern").id("2"));
+        DASHBOARDS.add(new DashboardDto().name("Arbeidsgiver").id("2"));
+
+         */
     }
 
-/*
-    public static List<AreaDto> getCurrentTestAreas(){
-        if
-    }
-*/
+
 
     public List<AreaDto> getAreaDtos(){
         if(areaDtos.isEmpty()){
@@ -80,8 +83,13 @@ public class TestUtil {
             return true;
         }
         return false;
-
     }
+
+    public List<DashboardDto> getDashboards(){
+
+        return null;
+    }
+
 
     public boolean deleteAdminArea(AreaDto areaDto) {
         if(areaDtos.stream().filter(dto -> dto.getId().equals(areaDto.getId())).findFirst().isPresent()){
@@ -92,9 +100,9 @@ public class TestUtil {
     }
 
 
-    public static List<TileDto> getAllTilesWithRandomStatuses(){
+    public List<TileDto> getAllTilesWithRandomStatuses(){
         ArrayList<TileDto> tileDtos = new ArrayList<>();
-        for (AreaDto areaDto: AREAS_INSTANCES.keySet()){
+        for (AreaDto areaDto: getAreaDtos()){
             tileDtos.add(getOne(areaDto));
 
         }
