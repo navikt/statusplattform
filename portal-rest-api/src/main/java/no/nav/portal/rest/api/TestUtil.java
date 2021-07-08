@@ -108,7 +108,7 @@ public class TestUtil {
         }
         return tileDtos;
     }
-    public static TileDto getOne(AreaDto areaDto){
+    public  TileDto getOne(AreaDto areaDto){
         TileDto tileDto = new TileDto();
         tileDto.setArea(areaDto);
         tileDto.setServices(getServicesRandomStatus(areaDto));
@@ -116,13 +116,15 @@ public class TestUtil {
     }
 
 
-    public static List<ServiceDto> getServicesRandomStatus(AreaDto areaDto){
+    public  List<ServiceDto> getServicesRandomStatus(AreaDto areaDto){
         ArrayList<ServiceDto> services = new ArrayList<>();
-        for (String service: AREAS_INSTANCES.get(areaDto)) {
-            ServiceDto serviceDto = new ServiceDto();
-            serviceDto.setName(service);
-            serviceDto.setStatus(getRandomStatus());
-            services.add(serviceDto);
+        if(AREAS_INSTANCES.get(areaDto) != null) {
+            for (String service : AREAS_INSTANCES.get(areaDto)) {
+                ServiceDto serviceDto = new ServiceDto();
+                serviceDto.setName(service);
+                serviceDto.setStatus(getRandomStatus());
+                services.add(serviceDto);
+            }
         }
         return services;
     }

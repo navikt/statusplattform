@@ -129,6 +129,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Service'
+    Dashboard:
+      title: Dashboard
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Area'
     Area:
       title: Area
       type: object
@@ -138,6 +150,8 @@ components:
         id:
           type: string
         beskrivelse:
+          type: string
+        ikon:
           type: string
         rangering:
           type: integer
