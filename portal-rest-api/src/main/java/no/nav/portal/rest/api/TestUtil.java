@@ -15,32 +15,32 @@ public class TestUtil {
 
     static{
 
-        DEFAULT_AREAS.put("ARBD",new AreaDto().name("Arbeidssøker eller permitert")
-                .beskrivelse("Arbeidssøker ...").id("ARBD").ikon("0001").rangering(1));
-        DEFAULT_AREAS.put("PENS",new AreaDto().name("Pensjon")
+        DEFAULT_AREAS.put("ARBD",new AreaDto().name("Arbeidssøker eller permitert").ikon("0001")
+                .beskrivelse("Arbeidssøker ...").id("ARBD").rangering(1));
+        DEFAULT_AREAS.put("PENS",new AreaDto().name("Pensjon").ikon("0002")
                 .beskrivelse("Pensjon ...").id("PENS").rangering(2));
-        DEFAULT_AREAS.put("BARN",new AreaDto().name("Venter barn")
+        DEFAULT_AREAS.put("BARN",new AreaDto().name("Venter barn").ikon("0003")
                 .beskrivelse("Venter barn  ...").id("BARN").rangering(3));
 
-        DEFAULT_AREAS.put("ALBR",new AreaDto().name("Alene med barn")
+        DEFAULT_AREAS.put("ALBR",new AreaDto().name("Alene med barn").ikon("0004")
                 .beskrivelse("Venter barn  ...").id("ALBR").rangering(4));
-        DEFAULT_AREAS.put("SYKM",new AreaDto().name("Sykmeldt")
+        DEFAULT_AREAS.put("SYKM",new AreaDto().name("Sykmeldt").ikon("0005")
                 .beskrivelse("Sykmeldt ...").id("SYKM").rangering(5));
-        DEFAULT_AREAS.put("SAAP",new AreaDto().name("Skal søke AAP")
+        DEFAULT_AREAS.put("SAAP",new AreaDto().name("Skal søke AAP").ikon("0006")
                 .beskrivelse("Skal søke AAP ...").id("SAAP").rangering(6));
 
-        DEFAULT_AREAS.put("SYKF",new AreaDto().name("Sykdom i familien")
+        DEFAULT_AREAS.put("SYKF",new AreaDto().name("Sykdom i familien").ikon("0007")
                 .beskrivelse("Sykdom i familien  ...").id("SYKF").rangering(7));
-        DEFAULT_AREAS.put("TILR",new AreaDto().name("Trenger tilrettelegging")
+        DEFAULT_AREAS.put("TILR",new AreaDto().name("Trenger tilrettelegging").ikon("0008")
                 .beskrivelse("Trenger tilrettelegging ...").id("TILR").rangering(8));
-        DEFAULT_AREAS.put("OKOH",new AreaDto().name("Trenger økonomisk sosialhjelp")
+        DEFAULT_AREAS.put("OKOH",new AreaDto().name("Trenger økonomisk sosialhjelp").ikon("0009")
                 .beskrivelse("Trenger økonomisk sosialhjelp...").id("OKOH").rangering(9));
 
-        DEFAULT_AREAS.put("OKHJ",new AreaDto().name("Trenger økonomisk rådgiving")
+        DEFAULT_AREAS.put("OKHJ",new AreaDto().name("Trenger økonomisk rådgiving").ikon("0010")
                 .beskrivelse("Trenger økonomisk rådgiving ...").id("OKHJ").rangering(10));
-        DEFAULT_AREAS.put("BEOS",new AreaDto().name("Berørt av EØS-saken")
+        DEFAULT_AREAS.put("BEOS",new AreaDto().name("Berørt av EØS-saken").ikon("0011")
                 .beskrivelse("Berørt av EØS-saken ...").id("BEOS").rangering(11));
-        DEFAULT_AREAS.put("MNIF",new AreaDto().name("Har mistet noen i nær familie")
+        DEFAULT_AREAS.put("MNIF",new AreaDto().name("Har mistet noen i nær familie").ikon("0012")
                 .beskrivelse("Har mistet noen i nær familie  ...").id("MNIF").rangering(12));
 
         //Legg til område/area her
@@ -93,7 +93,7 @@ public class TestUtil {
 
     public boolean deleteAdminArea(AreaDto areaDto) {
         if(areaDtos.stream().filter(dto -> dto.getId().equals(areaDto.getId())).findFirst().isPresent()){
-            areaDtos.remove(areaDto);
+            areaDtos = areaDtos.stream().filter(area -> !area.getId().equals(areaDto.getId())).collect(Collectors.toList());
             return true;
         }
         return false;
