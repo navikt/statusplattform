@@ -27,7 +27,7 @@ public class AreaController {
    @GET("/Tiles")
    @JsonBody
    public List<TileDto> getTestData() {
-      return setAreaStatus(TestUtil.getAllTilesWithRandomStatuses());
+      return setAreaStatus(testUtil.getAllTilesWithRandomStatuses());
    }
 
    @GET("/Areas")
@@ -48,6 +48,13 @@ public class AreaController {
    public List<AreaDto> deleteArea(@JsonBody AreaDto areaDto) {
          testUtil.deleteAdminArea(areaDto);
       return testUtil.getAreaDtos();
+   }
+
+   @GET("/dashboards")
+   @JsonBody
+   public List<DashboardDto> getDashBoards() {
+      ArrayList<DashboardDto> statusAndIncidentsDtos = new ArrayList<>();
+      return statusAndIncidentsDtos;
    }
 
 
