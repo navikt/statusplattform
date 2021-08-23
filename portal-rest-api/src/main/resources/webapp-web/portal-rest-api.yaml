@@ -135,12 +135,10 @@ components:
       properties:
         name:
           type: string
-        id:
-          type: string
-        areas:
+        areasIds:
           type: array
           items:
-            $ref: '#/components/schemas/Area'
+            type: string
     Area:
       title: Area
       type: object
@@ -155,10 +153,40 @@ components:
           type: string
         rangering:
           type: integer
+        servisesIds:
+          type: array
+          items:
+            type: string
     Service:
       title: Service
       type: object
       properties:
+        name:
+          type: string
+        id:
+          type: string
+        type:
+          type: string
+        team:
+          type: string
+        dependecies:
+          type: array
+          items:
+            type: string
+        monitorlink:
+          type: string
+        description:
+          type: string
+        logglink:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+    ServiceStatus:
+      title: Service
+      type: object
+      properties:
+        serviceId:
+          type: string
         name:
           type: string
         status:

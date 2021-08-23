@@ -1,8 +1,11 @@
 
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.repositories.ExampleRepository;
+import nav.portal.core.entities.AreaEntity;
+import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.repositories.*;
 
+import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.TestUtil;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.*;
@@ -14,39 +17,76 @@ import java.util.stream.Collectors;
 
 public class AreaController {
 
-   private final ExampleRepository exampleRepo;
+   private final AreaRepository areaRepository;
+   private final DashboardRepository dashboardRepository;
+   private final ServiceRepository serviceRepository;
+   private final RecordRepository recordRepository;
    private TestUtil testUtil; //TODO DENNE SKAL IKKE BO HER FINN UT ANNEN LØSNING
 
 
    public AreaController(DbContext dbContext) {
+      this.areaRepository = new AreaRepository(dbContext);
+      this.dashboardRepository = new DashboardRepository(dbContext);
+      this.serviceRepository = new ServiceRepository(dbContext);
+      this.recordRepository = new RecordRepository(dbContext);
       this.testUtil = new TestUtil();
-      this.exampleRepo = new ExampleRepository(dbContext);
    }
 
 
    @GET("/Tiles")
    @JsonBody
    public List<TileDto> getTestData() {
+      //Dashboardtype må settes som parameter
+      DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
+      List<AreaDto> areaDtos = areaRepository.retrieve(dashboardDto.getAreasIds())
+              .stream()
+              .map(EntityDtoMappers::toDto)
+              .collect(Collectors.toList());
+      List<TileDto> tiles = Collections.EMPTY_LIST;
+      for(AreaDto dto: areaDtos){
+         List<String> serviseIds = dto.getServisesIds();
+         List<ServiceDto> services =  serviceRepository.retrieve(serviseIds)
+                 .stream().map(EntityDtoMappers::toDto)
+                 .collect(Collectors.toList());
+         //TODO gå igjennom dette:
+
+
+      }
+
       return setAreaStatus(testUtil.getAllTilesWithRandomStatuses());
    }
 
    @GET("/Areas")
    @JsonBody
+   //TODO denne må hente basert på dashboard:
    public List<AreaDto> getAreas() {
-      return testUtil.getAreaDtos();
+      DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
+      List<String> areaCodes = dashboardDto.getAreasIds();
+      return areaRepository.retrieve(areaCodes).stream()
+              .map(EntityDtoMappers::toDto)
+              .collect(Collectors.toList());
+
    }
 
    @POST("/Areas")
    @JsonBody
-   public List<AreaDto> newAreas(@JsonBody AreaDto areaDto) {
-      testUtil.addAdminArea(areaDto);
-      return testUtil.getAreaDtos();
+   public AreaDto newAreas(@JsonBody AreaDto areaDto) {
+      try{
+         areaRepository.retrieve(areaDto.getId());
+         areaDto.setBeskrivelse("Ikke lagt til, id allerede i db!");
+         return areaDto;
+      }
+      catch (IllegalArgumentException e){
+         areaRepository.save(EntityDtoMappers.toEntity(areaDto));
+         return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
+      }
    }
 
    @DELETE("/Areas")
    @JsonBody
+   //TODO denne skal kun fjerne området fra ett dashboard
    public List<AreaDto> deleteArea(@JsonBody AreaDto areaDto) {
-         testUtil.deleteAdminArea(areaDto);
+      testUtil.deleteAdminArea(areaDto);
       return testUtil.getAreaDtos();
    }
 

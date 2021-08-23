@@ -30,6 +30,7 @@
             <version>0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>no.nav</groupId>
             <artifactId>portal-rest-api</artifactId>
@@ -41,6 +42,12 @@
             <artifactId>h2</artifactId>
             <version>1.4.200</version>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.23</version>
+        </dependency>
+
     </dependencies>
 
     <build>
