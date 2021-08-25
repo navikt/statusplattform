@@ -1,10 +1,9 @@
 
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
-
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.TestUtil;
 import no.portal.web.generated.api.*;
@@ -14,6 +13,7 @@ import org.fluentjdbc.DbContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.sql.Timestamp;
 
 public class AreaController {
 
@@ -42,18 +42,28 @@ public class AreaController {
               .stream()
               .map(EntityDtoMappers::toDto)
               .collect(Collectors.toList());
-      List<TileDto> tiles = Collections.EMPTY_LIST;
-      for(AreaDto dto: areaDtos){
-         List<String> serviseIds = dto.getServisesIds();
+      ArrayList<TileDto> tiles = new ArrayList<>();
+      for(AreaDto areaDto: areaDtos){
+         List<String> serviseIds = areaDto.getServisesIds();
          List<ServiceDto> services =  serviceRepository.retrieve(serviseIds)
                  .stream().map(EntityDtoMappers::toDto)
                  .collect(Collectors.toList());
-         //TODO gå igjennom dette:
+         //TODO gå igjennom dette. Hvordan bør dette gjøres?
+         for(ServiceDto serviceDto: services){
+             Optional<RecordEntity> optRecord = recordRepository.getLatestRecord(serviceDto.getId());
+             if(optRecord.isPresent()){
+               serviceDto.setStatus(StatusDto.fromValue(optRecord.get().getStatus()));
 
-
+             }
+         }
+         TileDto tile = new TileDto();
+         tile.setArea(areaDto);
+         tile.setServices(services);
+         tile.setStatus(getTileStatus(tile));
+         tiles.add(tile);
       }
 
-      return setAreaStatus(testUtil.getAllTilesWithRandomStatuses());
+      return tiles;
    }
 
    @GET("/Areas")
@@ -76,6 +86,37 @@ public class AreaController {
          areaDto.setBeskrivelse("Ikke lagt til, id allerede i db!");
          return areaDto;
       }
+      catch (IllegalArgumentException e){
+         areaRepository.save(EntityDtoMappers.toEntity(areaDto));
+         return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
+      }
+   }
+
+   @POST("/ServiceRecord")
+   @JsonBody
+   public void uppdateRecord(@JsonBody ServiceDto serviceDto) {
+      if(serviceRepository.doesEntryExist(serviceDto.getId())){
+         //Servisen er lagret fra før
+         RecordEntity entity = new RecordEntity(serviceDto.getId(),
+                 serviceDto.getStatus().getValue()
+                 ,new Timestamp(System.currentTimeMillis()),
+                 42);
+         recordRepository.save(entity);
+      }
+      else{
+         //Servicen er ikke lagret fra før
+         ServiceEntity entity = new ServiceEntity();
+         entity.setId(serviceDto.getId());
+         entity.setName(serviceDto.getName());
+         entity.setType(serviceDto.getType());
+         entity.setTeam(serviceDto.getTeam());
+         EntityDtoMappers.toEntity()
+      }
+         Optional<ServiceDto> serviceDtoFromDb = serviceRepository.retrieve(serviceDto.getId());
+         recordRepository
+         areaRepository.retrieve(areaDto.getId());
+         areaDto.setBeskrivelse("Ikke lagt til, id allerede i db!");
+
       catch (IllegalArgumentException e){
          areaRepository.save(EntityDtoMappers.toEntity(areaDto));
          return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));

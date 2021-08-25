@@ -7,6 +7,7 @@ import org.fluentjdbc.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,10 +33,14 @@ public class ServiceRepository {
         return result.getSaveStatus();
     }
 
-    public ServiceEntity retrieve(String id) {
+    public Optional<ServiceEntity> retrieve(String id) {
         return table.where("id", id)
-                .singleObject(ServiceRepository::toService)
-                .orElseThrow(() -> new IllegalArgumentException("Not found: Service with id " + id));
+                .singleObject(ServiceRepository::toService);
+    }
+
+    public Boolean doesEntryExist(String id){
+        return table.where("id", id)
+                .singleObject(ServiceRepository::toService).isPresent();
     }
     public List<ServiceEntity> retrieve(List<String> ids) {
         return table.whereIn("id", ids)
@@ -44,8 +49,8 @@ public class ServiceRepository {
     }
 
     private static ServiceEntity toService(DatabaseRow row) throws SQLException {
-        return new ServiceEntity(row.getString("id"),
-                row.getString("name"),
+        return new ServiceEntity(row.getString("name"),
+                row.getString("id"),
                 row.getString("type"),
                 row.getString("team"),
                 row.getStringList("dependencies"),

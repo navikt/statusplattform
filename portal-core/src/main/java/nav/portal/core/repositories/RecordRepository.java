@@ -5,6 +5,7 @@ import nav.portal.core.entities.RecordEntity;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -24,12 +25,11 @@ public class RecordRepository {
         return result.getSaveStatus();
     }
 
-    public RecordEntity retrieve(String serviceId) {
+    public Optional<RecordEntity> getLatestRecord(String serviceId) {
         return table.where("serviceid", serviceId)
                 .orderBy("timestamp DESC")
                 .limit(1)
-                .singleObject(RecordRepository::toRecord)
-                .orElseThrow(() -> new IllegalArgumentException("Not found: Record with groupUid " + serviceId));
+                .singleObject(RecordRepository::toRecord);
     }
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {

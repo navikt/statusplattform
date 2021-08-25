@@ -12,7 +12,7 @@ public class ServiceEntity {
     private String description;
     private String logglink;
 
-    public ServiceEntity() {
+    public  ServiceEntity() {
     }
 
     public ServiceEntity(String name, String id, String type, String team, List<String> dependencies, String monitorlink, String description, String logglink) {
