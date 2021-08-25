@@ -13,7 +13,7 @@ spec:
   gcp:
     sqlInstances:
       - name: NavStatus
-        type: POSTGRES_13
+        type: POSTGRES_12
         highAvailability: true
         tier: db-custom-2-3840
         databases:
