@@ -10,5 +10,14 @@ spec:
   port: 3001
   ingresses:
       - https://portalserver.labs.nais.io
+  gcp:
+    sqlInstances:
+      - name: NavStatus
+        type: POSTGRES_13
+        highAvailability: true
+        tier: db-custom-2-3840
+        databases:
+          - name: unleash
+            envVarPrefix: DB
   #image: ghcr.io/navikt/myapplication:417dcaa2c839b9da72e0189e2cfdd4e90e9cc6fd
   #       ^--- interpolated from the ${{ env.docker_image }} variable in the action
