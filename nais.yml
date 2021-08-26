@@ -9,7 +9,7 @@ spec:
   image: {{ image }}
   port: 3001
   ingresses:
-      - https://portalserver.labs.nais.io/
+    - https://portalserver.dev.nav.no/
   gcp:
     sqlInstances:
       - name: NavStatus
