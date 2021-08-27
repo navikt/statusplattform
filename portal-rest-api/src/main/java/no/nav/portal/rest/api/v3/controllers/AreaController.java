@@ -97,6 +97,7 @@ public class AreaController {
    public void uppdateRecord(@JsonBody ServiceDto serviceDto) {
       if(serviceRepository.doesEntryExist(serviceDto.getId())){
          //Servisen er lagret fra før
+         //Legger kunn til en ny record. Men skal man sammenligne?
          RecordEntity entity = new RecordEntity(serviceDto.getId(),
                  serviceDto.getStatus().getValue()
                  ,new Timestamp(System.currentTimeMillis()),
@@ -105,22 +106,23 @@ public class AreaController {
       }
       else{
          //Servicen er ikke lagret fra før
+         //Dette skal legges inn i ett tjeneste lag
          ServiceEntity entity = new ServiceEntity();
          entity.setId(serviceDto.getId());
          entity.setName(serviceDto.getName());
          entity.setType(serviceDto.getType());
          entity.setTeam(serviceDto.getTeam());
-         EntityDtoMappers.toEntity()
+         entity.setDependencies(serviceDto.getDependencies());
+         entity.setMonitorlink(serviceDto.getMonitorlink());
+         entity.setDescription(serviceDto.getDescription());
+         entity.setLogglink(serviceDto.getLogglink());
+         serviceRepository.save(entity);
       }
-         Optional<ServiceDto> serviceDtoFromDb = serviceRepository.retrieve(serviceDto.getId());
-         recordRepository
-         areaRepository.retrieve(areaDto.getId());
-         areaDto.setBeskrivelse("Ikke lagt til, id allerede i db!");
-
-      catch (IllegalArgumentException e){
-         areaRepository.save(EntityDtoMappers.toEntity(areaDto));
-         return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
-      }
+      RecordEntity entity = new RecordEntity(serviceDto.getId(),
+              serviceDto.getStatus().getValue()
+              ,new Timestamp(System.currentTimeMillis()),
+              42);
+      recordRepository.save(entity);
    }
 
    @DELETE("/Areas")

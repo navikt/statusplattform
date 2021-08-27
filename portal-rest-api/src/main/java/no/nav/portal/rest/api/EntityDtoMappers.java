@@ -35,7 +35,7 @@ public class EntityDtoMappers {
         dto.setName(entity.getName());
         dto.setType(entity.getType());
         dto.setTeam(entity.getTeam());
-        dto.setDependecies(entity.getDependencies());
+        dto.setDependencies(entity.getDependencies());
         dto.setMonitorlink(entity.getMonitorlink());
         dto.setDescription(entity.getDescription());
         dto.setLogglink(entity.getLogglink());

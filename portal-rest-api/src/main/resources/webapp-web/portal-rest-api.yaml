@@ -169,7 +169,7 @@ components:
           type: string
         team:
           type: string
-        dependecies:
+        dependencies:
           type: array
           items:
             type: string
