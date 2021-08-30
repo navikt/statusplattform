@@ -12,7 +12,7 @@ spec:
     - https://digitalstatus.ekstern.dev.nav.no
   gcp:
     sqlInstances:
-      - name: NavStatus
+      - name: navstatus
         type: POSTGRES_12
         highAvailability: true
         tier: db-custom-2-3840
