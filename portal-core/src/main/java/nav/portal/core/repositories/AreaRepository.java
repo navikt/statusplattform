@@ -1,13 +1,11 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.ExampleEntity;
 import org.fluentjdbc.*;
 
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

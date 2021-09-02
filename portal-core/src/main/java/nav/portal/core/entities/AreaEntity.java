@@ -9,8 +9,6 @@ public class AreaEntity {
     private String beskrivelse;
     private String ikon;
     private Integer rangering;
-
-
     private List<String> servisesIds;
 
     public AreaEntity() {
