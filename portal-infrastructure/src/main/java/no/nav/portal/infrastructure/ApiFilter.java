@@ -19,13 +19,12 @@ public class ApiFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        chain.doFilter(request, response);
-        /*try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
+        try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
                 chain.doFilter(request, response);
                 transaction.setComplete();
             }
-        }*/
+        }
     }
 
     public void setDataSource(DataSource dataSource) {

@@ -45,6 +45,11 @@ public class TestUtil {
 
         //Legg til område/area her
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("ARBD"), Arrays.asList("Arena","Meldekort", "Oppf. arbeid", "Søk Dagpenger"));
+
+
+
+
+
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("PENS"), Arrays.asList("Sykmelding","Frikort", "eResept. arbeid", "Søk Dagpenger"));
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("BARN"), Arrays.asList("Bidrag","Engangsstønad", "Foreldrepenger"));
 
@@ -57,9 +62,12 @@ public class TestUtil {
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("OKOH"), Arrays.asList("AAregister","AktørRegister", "Datavarehus","DKIF", "Enhetsregister","Henvendelse", "Inntektskomponenten","Joark","NORG","TPS","TSS"));
 
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("OKHJ"), Arrays.asList("Dokumentløsning","Gosys", "Modiabrukerdialog", "Navet","Personkortet","WinTid"));
-        AREAS_INSTANCES.put(DEFAULT_AREAS.get("BEOS"), Arrays.asList("Ok"));
+        AREAS_INSTANCES.put(DEFAULT_AREAS.get("BEOS"), Arrays.asList("Modiabrukerdialog", "Navet"));
         AREAS_INSTANCES.put(DEFAULT_AREAS.get("MNIF"), Arrays.asList("AAregister","AktørRegister", "Datavarehus","DKIF", "Enhetsregister","Henvendelse", "Inntektskomponenten","Joark","NORG","TPS","TSS"));
 
+        AREAS_INSTANCES.put(DEFAULT_AREAS.get("OKHJ"), Arrays.asList("Dokumentløsning","Gosys", "Modiabrukerdialog", "Navet","Personkortet","WinTid"));
+        AREAS_INSTANCES.put(DEFAULT_AREAS.get("BEOS"), Arrays.asList("Dokumentløsning","Gosys"));
+        AREAS_INSTANCES.put(DEFAULT_AREAS.get("MNIF"), Arrays.asList("AAregister","AktørRegister", "Datavarehus","DKIF", "Enhetsregister","Henvendelse", "Inntektskomponenten","Joark","NORG","TPS","TSS"));
         /*
         DASHBOARDS.add(new DashboardDto().name("Privatperson").id("1"));
         DASHBOARDS.add(new DashboardDto().name("Intern").id("2"));

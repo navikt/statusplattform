@@ -12,6 +12,8 @@ public class DataSourceTransformer {
     public static DataSource create(Map<String, String> props) {
         Properties properties = new Properties();
         props.forEach(properties::put);
-        return new HikariDataSource(new HikariConfig(properties));
+        HikariDataSource dataSource = new HikariDataSource(new HikariConfig(properties));
+        Flyway.configure().dataSource(dataSource).load().migrate();
+        return dataSource;
     }
 }
