@@ -1,6 +1,0 @@
-dn: cn=schema
-changetype: modify
-add: objectClasses
-objectClasses: ( 2.16.840.1.113730.3.2.2 NAME 'inetOrgPerson' SUP organizationalPerson STRUCTURAL MAY ( audio $ businessCategory $ carLicense $ departmentNumber $ displayName $ employeeNumber $ employeeType $ givenName $ homePhone $ homePostalAddress $ initials $ jpegPhoto $ labeledURI $ mail $ manager $ mobile $ o $ pager $ photo $ roomNumber $ secretary $ uid $ userCertificate $ x500UniqueIdentifier $ preferredLanguage $ userSMIMECertificate $ userPKCS12 ) X-ORIGIN 'RFC 2798' X-SCHEMA-FILE '00-core.ldif' )
-objectClasses: ( 2.16.840.1.113730.3.2.130 NAME 'inetuser' DESC 'Auxiliary class which has to be present in an entry for delivery of subscriber services' SUP top AUXILIARY MAY ( uid $ inetUserStatus $ inetUserHTTPURL $ userPassword $ memberof ) X-ORIGIN 'Nortel subscriber interoperability' X-SCHEMA-FILE '99-user.ldif' )
-objectClasses: ( 2.16.840.1.113730.3.2.33 NAME 'groupOfURLs' DESC 'Sun-defined objectclass' SUP top STRUCTURAL MUST cn MAY ( memberURL $ businessCategory $ description $ o $ ou $ owner $ seeAlso ) X-ORIGIN 'Sun Java System Directory Server' X-SCHEMA-FILE '00-core.ldif' )
