@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExampleRepositoryTest {
-
+/*
    private SampleData sampleData = new SampleData();
 
    private DataSource dataSource = TestDataSource.create();
@@ -43,5 +43,5 @@ class ExampleRepositoryTest {
       Assertions.assertThat(repository.retrieve(entity.getUid()))
             .isEqualTo(entity);
    }
-
+*/
 }
