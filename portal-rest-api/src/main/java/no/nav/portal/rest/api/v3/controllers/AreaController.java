@@ -76,7 +76,7 @@ public class AreaController {
               .map(EntityDtoMappers::toDto)
               .collect(Collectors.toList());
 */
-         return System.getenv("my-secret");
+         return "Hey";//System.getenv("my-secret");
    }
 
    @POST("/Areas")
