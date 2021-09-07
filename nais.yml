@@ -6,6 +6,10 @@ metadata:
   labels:
     team: navdig
 spec:
+  envFrom:
+    - secret: my-secret
+  secureLogs:
+    enabled: true
   image: {{ image }}
   port: 3001
   ingresses:

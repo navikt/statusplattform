@@ -69,13 +69,14 @@ public class AreaController {
    @GET("/Areas")
    @JsonBody
    //TODO denne må hente basert på dashboard:
-   public List<AreaDto> getAreas() {
-      DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
+   public String getAreas() {
+/*      DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
       List<String> areaCodes = dashboardDto.getAreasIds();
       return areaRepository.retrieve(areaCodes).stream()
               .map(EntityDtoMappers::toDto)
               .collect(Collectors.toList());
-
+*/
+         return System.getenv("my-secret");
    }
 
    @POST("/Areas")
