@@ -1,4 +1,4 @@
-/*grant all on all tables in schema public to cloudsqliamuser;*/
+grant all on all tables in schema public to cloudsqliamuser;
 
 CREATE TABLE public.area (
     beskrivelse text NOT NULL,
