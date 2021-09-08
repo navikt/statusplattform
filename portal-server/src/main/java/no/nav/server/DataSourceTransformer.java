@@ -12,7 +12,7 @@ import java.util.Properties;
 public class DataSourceTransformer {
     public static DataSource create(Map<String, String> props1) {
         Map<String, String> props = new HashMap<>();
-        props.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/flywaytest");
+        props.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
         props.put("username", "postgres");
         //Lokalt passord
         props.put("password", "system");
