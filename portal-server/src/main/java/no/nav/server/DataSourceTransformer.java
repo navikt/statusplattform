@@ -17,7 +17,7 @@ public class DataSourceTransformer {
         //Lokalt passord
         //props.put("password", "system");
         //props.put("password", System.getenv("key1"));
-        props.put("jdbcUrl", "jdbc:postgres://navstatus:eXbfbOCt-wr8RJqL15kbJX75RpImagbOwadRwhKfU6c@127.0.0.1:5432/navstatus");
+        props.put("jdbcUrl", "jdbc:postgres://postgres:karamell64@127.0.0.1:5432/navstatus");
         props.put("driverClassName", "org.postgresql.Driver");
         props.put("maximumPoolSize","32");
         Properties properties = new Properties();
