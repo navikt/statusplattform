@@ -22,7 +22,22 @@ public class DataSourceTransformer {
         props.put("maximumPoolSize","32");
         Properties properties = new Properties();
         props.forEach(properties::put);
-        HikariDataSource dataSource = new HikariDataSource(new HikariConfig(properties));
+        HikariDataSource dataSource;
+
+
+        int count = 0;
+        int maxTries = 100000;
+        while(true) {
+            try {
+                dataSource = new HikariDataSource(new HikariConfig(properties));
+                break;
+            } catch (Exception e) {
+                if (++count == maxTries) throw e;
+            }
+        }
+
+
+
         Flyway.configure().dataSource(dataSource).load().migrate();
         return dataSource;
     }
