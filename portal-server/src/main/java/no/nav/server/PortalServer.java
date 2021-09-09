@@ -42,9 +42,10 @@ public class PortalServer {
         int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt)
                 .orElse(3001);
         connector.setPort(port);
+        setDataSource(DataSourceTransformer.create());
 
         new ConfigObserver("portal")
-                .onPrefixedValue("dataSource", DataSourceTransformer::create, this::setDataSource)
+                //.onPrefixedValue("dataSource", DataSourceTransformer::create, this::setDataSource)
                 .onInetSocketAddress("http.port", port, this::setHttpPort)
                 /*Når man legger inn autentisering med OIDC for Profil / Admin så er det ca slik. Se denne commit for hvordan det funket for rest før
                 .onStringValue("openid.discovery_url", null, brukergrupperRestApi::setOpenIdConfiguration)

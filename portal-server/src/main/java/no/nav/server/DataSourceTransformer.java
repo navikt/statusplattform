@@ -10,14 +10,14 @@ import java.util.Map;
 import java.util.Properties;
 
 public class DataSourceTransformer {
-    public static DataSource create(Map<String, String> props1) {
+    public static DataSource create() {
         Map<String, String> props = new HashMap<>();
         props.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
         props.put("username", "postgres");
         //Lokalt passord
         //props.put("password", "system");
         props.put("password", System.getenv("key1"));
-        //props.put("jdbcUrl", "jdbc:postgres://postgres:karamell64@127.0.0.1:5432/navstatus");
+
         props.put("driverClassName", "org.postgresql.Driver");
         props.put("maximumPoolSize","32");
         Properties properties = new Properties();
@@ -26,7 +26,7 @@ public class DataSourceTransformer {
 
 
         int count = 0;
-        int maxTries = 100000;
+        int maxTries = 1;
         while(true) {
             try {
                 dataSource = new HikariDataSource(new HikariConfig(properties));

@@ -33,7 +33,7 @@ public class AreaController {
    }
 
 
-   @GET("/Tiles")
+   @GET("/tiles")
    @JsonBody
    public List<TileDto> getTestData() {
       //Dashboardtype må settes som parameter
