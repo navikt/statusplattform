@@ -26,7 +26,7 @@ public class DataSourceTransformer {
 
 
         int count = 0;
-        int maxTries = 1;
+        int maxTries = 1000000;
         while(true) {
             try {
                 dataSource = new HikariDataSource(new HikariConfig(properties));
