@@ -30,17 +30,23 @@ public class DashboardRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Dashboard with name " + name));
     }
 
+
+
+    public void removeArea(String dashboardName, String areaId) {
+            DashboardEntity entity = retrieve(dashboardName);
+            entity.removeOne(areaId);
+            save(entity);
+    }
+
     private static DashboardEntity toDashboard(DatabaseRow row) throws SQLException {
         return new DashboardEntity(row.getString("name"),
                 row.getStringList("areas"));
     }
 
     public void addAreaToDashboard(String dashboardName, String areaId){
-        String areas = table.where("name",dashboardName).singleString("areas").get();
-        areas = areas.substring(1,areas.length()-1)+","+areaId;
-        String[] areasList = areas.split(",");
-        table.where("name", dashboardName).update().setField("areas",areasList).execute();
-
+        DashboardEntity entity = retrieve(dashboardName);
+        entity.addOneArea(areaId);
+        save(entity);
     }
 
     public Query query() {

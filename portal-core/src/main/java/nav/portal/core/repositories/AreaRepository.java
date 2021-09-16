@@ -5,6 +5,7 @@ import org.fluentjdbc.*;
 
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +50,7 @@ public class AreaRepository {
                 row.getString("beskrivelse"),
                 row.getString("ikon"),
                 row.getInt("rangering"),
-                row.getStringList("services")
+                Collections.emptyList()
                 );
     }
 

@@ -36,7 +36,7 @@ public class AreaController {
 
    @GET("/Tiles")
    @JsonBody
-   public List<TileDto> getTestData() {
+   public List<TileDto> getTiles() {
       //Dashboardtype må settes som parameter
       DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
       List<AreaDto> areaDtos = areaRepository.retrieve(dashboardDto.getAreasIds())
@@ -169,9 +169,9 @@ public class AreaController {
    @DELETE("/Areas")
    @JsonBody
    //TODO denne skal kun fjerne området fra ett dashboard
-   public List<AreaDto> deleteArea(@JsonBody AreaDto areaDto) {
-      testUtil.deleteAdminArea(areaDto);
-      return testUtil.getAreaDtos();
+   public void deleteArea(@JsonBody AreaDto areaDto) {
+      dashboardRepository.removeArea("privatperson",areaDto.getId());
+
    }
 
    @GET("/dashboards")

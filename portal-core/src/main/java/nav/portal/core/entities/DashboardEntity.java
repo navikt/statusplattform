@@ -6,7 +6,7 @@ import java.util.List;
 public class DashboardEntity {
 
     private String name;
-    private List<String> areasIds = new ArrayList<>();
+    private List<String> areasIds;
 
     public DashboardEntity() {
     }
@@ -32,6 +32,21 @@ public class DashboardEntity {
 
     public void setAreasIds(List<String> areasIds) {
         this.areasIds = areasIds;
+    }
+
+
+    public DashboardEntity addOneArea(String areasId) {
+        ArrayList<String> newAreas = new ArrayList(this.areasIds);
+        newAreas.add(areasId);
+        this.setAreasIds(newAreas);
+        return this;
+    }
+
+    public DashboardEntity removeOne(String areasId) {
+        ArrayList<String> newAreas = new ArrayList(this.areasIds);
+        newAreas.remove(areasId);
+        this.setAreasIds(newAreas);
+        return this;
     }
 }
 
