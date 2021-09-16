@@ -4,6 +4,7 @@ import nav.portal.core.entities.DashboardEntity;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class DashboardRepository {
@@ -32,6 +33,14 @@ public class DashboardRepository {
     private static DashboardEntity toDashboard(DatabaseRow row) throws SQLException {
         return new DashboardEntity(row.getString("name"),
                 row.getStringList("areas"));
+    }
+
+    public void addAreaToDashboard(String dashboardName, String areaId){
+        String areas = table.where("name",dashboardName).singleString("areas").get();
+        areas = areas.substring(1,areas.length()-1)+","+areaId;
+        String[] areasList = areas.split(",");
+        table.where("name", dashboardName).update().setField("areas",areasList).execute();
+
     }
 
     public Query query() {

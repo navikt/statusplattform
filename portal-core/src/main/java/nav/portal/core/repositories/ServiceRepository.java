@@ -48,6 +48,17 @@ public class ServiceRepository {
                 .collect(Collectors.toList());
     }
 
+    public int delete(String id) {
+        return table.where("id", id).executeDelete();
+    }
+
+    public List<ServiceEntity> retrieveAll() {
+        return table.unordered()
+                .stream(ServiceRepository::toService)
+                .collect(Collectors.toList());
+    }
+
+
     private static ServiceEntity toService(DatabaseRow row) throws SQLException {
         return new ServiceEntity(row.getString("name"),
                 row.getString("id"),

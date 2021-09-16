@@ -1,6 +1,7 @@
 
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
@@ -33,7 +34,7 @@ public class AreaController {
    }
 
 
-   @GET("/tiles")
+   @GET("/Tiles")
    @JsonBody
    public List<TileDto> getTestData() {
       //Dashboardtype må settes som parameter
@@ -69,14 +70,14 @@ public class AreaController {
    @GET("/Areas")
    @JsonBody
    //TODO denne må hente basert på dashboard:
-   public String getAreas() {
-/*      DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
+   public List<AreaDto> getAreas() {
+      DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
       List<String> areaCodes = dashboardDto.getAreasIds();
       return areaRepository.retrieve(areaCodes).stream()
               .map(EntityDtoMappers::toDto)
               .collect(Collectors.toList());
-*/
-         return "Hey";//System.getenv("my-secret");
+
+
    }
 
    @POST("/Areas")
@@ -88,6 +89,8 @@ public class AreaController {
          return areaDto;
       }
       catch (IllegalArgumentException e){
+         //TODO denne må legges in basert på dashboard
+         dashboardRepository.addAreaToDashboard("privatperson", areaDto.getId());
          areaRepository.save(EntityDtoMappers.toEntity(areaDto));
          return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
       }
@@ -125,6 +128,43 @@ public class AreaController {
               42);
       recordRepository.save(entity);
    }
+
+   @POST("/Service")
+   @JsonBody
+   public void newService(@JsonBody ServiceDto serviceDto) {
+         //Servicen er ikke lagret fra før
+         //Dette skal legges inn i ett tjeneste lag
+         ServiceEntity entity = new ServiceEntity();
+         entity.setId(serviceDto.getId());
+         entity.setName(serviceDto.getName());
+         entity.setType(serviceDto.getType());
+         entity.setTeam(serviceDto.getTeam());
+         entity.setDependencies(serviceDto.getDependencies());
+         entity.setMonitorlink(serviceDto.getMonitorlink());
+         entity.setDescription(serviceDto.getDescription());
+         entity.setLogglink(serviceDto.getLogglink());
+         serviceRepository.save(entity);
+      }
+
+   @GET("/Services")
+   @JsonBody
+   public List<ServiceDto> getServices() {
+      return serviceRepository.retrieveAll()
+              .stream()
+              .map(EntityDtoMappers::toDto)
+              .collect(Collectors.toList());
+
+   }
+
+   @DELETE("/Service")
+   @JsonBody
+   //TODO denne skal kun fjerne området fra ett dashboard
+   public void deleteService(@JsonBody ServiceDto serviceDto) {
+      serviceRepository.delete(serviceDto.getId());
+   }
+
+
+
 
    @DELETE("/Areas")
    @JsonBody
