@@ -1,5 +1,7 @@
 package nav.portal.core.entities;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AreaEntity {
@@ -20,15 +22,25 @@ public class AreaEntity {
         this.beskrivelse = beskrivelse;
         this.ikon = ikon;
         this.rangering = rangering;
-        this.servisesIds = servisesIds;
+        this.servisesIds  = servisesIds == null? Collections.emptyList() :servisesIds;
     }
 
     public List<String> getServisesIds() {
         return servisesIds;
     }
 
-    public void setServisesIds(List<String> servisesIds) {
+    public void setServisesIds(ArrayList<String> servisesIds) {
         this.servisesIds = servisesIds;
+    }
+
+    public AreaEntity addService(String serviceId){
+        if( !this.servisesIds.contains(serviceId)) {
+            ArrayList<String> services = new ArrayList<>(this.servisesIds);
+            services.add(serviceId);
+            this.servisesIds = services;
+            return this;
+        }
+        return this;
     }
 
     public String getName() {

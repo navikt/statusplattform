@@ -22,7 +22,6 @@ public class AreaController {
    private final DashboardRepository dashboardRepository;
    private final ServiceRepository serviceRepository;
    private final RecordRepository recordRepository;
-   private TestUtil testUtil; //TODO DENNE SKAL IKKE BO HER FINN UT ANNEN LØSNING
 
 
    public AreaController(DbContext dbContext) {
@@ -30,7 +29,6 @@ public class AreaController {
       this.dashboardRepository = new DashboardRepository(dbContext);
       this.serviceRepository = new ServiceRepository(dbContext);
       this.recordRepository = new RecordRepository(dbContext);
-      this.testUtil = new TestUtil();
    }
 
 
@@ -98,10 +96,9 @@ public class AreaController {
 
    @PUT("/ServiceOnArea")
    @JsonBody
-   public AreaDto addServiceToArea(@JsonBody AreaDto areaDto) {
-         areaRepository.save(EntityDtoMappers.toEntity(areaDto));
-         return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
-
+   public void addServiceToArea(@JsonBody ServiceToAreaDto serviceToAreaDto) {
+      areaRepository.addServiceToArea(serviceToAreaDto.getAreaId()
+              ,serviceToAreaDto.getServiceId());
    }
 
    @POST("/ServiceRecord")

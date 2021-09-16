@@ -6,7 +6,7 @@ info:
 servers:
   - url: /rest
 paths:
-  /tiles:
+  /Tiles:
     get:
       tags:
         - Tiles
@@ -31,31 +31,32 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
-  /testStatus:
-    get:
+  /ServiceOnArea:
+    put:
       tags:
-        - status
-      summary: Status og hendelser
-      operationId: status
+        - ServiceOnArea
+      summary: ServiceOnArea
+      requestBody:
+        description: Legg til en ny tjeneste på et område
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceToArea'
+          text/plain:
+            schema:
+              type: string
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/StatusAndIncidents'
-        '401':
-          description: Unauthorized
-          content: {}
+        '201':
+          description: Created
         '403':
           description: Forbidden
-          content: {}
+          content: { }
         '404':
           description: Not Found
-          content: {}
-      deprecated: false
+          content: { }
+
+
   /Areas:
     get:
       tags:
@@ -139,6 +140,14 @@ components:
           type: array
           items:
             type: string
+    ServiceToArea:
+      title: ServiceToArea
+      type: object
+      properties:
+        areaId:
+          type: string
+        serviceId:
+          type: string
     Area:
       title: Area
       type: object

@@ -5,6 +5,7 @@ import org.fluentjdbc.*;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ public class AreaRepository {
                 .setField("beskrivelse", entity.getBeskrivelse())
                 .setField("ikon", entity.getIkon())
                 .setField("rangering", entity.getRangering())
+                .setField("services", entity.getServisesIds())
                 .execute();
         return result.getSaveStatus();
     }
@@ -35,6 +37,12 @@ public class AreaRepository {
         return table.where("id", id)
                 .singleObject(AreaRepository::toArea)
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Area with id " + id));
+    }
+
+    public void addServiceToArea(String areaId, String serviceId) {
+        AreaEntity entity = retrieve(areaId);
+        entity.addService(serviceId);
+        save(entity);
     }
 
     public List<AreaEntity> retrieve(List<String> ids) {
@@ -50,7 +58,7 @@ public class AreaRepository {
                 row.getString("beskrivelse"),
                 row.getString("ikon"),
                 row.getInt("rangering"),
-                Collections.emptyList()
+                row.getStringList("services")
                 );
     }
 
