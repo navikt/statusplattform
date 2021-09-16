@@ -96,6 +96,14 @@ public class AreaController {
       }
    }
 
+   @PUT("/ServiceOnArea")
+   @JsonBody
+   public AreaDto addServiceToArea(@JsonBody AreaDto areaDto) {
+         areaRepository.save(EntityDtoMappers.toEntity(areaDto));
+         return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
+
+   }
+
    @POST("/ServiceRecord")
    @JsonBody
    public void uppdateRecord(@JsonBody ServiceDto serviceDto) {
