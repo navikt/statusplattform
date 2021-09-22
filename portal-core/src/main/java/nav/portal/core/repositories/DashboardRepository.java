@@ -5,6 +5,7 @@ import org.fluentjdbc.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DashboardRepository {
@@ -28,6 +29,12 @@ public class DashboardRepository {
         return table.where("name", name)
                 .singleObject(DashboardRepository::toDashboard)
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Dashboard with name " + name));
+    }
+
+    public List<DashboardEntity> retrieveAll() {
+        return table.unordered()
+                .stream(DashboardRepository::toDashboard)
+                .collect(Collectors.toList());
     }
 
 

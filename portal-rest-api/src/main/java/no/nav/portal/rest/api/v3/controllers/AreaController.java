@@ -78,6 +78,16 @@ public class AreaController {
 
    }
 
+   @GET("/Dashboard")
+   @JsonBody
+   public List<DashboardDto> getDashboards() {
+      return dashboardRepository.retrieveAll().stream()
+              .map(EntityDtoMappers::toDto)
+              .collect(Collectors.toList());
+
+
+   }
+
    @POST("/Areas")
    @JsonBody
    public AreaDto newAreas(@JsonBody AreaDto areaDto) {
