@@ -32,7 +32,6 @@ public class PortalRestApi extends ClasspathWebAppContext {
         addServlet(new ServletHolder(new ApiServlet(List.of(
                 new AreaController(dbContext),
                 new DashboardController(dbContext),
-                new MessageController(dbContext),
                 new ServiceController(dbContext),
                 new TileController(dbContext)
 
