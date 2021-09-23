@@ -29,7 +29,7 @@ public class AreaEntity {
         return servisesIds;
     }
 
-    public void setServisesIds(ArrayList<String> servisesIds) {
+    public void setServisesIds(List<String> servisesIds) {
         this.servisesIds = servisesIds;
     }
 
@@ -42,6 +42,19 @@ public class AreaEntity {
         }
         return this;
     }
+
+    public AreaEntity removeService(String serviceId){
+        if( this.servisesIds.contains(serviceId)) {
+            ArrayList<String> services = new ArrayList<>(this.servisesIds);
+            services.remove(serviceId);
+            this.servisesIds = services;
+            return this;
+        }
+        return this;
+    }
+
+
+
 
     public String getName() {
         return name;

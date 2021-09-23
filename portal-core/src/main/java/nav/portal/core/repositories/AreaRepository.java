@@ -45,6 +45,12 @@ public class AreaRepository {
         save(entity);
     }
 
+    public void removeServiceFromArea(String areaId, String serviceId) {
+        AreaEntity entity = retrieve(areaId);
+        entity.removeService(serviceId);
+        save(entity);
+    }
+
     public List<AreaEntity> retrieve(List<String> ids) {
         return table.whereIn("id", ids)
                 .stream(AreaRepository::toArea)

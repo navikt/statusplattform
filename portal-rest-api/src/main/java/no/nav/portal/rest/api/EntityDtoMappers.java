@@ -7,6 +7,8 @@ import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.DashboardDto;
 import no.portal.web.generated.api.ServiceDto;
 
+import java.util.Collections;
+
 public class EntityDtoMappers {
 
     public static AreaEntity toEntity(AreaDto dto){
@@ -14,6 +16,7 @@ public class EntityDtoMappers {
         entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setBeskrivelse(dto.getBeskrivelse());
+        entity.setServisesIds(dto.getServisesIds());
         entity.setIkon(dto.getIkon());
         entity.setRangering(dto.getRangering());
         return entity;
