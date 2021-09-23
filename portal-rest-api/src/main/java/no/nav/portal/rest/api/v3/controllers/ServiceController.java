@@ -34,7 +34,11 @@ public class ServiceController {
     }
 
 
-
+    @DELETE("/Service")
+    @JsonBody
+    public void deleteService(@JsonBody ServiceDto serviceDto) {
+        serviceRepository.delete(serviceDto.getId());
+    }
 
 
 
@@ -97,13 +101,5 @@ public class ServiceController {
                 .collect(Collectors.toList());
 
     }
-
-    @DELETE("/Service")
-    @JsonBody
-    //TODO denne skal kun fjerne området fra ett dashboard
-    public void deleteService(@JsonBody ServiceDto serviceDto) {
-        serviceRepository.delete(serviceDto.getId());
-    }
-
 
 }

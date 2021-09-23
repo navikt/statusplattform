@@ -8,6 +8,7 @@ import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.GET;
+import org.actioncontroller.PathParam;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
@@ -34,11 +35,11 @@ public class TileController {
 
 
 
-    @GET("/Tiles")
+    @GET("/Tiles/:Dashboard")
     @JsonBody
-    public List<TileDto> getTiles() {
+    public List<TileDto> getTiles(@PathParam("Dashboard") String dashboard) {
         //Dashboardtype må settes som parameter
-        DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve("privatperson"));
+        DashboardDto dashboardDto  =  EntityDtoMappers.toDto(dashboardRepository.retrieve(dashboard));
         List<AreaDto> areaDtos = areaRepository.retrieve(dashboardDto.getAreasIds())
                 .stream()
                 .map(EntityDtoMappers::toDto)

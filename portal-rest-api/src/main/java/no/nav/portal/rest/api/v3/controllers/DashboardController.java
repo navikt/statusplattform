@@ -4,6 +4,7 @@ import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
+import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.DashboardDto;
 import org.actioncontroller.GET;
 import org.actioncontroller.json.JsonBody;
@@ -11,6 +12,7 @@ import org.fluentjdbc.DbContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DashboardController {
 
@@ -27,11 +29,11 @@ public class DashboardController {
         this.recordRepository = new RecordRepository(dbContext);
     }
 
-    @GET("/dashboards")
+    @GET("/Dashboards")
     @JsonBody
-    public List<DashboardDto> getDashBoards() {
-        ArrayList<DashboardDto> statusAndIncidentsDtos = new ArrayList<>();
-        return statusAndIncidentsDtos;
+    public List<DashboardDto> getDashboards() {
+        return dashboardRepository.retrieveAll().stream()
+                .map(EntityDtoMappers::toDto)
+                .collect(Collectors.toList());
     }
-
 }

@@ -33,33 +33,32 @@ public class AreaController {
       this.recordRepository = new RecordRepository(dbContext);
    }
 
-   @GET("/Areas/:dashboard")
+   @GET("/Areas/:Dashboard")
    @JsonBody
-   public List<AreaDto> getAreas(@PathParam("dashboard") String dashboard) {
+   public List<AreaDto> getAreas(@PathParam("Dashboard") String dashboard) {
       return areaRepositoryHelper.getAreasOnDashboard(dashboard);
    }
 
-   @GET("/Dashboard")
-   @JsonBody
-   public List<DashboardDto> getDashboards() {
-      return dashboardRepository.retrieveAll().stream()
-              .map(EntityDtoMappers::toDto)
-              .collect(Collectors.toList());
-   }
 
-   @POST("/Areas/:dashboard")
+
+   @POST("/Areas/:Dashboard")
    @JsonBody
-   public AreaDto newAreas(@JsonBody AreaDto areaDto, @PathParam("dashboard") String dashboard) {
+   public AreaDto newAreas(@JsonBody AreaDto areaDto, @PathParam("Dashboard") String dashboard) {
       try{
          areaRepository.retrieve(areaDto.getId());
          return areaDto;
       }
       catch (IllegalArgumentException e){
-         //TODO denne må legges in basert på dashboard
-         dashboardRepository.addAreaToDashboard("privatperson", areaDto.getId());
+         dashboardRepository.addAreaToDashboard(dashboard, areaDto.getId());
          areaRepository.save(EntityDtoMappers.toEntity(areaDto));
          return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
       }
+   }
+
+   @DELETE("/Areas/:Dashboard")
+   @JsonBody
+   public void deleteArea(@JsonBody AreaDto areaDto, @PathParam("Dashboard") String dashboard) {
+      dashboardRepository.removeArea(dashboard,areaDto.getId());
    }
 
    @PUT("/ServiceOnArea")
@@ -76,25 +75,7 @@ public class AreaController {
               ,serviceToAreaDto.getServiceId());
    }
 
-   @DELETE("/Areas/:dashboard")
-   @JsonBody
-   public void deleteArea(@JsonBody AreaDto areaDto, @PathParam("dashboard") String dashboard) {
-      dashboardRepository.removeArea(dashboard,areaDto.getId());
-   }
 
-   @GET("/testStatus")
-   @JsonBody
-   public List<StatusAndIncidentsDto> getTestStatus() {
-      ArrayList<StatusAndIncidentsDto> statusAndIncidentsDtos = new ArrayList<>();
-      int numberOfSandIs = 5;
-      for(int i = 0; i <numberOfSandIs; i++){
-         StatusAndIncidentsDto dto = new StatusAndIncidentsDto();
-         dto.status("Status " + i);
-         dto.setName("Name " + i);
-         statusAndIncidentsDtos.add(dto);
-      }
-      return statusAndIncidentsDtos;
-   }
 
 
 
