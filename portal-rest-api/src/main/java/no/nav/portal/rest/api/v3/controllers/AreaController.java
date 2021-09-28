@@ -58,7 +58,10 @@ public class AreaController {
    @DELETE("/Areas/:Dashboard")
    @JsonBody
    public void deleteArea(@JsonBody AreaDto areaDto, @PathParam("Dashboard") String dashboard) {
-      dashboardRepository.removeArea(dashboard,areaDto.getId());
+         boolean removed = dashboardRepository.removeArea(dashboard,areaDto.getId());
+         if(!removed){
+            throw new HttpNotFoundException();
+         }
    }
 
    @PUT("/ServiceOnArea")

@@ -38,11 +38,14 @@ public class DashboardRepository {
     }
 
 
-
-    public void removeArea(String dashboardName, String areaId) {
+    public boolean removeArea(String dashboardName, String areaId) {
             DashboardEntity entity = retrieve(dashboardName);
+            if(!entity.getAreasIds().contains(areaId)){
+                return false;
+            }
             entity.removeOne(areaId);
             save(entity);
+            return true;
     }
 
     private static DashboardEntity toDashboard(DatabaseRow row) throws SQLException {
