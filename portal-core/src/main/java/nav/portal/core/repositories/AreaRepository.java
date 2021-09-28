@@ -22,7 +22,16 @@ public class AreaRepository {
         table = dbContext.table("area");
     }
 
-    public DatabaseSaveResult.SaveStatus save(AreaEntity entity) {
+    public DatabaseSaveResult.SaveStatus saveNew(AreaEntity entity) {
+        DatabaseSaveResult<String> result = table.newSaveBuilderWithString("id", entity.getId())
+                .setField("name",entity.getName())
+                .setField("beskrivelse", entity.getBeskrivelse())
+                .setField("ikon", entity.getIkon())
+                .setField("rangering", entity.getRangering())
+                .execute();
+        return result.getSaveStatus();
+    }
+    public DatabaseSaveResult.SaveStatus uppdate(AreaEntity entity) {
         DatabaseSaveResult<String> result = table.newSaveBuilderWithString("id", entity.getId())
                 .setField("name",entity.getName())
                 .setField("beskrivelse", entity.getBeskrivelse())
@@ -42,13 +51,13 @@ public class AreaRepository {
     public void addServiceToArea(String areaId, String serviceId) {
         AreaEntity entity = retrieve(areaId);
         entity.addService(serviceId);
-        save(entity);
+        uppdate(entity);
     }
 
     public void removeServiceFromArea(String areaId, String serviceId) {
         AreaEntity entity = retrieve(areaId);
         entity.removeService(serviceId);
-        save(entity);
+        uppdate(entity);
     }
 
     public List<AreaEntity> retrieve(List<String> ids) {

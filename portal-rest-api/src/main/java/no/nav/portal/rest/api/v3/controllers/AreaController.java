@@ -50,7 +50,7 @@ public class AreaController {
       }
       catch (IllegalArgumentException e){
          dashboardRepository.addAreaToDashboard(dashboard, areaDto.getId());
-         areaRepository.save(EntityDtoMappers.toEntity(areaDto));
+         areaRepository.saveNew(EntityDtoMappers.toEntity(areaDto));
          return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
       }
    }
