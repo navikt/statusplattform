@@ -13,6 +13,7 @@ import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ public class TileController {
         List<AreaDto> areaDtos = areaRepository.retrieve(dashboardDto.getAreasIds())
                 .stream()
                 .map(EntityDtoMappers::toDto)
+                .sorted(Comparator.comparing(AreaDto::getRangering))
                 .collect(Collectors.toList());
         ArrayList<TileDto> tiles = new ArrayList<>();
         for(AreaDto areaDto: areaDtos){
