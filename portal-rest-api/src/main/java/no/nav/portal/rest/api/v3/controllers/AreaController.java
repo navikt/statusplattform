@@ -39,6 +39,19 @@ public class AreaController {
       return areaRepositoryHelper.getAreasOnDashboard(dashboard);
    }
 
+   @POST("/Areas")
+   @JsonBody
+   public AreaDto newArea(@JsonBody AreaDto areaDto) {
+      try{
+         areaRepository.retrieve(areaDto.getId());
+         throw new HttpForbiddenException("Område med id: "+ areaDto.getId() +" finnes fra før.");
+      }
+      catch (IllegalArgumentException e){
+         areaRepository.saveNew(EntityDtoMappers.toEntity(areaDto));
+         return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
+      }
+   }
+
 
 
    @POST("/Areas/:Dashboard")
