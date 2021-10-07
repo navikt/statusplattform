@@ -1,6 +1,7 @@
 package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.entities.RecordEntityBuilder;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.DashboardRepository;
@@ -48,10 +49,7 @@ public class ServiceController {
         if(serviceRepository.doesEntryExist(serviceDto.getId())){
             //Servisen er lagret fra før
             //Legger kunn til en ny record. Men skal man sammenligne?
-            RecordEntity entity = new RecordEntity(serviceDto.getId(),
-                    serviceDto.getStatus().getValue()
-                    ,new Timestamp(System.currentTimeMillis()),
-                    42);
+            RecordEntity entity = new RecordEntityBuilder().setServiceId(serviceDto.getId()).setStatus(serviceDto.getStatus().getValue()).setCreated_at(new Timestamp(System.currentTimeMillis())).setResponsetime(42).createRecordEntity();
             recordRepository.save(entity);
         }
         else{
@@ -68,10 +66,7 @@ public class ServiceController {
             entity.setLogglink(serviceDto.getLogglink());
             serviceRepository.save(entity);
         }
-        RecordEntity entity = new RecordEntity(serviceDto.getId(),
-                serviceDto.getStatus().getValue()
-                ,new Timestamp(System.currentTimeMillis()),
-                42);
+        RecordEntity entity = new RecordEntityBuilder().setServiceId(serviceDto.getId()).setStatus(serviceDto.getStatus().getValue()).setCreated_at(new Timestamp(System.currentTimeMillis())).setResponsetime(42).createRecordEntity();
         recordRepository.save(entity);
     }
 

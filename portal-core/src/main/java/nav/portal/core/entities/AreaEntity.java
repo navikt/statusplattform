@@ -1,60 +1,26 @@
 package nav.portal.core.entities;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.UUID;
 
 public class AreaEntity {
 
-    private String id;
+    private UUID id;
     private String name;
     private String beskrivelse;
     private String ikon;
-    private Integer rangering;
-    private List<String> servisesIds;
+
 
     public AreaEntity() {
     }
 
-    public AreaEntity(String id, String name, String beskrivelse, String ikon, Integer rangering, List<String> servisesIds) {
+    public AreaEntity(UUID id, String name, String beskrivelse, String ikon) {
         this.id = id;
         this.name = name;
         this.beskrivelse = beskrivelse;
         this.ikon = ikon;
-        this.rangering = rangering;
-        this.servisesIds  = servisesIds == null? Collections.emptyList() :servisesIds;
+
     }
-
-    public List<String> getServisesIds() {
-        return servisesIds;
-    }
-
-    public void setServisesIds(List<String> servisesIds) {
-        this.servisesIds = servisesIds;
-    }
-
-    public AreaEntity addService(String serviceId){
-        if( !this.servisesIds.contains(serviceId)) {
-            ArrayList<String> services = new ArrayList<>(this.servisesIds);
-            services.add(serviceId);
-            this.servisesIds = services;
-            return this;
-        }
-        return this;
-    }
-
-    public AreaEntity removeService(String serviceId){
-        if( this.servisesIds.contains(serviceId)) {
-            ArrayList<String> services = new ArrayList<>(this.servisesIds);
-            services.remove(serviceId);
-            this.servisesIds = services;
-            return this;
-        }
-        return this;
-    }
-
-
-
 
     public String getName() {
         return name;
@@ -72,11 +38,11 @@ public class AreaEntity {
         this.beskrivelse = beskrivelse;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -88,11 +54,4 @@ public class AreaEntity {
         this.ikon = ikon;
     }
 
-    public Integer getRangering() {
-        return rangering;
-    }
-
-    public void setRangering(Integer rangering) {
-        this.rangering = rangering;
-    }
 }

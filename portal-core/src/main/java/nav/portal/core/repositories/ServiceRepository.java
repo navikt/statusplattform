@@ -1,79 +1,116 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.ExampleEntity;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.ServiceType;
+import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ServiceRepository {
 
-    private final DbContextTable table;
+    private final DbContextTable serviceTable;
+    private final DbContextTable service_serviceTable;
+
 
     public ServiceRepository(DbContext dbContext) {
-        table = dbContext.table("service");
+
+        serviceTable = dbContext.table("service");
+        service_serviceTable = dbContext.table("service_service");
     }
 
-    public DatabaseSaveResult.SaveStatus save(ServiceEntity entity) {
-        DatabaseSaveResult<String> result = table.newSaveBuilderWithString("id", entity.getId())
-                .setField("name", entity.getName())
-                .setField("type", entity.getType())
-                .setField("team", entity.getTeam())
-                .setField("dependencies", entity.getDependencies())
-                .setField("monitorlink", entity.getMonitorlink())
-                .setField("description", entity.getDescription())
-                .setField("logglink", entity.getLogglink())
-                .execute();
-        return result.getSaveStatus();
+    public UUID save(ServiceEntity service) {
+        //Legger inn alle alle avhengigheter:
+        service.getDependencies().forEach(dependency ->
+                service_serviceTable.insert()
+                        .setField("service1_id",service.getId())
+                        .setField("service2_id",dependency.getId())
+                        .execute()
+        );
+
+        return serviceTable.newSaveBuilderWithUUID("id", service.getId())
+                .setField("name", service.getName())
+                .setField("type", service.getType().getDbRepresentation())
+                .setField("team", service.getTeam())
+                .setField("monitorlink", service.getMonitorlink())
+                .setField("description", service.getDescription())
+                .setField("logglink", service.getLogglink())
+                .execute()
+                .getId();
     }
 
-    public Optional<ServiceEntity> retrieve(String id) {
-        return table.where("id", id)
+    public Optional<ServiceEntity> retrieve(UUID id) {
+        return serviceTable.where("id", id)
                 .singleObject(ServiceRepository::toService);
     }
 
-    public Boolean doesEntryExist(String id){
-        return table.where("id", id)
+    public Map.Entry<ServiceEntity, List<ServiceEntity>> retrieveOne(UUID service_id) {
+        DbContextTableAlias s2s = service_serviceTable.alias("s2s");
+        DbContextTableAlias service = serviceTable.alias("service");
+
+        Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
+        service
+                .where("id" , service_id)
+                .leftJoin(service.column("id"), s2s.column("service1_id"))
+                .leftJoin(s2s.column("service2_id"), service.column("id"))
+                .list(row -> {
+                    List<ServiceEntity> serviceList = result
+                            .computeIfAbsent(toService(row.table(service)), ignored -> new ArrayList<>());
+
+                    DatabaseRow serivceRow = row.table(service);
+                    Optional.ofNullable(row.getUUID("service_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
+                    return null;
+                });
+        return result
+                .entrySet()
+                .stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Not found: Service with id " + service_id));
+    }
+
+    public Boolean doesEntryExist(UUID id){
+        return serviceTable.where("id", id)
                 .singleObject(ServiceRepository::toService).isPresent();
     }
     public List<ServiceEntity> retrieve(List<String> ids) {
-        return table.whereIn("id", ids)
+        return serviceTable.whereIn("id", ids)
                 .stream(ServiceRepository::toService)
                 .collect(Collectors.toList());
     }
 
-    public int delete(String id) {
-        return table.where("id", id).executeDelete();
+    public int delete(UUID id) {
+        return serviceTable.where("id", id).executeDelete();
     }
 
     public List<ServiceEntity> retrieveAll() {
-        return table.unordered()
+        return serviceTable.orderedBy("name")
                 .stream(ServiceRepository::toService)
                 .collect(Collectors.toList());
     }
 
 
-    private static ServiceEntity toService(DatabaseRow row) throws SQLException {
-        return new ServiceEntity(row.getString("name"),
-                row.getString("id"),
-                row.getString("type"),
-                row.getString("team"),
-                row.getStringList("dependencies"),
-                row.getString("monitorlink"),
-                row.getString("description"),
-                row.getString("logglink")
-                );
+    static ServiceEntity toService(DatabaseRow row) {
+        try {
+            return new ServiceEntity(row.getString("name"),
+                    row.getUUID("id"),
+                    ServiceType.fromDb(row.getString("type")),
+                    row.getString("team"),
+                    row.getString("monitorlink"),
+                    row.getString("description"),
+                    row.getString("logglink")
+                    );
+        } catch (SQLException e) {
+            throw ExceptionUtil.soften(e);
+        }
 
     }
 
     public Query query() {
-        return new Query(table.query());
+        return new Query(serviceTable.query());
     }
 
     public static class Query {

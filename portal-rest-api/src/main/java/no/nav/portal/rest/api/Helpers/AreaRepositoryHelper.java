@@ -7,10 +7,9 @@ import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.DashboardDto;
+import org.actioncontroller.HttpForbiddenException;
 import org.fluentjdbc.DbContext;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +25,20 @@ public class AreaRepositoryHelper {
         this.dashboardRepository = new DashboardRepository(dbContext);
         this.serviceRepository = new ServiceRepository(dbContext);
         this.recordRepository = new RecordRepository(dbContext);
+    }
+
+
+
+    public AreaDto newArea(AreaDto areaDto){
+        try{
+            areaRepository.retrieve(areaDto.getId());
+            throw new HttpForbiddenException("Område med id: "+ areaDto.getId() +" finnes fra før.");
+        }
+        catch (IllegalArgumentException e){
+            areaRepository.save(EntityDtoMappers.toEntity(areaDto));
+            return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
+        }
+
     }
 
 

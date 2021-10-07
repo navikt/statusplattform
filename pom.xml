@@ -11,7 +11,7 @@
     <modules>
         <module>portal-core</module>
         <module>portal-infrastructure</module>
-        <module>portal-rest-api</module>
+        <!--module>portal-rest-api</module-->
         <module>portal-server</module>
     </modules>
 

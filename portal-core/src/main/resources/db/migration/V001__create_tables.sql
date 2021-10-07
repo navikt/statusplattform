@@ -1,61 +1,83 @@
 /*grant all on all tables in schema public to cloudsqliamuser;*/
 
-CREATE TABLE public.area
+
+CREATE TABLE service
 (
-    beskrivelse text COLLATE pg_catalog."default" NOT NULL,
-    id text COLLATE pg_catalog."default" NOT NULL,
-    ikon text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
-    rangering integer NOT NULL,
-    services text[] COLLATE pg_catalog."default",
-    CONSTRAINT "Area_pkey" PRIMARY KEY (id)
-)
+    id          UUID         NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    type        VARCHAR(20)  NOT NULL,
+    team        VARCHAR(100) NOT NULL,
+    monitorlink VARCHAR(300) NULL,
+    logglink    VARCHAR(300) NULL,
+    description text NULL,
+    created_at  timestamp with time zone  NOT NULL DEFAULT NOW(),
+    updated_at  timestamp with time zone NULL,
+    PRIMARY KEY (id)
+);
 
-TABLESPACE pg_default;
-
-ALTER TABLE public.area
-    OWNER to postgres;
-
-CREATE TABLE public.dashboard
+CREATE TABLE service_service
 (
-    name text COLLATE pg_catalog."default" NOT NULL,
-    areas text[] COLLATE pg_catalog."default",
-    CONSTRAINT dashboard_pkey PRIMARY KEY (name)
-)
+    service1_id     UUID        NOT NULL,
+    service2_id     UUID        NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+    updated_at timestamp with time zone NULL,
+    PRIMARY KEY (area_id, service_id),
+    FOREIGN KEY (service_id) REFERENCES service (id),
+    FOREIGN KEY (area_id) REFERENCES area (id)
+);
 
-TABLESPACE pg_default;
-
-ALTER TABLE public.dashboard
-    OWNER to postgres;
-
-CREATE TABLE public.record
+CREATE TABLE service_status
 (
-    status text COLLATE pg_catalog."default",
-    "timestamp" timestamp with time zone,
-    responsetime integer NOT NULL,
-    serviceid text COLLATE pg_catalog."default"
-)
+    id            UUID        NOT NULL,
+    service_id    UUID        NOT NULL,
+    status        VARCHAR(20) NOT NULL,
+    response_time integer NULL,
+    created_at    timestamp with time zone NOT NULL DEFAULT NOW(),
+    updated_at    timestamp with time zone NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (service_id) REFERENCES service (id)
+);
 
-TABLESPACE pg_default;
-
-ALTER TABLE public.record
-    OWNER to postgres;
-
-
-CREATE TABLE public.service
+CREATE TABLE area
 (
-    name text COLLATE pg_catalog."default" NOT NULL,
-    id text COLLATE pg_catalog."default" NOT NULL,
-    type text COLLATE pg_catalog."default" NOT NULL,
-    team text COLLATE pg_catalog."default" NOT NULL,
-    dependencies text[] COLLATE pg_catalog."default" NOT NULL,
-    monitorlink text COLLATE pg_catalog."default",
-    description text COLLATE pg_catalog."default",
-    logglink text COLLATE pg_catalog."default",
-    CONSTRAINT service_pkey PRIMARY KEY (id)
-)
+    id          UUID         NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    icon        VARCHAR(20) NULL,
+    description text NULL,
+    created_at  timestamp with time zone  NOT NULL DEFAULT NOW(),
+    updated_at  timestamp with time zone NULL,
+    PRIMARY KEY (id)
+);
 
-TABLESPACE pg_default;
+CREATE TABLE area_service
+(
+    area_id    UUID        NOT NULL,
+    service_id UUID        NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+    updated_at timestamp with time zone NULL,
+    PRIMARY KEY (area_id, service_id),
+    FOREIGN KEY (service_id) REFERENCES service (id),
+    FOREIGN KEY (area_id) REFERENCES area (id)
+);
 
-ALTER TABLE public.service
-    OWNER to postgres;
+
+
+CREATE TABLE dashboard
+(
+    id         UUID         NOT NULL,
+    name       VARCHAR(100) NOT NULL,
+    created_at timestamp with time zone  NOT NULL DEFAULT NOW(),
+    updated_at timestamp with time zone NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE dashboard_area
+(
+    dashboard_id UUID        NOT NULL,
+    area_id    UUID        NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+    updated_at timestamp with time zone NULL,
+    PRIMARY KEY (area_id, service_id),
+    FOREIGN KEY (dashboard_id) REFERENCES dashboard (id),
+    FOREIGN KEY (area_id) REFERENCES area (id)
+);

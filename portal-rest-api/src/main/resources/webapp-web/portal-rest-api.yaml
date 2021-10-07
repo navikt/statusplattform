@@ -131,16 +131,6 @@ paths:
 
 components:
   schemas:
-    StatusAndIncidents:
-      title: Area
-      type: object
-      properties:
-        name:
-          type: string
-        status:
-          $ref: '#/components/schemas/SandIelement'
-    SandIelement:
-      type: string
     Tile:
       title: Tile
       type: object
@@ -159,18 +149,20 @@ components:
       properties:
         name:
           type: string
-        areasIds:
+        areas:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Area'
     ServiceToArea:
       title: ServiceToArea
       type: object
       properties:
         areaId:
           type: string
+          format: uuid
         serviceId:
           type: string
+          format: uuid
     Area:
       title: Area
       type: object
@@ -179,12 +171,11 @@ components:
           type: string
         id:
           type: string
+          format: uuid
         beskrivelse:
           type: string
         ikon:
           type: string
-        rangering:
-          type: integer
         servisesIds:
           type: array
           items:
@@ -197,14 +188,15 @@ components:
           type: string
         id:
           type: string
+          format: uuid
         type:
-          type: string
+          $ref: '#/components/schemas/ServiceType'
         team:
           type: string
         dependencies:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Service'
         monitorlink:
           type: string
         description:
@@ -214,7 +206,7 @@ components:
         status:
           $ref: '#/components/schemas/Status'
     ServiceStatus:
-      title: Service
+      title: ServiceStatus
       type: object
       properties:
         serviceId:
@@ -230,4 +222,8 @@ components:
         - OK
         - ISSUE
         - DOWN
-
+    ServiceType:
+      type: string
+      enum:
+        - APPLIKASJON
+        - TJENESTE

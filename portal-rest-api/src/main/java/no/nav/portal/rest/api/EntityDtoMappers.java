@@ -3,11 +3,15 @@ package no.nav.portal.rest.api;
 import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.DashboardEntity;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.DashboardDto;
 import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.ServiceTypeDto;
 
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class EntityDtoMappers {
 
@@ -16,9 +20,7 @@ public class EntityDtoMappers {
         entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setBeskrivelse(dto.getBeskrivelse());
-        entity.setServisesIds(dto.getServisesIds());
         entity.setIkon(dto.getIkon());
-        entity.setRangering(dto.getRangering());
         return entity;
     }
 
@@ -28,17 +30,18 @@ public class EntityDtoMappers {
         dto.setName(entity.getName());
         dto.setBeskrivelse(entity.getBeskrivelse());
         dto.setIkon(entity.getIkon());
-        dto.setRangering(entity.getRangering());
-        dto.setServisesIds(entity.getServisesIds());
         return dto;
     }
     public static ServiceDto toDto(ServiceEntity entity){
         ServiceDto dto = new ServiceDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setType(entity.getType());
+        dto.setType(toDto(entity.getType()));//TODO DENNE SKAL VÆRE ENUM
         dto.setTeam(entity.getTeam());
-        dto.setDependencies(entity.getDependencies());
+        dto.setDependencies(entity.getDependencies()
+                .stream()
+                .map(EntityDtoMappers::toDto)
+                .collect(Collectors.toList()));
         dto.setMonitorlink(entity.getMonitorlink());
         dto.setDescription(entity.getDescription());
         dto.setLogglink(entity.getLogglink());
@@ -47,7 +50,13 @@ public class EntityDtoMappers {
     public static DashboardDto toDto(DashboardEntity entity){
         DashboardDto dto = new DashboardDto();
         dto.setName(entity.getName());
-        dto.setAreasIds(entity.getAreasIds());
+        dto.setAreas(entity.getAreas()
+                .stream()
+                .map(EntityDtoMappers::toDto)
+                .collect(Collectors.toList()));
         return dto;
+    }
+    public static ServiceTypeDto toDto(ServiceType serviceType){
+        return ServiceTypeDto.fromValue(serviceType.getDbRepresentation());
     }
 }

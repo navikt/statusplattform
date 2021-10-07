@@ -1,7 +1,7 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.ExampleEntity;
 import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
@@ -10,33 +10,34 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public class RecordRepository {
-    private final DbContextTable table;
+    private final DbContextTable recordTable;
+
 
     public RecordRepository(DbContext dbContext) {
-        table = dbContext.table("record");
+        //TODO:Vurder skal Record bytte navn til service_status
+        recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
     }
 
     public DatabaseSaveResult.SaveStatus save(RecordEntity entity) {
-        DatabaseSaveResult<String> result = table.newSaveBuilderWithString("serviceid", entity.getServiceId())
+        DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
-                .setField("timestamp", entity.getTimestamp())
-                .setField("responsetime", entity.getResponsetime())
+                .setField("response_time", entity.getResponsetime())
                 .execute();
         return result.getSaveStatus();
     }
 
-    public Optional<RecordEntity> getLatestRecord(String serviceId) {
-        return table.where("serviceid", serviceId)
-                .orderBy("timestamp DESC")
+    public Optional<RecordEntity> getLatestRecord(UUID serviceId) {
+        return recordTable.where("service_id", serviceId)
+                .orderBy("created_at DESC")
                 .limit(1)
                 .singleObject(RecordRepository::toRecord);
     }
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
-        return new RecordEntity(row.getString("serviceid"),
-                row.getString("status"),
-                row.getTimestamp("timestamp"),
-                row.getInt("responsetime"));
+        return new RecordEntity(row.getUUID("service_id"),
+                ServiceStatus.fromDb(row.getString("status")),
+                row.getZonedDateTime("created_at"),
+                row.getInt("response_time"));
     }
 
 

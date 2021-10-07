@@ -1,13 +1,17 @@
 package nav.portal.core.entities;
 
+import nav.portal.core.enums.ServiceType;
+
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class ServiceEntity {
     private String name;
-    private String id;
-    private String type;
+    private UUID id;
+    private ServiceType type;
     private String team;
-    private List<String> dependencies;
+    private List<ServiceEntity> dependencies;
     private String monitorlink;
     private String description;
     private String logglink;
@@ -15,12 +19,11 @@ public class ServiceEntity {
     public  ServiceEntity() {
     }
 
-    public ServiceEntity(String name, String id, String type, String team, List<String> dependencies, String monitorlink, String description, String logglink) {
+    public ServiceEntity(String name, UUID id, ServiceType type, String team, String monitorlink, String description, String logglink) {
         this.name = name;
         this.id = id;
         this.type = type;
         this.team = team;
-        this.dependencies = dependencies;
         this.monitorlink = monitorlink;
         this.description = description;
         this.logglink = logglink;
@@ -34,19 +37,22 @@ public class ServiceEntity {
         this.name = name;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
+    public List<ServiceEntity> getDependencies() {
+        return dependencies;
+    }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getType() {
+    public ServiceType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ServiceType type) {
         this.type = type;
     }
 
@@ -56,14 +62,6 @@ public class ServiceEntity {
 
     public void setTeam(String team) {
         this.team = team;
-    }
-
-    public List<String> getDependencies() {
-        return dependencies;
-    }
-
-    public void setDependencies(List<String> dependencies) {
-        this.dependencies = dependencies;
     }
 
     public String getMonitorlink() {
@@ -88,5 +86,18 @@ public class ServiceEntity {
 
     public void setLogglink(String logglink) {
         this.logglink = logglink;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ServiceEntity that = (ServiceEntity) o;
+        return Objects.equals(name, that.name) && Objects.equals(id, that.id) && Objects.equals(type, that.type) && Objects.equals(team, that.team) && Objects.equals(dependencies, that.dependencies) && Objects.equals(monitorlink, that.monitorlink) && Objects.equals(description, that.description) && Objects.equals(logglink, that.logglink);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, id, type, team, dependencies, monitorlink, description, logglink);
     }
 }

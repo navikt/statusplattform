@@ -2,50 +2,42 @@ package nav.portal.core.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DashboardEntity {
 
+    private UUID id;
     private String name;
-    private List<String> areasIds;
+    private List<AreaEntity> areas;
 
     public DashboardEntity() {
-    }
-
-    public DashboardEntity(String name, List<String> areasIds) {
-        this.name = name;
-        this.areasIds = areasIds;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public DashboardEntity setName(String name) {
         this.name = name;
-    }
-
-
-
-    public List<String> getAreasIds() {
-        return areasIds;
-    }
-
-    public void setAreasIds(List<String> areasIds) {
-        this.areasIds = areasIds;
-    }
-
-
-    public DashboardEntity addOneArea(String areasId) {
-        ArrayList<String> newAreas = new ArrayList(this.areasIds);
-        newAreas.add(areasId);
-        this.setAreasIds(newAreas);
         return this;
     }
 
-    public DashboardEntity removeOne(String areasId) {
-        ArrayList<String> newAreas = new ArrayList(this.areasIds);
-        newAreas.remove(areasId);
-        this.setAreasIds(newAreas);
+    public UUID getId() {
+        return id;
+    }
+
+    public DashboardEntity setId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
+    public List<AreaEntity> getAreas() {
+        return areas;
+    }
+
+
+    public DashboardEntity setAreas(List<AreaEntity> areas) {
+        this.areas = areas;
         return this;
     }
 }

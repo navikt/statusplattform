@@ -1,8 +1,6 @@
 
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.RecordEntity;
-import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
@@ -12,8 +10,6 @@ import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.sql.Timestamp;
 
 public class AreaController {
 
@@ -36,36 +32,25 @@ public class AreaController {
    @GET("/Areas/:Dashboard")
    @JsonBody
    public List<AreaDto> getAreas(@PathParam("Dashboard") String dashboard) {
+      //TODO endre til å hente basert på uid
       return areaRepositoryHelper.getAreasOnDashboard(dashboard);
    }
 
    @POST("/Areas")
    @JsonBody
    public AreaDto newArea(@JsonBody AreaDto areaDto) {
-      try{
-         areaRepository.retrieve(areaDto.getId());
-         throw new HttpForbiddenException("Område med id: "+ areaDto.getId() +" finnes fra før.");
-      }
-      catch (IllegalArgumentException e){
-         areaRepository.saveNew(EntityDtoMappers.toEntity(areaDto));
-         return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
-      }
+         return areaRepositoryHelper.newArea(areaDto);
    }
 
 
 
    @POST("/Areas/:Dashboard")
    @JsonBody
-   public AreaDto newAreas(@JsonBody AreaDto areaDto, @PathParam("Dashboard") String dashboard) {
-      try{
-         areaRepository.retrieve(areaDto.getId());
-         return areaDto;
-      }
-      catch (IllegalArgumentException e){
-         dashboardRepository.addAreaToDashboard(dashboard, areaDto.getId());
-         areaRepository.saveNew(EntityDtoMappers.toEntity(areaDto));
+   public AreaDto addAreaToDashboard(@JsonBody AreaDto areaDto, @PathParam("Dashboard") String dashboard) {
+         dashboardRepository.(dashboard, areaDto.getId());
+         areaRepository.save(EntityDtoMappers.toEntity(areaDto));
          return EntityDtoMappers.toDto(areaRepository.retrieve(areaDto.getId()));
-      }
+      
    }
 
    @DELETE("/Areas/:Dashboard")

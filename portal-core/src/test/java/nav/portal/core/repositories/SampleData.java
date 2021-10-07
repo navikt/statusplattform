@@ -16,6 +16,7 @@ public class SampleData {
     private static final List<String> place = List.of("London", "Fantasy", "City");
 
 
+
     public ExampleEntity sampleExample() {
         return  new ExampleEntity();
     }

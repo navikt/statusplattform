@@ -1,54 +1,43 @@
 package nav.portal.core.entities;
 
-import net.sourceforge.jtds.jdbc.DateTime;
 
-import java.sql.Timestamp;
+import nav.portal.core.enums.ServiceStatus;
+
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 public class RecordEntity {
-    private String serviceId;
-    private String status; //Skal være enum, enumet "bor" ikke her. Bør man ha eget enum for core?
-    private Timestamp timestamp;
+    private UUID serviceId;
+    private ServiceStatus status;
+    private ZonedDateTime created_at;
     private Integer responsetime;
 
-    public RecordEntity() {
-    }
 
-    public RecordEntity(String serviceId, String status, Timestamp timestamp, Integer responsetime) {
+
+    public RecordEntity(UUID serviceId, ServiceStatus status, ZonedDateTime created_at, Integer responsetime) {
         this.serviceId = serviceId;
         this.status = status;
-        this.timestamp = timestamp;
         this.responsetime = responsetime;
+        this.created_at = created_at;
     }
 
-    public String getServiceId() {
+    public UUID getServiceId() {
         return serviceId;
     }
 
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
-    }
 
-    public String getStatus() {
+    public ServiceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public ZonedDateTime getCreated_at() {
+        return created_at;
     }
 
     public Integer getResponsetime() {
         return responsetime;
     }
 
-    public void setResponsetime(Integer responsetime) {
-        this.responsetime = responsetime;
-    }
+
 }
