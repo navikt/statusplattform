@@ -27,13 +27,13 @@ public class AreaRepository {
         serviceTable = dbContext.table("service");
     }
 
-    public DatabaseSaveResult.SaveStatus save(AreaEntity entity) {
+    public UUID save(AreaEntity entity) {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
                 .setField("beskrivelse", entity.getBeskrivelse())
                 .setField("ikon", entity.getIkon())
                 .execute();
-        return result.getSaveStatus();
+        return result.getId();
     }
     public DatabaseSaveResult.SaveStatus uppdate(AreaEntity entity) {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())

@@ -176,10 +176,10 @@ components:
           type: string
         ikon:
           type: string
-        servisesIds:
+        servises:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Service'
     Service:
       title: Service
       type: object

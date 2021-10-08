@@ -1,10 +1,8 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.ExampleEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
-import org.fluentjdbc.DatabaseSaveResult;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
-import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;

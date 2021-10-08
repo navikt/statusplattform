@@ -17,9 +17,4 @@ public class SampleData {
 
 
 
-    public ExampleEntity sampleExample() {
-        return  new ExampleEntity();
-    }
-
-
 }

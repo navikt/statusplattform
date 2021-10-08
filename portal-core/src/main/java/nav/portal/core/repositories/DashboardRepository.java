@@ -46,6 +46,13 @@ public class DashboardRepository {
                 .executeDelete();
     }
 
+    public UUID uidFromName(String name) {
+        return dashboardTable.where("name", name)
+                .singleObject(DashboardRepository::toDashboard)
+                .map(dashboard -> dashboard.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Not found: Dashboard with name " + name));
+    }
+
     public Map.Entry<DashboardEntity, List<AreaWithServices>> retrieveOne(UUID id) {
         DbContextTableAlias d = dashboardTable.alias("d");
         DbContextTableAlias d2a = dashboardAreaTable.alias("d2a");

@@ -25,12 +25,6 @@ public class ServiceRepository {
 
     public UUID save(ServiceEntity service) {
         //Legger inn alle alle avhengigheter:
-        service.getDependencies().forEach(dependency ->
-                service_serviceTable.insert()
-                        .setField("service1_id",service.getId())
-                        .setField("service2_id",dependency.getId())
-                        .execute()
-        );
 
         return serviceTable.newSaveBuilderWithUUID("id", service.getId())
                 .setField("name", service.getName())
@@ -41,6 +35,20 @@ public class ServiceRepository {
                 .setField("logglink", service.getLogglink())
                 .execute()
                 .getId();
+    }
+
+    public void addDependenciesToService(ServiceEntity service, List<ServiceEntity> services){
+        services.forEach(dependency ->
+                service_serviceTable.insert()
+                        .setField("service1_id", service.getId())
+                        .setField("service2_id", dependency.getId())
+                        .execute()
+        );
+    }
+
+    public Boolean isOtherServicesDependentOn(UUID id) {
+        return service_serviceTable.where("service2_id", id).getCount() > 0;
+
     }
 
     public Optional<ServiceEntity> retrieve(UUID id) {
@@ -72,6 +80,25 @@ public class ServiceRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Service with id " + service_id));
     }
 
+    public Map<ServiceEntity, List<ServiceEntity>> retriveAll() {
+        DbContextTableAlias s2s = service_serviceTable.alias("s2s");
+        DbContextTableAlias service = serviceTable.alias("service");
+
+        Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
+        service.leftJoin(service.column("id"), s2s.column("service1_id"))
+                .leftJoin(s2s.column("service2_id"), service.column("id"))
+                .list(row -> {
+                    List<ServiceEntity> serviceList = result
+                            .computeIfAbsent(toService(row.table(service)), ignored -> new ArrayList<>());
+
+                    DatabaseRow serivceRow = row.table(service);
+                    Optional.ofNullable(row.getUUID("service_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
+                    return null;
+                });
+        return result;
+    }
+
     public Boolean doesEntryExist(UUID id){
         return serviceTable.where("id", id)
                 .singleObject(ServiceRepository::toService).isPresent();
@@ -86,11 +113,7 @@ public class ServiceRepository {
         return serviceTable.where("id", id).executeDelete();
     }
 
-    public List<ServiceEntity> retrieveAll() {
-        return serviceTable.orderedBy("name")
-                .stream(ServiceRepository::toService)
-                .collect(Collectors.toList());
-    }
+
 
 
     static ServiceEntity toService(DatabaseRow row) {

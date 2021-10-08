@@ -11,7 +11,6 @@ public class ServiceEntity {
     private UUID id;
     private ServiceType type;
     private String team;
-    private List<ServiceEntity> dependencies;
     private String monitorlink;
     private String description;
     private String logglink;
@@ -40,9 +39,7 @@ public class ServiceEntity {
     public UUID getId() {
         return id;
     }
-    public List<ServiceEntity> getDependencies() {
-        return dependencies;
-    }
+
 
     public void setId(UUID id) {
         this.id = id;
@@ -93,11 +90,11 @@ public class ServiceEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ServiceEntity that = (ServiceEntity) o;
-        return Objects.equals(name, that.name) && Objects.equals(id, that.id) && Objects.equals(type, that.type) && Objects.equals(team, that.team) && Objects.equals(dependencies, that.dependencies) && Objects.equals(monitorlink, that.monitorlink) && Objects.equals(description, that.description) && Objects.equals(logglink, that.logglink);
+        return Objects.equals(name, that.name) && Objects.equals(id, that.id) && Objects.equals(type, that.type) && Objects.equals(team, that.team) && Objects.equals(monitorlink, that.monitorlink) && Objects.equals(description, that.description) && Objects.equals(logglink, that.logglink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, id, type, team, dependencies, monitorlink, description, logglink);
+        return Objects.hash(name, id, type, team, monitorlink, description, logglink);
     }
 }
