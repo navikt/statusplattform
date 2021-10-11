@@ -24,35 +24,35 @@ public class AreaController {
    }
 
 
-
-   @GET("/Areas/:Dashboard")
+   @GET("/Areas")
    @JsonBody
-   public List<AreaDto> getAreas(@PathParam("Dashboard") String dashboard) {
-      return areaRepositoryHelper.getAreasOnDashboard(dashboard);
-
+   public List<AreaDto> getAllAreas() {
+      return EntityDtoMappers.toAreaDtoDeep(areaRepository.retrieveAll());
    }
-
    @POST("/Areas")
    @JsonBody
    public AreaDto newArea(@JsonBody AreaDto areaDto) {
          return areaRepositoryHelper.newArea(areaDto);
    }
 
-
-   @PUT("/ServiceOnArea")
+   @GET("/Areas/:Dashboard_id")
    @JsonBody
-   public void addServiceToArea(@JsonBody ServiceToAreaDto serviceToAreaDto) {
-      areaRepository.addServiceToArea(serviceToAreaDto.getAreaId()
-              ,serviceToAreaDto.getServiceId());
+   public List<AreaDto> getAreas(@PathParam("Dashboard") UUID dashboard_id) {
+      return areaRepositoryHelper.getAreasOnDashboard(dashboard_id);
    }
 
-   @DELETE("/ServiceOnArea")
+
+   @PUT("/Area/:Area_id/:Service_id")
    @JsonBody
-   public void removeServiceFromArea(@JsonBody ServiceToAreaDto serviceToAreaDto) {
-      areaRepository.removeServiceFromArea(serviceToAreaDto.getAreaId()
-              ,serviceToAreaDto.getServiceId());
+   public void addServiceToArea(@PathParam("Area_id") UUID area_id, @PathParam("Service_id") UUID service_id ) {
+      areaRepository.addServiceToArea(area_id,service_id);
    }
 
+   @DELETE("/Area/:Area_id/:Service_id")
+   @JsonBody
+   public void removeServiceFromArea(@PathParam("Area_id") UUID area_id, @PathParam("Service_id") UUID service_id ) {
+      areaRepository.removeServiceFromArea(area_id,service_id);
+   }
 
 
 

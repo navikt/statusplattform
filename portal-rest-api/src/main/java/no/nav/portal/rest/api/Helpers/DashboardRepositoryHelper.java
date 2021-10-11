@@ -2,18 +2,13 @@ package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.AreaWithServices;
 import nav.portal.core.entities.RecordEntity;
-import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.repositories.RecordRepository;
-import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.StatusDto;
 import no.portal.web.generated.api.TileDto;
-import org.actioncontroller.GET;
-import org.actioncontroller.PathParam;
-import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
 import java.util.Collections;
@@ -35,12 +30,11 @@ public class DashboardRepositoryHelper {
 
 
 
-    public List<TileDto> getTilesOnDashboard(String dashboardName) {
-        UUID id = dashboardRepository.uidFromName(dashboardName);
+    public List<TileDto> getTilesOnDashboard(UUID id) {
         List<AreaWithServices> areasWithServices = dashboardRepository.retrieveOne(id).getValue();
         List<AreaDto> areaDtos = areasWithServices.stream()
                 .map(aws ->
-                        EntityDtoMappers.toAreaDto(aws.getArea(),aws.getServices()))
+                        EntityDtoMappers.toAreaDtoDeep(aws.getArea(),aws.getServices()))
                 .collect(Collectors.toList());
         List<TileDto> tiles = Collections.EMPTY_LIST;
         for(AreaDto areaDto: areaDtos){

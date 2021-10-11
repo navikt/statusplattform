@@ -25,26 +25,31 @@ public class DashboardRepository {
         this.dbContext = dbContext;
     }
 
-    public DatabaseSaveResult.SaveStatus save(DashboardEntity entity) {
+    public UUID save(String name) {
         DatabaseSaveResult<UUID> result = dashboardTable
-                .newSaveBuilderWithUUID("id", entity.getId())
-                .setField("name", entity.getName())
+                .newSaveBuilderWithUUID("id", UUID.randomUUID())
+                .setField("name", name)
                 .execute();
-        return result.getSaveStatus();
+        return  result.getId();
     }
 
-    public void addAreaToDashboard(UUID dashboardId, UUID areaId) {
-        dashboardAreaTable.insert()
-                .setField("dashboard_id", dashboardId)
-                .setField("area_id", areaId)
-                .execute();
+    public void settAreasOnDashboard(UUID dashboardId, List<UUID> areas) {
+        dashboardAreaTable.where("dashboard_id", dashboardId).executeDelete();
+
+        for(int i = 0; i < areas.size(); i++){
+            dashboardAreaTable.insert()
+                    .setField("dashboard_id", dashboardId)
+                    .setField("area_id", areas.get(i))
+                    .setField("rangering",i)
+                    .execute();
+        }
+
     }
 
-    public void removeAreaFromDashboard(UUID dashboardId, UUID areaId) {
-        dashboardAreaTable.where("dashboardId",dashboardId)
-                .where("service_id",areaId)
-                .executeDelete();
+    public List<DashboardEntity> getAllDashboardUUIDsAndNames(){
+        return dashboardTable.orderedBy("name").stream(DashboardRepository::toDashboard).collect(Collectors.toList());
     }
+
 
     public UUID uidFromName(String name) {
         return dashboardTable.where("name", name)

@@ -8,7 +8,6 @@ import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.AreaDto;
-import org.actioncontroller.HttpForbiddenException;
 import org.fluentjdbc.DbContext;
 
 import java.util.List;
@@ -36,20 +35,23 @@ public class AreaRepositoryHelper {
     public AreaDto newArea(AreaDto areaDto){
             UUID id = areaRepository.save(EntityDtoMappers.toAreaEntity(areaDto));
             Map.Entry<AreaEntity,List<ServiceEntity>> area = areaRepository.retrieveOne(id);
-            return EntityDtoMappers.toAreaDto(area.getKey(),area.getValue());
+            return EntityDtoMappers.toAreaDtoDeep(area.getKey(),area.getValue());
     }
 
 
+    public List<AreaDto> getAreasOnDashboard(UUID dashboardName_id){
+        return dashboardRepository.retrieveOne(dashboardName_id)
+                .getValue()
+                .stream()
+                .map(as -> EntityDtoMappers
+                        .toAreaDtoDeep(as.getArea(),as.getServices()))
+                .collect(Collectors.toList());
+    }
 
 
     public List<AreaDto> getAreasOnDashboard(String dashboardName){
         UUID dashboardUid = dashboardRepository.uidFromName(dashboardName);
-        return dashboardRepository.retrieveOne(dashboardUid)
-                .getValue()
-                .stream()
-                .map(as -> EntityDtoMappers
-                                .toAreaDto(as.getArea(),as.getServices()))
-                .collect(Collectors.toList());
+        return getAreasOnDashboard(dashboardUid);
     }
 
 

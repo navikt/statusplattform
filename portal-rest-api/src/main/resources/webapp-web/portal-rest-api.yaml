@@ -6,12 +6,13 @@ info:
 servers:
   - url: /rest
 paths:
-  /Tiles:
+  /Dashboards:
     get:
       tags:
-        - Tiles
-      summary: Tiles
-      operationId: Tiles
+        - Dashboard
+      summary: Hent alle dashboard,
+      description: Henter id og navn på alle dashboard. Ikke tilhørende områder/tjenester.
+      operationId: getDashboards
       responses:
         '200':
           description: OK
@@ -20,7 +21,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Tile'
+                  $ref: '#/components/schemas/Dashboard'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+  /Dashboard/{Dashboard_name}:
+    post:
+      tags:
+        - Dashboard
+      summary: Legg til nytt dashboard.
+      description: Legg til nytt dashboard. Id genereres i backend, og sendes tilbake
+      operationId: addDashboard
+      parameters:
+        - name: Dashboard_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
         '401':
           description: Unauthorized
           content: {}
@@ -31,61 +62,110 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
-  /ServiceOnArea:
+  /Dashboard/{Dashboard_id}:
     put:
       tags:
-        - ServiceOnArea
-      summary: ServiceOnArea
+        - Dashboard
+      summary: Legg inn/ fjern/ endre rekkefølge på områder på dashbord
+      description: Legg inn liste av område-ider som hører til på dashboardet. Første id vil komme først osv.
+      operationId: putDashboards
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       requestBody:
-        description: Legg til en ny tjeneste på et område
-        required: true
         content:
-          application/json:
+          'application/x-www-form-urlencoded':
             schema:
-              $ref: '#/components/schemas/ServiceToArea'
-          text/plain:
-            schema:
-              type: string
+              type: array
+              items:
+                type: string
+                format: uuid
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+          content: {}
         '403':
           description: Forbidden
-          content: { }
+          content: {}
         '404':
           description: Not Found
-          content: { }
-  /ServiceRecord:
-    post:
+          content: {}
+      deprecated: false
+    get:
       tags:
-        - ServiceRecord
-      summary: Legg til status på en tjeneste
-      requestBody:
-        description: Legg til status på en tjeneste
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Service'
-          text/plain:
-            schema:
-              type: string
+        - Dashboard
+      summary: Hent dashboard med innhold.
+      description: henter et dashboard med alle underliggende områder/ tjenester
+      operationId: getDashboard
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tile'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /Areas/{Dashboard_id}:
+    get:
+      tags:
+        - Area
+      summary: Alle områder
+      operationId: AreasOnDashBoard
+      description: Henter alle områder med underliggende tjenster
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
         '403':
           description: Forbidden
           content: { }
         '404':
           description: Not Found
           content: { }
-
+      deprecated: false
   /Areas:
     get:
       tags:
         - Area
-      summary: Mulige områder tjenester kan legges i
+      summary: Alle områder
       operationId: Area
+      description: Henter alle områder med underliggende tjenster
       responses:
         '200':
           description: OK
@@ -110,7 +190,7 @@ paths:
         - Area
       summary: Legg til ett nytt område
       requestBody:
-        description: Legg til ett nytt område
+        description: Legg til ett nytt område. Her trenger IKKE services å være med ved innsending.
         required: true
         content:
           application/json:
@@ -128,6 +208,160 @@ paths:
         '404':
           description: Not Found
           content: { }
+
+  /Area/{Area_id}/{Service_id}:
+    put:
+      tags:
+        - Area
+      summary: ServiceOnArea
+      description: Legg til en ny tjeneste på et område
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - Area
+      summary: ServiceOnArea
+      description: Fjern tjeneste fra område
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deletead
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Services:
+    get:
+      tags:
+        - Service
+      summary: Alle områder
+      operationId: Service
+      description: Henter alle områder med underliggende tjenster
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Service:
+    post:
+      tags:
+        - Service
+      summary: Legg til tjeneste
+      requestBody:
+        description: Legg til en ny tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Service/{Service_id}:
+    delete:
+      tags:
+        - Service
+      summary: Slett en tjeneste
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+  /ServiceStatus:
+    post:
+      tags:
+        - Record
+      summary: Legg til status på en tjeneste
+      requestBody:
+        description: Legg til status på en tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+
+
 
 components:
   schemas:
@@ -147,12 +381,13 @@ components:
       title: Dashboard
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          example: "84e49ba0-7409-41ed-8ebe-949ad94dc1d3"
         name:
           type: string
-        areas:
-          type: array
-          items:
-            $ref: '#/components/schemas/Area'
+          example: "Privatperson"
     ServiceToArea:
       title: ServiceToArea
       type: object
@@ -211,8 +446,7 @@ components:
       properties:
         serviceId:
           type: string
-        name:
-          type: string
+          format: uuid
         status:
           $ref: '#/components/schemas/Status'
 

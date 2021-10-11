@@ -9,6 +9,7 @@ import org.fluentjdbc.*;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -84,6 +85,9 @@ public class AreaRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Area with id " + area_id));
     }
 
+    public List<AreaEntity> retriveAllShallow(){
+        return areaTable.orderedBy("name").stream(AreaRepository::toArea).collect(Collectors.toList());
+    }
     public Map<AreaEntity, List<ServiceEntity>> retrieveAll() {
         DbContextTableAlias areaAlias = areaTable.alias("area");
         DbContextTableAlias a2s = areaServiceTable.alias("a2s");
