@@ -49,12 +49,12 @@ class ServiceRepositoryTest {
 
    /*
       TODO:
-      1: Legg inn at tabeller benytter "blablaEithTimezone-klasse
-      2: Flere felter er omdøpte, må rettes til korrekt tye og navn
+      2: Flere felter er omdøpte, må rettes til korrekt tye og navn SE ETTER NORSKE NAVN
       3: Services har avhengighet til andre services, må modelleres korrekt (via egen koblingstabell)
       4: Enumer, lag enumene i koden
       5: Lage testdatabuilder, se prodregprosjekt.
       6: Skrive tester.
+      7: Fikse yaml kontrakt: 
     */
 
 

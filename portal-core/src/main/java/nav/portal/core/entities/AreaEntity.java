@@ -7,19 +7,19 @@ public class AreaEntity {
 
     private UUID id;
     private String name;
-    private String beskrivelse;
-    private String ikon;
+    private String description;
+    private String icon;
 
 
     public AreaEntity() {
     }
 
-    public AreaEntity(UUID id, String name, String beskrivelse, String ikon) {
+    //TODO Lage enum av icon:
+    public AreaEntity(UUID id, String name, String description, String icon) {
         this.id = id;
         this.name = name;
-        this.beskrivelse = beskrivelse;
-        this.ikon = ikon;
-
+        this.description = description;
+        this.icon = icon;
     }
 
     public String getName() {
@@ -30,12 +30,12 @@ public class AreaEntity {
         this.name = name;
     }
 
-    public String getBeskrivelse() {
-        return beskrivelse;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBeskrivelse(String beskrivelse) {
-        this.beskrivelse = beskrivelse;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UUID getId() {
@@ -46,12 +46,12 @@ public class AreaEntity {
         this.id = id;
     }
 
-    public String getIkon() {
-        return ikon;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setIkon(String ikon) {
-        this.ikon = ikon;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
 }

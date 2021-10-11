@@ -8,16 +8,4 @@ import org.fluentjdbc.DbContext;
 
 public class MessageController {
 
-    private final AreaRepository areaRepository;
-    private final DashboardRepository dashboardRepository;
-    private final ServiceRepository serviceRepository;
-    private final RecordRepository recordRepository;
-
-
-    public MessageController(DbContext dbContext) {
-        this.areaRepository = new AreaRepository(dbContext);
-        this.dashboardRepository = new DashboardRepository(dbContext);
-        this.serviceRepository = new ServiceRepository(dbContext);
-        this.recordRepository = new RecordRepository(dbContext);
-    }
 }

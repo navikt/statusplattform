@@ -47,12 +47,17 @@ public class PortalServer {
         new ConfigObserver("portal")
                 //.onPrefixedValue("dataSource", DataSourceTransformer::create, this::setDataSource)
                 .onInetSocketAddress("http.port", port, this::setHttpPort)
+                .onStringValue("isLocal", "false", this::setIsLocal)
                 /*Når man legger inn autentisering med OIDC for Profil / Admin så er det ca slik. Se denne commit for hvordan det funket for rest før
                 .onStringValue("openid.discovery_url", null, brukergrupperRestApi::setOpenIdConfiguration)
                 .onStringValue("openid.client_id", null, brukergrupperRestApi::setClientId)
                 .onStringValue("openid.client_secret", null, brukergrupperRestApi::setClientSecret)*/
 
         ;
+    }
+
+    private void setIsLocal(String isLocal) {
+        portalRestApi.setIsLocal(Boolean.parseBoolean(isLocal));
     }
 
     private void setDataSource(DataSource dataSource) {

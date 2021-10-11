@@ -8,7 +8,6 @@ public class DashboardEntity {
 
     private UUID id;
     private String name;
-    private List<AreaEntity> areas;
 
     public DashboardEntity() {
     }
@@ -31,15 +30,6 @@ public class DashboardEntity {
         return this;
     }
 
-    public List<AreaEntity> getAreas() {
-        return areas;
-    }
-
-
-    public DashboardEntity setAreas(List<AreaEntity> areas) {
-        this.areas = areas;
-        return this;
-    }
 }
 
 

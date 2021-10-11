@@ -18,11 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 public class CORSFilter implements Filter {
 
 
+    private boolean isLocal;
+
     /**
      * Default constructor.
+     * @param isLocal
      */
     public CORSFilter() {
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -42,9 +44,11 @@ public class CORSFilter implements Filter {
         System.out.println("CORSFilter HTTP Request: " + request.getMethod());
 
         // Authorize (allow) all domains to consume the content
-        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", "*");
+        //TODO hvordan skal dette håndteres? Dersom frontend og backend hostes på samme server trenger ikke
+        String frontendUrl = isLocal? "localhost" : "portal.labs.nais.io";
+        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", frontendUrl);
         ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Methods","GET, OPTIONS, HEAD, PUT, POST, DELETE");
-        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers", "*");
+        //((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers", "*");
 
 
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
@@ -67,4 +71,7 @@ public class CORSFilter implements Filter {
         // TODO Auto-generated method stub
     }
 
+    public void setIsLocal(boolean isLocal) {
+        this.isLocal = isLocal;
+    }
 }

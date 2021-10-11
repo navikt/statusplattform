@@ -9,7 +9,6 @@ import org.fluentjdbc.*;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -30,16 +29,16 @@ public class AreaRepository {
     public UUID save(AreaEntity entity) {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
-                .setField("beskrivelse", entity.getBeskrivelse())
-                .setField("ikon", entity.getIkon())
+                .setField("beskrivelse", entity.getDescription())
+                .setField("ikon", entity.getIcon())
                 .execute();
         return result.getId();
     }
     public DatabaseSaveResult.SaveStatus uppdate(AreaEntity entity) {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
-                .setField("beskrivelse", entity.getBeskrivelse())
-                .setField("ikon", entity.getIkon())
+                .setField("beskrivelse", entity.getDescription())
+                .setField("ikon", entity.getIcon())
                 .execute();
         return result.getSaveStatus();
     }
@@ -110,8 +109,8 @@ public class AreaRepository {
         try {
             return new AreaEntity(row.getUUID("id"),
                     row.getString("name"),
-                    row.getString("beskrivelse"),
-                    row.getString("ikon"));
+                    row.getString("description"),
+                    row.getString("icon"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }

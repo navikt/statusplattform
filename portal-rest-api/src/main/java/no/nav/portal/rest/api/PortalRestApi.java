@@ -24,16 +24,17 @@ public class PortalRestApi extends ClasspathWebAppContext {
     };
 
     private final ApiFilter filter;
+    private final CORSFilter corsFilter;
 
     public PortalRestApi(String context) {
         super(context, "/webapp-web");
-        addFilter(new FilterHolder(new CORSFilter()),"/*", EnumSet.of(DispatcherType.REQUEST));
+        corsFilter = new CORSFilter();
+        addFilter(new FilterHolder(corsFilter),"/*", EnumSet.of(DispatcherType.REQUEST));
         addServlet(new ServletHolder(new WebJarServlet("swagger-ui")), "/swagger/*");
         addServlet(new ServletHolder(new ApiServlet(List.of(
                 new AreaController(dbContext),
                 new DashboardController(dbContext),
-                new ServiceController(dbContext),
-                new TileController(dbContext)
+                new ServiceController(dbContext)
 
         ))), "/*");
 
@@ -46,4 +47,7 @@ public class PortalRestApi extends ClasspathWebAppContext {
         filter.setDataSource(dataSource);
     }
 
+    public void setIsLocal(boolean isLocal) {
+        corsFilter.setIsLocal(isLocal);
+    }
 }
