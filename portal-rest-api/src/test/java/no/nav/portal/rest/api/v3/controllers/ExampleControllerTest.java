@@ -1,8 +1,6 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.ExampleEntity;
 
-import nav.portal.core.repositories.ExampleRepository;
 import nav.portal.core.repositories.SampleData;
 import nav.portal.core.repositories.TestDataSource;
 //import no.portal.web.generated.api.ExampleDataDto;
@@ -34,7 +32,6 @@ public class ExampleControllerTest {
       connection.close();
    }
 
-   private final ExampleRepository repository = new ExampleRepository(dbContext);
    private final AreaController controller = new AreaController(dbContext);
 
 

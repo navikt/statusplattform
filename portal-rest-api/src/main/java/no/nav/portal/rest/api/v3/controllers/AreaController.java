@@ -37,7 +37,7 @@ public class AreaController {
 
    @GET("/Areas/:Dashboard_id")
    @JsonBody
-   public List<AreaDto> getAreas(@PathParam("Dashboard") UUID dashboard_id) {
+   public List<AreaDto> getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
       return areaRepositoryHelper.getAreasOnDashboard(dashboard_id);
    }
 

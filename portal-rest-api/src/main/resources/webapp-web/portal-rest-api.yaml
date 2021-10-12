@@ -388,6 +388,10 @@ components:
         name:
           type: string
           example: "Privatperson"
+        areas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Area'
     ServiceToArea:
       title: ServiceToArea
       type: object

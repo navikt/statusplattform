@@ -7,8 +7,6 @@ import java.util.Random;
 
 
 public class SampleData {
-    AreaEntity entity
-
 
 
 }

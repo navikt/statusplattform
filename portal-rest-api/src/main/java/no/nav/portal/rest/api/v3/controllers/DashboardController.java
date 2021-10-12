@@ -33,21 +33,21 @@ public class DashboardController {
 
     @POST("/Dashboards/:Dashboard_name")
     @JsonBody
-    public UUID postDashboard(@PathParam("Dashboard_name") String dashboardName) {
-        return dashboardRepository.save(dashboardName);
+    public UUID postDashboard(@PathParam("Dashboard_name") String dashboard_name) {
+        return dashboardRepository.save(dashboard_name);
     }
 
 
     @PUT("/Dashboard/:Dashboard_id")
     @JsonBody
-    public void addAreaToDashboard(@PathParam("Dashboard") UUID dashboardId,@JsonBody List<UUID> areaIds) {
-        dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
+    public void addAreaToDashboard(@PathParam("Dashboard_id") UUID dashboard_id,@JsonBody List<UUID> areaIds) {
+        dashboardRepository.settAreasOnDashboard(dashboard_id,areaIds);
     }
 
     @GET("/Dashboard/:Dashboard_id")
     @JsonBody
-    public List<TileDto> getDashboard(@PathParam("Dashboard") UUID dashboardId) {
-        return dashboardRepositoryHelper.getTilesOnDashboard(dashboardId);
+    public List<TileDto> getDashboard(@PathParam("Dashboard_id") UUID dashboard_id) {
+        return dashboardRepositoryHelper.getTilesOnDashboard(dashboard_id);
     }
 
 

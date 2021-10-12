@@ -11,8 +11,9 @@ import java.util.Properties;
 
 public class DataSourceTransformer {
     public static DataSource create() {
+        //TODO fiks denne tilbake til å lese fra properties fil.
         Map<String, String> props = new HashMap<>();
-        props.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
+        props.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus_uuid");
         props.put("username", "postgres");
         props.put("password", System.getenv("key1"));
         props.put("driverClassName", "org.postgresql.Driver");

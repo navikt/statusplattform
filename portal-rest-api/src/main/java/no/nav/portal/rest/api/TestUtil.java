@@ -14,7 +14,7 @@ public class TestUtil {
     private List<AreaDto> areaDtos = Collections.emptyList();
 
     static{
-
+/**
         DEFAULT_AREAS.put("ARBD",new AreaDto().name("Arbeidssøker eller permitert").ikon("0001")
                 .beskrivelse("Arbeidssøker ...").id("ARBD").rangering(1));
         DEFAULT_AREAS.put("PENS",new AreaDto().name("Pensjon").ikon("0002")

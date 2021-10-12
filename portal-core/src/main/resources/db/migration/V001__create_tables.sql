@@ -21,9 +21,9 @@ CREATE TABLE service_service
     service2_id     UUID        NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp with time zone NULL,
-    PRIMARY KEY (area_id, service_id),
-    FOREIGN KEY (service_id) REFERENCES service (id),
-    FOREIGN KEY (area_id) REFERENCES area (id)
+    PRIMARY KEY (service1_id, service2_id),
+    FOREIGN KEY (service1_id) REFERENCES service (id),
+    FOREIGN KEY (service2_id) REFERENCES service (id)
 );
 
 CREATE TABLE service_status
@@ -77,7 +77,7 @@ CREATE TABLE dashboard_area
     area_id    UUID        NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp with time zone NULL,
-    PRIMARY KEY (area_id, service_id),
+    PRIMARY KEY (dashboard_id, area_id),
     FOREIGN KEY (dashboard_id) REFERENCES dashboard (id),
     FOREIGN KEY (area_id) REFERENCES area (id)
 );
