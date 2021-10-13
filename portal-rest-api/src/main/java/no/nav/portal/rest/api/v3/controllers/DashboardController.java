@@ -34,8 +34,8 @@ public class DashboardController {
 
     @POST("/Dashboard")
     @JsonBody
-    public UUID postDashboard(@JsonBody String dashboard_name) {
-        return dashboardRepository.save(dashboard_name);
+    public UUID postDashboard(@JsonBody DashboardDto dashboardDto) {
+        return dashboardRepository.save(dashboardDto.getName());
     }
 
 
