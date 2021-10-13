@@ -31,7 +31,7 @@ paths:
         '404':
           description: Not Found
           content: {}
-  /Dashboard/{Dashboard_name}:
+  /Dashboards/{Dashboard_name}:
     post:
       tags:
         - Dashboard
@@ -411,9 +411,9 @@ components:
         id:
           type: string
           format: uuid
-        beskrivelse:
+        descripiton:
           type: string
-        ikon:
+        icon:
           type: string
         servises:
           type: array

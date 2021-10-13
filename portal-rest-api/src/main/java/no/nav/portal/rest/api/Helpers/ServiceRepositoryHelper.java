@@ -6,6 +6,8 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
 import org.fluentjdbc.DbContext;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,9 +26,12 @@ public class ServiceRepositoryHelper {
         List<ServiceDto> result = services.keySet()
                 .stream().map(EntityDtoMappers::toServiceDto)
                 .collect(Collectors.toList());
-        result.forEach(s -> services.get(s)
-                .stream()
-                .map(EntityDtoMappers::toServiceDto));
+        result.forEach(s -> {
+            List<ServiceEntity> dependencies = services.get(s);
+            dependencies = dependencies != null ? dependencies : Collections.EMPTY_LIST;
+            s.dependencies(dependencies.stream()
+                    .map(EntityDtoMappers::toServiceDto).collect(Collectors.toList()));
+            });
         return result;
 
     }

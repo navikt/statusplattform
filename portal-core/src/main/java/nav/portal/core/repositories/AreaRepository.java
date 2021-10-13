@@ -30,16 +30,16 @@ public class AreaRepository {
     public UUID save(AreaEntity entity) {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
-                .setField("beskrivelse", entity.getDescription())
-                .setField("ikon", entity.getIcon())
+                .setField("description", entity.getDescription())
+                .setField("icon", entity.getIcon())
                 .execute();
         return result.getId();
     }
     public DatabaseSaveResult.SaveStatus uppdate(AreaEntity entity) {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
-                .setField("beskrivelse", entity.getDescription())
-                .setField("ikon", entity.getIcon())
+                .setField("description", entity.getDescription())
+                .setField("icon", entity.getIcon())
                 .execute();
         return result.getSaveStatus();
     }

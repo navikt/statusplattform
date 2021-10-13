@@ -1,7 +1,7 @@
 package nav.portal.core.enums;
 
 public enum ServiceType implements DbEnum {
-    APPLIKASJON("applikasjon");
+    APPLIKASJON("APPLIKASJON");
 
     private String dbRepresentation;
 
@@ -15,6 +15,6 @@ public enum ServiceType implements DbEnum {
     }
 
     public static ServiceType fromDb(String dbRepresentation){
-        return (ServiceType) DbEnum.findEnum(dbRepresentation, values(), ServiceType.class.getSimpleName());
+        return (ServiceType) DbEnum.findEnum(dbRepresentation.toUpperCase(), values(), ServiceType.class.getSimpleName());
     }
 }
