@@ -39,13 +39,11 @@ paths:
       description: Legg til nytt dashboard. Id genereres i backend, og sendes tilbake
       operationId: addDashboard
       requestBody:
-        description: Legg til ett nytt område. Her trenger IKKE services å være med ved innsending.
         required: true
         content:
           application/json:
             schema:
-              type: string
-              example: "Nytt Dashboard"
+              $ref: '#/components/schemas/Dashboard'
           text/plain:
             schema:
               type: string
