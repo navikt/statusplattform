@@ -25,8 +25,8 @@ public class EntityDtoMappers {
         AreaEntity entity = new AreaEntity();
         entity.setId(dto.getId());
         entity.setName(dto.getName());
-        entity.setDescription(dto.getBeskrivelse());
-        entity.setIcon(dto.getIkon());
+        entity.setDescription(dto.getDescripiton());
+        entity.setIcon(dto.getIcon());
         return entity;
     }
 
@@ -52,8 +52,8 @@ public class EntityDtoMappers {
         AreaDto dto = new AreaDto();
         dto.setId(area.getId());
         dto.setName(area.getName());
-        dto.setBeskrivelse(area.getDescription());
-        dto.setIkon(area.getIcon());
+        dto.setDescripiton(area.getDescription());
+        dto.setIcon(area.getIcon());
         dto.setServises(
                 services.stream()
                         .map(EntityDtoMappers::toServiceDto)
@@ -68,8 +68,8 @@ public class EntityDtoMappers {
         AreaDto dto = new AreaDto();
         dto.setId(area.getId());
         dto.setName(area.getName());
-        dto.setBeskrivelse(area.getDescription());
-        dto.setIkon(area.getIcon());
+        dto.setDescripiton(area.getDescription());
+        dto.setIcon(area.getIcon());
 
         return dto;
     }

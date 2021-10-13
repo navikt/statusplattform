@@ -267,9 +267,9 @@ paths:
     get:
       tags:
         - Service
-      summary: Alle områder
+      summary: Hent alle tjenester
       operationId: Service
-      description: Henter alle områder med underliggende tjenster
+      description: Henter alle servicer med tjenesteavhengigheter - ett lag dypt.
       responses:
         '200':
           description: OK
