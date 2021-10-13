@@ -3,9 +3,10 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.util.UuidListBody;
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
 import no.nav.portal.rest.api.Helpers.DashboardRepositoryHelper;
 import no.portal.web.generated.api.DashboardDto;
-import no.portal.web.generated.api.TileDto;
+
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -17,11 +18,13 @@ public class DashboardController {
 
     private final DashboardRepository dashboardRepository;
     private final DashboardRepositoryHelper dashboardRepositoryHelper;
+    private AreaRepositoryHelper areaRepositoryHelper;
 
 
     public DashboardController(DbContext dbContext) {
         this.dashboardRepository = new DashboardRepository(dbContext);
         this.dashboardRepositoryHelper = new DashboardRepositoryHelper(dbContext);
+        this.areaRepositoryHelper = new AreaRepositoryHelper(dbContext);
 
     }
 
@@ -46,9 +49,11 @@ public class DashboardController {
 
     @GET("/Dashboard/:Dashboard_id")
     @JsonBody
-    public List<TileDto> getDashboard(@PathParam("Dashboard_id") UUID dashboard_id) {
-        return dashboardRepositoryHelper.getTilesOnDashboard(dashboard_id);
+    public DashboardDto getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
+        return dashboardRepositoryHelper.getDashboard(dashboard_id);
     }
+
+
 
 
 }

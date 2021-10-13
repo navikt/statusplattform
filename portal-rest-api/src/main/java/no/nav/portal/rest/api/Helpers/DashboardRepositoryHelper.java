@@ -5,10 +5,7 @@ import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.repositories.RecordRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.StatusDto;
-import no.portal.web.generated.api.TileDto;
+import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
 import java.util.Collections;
@@ -30,35 +27,15 @@ public class DashboardRepositoryHelper {
 
 
 
-    public List<TileDto> getTilesOnDashboard(UUID id) {
-        List<AreaWithServices> areasWithServices = dashboardRepository.retrieveOne(id).getValue();
-        List<AreaDto> areaDtos = areasWithServices.stream()
-                .map(aws ->
-                        EntityDtoMappers.toAreaDtoDeep(aws.getArea(),aws.getServices()))
-                .collect(Collectors.toList());
-        List<TileDto> tiles = Collections.EMPTY_LIST;
-        for(AreaDto areaDto: areaDtos){
-            for(ServiceDto serviceDto: areaDto.getServices()){
-                //Henter siste record-innslag for tjenester
-                Optional<RecordEntity> optRecord = recordRepository.getLatestRecord(serviceDto.getId());
-                if(optRecord.isPresent()){
-                    //setter status dersom den finnes.
-                    serviceDto.setStatus(StatusDto.fromValue(optRecord.get().getStatus().getDbRepresentation()));
-                }
-                else{
-                    //Hvis ikke er den nede.
-                    serviceDto.setStatus(StatusDto.DOWN);
-                }
-            }
-            TileDto tile = new TileDto();
-            tile.setArea(areaDto);
-            tile.setServices(areaDto.getServices());
-            tile.setStatus(getTileStatus(tile));
-            tiles.add(tile);
-        }
-        return tiles;
+    public DashboardDto getDashboard(UUID dashboard_id){
+        DashboardDto dashboardDto = EntityDtoMappers.toDashboardDtoDeep(dashboardRepository.retrieveOne(dashboard_id));
+        dashboardDto.getAreas().forEach(areaDto -> areaDto.setStatus(getAreaStatus(areaDto)));
+        return dashboardDto;
     }
-    private StatusDto getTileStatus(TileDto dto){
+
+
+
+    private StatusDto getAreaStatus(AreaDto dto){
         if(dto.getServices()
                 .stream()
                 .map(s -> s.getStatus())
@@ -71,4 +48,6 @@ public class DashboardRepositoryHelper {
                 .contains(StatusDto.ISSUE)) return StatusDto.ISSUE;
         return StatusDto.OK;
     }
+
+
 }
