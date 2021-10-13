@@ -38,7 +38,7 @@ public class DashboardRepositoryHelper {
                 .collect(Collectors.toList());
         List<TileDto> tiles = Collections.EMPTY_LIST;
         for(AreaDto areaDto: areaDtos){
-            for(ServiceDto serviceDto: areaDto.getServises()){
+            for(ServiceDto serviceDto: areaDto.getServices()){
                 //Henter siste record-innslag for tjenester
                 Optional<RecordEntity> optRecord = recordRepository.getLatestRecord(serviceDto.getId());
                 if(optRecord.isPresent()){
@@ -52,7 +52,7 @@ public class DashboardRepositoryHelper {
             }
             TileDto tile = new TileDto();
             tile.setArea(areaDto);
-            tile.setServices(areaDto.getServises());
+            tile.setServices(areaDto.getServices());
             tile.setStatus(getTileStatus(tile));
             tiles.add(tile);
         }

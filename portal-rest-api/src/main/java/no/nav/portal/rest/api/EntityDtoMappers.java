@@ -54,7 +54,7 @@ public class EntityDtoMappers {
         dto.setName(area.getName());
         dto.setDescripiton(area.getDescription());
         dto.setIcon(area.getIcon());
-        dto.setServises(
+        dto.setServices(
                 services.stream()
                         .map(EntityDtoMappers::toServiceDto)
                         .collect(Collectors.toList())
