@@ -6,7 +6,6 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.DashboardRepositoryHelper;
 import no.portal.web.generated.api.DashboardDto;
 import no.portal.web.generated.api.TileDto;
-import no.portal.web.generated.api.UuidListDto;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
