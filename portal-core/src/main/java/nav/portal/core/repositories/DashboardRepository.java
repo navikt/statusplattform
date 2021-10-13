@@ -40,7 +40,7 @@ public class DashboardRepository {
             dashboardAreaTable.insert()
                     .setField("dashboard_id", dashboardId)
                     .setField("area_id", areas.get(i))
-                    .setField("rangering",i)
+                    .setField("order_in_dashboard",i)
                     .execute();
         }
 
@@ -70,7 +70,7 @@ public class DashboardRepository {
 
         d.where("id",id)
                 .leftJoin(d.column("id"), d2a.column("dashboard_id"))
-                .orderBy(d2a.column("rangering"))
+                .orderBy(d2a.column("order_in_dashboard"))
                 .list(row -> {
                     List<AreaWithServices> areasInDashboard = result.computeIfAbsent(toDashboard(row.table(d)), ignored -> new ArrayList<>());
                     Optional.ofNullable(row.getUUID("area_id"))
@@ -94,7 +94,7 @@ public class DashboardRepository {
 
         d.where("name",name)
                 .leftJoin(d.column("id"), d2a.column("dashboard_id"))
-                .orderBy(d2a.column("rangering"))
+                .orderBy(d2a.column("order_in_dashboard"))
                 .list(row -> {
                     List<AreaWithServices> areasInDashboard = result.computeIfAbsent(toDashboard(row.table(d)), ignored -> new ArrayList<>());
                     Optional.ofNullable(row.getUUID("area_id"))
@@ -118,7 +118,7 @@ public class DashboardRepository {
         Map<DashboardEntity, List<AreaWithServices>> result = new HashMap<>();
 
         d.leftJoin(d.column("id"), d2a.column("dashboard_id"))
-                .orderBy(d2a.column("rangering"))
+                .orderBy(d2a.column("order_in_dashboard"))
                 .list(row -> {
                     List<AreaWithServices> areasInDashboard = result.computeIfAbsent(toDashboard(row.table(d)), ignored -> new ArrayList<>());
                     Optional.ofNullable(row.getUUID("area_id"))

@@ -31,19 +31,24 @@ paths:
         '404':
           description: Not Found
           content: {}
-  /Dashboards/{Dashboard_name}:
+  /Dashboard:
     post:
       tags:
         - Dashboard
       summary: Legg til nytt dashboard.
       description: Legg til nytt dashboard. Id genereres i backend, og sendes tilbake
       operationId: addDashboard
-      parameters:
-        - name: Dashboard_name
-          in: path
-          required: true
-          schema:
-            type: string
+      requestBody:
+        description: Legg til ett nytt område. Her trenger IKKE services å være med ved innsending.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              example: "Nytt Dashboard"
+          text/plain:
+            schema:
+              type: string
       responses:
         '200':
           description: OK
@@ -78,7 +83,7 @@ paths:
             format: uuid
       requestBody:
         content:
-          'application/x-www-form-urlencoded':
+          'application/json':
             schema:
               type: array
               items:
@@ -116,7 +121,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tile'
+                $ref: '#/components/schemas/Dashboard'
         '401':
           description: Unauthorized
           content: {}
@@ -365,18 +370,6 @@ paths:
 
 components:
   schemas:
-    Tile:
-      title: Tile
-      type: object
-      properties:
-        area:
-          $ref: '#/components/schemas/Area'
-        status:
-          $ref: '#/components/schemas/Status'
-        services:
-          type: array
-          items:
-            $ref: '#/components/schemas/Service'
     Dashboard:
       title: Dashboard
       type: object
@@ -384,12 +377,14 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
           example: "84e49ba0-7409-41ed-8ebe-949ad94dc1d3"
         name:
           type: string
           example: "Privatperson"
         areas:
           type: array
+          readOnly: true
           items:
             $ref: '#/components/schemas/Area'
     ServiceToArea:
@@ -411,14 +406,21 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
         descripiton:
           type: string
         icon:
           type: string
-        servises:
+        services:
           type: array
+          readOnly: true
           items:
             $ref: '#/components/schemas/Service'
+        status:
+          readOnly: true
+          $ref: '#/components/schemas/Status'
+      required:
+        - name
     Service:
       title: Service
       type: object
@@ -428,12 +430,14 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
         type:
           $ref: '#/components/schemas/ServiceType'
         team:
           type: string
         dependencies:
           type: array
+          readOnly: true
           items:
             $ref: '#/components/schemas/Service'
         monitorlink:

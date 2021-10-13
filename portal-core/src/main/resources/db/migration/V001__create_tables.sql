@@ -75,6 +75,7 @@ CREATE TABLE dashboard_area
 (
     dashboard_id UUID        NOT NULL,
     area_id    UUID        NOT NULL,
+    order_in_dashboard int        NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp with time zone NULL,
     PRIMARY KEY (dashboard_id, area_id),

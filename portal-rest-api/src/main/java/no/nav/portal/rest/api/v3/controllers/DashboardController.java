@@ -1,10 +1,12 @@
 package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.repositories.DashboardRepository;
+import nav.portal.core.util.UuidListBody;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.DashboardRepositoryHelper;
 import no.portal.web.generated.api.DashboardDto;
 import no.portal.web.generated.api.TileDto;
+import no.portal.web.generated.api.UuidListDto;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -31,16 +33,15 @@ public class DashboardController {
         return EntityDtoMappers.toDashboardDtoShallow(dashboardRepository.getAllDashboardUUIDsAndNames());
     }
 
-    @POST("/Dashboards/:Dashboard_name")
+    @POST("/Dashboard")
     @JsonBody
-    public UUID postDashboard(@PathParam("Dashboard_name") String dashboard_name) {
+    public UUID postDashboard(@JsonBody String dashboard_name) {
         return dashboardRepository.save(dashboard_name);
     }
 
 
     @PUT("/Dashboard/:Dashboard_id")
-    @JsonBody
-    public void addAreaToDashboard(@PathParam("Dashboard_id") UUID dashboard_id,@JsonBody List<UUID> areaIds) {
+    public void addAreaToDashboard(@PathParam("Dashboard_id") UUID dashboard_id, @UuidListBody List<UUID> areaIds) {
         dashboardRepository.settAreasOnDashboard(dashboard_id,areaIds);
     }
 
