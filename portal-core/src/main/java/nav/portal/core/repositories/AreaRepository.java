@@ -45,6 +45,12 @@ public class AreaRepository {
     }
 
 
+    public void deleteArea(UUID areaId){
+        areaServiceTable.where("area_id", areaId).executeDelete();
+        areaTable.where("id", areaId).executeDelete();
+
+    }
+
 
     public void addServiceToArea(UUID areaId, UUID serviceId) {
         areaServiceTable.insert()

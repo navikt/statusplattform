@@ -266,6 +266,28 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Area/{Area_id}:
+    delete:
+      tags:
+        - Area
+      summary: Fjern område
+      description: Fjern område
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deletead
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
   /Services:
     get:
       tags:

@@ -35,11 +35,20 @@ public class AreaController {
          return areaRepositoryHelper.newArea(areaDto);
    }
 
+   @DELETE("/Area/:Area_id")
+   @JsonBody
+   public void deleteArea(@PathParam("Area_id") UUID area_id ) {
+      areaRepository.deleteArea(area_id);
+   }
+
+
    @GET("/Areas/:Dashboard_id")
    @JsonBody
    public List<AreaDto> getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
       return areaRepositoryHelper.getAreasOnDashboard(dashboard_id);
    }
+
+
 
 
    @PUT("/Area/:Area_id/:Service_id")
