@@ -39,23 +39,20 @@ class ServiceRepositoryTest {
 
    @Test
    void retrieve_RetrievesOne() {
-      ServiceEntity service = new ServiceEntity("a", null, ServiceType.APPLIKASJON, "team", "monitor", "description", "logglink");
-      UUID uuid = repository.save(service);
+      // Arrange
+      ServiceEntity service = sampleData.getServiceEntity();
 
+      // Act
+      UUID uuid = repository.save(service);
       service.setId(uuid);
+
+      // Assert
       Assertions.assertThat(repository.retrieve(uuid).orElseGet(() -> fail("klarte ikke legge til i db")))
               .isEqualTo(service);
    }
 
-   /*
-      TODO:
-      2: Flere felter er omdøpte, må rettes til korrekt tye og navn SE ETTER NORSKE NAVN
-      3: Services har avhengighet til andre services, må modelleres korrekt (via egen koblingstabell)
-      4: Enumer, lag enumene i koden
-      5: Lage testdatabuilder, se prodregprosjekt.
-      6: Skrive tester.
-      7: Fikse yaml kontrakt: 
-    */
+
+
 
 
 }

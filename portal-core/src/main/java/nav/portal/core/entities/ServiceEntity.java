@@ -15,12 +15,12 @@ public class ServiceEntity {
     private String description;
     private String logglink;
 
-    public  ServiceEntity() {
+    public ServiceEntity() {
     }
 
     public ServiceEntity(String name, UUID id, ServiceType type, String team, String monitorlink, String description, String logglink) {
-        this.name = name;
         this.id = id;
+        this.name = name;
         this.type = type;
         this.team = team;
         this.monitorlink = monitorlink;
@@ -32,57 +32,63 @@ public class ServiceEntity {
         return name;
     }
 
-    public void setName(String name) {
+    public ServiceEntity setName(String name) {
         this.name = name;
+        return this;
     }
 
     public UUID getId() {
         return id;
     }
 
-
-    public void setId(UUID id) {
+    public ServiceEntity setId(UUID id) {
         this.id = id;
+        return this;
     }
 
     public ServiceType getType() {
         return type;
     }
 
-    public void setType(ServiceType type) {
+    public ServiceEntity setType(ServiceType type) {
         this.type = type;
+        return this;
     }
 
     public String getTeam() {
         return team;
     }
 
-    public void setTeam(String team) {
+    public ServiceEntity setTeam(String team) {
         this.team = team;
+        return this;
     }
 
     public String getMonitorlink() {
         return monitorlink;
     }
 
-    public void setMonitorlink(String monitorlink) {
+    public ServiceEntity setMonitorlink(String monitorlink) {
         this.monitorlink = monitorlink;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public ServiceEntity setDescription(String description) {
         this.description = description;
+        return this;
     }
 
     public String getLogglink() {
         return logglink;
     }
 
-    public void setLogglink(String logglink) {
+    public ServiceEntity setLogglink(String logglink) {
         this.logglink = logglink;
+        return this;
     }
 
     @Override
