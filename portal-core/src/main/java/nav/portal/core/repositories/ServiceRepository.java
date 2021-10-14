@@ -57,19 +57,19 @@ public class ServiceRepository {
     public Map.Entry<ServiceEntity, List<ServiceEntity>> retrieveOneWithDependencies(UUID service_id) {
         DbContextTableAlias s2s = service_serviceTable.alias("s2s");
         DbContextTableAlias service = serviceTable.alias("service");
+        DbContextTableAlias dependentService = serviceTable.alias("dependent_service");
 
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
-        service
-                .where("id" , service_id)
+        service.where("id", service)
                 .leftJoin(service.column("id"), s2s.column("service1_id"))
-                .leftJoin(s2s.column("service2_id"), service.column("id"))
+                .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
                 .list(row -> {
                     List<ServiceEntity> serviceList = result
                             .computeIfAbsent(toService(row.table(service)), ignored -> new ArrayList<>());
 
-                    DatabaseRow serivceRow = row.table(service);
-                    Optional.ofNullable(row.getUUID("service_id"))
-                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
+                    DatabaseRow dependentServiceRow = row.table(dependentService);
+                    Optional.ofNullable(row.getUUID("service1_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(dependentServiceRow)));
                     return null;
                 });
         return result

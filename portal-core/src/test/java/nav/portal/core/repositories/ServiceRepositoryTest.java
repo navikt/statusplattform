@@ -1,7 +1,6 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -11,6 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
+import java.security.Provider;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +37,7 @@ class ServiceRepositoryTest {
       connection.close();
    }
 
-   private final ServiceRepository repository = new ServiceRepository(dbContext);
+   private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
 
 
@@ -46,10 +48,10 @@ class ServiceRepositoryTest {
       ServiceEntity service = sampleData.getServiceEntity();
 
       // Act
-      UUID uuid = repository.save(service);
+      UUID uuid = serviceRepository.save(service);
 
       // Assert
-      Assertions.assertThat(repository.retrieve(uuid).orElseGet(() -> fail("klarte ikke legge til i db")))
+      Assertions.assertThat(serviceRepository.retrieve(uuid).orElseGet(() -> fail("klarte ikke legge til i db")))
               .isEqualTo(service);
    }
 
@@ -58,12 +60,24 @@ class ServiceRepositoryTest {
    @Test
    void save_and_confirm_dependencies() {
       // Arrange
-
+      ServiceEntity service = sampleData.getServiceEntity();
+      List<ServiceEntity> dependentServices = List.of(sampleData.getServiceEntity());
 
       // Act
+      serviceRepository.save(service);
+      dependentServices.forEach(serviceRepository::save);
 
+      /*
+      for(int i= 0; i < dependantService.size(); i++){
+         serviceRepository.save(dependantService.get(i));
+      }*/
+
+      serviceRepository.addDependenciesToService(service, dependentServices);
 
       // Assert
+      Map.Entry<ServiceEntity,List<ServiceEntity>> retrievedService = serviceRepository.retrieveOneWithDependencies(service.getId());
+      List<ServiceEntity> retrievedDependentServices = retrievedService.getValue();
+      Assertions.assertThat(retrievedDependentServices).isEqualTo(dependentServices);
 
    }
 
