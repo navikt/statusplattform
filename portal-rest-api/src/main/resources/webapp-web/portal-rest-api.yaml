@@ -411,7 +411,32 @@ paths:
         '404':
           description: Not Found
           content: { }
-
+  /Service/{Service_id}/{DependentOnService_id}:
+    put:
+      tags:
+        - Area
+      summary: Service dependency
+      description: Legg til en tjenesteavhengigheter.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: DependentOnService_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
 
 
 

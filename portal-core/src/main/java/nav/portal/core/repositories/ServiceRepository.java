@@ -50,6 +50,13 @@ public class ServiceRepository {
                         .execute()
         );
     }
+    public void addDependenciesToService(UUID service1_id, UUID service2_id){
+                service_serviceTable.insert()
+                        .setField("service1_id", service1_id)
+                        .setField("service2_id", service2_id)
+                        .execute();
+    }
+
 
     public Boolean isOtherServicesDependentOn(UUID id) {
         return service_serviceTable.where("service2_id", id).getCount() > 0;
