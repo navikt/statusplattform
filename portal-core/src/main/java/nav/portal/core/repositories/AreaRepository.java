@@ -20,11 +20,13 @@ public class AreaRepository {
     private final DbContextTable areaTable;
     private final DbContextTable areaServiceTable;
     private final DbContextTable serviceTable;
+    private final DbContextTable dashboardAreaTable;
 
     public AreaRepository(DbContext dbContext) {
         areaTable = dbContext.table("area");
         areaServiceTable = dbContext.table("area_service");
         serviceTable = dbContext.table("service");
+        dashboardAreaTable = dbContext.table("dashboard_area");
     }
 
     public UUID save(AreaEntity entity) {
@@ -46,6 +48,7 @@ public class AreaRepository {
 
 
     public void deleteArea(UUID areaId){
+        dashboardAreaTable.where("area_id", areaId).executeDelete();
         areaServiceTable.where("area_id", areaId).executeDelete();
         areaTable.where("id", areaId).executeDelete();
 
