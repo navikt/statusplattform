@@ -4,13 +4,16 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
 import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.ServiceTypeDto;
 import org.actioncontroller.DELETE;
 import org.actioncontroller.GET;
 import org.actioncontroller.POST;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ServiceController {
@@ -42,4 +45,9 @@ public class ServiceController {
         serviceRepositoryHelper.deleteService(serviceDto);
     }
 
+    @GET("/Services/Typer")
+    @JsonBody
+    public List<String> getServicetyper() {
+        return Arrays.stream(ServiceTypeDto.values()).map(ServiceTypeDto::toString).collect(Collectors.toList());
+    }
 }

@@ -1,7 +1,9 @@
 package nav.portal.core.enums;
 
 public enum ServiceType implements DbEnum {
-    APPLIKASJON("APPLIKASJON");
+    APPLIKASJON("APPLIKASJON"),
+    TJENESTE("TJENESTE");
+
 
     private String dbRepresentation;
 

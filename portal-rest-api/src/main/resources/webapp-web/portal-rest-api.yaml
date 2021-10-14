@@ -288,6 +288,33 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Services/Typer:
+    get:
+      tags:
+        - Service
+      summary: Hent alle tjenester typer
+      operationId: Service
+      description: Henter alle servicer med tjenesteavhengigheter - ett lag dypt.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Applikasjon
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /Services:
     get:
       tags:
@@ -427,7 +454,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-        description:
+        descripiton:
           type: string
         icon:
           type: string

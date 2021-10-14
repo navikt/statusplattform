@@ -35,6 +35,8 @@ public class ServiceRepository {
                 .getId();
     }
 
+
+
     public Optional<ServiceEntity> retrieve(UUID id) {
         return serviceTable.where("id", id)
                 .singleObject(ServiceRepository::toService);
