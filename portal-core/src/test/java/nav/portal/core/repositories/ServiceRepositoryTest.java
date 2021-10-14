@@ -37,6 +37,9 @@ class ServiceRepositoryTest {
 
    private final ServiceRepository repository = new ServiceRepository(dbContext);
 
+
+
+   //TODO: Skriv flere tester som denne: Orlene og Bjørg
    @Test
    void retrieve_RetrievesOne() {
       // Arrange
@@ -44,12 +47,29 @@ class ServiceRepositoryTest {
 
       // Act
       UUID uuid = repository.save(service);
-      service.setId(uuid);
 
       // Assert
       Assertions.assertThat(repository.retrieve(uuid).orElseGet(() -> fail("klarte ikke legge til i db")))
               .isEqualTo(service);
    }
+
+   //Skrive test for å legge til avhengigheter:
+
+   @Test
+   void save_and_confirm_dependencies() {
+      // Arrange
+
+
+      // Act
+
+
+      // Assert
+
+   }
+
+
+
+
 
 
 

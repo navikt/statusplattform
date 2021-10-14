@@ -24,8 +24,6 @@ public class ServiceRepository {
     }
 
     public UUID save(ServiceEntity service) {
-        //Legger inn alle alle avhengigheter:
-
         return serviceTable.newSaveBuilderWithUUID("id", service.getId())
                 .setField("name", service.getName())
                 .setField("type", service.getType().getDbRepresentation())
@@ -35,6 +33,11 @@ public class ServiceRepository {
                 .setField("logglink", service.getLogglink())
                 .execute()
                 .getId();
+    }
+
+    public Optional<ServiceEntity> retrieve(UUID id) {
+        return serviceTable.where("id", id)
+                .singleObject(ServiceRepository::toService);
     }
 
     public void addDependenciesToService(ServiceEntity service, List<ServiceEntity> services){
@@ -51,12 +54,7 @@ public class ServiceRepository {
 
     }
 
-    public Optional<ServiceEntity> retrieve(UUID id) {
-        return serviceTable.where("id", id)
-                .singleObject(ServiceRepository::toService);
-    }
-
-    public Map.Entry<ServiceEntity, List<ServiceEntity>> retrieveOne(UUID service_id) {
+    public Map.Entry<ServiceEntity, List<ServiceEntity>> retrieveOneWithDependencies(UUID service_id) {
         DbContextTableAlias s2s = service_serviceTable.alias("s2s");
         DbContextTableAlias service = serviceTable.alias("service");
 
