@@ -6,10 +6,7 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
 import org.fluentjdbc.DbContext;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ServiceRepositoryHelper {
@@ -36,13 +33,14 @@ public class ServiceRepositoryHelper {
 
     }
 
-    public void saveNewService(ServiceDto serviceDto){
+    public UUID saveNewService(ServiceDto serviceDto){
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);
         List<ServiceEntity> dependencies = serviceDto.getDependencies()
                 .stream().map(EntityDtoMappers::toServiceEntity)
                 .collect(Collectors.toList());
-        serviceRepository.save(service);
+        UUID uuid = serviceRepository.save(service);
         serviceRepository.addDependenciesToService(service,dependencies);
+        return uuid;
     }
 
     public void deleteService(ServiceDto serviceDto){
