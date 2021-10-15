@@ -92,14 +92,14 @@ public class EntityDtoMappers {
         return result;
     }
 
-    public static DashboardDto toDashboardDtoShallow(DashboardEntity entity){
-        DashboardDto dto = new DashboardDto();
+    public static DashboardNameIdDto toDashboardDtoShallow(DashboardEntity entity){
+        DashboardNameIdDto dto = new DashboardNameIdDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         return dto;
     }
 
-    public static List<DashboardDto>toDashboardDtoShallow(List<DashboardEntity> entities){
+    public static List<DashboardNameIdDto>toDashboardDtoShallow(List<DashboardEntity> entities){
         return entities.stream().map(EntityDtoMappers::toDashboardDtoShallow).collect(Collectors.toList());
     }
 

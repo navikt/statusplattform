@@ -69,7 +69,7 @@ public class ServiceRepository {
         DbContextTableAlias dependentService = serviceTable.alias("dependent_service");
 
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
-        service.where("id", service)
+        service.where("id", service_id)
                 .leftJoin(service.column("id"), s2s.column("service1_id"))
                 .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
                 .list(row -> {

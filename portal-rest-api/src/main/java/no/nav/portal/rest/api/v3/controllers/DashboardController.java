@@ -7,6 +7,7 @@ import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
 import no.nav.portal.rest.api.Helpers.DashboardRepositoryHelper;
 import no.portal.web.generated.api.DashboardDto;
 
+import no.portal.web.generated.api.DashboardNameIdDto;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -31,7 +32,7 @@ public class DashboardController {
 
     @GET("/Dashboards")
     @JsonBody
-    public List<DashboardDto> getDashboards() {
+    public List<DashboardNameIdDto> getDashboards() {
         return EntityDtoMappers.toDashboardDtoShallow(dashboardRepository.getAllDashboardUUIDsAndNames());
     }
 
