@@ -293,7 +293,7 @@ paths:
       tags:
         - Service
       summary: Hent alle tjenester typer
-      operationId: Service
+      operationId: ServiceType
       description: Henter alle servicer med tjenesteavhengigheter - ett lag dypt.
       responses:
         '200':
@@ -479,7 +479,7 @@ components:
           type: string
           format: uuid
           readOnly: true
-        descripiton:
+        description:
           type: string
         icon:
           type: string
