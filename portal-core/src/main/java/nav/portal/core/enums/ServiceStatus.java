@@ -19,6 +19,6 @@ public enum ServiceStatus implements DbEnum {
     }
 
     public static ServiceStatus fromDb(String dbRepresentation){
-        return (ServiceStatus) DbEnum.findEnum(dbRepresentation, values(), ServiceStatus.class.getSimpleName());
+        return (ServiceStatus) DbEnum.findEnum(dbRepresentation.toLowerCase(), values(), ServiceStatus.class.getSimpleName());
     }
 }

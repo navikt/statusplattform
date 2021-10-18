@@ -21,11 +21,11 @@ public class RecordController {
     @POST("/ServiceStatus")
     public  void addServiceStatus(@JsonBody ServiceStatusDto serviceStatusDto){
         //TODO denne må utbedres
-        RecordEntity entity =
-                new RecordEntity(serviceStatusDto.getServiceId()
-                        ,ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue())
-                , ZonedDateTime.now()
-                ,42);
+        RecordEntity entity = new RecordEntity()
+                .setServiceId(serviceStatusDto.getServiceId())
+                .setStatus(ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue()))
+                .setCreated_at(ZonedDateTime.now())
+                .setResponsetime(42);
         recordRepository.save(entity);
 
     }

@@ -7,37 +7,59 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class RecordEntity {
+
+    private UUID id;
     private UUID serviceId;
     private ServiceStatus status;
     private ZonedDateTime created_at;
     private Integer responsetime;
 
+    public RecordEntity() {
 
+    }
 
-    public RecordEntity(UUID serviceId, ServiceStatus status, ZonedDateTime created_at, Integer responsetime) {
-        this.serviceId = serviceId;
-        this.status = status;
-        this.responsetime = responsetime;
-        this.created_at = created_at;
+    public UUID getId() {
+        return id;
+    }
+
+    public RecordEntity setId(UUID id) {
+        this.id = id;
+        return this;
     }
 
     public UUID getServiceId() {
         return serviceId;
     }
 
+    public RecordEntity setServiceId(UUID serviceId) {
+        this.serviceId = serviceId;
+        return this;
+    }
 
     public ServiceStatus getStatus() {
         return status;
     }
 
+    public RecordEntity setStatus(ServiceStatus status) {
+        this.status = status;
+        return this;
+    }
 
     public ZonedDateTime getCreated_at() {
         return created_at;
+    }
+
+    public RecordEntity setCreated_at(ZonedDateTime created_at) {
+        this.created_at = created_at;
+        return this;
     }
 
     public Integer getResponsetime() {
         return responsetime;
     }
 
-
+    public RecordEntity setResponsetime(Integer responsetime) {
+        this.responsetime = responsetime;
+        return this;
+    }
 }

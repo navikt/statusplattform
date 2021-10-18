@@ -19,7 +19,8 @@ public class RecordRepository {
     }
 
     public DatabaseSaveResult.SaveStatus save(RecordEntity entity) {
-        DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("service_id", entity.getServiceId())
+        DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
                 .setField("response_time", entity.getResponsetime())
                 .execute();
@@ -34,10 +35,12 @@ public class RecordRepository {
     }
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
-        return new RecordEntity(row.getUUID("service_id"),
-                ServiceStatus.fromDb(row.getString("status")),
-                row.getZonedDateTime("created_at"),
-                row.getInt("response_time"));
+        return new RecordEntity()
+                .setId(row.getUUID("id"))
+                .setServiceId(row.getUUID("service_id"))
+                .setStatus(ServiceStatus.fromDb(row.getString("status")))
+                .setCreated_at(row.getZonedDateTime("created_at"))
+                .setResponsetime(row.getInt("response_time"));
     }
 
 
