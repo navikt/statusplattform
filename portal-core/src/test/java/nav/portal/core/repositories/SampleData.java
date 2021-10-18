@@ -15,7 +15,7 @@ public class SampleData {
 
     String[] dashboardNames = {"Privatperson", "Arbeidsgiver", "Sammarbeidspartner"};
 
-    String[] serviceNames = {"Service1", "Testservice 2", "Æ er en tjeneste", "Øgletjeneste"};
+    String[] serviceNames = {"Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste"};
 
     String[] urlStrings = {"www.random.com", "www.æøå.com", "wwww.123abc.com"};
 
@@ -23,12 +23,18 @@ public class SampleData {
 
     String[] descriptions = {"kort beskrivelse", "laaang beskrivelse ------- laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------", "beskrivelseÆØÅ"};
 
+    String[] icons = {"0001","0002","0003","0004","0005","0006","0007","0008","0009","00010","0011","0012"};
 
 
+public AreaEntity getRandomizedAreaEntity(){
+    return new AreaEntity()
+            .setName(getRandomFromArray(areaNames))
+            .setDescription(getRandomFromArray(descriptions))
+            .setIcon(getRandomFromArray(icons));
+}
 
-public ServiceEntity getServiceEntity() {
+public ServiceEntity getRandomizedServiceEntity() {
     return new ServiceEntity()
-            .setId(UUID.randomUUID())
             .setName(getRandomFromArray(serviceNames))
             .setType(getRandomServiceType())
             .setTeam(getRandomFromArray(teamNames))

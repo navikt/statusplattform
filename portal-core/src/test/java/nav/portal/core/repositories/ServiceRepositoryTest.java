@@ -1,6 +1,7 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -10,13 +11,11 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
-import java.security.Provider;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 class ServiceRepositoryTest {
@@ -46,11 +45,13 @@ class ServiceRepositoryTest {
    @Test
    void save_and_retrieve_service() {
       // Arrange
-      ServiceEntity service = sampleData.getServiceEntity();
+      ServiceEntity service = sampleData.getRandomizedServiceEntity();
 
       // Act
       UUID uuid = serviceRepository.save(service);
       Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
+      service.setId(uuid);
+
 
       // Assert
       Assertions.assertThat(retrievedService.orElseGet(() -> fail("klarte ikke legge til i db")))
@@ -62,8 +63,8 @@ class ServiceRepositoryTest {
    @Test
    void save_and_confirm_dependencies() {
       // Arrange
-      ServiceEntity service = sampleData.getServiceEntity();
-      List<ServiceEntity> dependentServices = List.of(sampleData.getServiceEntity());
+      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      List<ServiceEntity> dependentServices = List.of(sampleData.getRandomizedServiceEntity());
 
       // Act
       serviceRepository.save(service);
@@ -77,7 +78,38 @@ class ServiceRepositoryTest {
 
    }
 
+   @Test
+   void save_and_retrieve_service_2() {
+      // Arrange
+      /*    private String name;
+    private ServiceType type;
+    private String team;
+    private String monitorlink;
+    private String description;
+    private String logglink;*/
 
+
+      ServiceEntity service = new ServiceEntity()
+              .setName("Hei")
+              .setType(ServiceType.TJENESTE)
+              .setTeam("Digital")
+              .setMonitorlink("Yes")
+              .setDescription("Orlenes data")
+              .setLogglink("No");
+      // Act
+      UUID uuid = serviceRepository.save(service);
+      service.setId(uuid);
+      Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
+
+
+
+
+
+      // Assert
+      Assertions.assertThat(retrievedService.orElseGet(() -> fail("klarte ikke legge til i db")))
+              .isEqualTo(service);// Assert
+
+   }
 
 
 
