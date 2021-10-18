@@ -42,7 +42,7 @@ public class DashboardController {
         return dashboardRepository.save(dashboardDto.getName());
     }
 
-    @DELETE("/Dashboard:Dashboard_id")
+    @DELETE("/Dashboard/:Dashboard_id")
     @JsonBody
     public void deleteDashboard(@PathParam("Dashboard_id") UUID dashboard_id) {
         dashboardRepositoryHelper.deleteDashboard(dashboard_id);
