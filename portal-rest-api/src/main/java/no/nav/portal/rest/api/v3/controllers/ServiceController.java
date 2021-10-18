@@ -51,7 +51,7 @@ public class ServiceController {
         serviceRepositoryHelper.deleteService(service_id);
     }
 
-    @GET("/Services/Typer")
+    @GET("/Services/Types")
     @JsonBody
     public List<String> getServicetyper() {
         return Arrays.stream(ServiceTypeDto.values()).map(ServiceTypeDto::toString).collect(Collectors.toList());
