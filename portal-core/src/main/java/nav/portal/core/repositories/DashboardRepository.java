@@ -153,7 +153,7 @@ public class DashboardRepository {
     }
 
     public void deleteDashboard(UUID id) {
-        dashboardTable.where("dashboard_id", id).executeDelete();
+        dashboardTable.where("id", id).executeDelete();
     }
 
     public static class Query {
