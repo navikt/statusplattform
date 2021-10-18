@@ -130,6 +130,29 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
+    delete:
+      tags:
+        - Dashboard
+      summary: Slett et dashboard med.
+      description: sletter dashboard med uuid dashboard_id
+      operationId: deleteDashboard
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /Areas/{Dashboard_id}:
     get:
       tags:

@@ -50,4 +50,9 @@ public class DashboardRepositoryHelper {
     }
 
 
+    public void deleteDashboard(UUID dashboard_id) {
+        dashboardRepository.deleteAreasFromDashboard(dashboard_id);
+        dashboardRepository.deleteDashboard(dashboard_id);
+
+    }
 }

@@ -148,6 +148,14 @@ public class DashboardRepository {
         return new Query(dashboardTable.query());
     }
 
+    public void deleteAreasFromDashboard(UUID id) {
+        dashboardAreaTable.where("dashboard_id", id).executeDelete();
+    }
+
+    public void deleteDashboard(UUID id) {
+        dashboardTable.where("dashboard_id", id).executeDelete();
+    }
+
     public static class Query {
 
         private final DbContextSelectBuilder query;
