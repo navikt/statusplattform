@@ -45,10 +45,10 @@ public class ServiceController {
         serviceRepository.addDependenciesToService(service_id,dependentOnService_id);
     }
 
-    @DELETE("/Service")
+    @DELETE("/Service/:Service_id")
     @JsonBody
-    public void deleteService(@JsonBody ServiceDto serviceDto) {
-        serviceRepositoryHelper.deleteService(serviceDto);
+    public void deleteService(@PathParam("Service_id") UUID service_id) {
+        serviceRepositoryHelper.deleteService(service_id);
     }
 
     @GET("/Services/Typer")
