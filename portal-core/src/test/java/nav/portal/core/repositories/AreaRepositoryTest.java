@@ -1,12 +1,17 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.AreaEntity;
+import nav.portal.core.entities.ServiceEntity;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,15 +38,31 @@ class AreaRepositoryTest {
 
     @Test
     void save() {
-    }
-
-    @Test
-    void uppdate() {
+        //Arrange
+        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        //Act
+        UUID uuid = areaRepository.save(area);
+        //Assert
+        Assertions.assertThat(uuid).isNotNull();
     }
 
     @Test
     void retrieveOne() {
+        //Arrange
+        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        UUID uuid = areaRepository.save(area);
+        area.setId(uuid);
+        //Act
+        Map.Entry<AreaEntity, List<ServiceEntity>> retreavedArea = areaRepository.retrieveOne(uuid);
+        //Assert
+        Assertions.assertThat(retreavedArea.getValue().size()).isEqualTo(0);
+        Assertions.assertThat(retreavedArea.getKey()).isEqualTo(area);
     }
+
+    @Test
+    void update() {
+    }
+
 
     @Test
     void deleteArea() {

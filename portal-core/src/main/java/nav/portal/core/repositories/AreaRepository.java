@@ -68,7 +68,7 @@ public class AreaRepository {
                 .executeDelete();
 
     }
-
+    //TODO bør denne være optional?
     public Map.Entry<AreaEntity, List<ServiceEntity>> retrieveOne(UUID area_id) {
         DbContextTableAlias areaAlias = areaTable.alias("area");
         DbContextTableAlias a2s = areaServiceTable.alias("a2s");
@@ -97,6 +97,7 @@ public class AreaRepository {
     public List<AreaEntity> retriveAllShallow(){
         return areaTable.orderedBy("name").stream(AreaRepository::toArea).collect(Collectors.toList());
     }
+    //TODO bør denne være optional?
     public Map<AreaEntity, List<ServiceEntity>> retrieveAll() {
         DbContextTableAlias areaAlias = areaTable.alias("area");
         DbContextTableAlias a2s = areaServiceTable.alias("a2s");
