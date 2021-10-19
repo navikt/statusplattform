@@ -38,7 +38,9 @@ public class AreaController {
    @DELETE("/Area/:Area_id")
    @JsonBody
    public void deleteArea(@PathParam("Area_id") UUID area_id ) {
-      areaRepository.deleteArea(area_id);
+      if(!areaRepository.deleteArea(area_id)){
+         throw new HttpNotFoundException("Fant ikke område med id: " + area_id);
+      };
    }
 
 
@@ -47,9 +49,6 @@ public class AreaController {
    public List<AreaDto> getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
       return areaRepositoryHelper.getAreasOnDashboard(dashboard_id);
    }
-
-
-
 
    @PUT("/Area/:Area_id/:Service_id")
    @JsonBody
@@ -63,6 +62,9 @@ public class AreaController {
       areaRepository.removeServiceFromArea(area_id,service_id);
    }
 
+   //TODO OMRÅDER SKAL HA UNIKE NAVN
+   //TODO TJENESTER SKAL HA UNIK NAVN-TYPE KOMBO
+   //TODO SORTERE PÅ NAVN
 
 
 

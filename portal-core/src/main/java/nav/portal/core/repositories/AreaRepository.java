@@ -47,10 +47,14 @@ public class AreaRepository {
     }
 
 
-    public void deleteArea(UUID areaId){
+    public boolean deleteArea(UUID areaId){
+        if(areaTable.where("id",areaId).singleObject(AreaRepository::toArea).isEmpty()){
+            return false;
+        }
         dashboardAreaTable.where("area_id", areaId).executeDelete();
         areaServiceTable.where("area_id", areaId).executeDelete();
         areaTable.where("id", areaId).executeDelete();
+        return true;
 
     }
 

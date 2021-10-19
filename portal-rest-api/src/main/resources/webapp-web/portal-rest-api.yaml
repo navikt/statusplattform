@@ -439,7 +439,7 @@ paths:
   /Service/{Service_id}/{DependentOnService_id}:
     put:
       tags:
-        - Area
+        - Service
       summary: Legg til tjenesteavhengighet.
       description: Legg til en tjenesteavhengighet til tjenesten med id Service_id.
       parameters:
