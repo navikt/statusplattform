@@ -39,6 +39,7 @@ public class ServiceRepositoryHelper {
                 .stream().map(EntityDtoMappers::toServiceEntity)
                 .collect(Collectors.toList());
         UUID uuid = serviceRepository.save(service);
+        service.setId(uuid);
         serviceRepository.addDependenciesToService(service,dependencies);
         return uuid;
     }
