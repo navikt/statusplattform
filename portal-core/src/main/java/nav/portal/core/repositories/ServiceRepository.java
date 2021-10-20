@@ -67,6 +67,12 @@ public class ServiceRepository {
                         .execute();
     }
 
+    public void removeDependenciesFromService(UUID serviceId){
+        //Sletter både avhengigheter fra tjenesten til andre tjenester, og andre tjenesters avhengighet til tjenesten
+        service_serviceTable.where("service1_id", serviceId).executeDelete();
+        service_serviceTable.where("service2_id", serviceId).executeDelete();
+    }
+
 
     public Boolean isOtherServicesDependentOn(UUID id) {
         return service_serviceTable.where("service2_id", id).getCount() > 0;

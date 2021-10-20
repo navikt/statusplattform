@@ -38,10 +38,7 @@ public class ServiceRepositoryHelper {
     }
 
     public void deleteService(UUID service_id){
-        if(serviceRepository.isOtherServicesDependentOn(service_id)){
-            throw new IllegalArgumentException("Kan ikke slette tjeneste," +
-                    " da andre tjenester er avhengig av denne. Disse avhengighetene må fjernes først");
-        }
+        serviceRepository.removeDependenciesFromService(service_id);
         serviceRepository.delete(service_id);
     }
 
