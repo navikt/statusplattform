@@ -389,7 +389,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /Service/{Service_id}:
     put:
       tags:
         - Service
@@ -414,6 +413,7 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Service/{Service_id}:
     delete:
       tags:
         - Service
