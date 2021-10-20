@@ -37,6 +37,11 @@ public class ServiceController {
     public UUID newService(@JsonBody ServiceDto serviceDto) {
         return serviceRepositoryHelper.saveNewService(serviceDto);
     }
+    @PUT("/Service")
+    @JsonBody
+    public void updateService(@JsonBody ServiceDto serviceDto) {
+        serviceRepositoryHelper.updateService(serviceDto);
+    }
 
     @PUT("/Service/addDependency/:Service_id/:DependentOnService_id")
     @JsonBody
@@ -45,11 +50,13 @@ public class ServiceController {
         serviceRepository.addDependenciesToService(service_id,dependentOnService_id);
     }
 
+
     @DELETE("/Service/:Service_id")
     @JsonBody
     public void deleteService(@PathParam("Service_id") UUID service_id) {
         serviceRepositoryHelper.deleteService(service_id);
     }
+
 
     @GET("/Services/Types")
     @JsonBody

@@ -1,6 +1,5 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
@@ -18,7 +17,6 @@ public class ServiceRepository {
 
 
     public ServiceRepository(DbContext dbContext) {
-
         serviceTable = dbContext.table("service");
         service_serviceTable = dbContext.table("service_service");
     }
@@ -33,6 +31,18 @@ public class ServiceRepository {
                 .setField("logglink", service.getLogglink())
                 .execute()
                 .getId();
+    }
+
+    public void update(ServiceEntity service){
+        serviceTable.where("id",service.getId())
+                .update()
+                .setField("name", service.getName())
+                .setField("type", service.getType().getDbRepresentation())
+                .setField("team", service.getTeam())
+                .setField("monitorlink", service.getMonitorlink())
+                .setField("description", service.getDescription())
+                .setField("logglink", service.getLogglink())
+                .execute();
     }
 
 

@@ -390,6 +390,30 @@ paths:
           description: Not Found
           content: { }
   /Service/{Service_id}:
+    put:
+      tags:
+        - Service
+      summary: Rediger tjeneste
+      description: Rediger tjenesteparametre
+      requestBody:
+        description: Oppdaterte verdier for tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
     delete:
       tags:
         - Service
@@ -462,9 +486,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-
-
-
 components:
   schemas:
     DashboardNameId:
@@ -537,7 +558,6 @@ components:
           type: string
         dependencies:
           type: array
-          readOnly: true
           items:
             $ref: '#/components/schemas/Service'
         monitorlink:
