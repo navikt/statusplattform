@@ -558,6 +558,7 @@ components:
           type: string
         dependencies:
           type: array
+          example: "[Liste av service objekter]"
           items:
             $ref: '#/components/schemas/Service'
         monitorlink:
