@@ -29,7 +29,7 @@ public class ServiceController {
     @GET("/Services")
     @JsonBody
     public List<ServiceDto> getServices() {
-        return serviceRepositoryHelper.getAllServices();
+        return serviceRepositoryHelper.getAllServices2();
     }
 
     @POST("/Service")
@@ -46,7 +46,6 @@ public class ServiceController {
     @PUT("/Service/addDependency/:Service_id/:DependentOnService_id")
     @JsonBody
     public void newService(@PathParam("Service_id") UUID service_id ,@PathParam("DependentOnService_id") UUID dependentOnService_id) {
-        //TODO
         serviceRepository.addDependenciesToService(service_id,dependentOnService_id);
     }
 

@@ -18,20 +18,34 @@ public class ServiceRepositoryHelper {
 
 
     //Denne returnerer avhengigheter ett nivå ned.
+    //TODO fjern ubrukt kode under
+    /**
     public List<ServiceDto> getAllServices() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retriveAll();
-        List<ServiceDto> result = services.keySet()
-                .stream().map(EntityDtoMappers::toServiceDto)
-                .collect(Collectors.toList());
-        result.forEach(s -> {
-            List<ServiceEntity> dependencies = services.get(s);
+        Map<ServiceDto,Map.Entry<ServiceEntity, List<ServiceEntity>>> dtoEntityMap = new HashMap<>();
+        List<ServiceDto> result = new ArrayList<>();
+        services.entrySet().forEach(
+                entry -> {
+                            ServiceDto dto = EntityDtoMappers.toServiceDtoShallow(entry.getKey());
+                            dtoEntityMap.put(dto, entry);
+                            result.add(dto);
+                        }
+                );
+        dtoEntityMap.entrySet().forEach(entry -> {
+            List<ServiceEntity> dependencies = entry.getValue().getValue();
             dependencies = dependencies != null ? dependencies : Collections.EMPTY_LIST;
-            s.dependencies(dependencies.stream()
-                    .map(EntityDtoMappers::toServiceDto).collect(Collectors.toList()));
+            entry.getKey().setDependencies(dependencies.stream()
+                    .map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
             });
         return result;
-
     }
+     **/
+    public List<ServiceDto> getAllServices2() {
+        Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retriveAll();
+        return services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+    }
+
+
 
     public UUID saveNewService(ServiceDto serviceDto){
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);

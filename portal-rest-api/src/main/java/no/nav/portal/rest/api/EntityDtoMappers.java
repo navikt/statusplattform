@@ -21,6 +21,7 @@ public class EntityDtoMappers {
         entity.setLogglink(dto.getLogglink());
         return entity;
     }
+
     public static AreaEntity toAreaEntity(AreaDto dto){
         AreaEntity entity = new AreaEntity();
         entity.setId(dto.getId());
@@ -31,7 +32,7 @@ public class EntityDtoMappers {
     }
 
 
-    public static ServiceDto toServiceDto(ServiceEntity entity){
+    public static ServiceDto toServiceDtoShallow(ServiceEntity entity){
         ServiceDto dto = new ServiceDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
@@ -42,6 +43,22 @@ public class EntityDtoMappers {
         dto.setLogglink(entity.getLogglink());
         return dto;
     }
+
+    public static ServiceDto toServiceDtoDeep(Map.Entry<ServiceEntity,List<ServiceEntity>> entry){
+        ServiceEntity service = entry.getKey();
+        List<ServiceEntity> dependencies = entry.getValue();
+        ServiceDto dto = new ServiceDto();
+        dto.setId(service.getId());
+        dto.setName(service.getName());
+        dto.setType(ServiceTypeDto.fromValue(service.getType().getDbRepresentation()));
+        dto.setTeam(service.getTeam());
+        dto.setMonitorlink(service.getMonitorlink());
+        dto.setDescription(service.getDescription());
+        dto.setLogglink(service.getLogglink());
+        dto.setDependencies(dependencies.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
+        return dto;
+    }
+
     public static List<AreaDto> toAreaDtoDeep(Map<AreaEntity,List<ServiceEntity>> areasWithservices){
         List<AreaDto> dtos = new ArrayList<>();
         areasWithservices.forEach((area, services) -> dtos.add(toAreaDtoDeep(area, services)));
@@ -56,7 +73,7 @@ public class EntityDtoMappers {
         dto.setIcon(area.getIcon());
         dto.setServices(
                 services.stream()
-                        .map(EntityDtoMappers::toServiceDto)
+                        .map(EntityDtoMappers::toServiceDtoShallow)
                         .collect(Collectors.toList())
         );
         return dto;
