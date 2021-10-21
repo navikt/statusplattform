@@ -3,6 +3,7 @@ package nav.portal.core.repositories;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
+import org.actioncontroller.HttpRequestException;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
@@ -22,6 +23,12 @@ public class ServiceRepository {
     }
 
     public UUID save(ServiceEntity service) {
+        //Sjekk på navn+type kombinasjon
+        if(serviceTable.where("name",service.getName())
+                .where("type", service.getType()).getCount()>0){
+            throw new HttpRequestException("Tjeneste med navn: "+ service.getName()
+                    +", og type: "+service.getType()+" finnes allerede");
+        }
         return serviceTable.newSaveBuilderWithUUID("id", service.getId())
                 .setField("name", service.getName())
                 .setField("type", service.getType().getDbRepresentation())

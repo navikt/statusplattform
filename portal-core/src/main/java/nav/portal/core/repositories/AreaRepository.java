@@ -3,6 +3,8 @@ package nav.portal.core.repositories;
 import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
+import org.actioncontroller.HttpNotFoundException;
+import org.actioncontroller.HttpRequestException;
 import org.fluentjdbc.*;
 
 
@@ -30,6 +32,10 @@ public class AreaRepository {
     }
 
     public UUID save(AreaEntity entity) {
+        //Sjekk på navn
+        if(dashboardAreaTable.where("name",entity.getName()).getCount()>0) {
+            throw new HttpRequestException("Område med navn: "+ entity.getName() +" finnes allerede");
+        }
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
                 .setField("description", entity.getDescription())
