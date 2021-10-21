@@ -52,7 +52,7 @@ public class ServiceRepository {
                 .singleObject(ServiceRepository::toService);
     }
 
-    public void addDependenciesToService(ServiceEntity service, List<ServiceEntity> services){
+    public void addDependencyToService(ServiceEntity service, List<ServiceEntity> services){
         services.forEach(dependency ->
                 service_serviceTable.insert()
                         .setField("service1_id", service.getId())
@@ -60,18 +60,25 @@ public class ServiceRepository {
                         .execute()
         );
     }
-    public void addDependenciesToService(UUID service1_id, UUID service2_id){
+    public void addDependencyToService(UUID service1_id, UUID service2_id){
                 service_serviceTable.insert()
                         .setField("service1_id", service1_id)
                         .setField("service2_id", service2_id)
                         .execute();
     }
+    public void removeDependencyFromService(UUID service1_id, UUID service2_id){
+        service_serviceTable
+                .where("service1_id", service1_id)
+                .where("service2_id", service2_id)
+                .executeDelete();
+    }
 
-    public void removeDependenciesFromService(UUID serviceId){
+    public void removeAllDependenciesFromService(UUID serviceId){
         //Sletter både avhengigheter fra tjenesten til andre tjenester, og andre tjenesters avhengighet til tjenesten
         service_serviceTable.where("service1_id", serviceId).executeDelete();
         service_serviceTable.where("service2_id", serviceId).executeDelete();
     }
+
 
 
     public Boolean isOtherServicesDependentOn(UUID id) {

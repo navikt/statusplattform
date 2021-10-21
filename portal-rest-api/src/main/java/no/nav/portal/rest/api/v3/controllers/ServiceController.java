@@ -45,9 +45,17 @@ public class ServiceController {
 
     @PUT("/Service/addDependency/:Service_id/:DependentOnService_id")
     @JsonBody
-    public void newService(@PathParam("Service_id") UUID service_id ,@PathParam("DependentOnService_id") UUID dependentOnService_id) {
-        serviceRepository.addDependenciesToService(service_id,dependentOnService_id);
+    public void newService(@PathParam("Service_id") UUID service_id
+            ,@PathParam("DependentOnService_id") UUID dependentOnService_id) {
+        serviceRepository.addDependencyToService(service_id,dependentOnService_id);
     }
+
+    @DELETE("/Service/addDependency/:Service_id/:DependentOnService_id")
+    public void removeDependencyFromService(@PathParam("Service_id") UUID service_id
+            ,@PathParam("DependentOnService_id") UUID dependentOnService_id) {
+        serviceRepository.removeDependencyFromService(service_id,dependentOnService_id);
+    }
+
 
 
     @DELETE("/Service/:Service_id")

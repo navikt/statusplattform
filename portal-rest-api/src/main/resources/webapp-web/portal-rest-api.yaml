@@ -486,6 +486,27 @@ paths:
         '404':
           description: Not Found
           content: { }
+    delete:
+      tags:
+        - Service
+      summary: Sletter en tjenesteavhengighet
+      description: Fjerner tjenesteavhengighet fra tjenesten med id Service_id til tjenesten med id dependentOnService_Id.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
 components:
   schemas:
     DashboardNameId:

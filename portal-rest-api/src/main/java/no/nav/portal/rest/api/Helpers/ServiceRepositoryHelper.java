@@ -33,19 +33,19 @@ public class ServiceRepositoryHelper {
                 .collect(Collectors.toList());
         UUID uuid = serviceRepository.save(service);
         service.setId(uuid);
-        serviceRepository.addDependenciesToService(service,dependencies);
+        serviceRepository.addDependencyToService(service,dependencies);
         return uuid;
     }
 
     public void deleteService(UUID service_id){
-        serviceRepository.removeDependenciesFromService(service_id);
+        serviceRepository.removeAllDependenciesFromService(service_id);
         serviceRepository.delete(service_id);
     }
 
 
     public void updateService(ServiceDto serviceDto) {
         serviceRepository.update(EntityDtoMappers.toServiceEntity(serviceDto));
-        serviceRepository.addDependenciesToService(EntityDtoMappers.toServiceEntity(serviceDto),
+        serviceRepository.addDependencyToService(EntityDtoMappers.toServiceEntity(serviceDto),
                 serviceDto.getDependencies().stream().map(EntityDtoMappers::toServiceEntity)
                         .collect(Collectors.toList()));
 

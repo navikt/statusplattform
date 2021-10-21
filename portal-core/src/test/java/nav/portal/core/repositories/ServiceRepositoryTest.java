@@ -69,7 +69,7 @@ class ServiceRepositoryTest {
       // Act
       serviceRepository.save(service);
       dependentServices.forEach(serviceRepository::save);
-      serviceRepository.addDependenciesToService(service, dependentServices);
+      serviceRepository.addDependencyToService(service, dependentServices);
 
       // Assert
       Map.Entry<ServiceEntity,List<ServiceEntity>> retrievedService = serviceRepository.retrieveOneWithDependencies(service.getId());
