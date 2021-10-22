@@ -138,7 +138,14 @@ class DashboardRepositoryTest {
     }
 
     @Test
-    void uidFromName() {
+    void uidFromName(){
+    //Arrange
+    String name = sampleData.getRandomizedDashboardName();
+    dashboardRepository.save(name);
+    //Act
+    UUID uuid = dashboardRepository.uidFromName(name);
+    //Assert
+    Assertions.assertThat(uuid).isExactlyInstanceOf(UUID.class);
     }
 
     @Test

@@ -43,7 +43,7 @@ class AreaRepositoryTest {
         //Act
         UUID uuid = areaRepository.save(area);
         //Assert
-        Assertions.assertThat(uuid).isNotNull();
+        Assertions.assertThat(uuid).isExactlyInstanceOf(UUID.class);
     }
 
     @Test
