@@ -497,7 +497,11 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
+        - name: DependentOnService_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '201':
           description: Deleted
