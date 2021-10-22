@@ -34,7 +34,7 @@ public class ServiceController {
 
     @POST("/Service")
     @JsonBody
-    public UUID newService(@JsonBody ServiceDto serviceDto) {
+    public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
         return serviceRepositoryHelper.saveNewService(serviceDto);
     }
     @PUT("/Service")

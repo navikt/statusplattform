@@ -44,6 +44,12 @@ public class EntityDtoMappers {
         return dto;
     }
 
+    public static ServiceDto toServiceDtoDeep(ServiceEntity service ,List<ServiceEntity> dependencies){
+        Map<ServiceEntity, List<ServiceEntity>> map = new HashMap<>();
+        map.put(service,dependencies);
+        return toServiceDtoDeep(map.entrySet().stream().findFirst().orElseThrow());
+    }
+
     public static ServiceDto toServiceDtoDeep(Map.Entry<ServiceEntity,List<ServiceEntity>> entry){
         ServiceEntity service = entry.getKey();
         List<ServiceEntity> dependencies = entry.getValue();

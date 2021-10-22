@@ -26,7 +26,7 @@ public class ServiceRepositoryHelper {
 
 
 
-    public UUID saveNewService(ServiceDto serviceDto){
+    public ServiceDto saveNewService(ServiceDto serviceDto){
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);
         List<ServiceEntity> dependencies = serviceDto.getDependencies()
                 .stream().map(EntityDtoMappers::toServiceEntity)
@@ -34,7 +34,7 @@ public class ServiceRepositoryHelper {
         UUID uuid = serviceRepository.save(service);
         service.setId(uuid);
         serviceRepository.addDependencyToService(service,dependencies);
-        return uuid;
+        return EntityDtoMappers.toServiceDtoDeep(service,dependencies);
     }
 
     public void deleteService(UUID service_id){

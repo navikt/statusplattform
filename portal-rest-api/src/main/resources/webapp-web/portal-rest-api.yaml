@@ -382,7 +382,7 @@ paths:
               type: string
       responses:
         '201':
-          description: Deleted
+          description: Created
         '403':
           description: Forbidden
           content: { }
