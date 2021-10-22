@@ -80,6 +80,11 @@ class AreaRepositoryTest {
 
     @Test
     void retriveAllShallow() {
+        //Arrange
+        //Act
+        areaRepository.retriveAllShallow();
+        //Assert
+
         //TODO denne
     }
 
