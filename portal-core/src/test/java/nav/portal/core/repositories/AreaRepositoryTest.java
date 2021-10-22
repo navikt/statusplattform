@@ -66,6 +66,7 @@ class AreaRepositoryTest {
 
     @Test
     void deleteArea() {
+        //TODO denne
     }
 
     @Test
@@ -79,6 +80,7 @@ class AreaRepositoryTest {
 
     @Test
     void retriveAllShallow() {
+        //TODO denne
     }
 
     @Test

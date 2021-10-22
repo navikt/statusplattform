@@ -150,10 +150,12 @@ class DashboardRepositoryTest {
 
     @Test
     void retrieveOne() {
+        //TODO denne
     }
 
     @Test
     void retrieveOneFromName() {
+        //TODO denne
     }
 
     @Test
@@ -166,5 +168,6 @@ class DashboardRepositoryTest {
 
     @Test
     void deleteDashboard() {
+        //TODO denne
     }
 }
