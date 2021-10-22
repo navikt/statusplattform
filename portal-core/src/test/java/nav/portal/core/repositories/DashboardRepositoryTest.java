@@ -108,8 +108,33 @@ class DashboardRepositoryTest {
     @Test
     void getAllDashboardUUIDsAndNames() {
         //Arrange
+        List<String> dashboardNames = sampleData.getDashboardNames();
+        dashboardNames.forEach(dashboardRepository::save);
+
         //Act
+        List<DashboardEntity> retrievedDashboards = dashboardRepository.getAllDashboardUUIDsAndNames();
         //Assert
+        Map<String, DashboardEntity> comparisons = new HashMap<>();
+
+        /* Under skrevet med forEach
+        retrievedDashboards.forEach(retrievedDashboard ->
+                comparisons.put(dashboardNames.stream().filter(name -> retrievedDashboard.getName().equals(name))
+                                .findFirst().orElseThrow(),
+                     retrievedDashboard));
+        */
+        // Under skrevet med vanlig for loop
+        for(int i = 0; i < retrievedDashboards.size(); i++){
+            DashboardEntity dashboardEntity = retrievedDashboards.get(i);
+            String dashboardName = dashboardNames.stream().filter(name -> dashboardEntity.getName().equals(name)).findFirst().orElseThrow();
+            comparisons.put(dashboardName, dashboardEntity);
+        }
+
+        comparisons.forEach((name, entity) -> {
+            Assertions.assertThat(name).isEqualTo(entity.getName());
+            Assertions.assertThat(entity.getId()).isExactlyInstanceOf(UUID.class);
+        });
+
+
     }
 
     @Test

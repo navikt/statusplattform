@@ -66,5 +66,9 @@ private ServiceType getRandomServiceType(){
     return ServiceType.values()[random.nextInt(ServiceType.values().length)];
 }
 
+public List<String> getDashboardNames(){
+    return List.of(dashboardNames);
+}
+
 
 }
