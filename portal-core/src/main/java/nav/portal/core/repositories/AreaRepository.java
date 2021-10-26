@@ -33,7 +33,7 @@ public class AreaRepository {
 
     public UUID save(AreaEntity entity) {
         //Sjekk på navn
-        if(dashboardAreaTable.where("name",entity.getName()).getCount()>0) {
+        if(areaTable.where("name",entity.getName()).getCount()>0) {
             throw new HttpRequestException("Område med navn: "+ entity.getName() +" finnes allerede");
         }
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
