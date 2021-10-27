@@ -42,8 +42,10 @@ class AreaRepositoryTest {
         AreaEntity area = sampleData.getRandomizedAreaEntity();
         //Act
         UUID uuid = areaRepository.save(area);
+        area.setId(uuid);
+        AreaEntity retrievedEntity = areaRepository.retrieveOne(uuid).getKey();
         //Assert
-        Assertions.assertThat(uuid).isExactlyInstanceOf(UUID.class);
+        Assertions.assertThat(retrievedEntity).isEqualTo(area);
     }
 
     @Test
@@ -53,10 +55,10 @@ class AreaRepositoryTest {
         UUID uuid = areaRepository.save(area);
         area.setId(uuid);
         //Act
-        Map.Entry<AreaEntity, List<ServiceEntity>> retreavedArea = areaRepository.retrieveOne(uuid);
+        Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(uuid);
         //Assert
-        Assertions.assertThat(retreavedArea.getValue().size()).isEqualTo(0);
-        Assertions.assertThat(retreavedArea.getKey()).isEqualTo(area);
+        Assertions.assertThat(retrievedArea.getValue().size()).isEqualTo(0);
+        Assertions.assertThat(retrievedArea.getKey()).isEqualTo(area);
     }
 
     @Test

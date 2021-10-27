@@ -18,9 +18,10 @@ import java.util.stream.Collectors;
 
 class DashboardRepositoryTest {
 
+    private DataSource dataSource = TestDataSource.create();
+
     private SampleData sampleData = new SampleData();
 
-    private DataSource dataSource = TestDataSource.create();
 
     private DbContext dbContext = new DbContext();
     private DbContextConnection connection;
@@ -168,6 +169,20 @@ class DashboardRepositoryTest {
 
     @Test
     void deleteDashboard() {
+        //Arrange
+        String dashboardname = "Dashboard";
+        UUID uuid = dashboardRepository.save(dashboardname);
+        //Act
+        UUID shouldExist = dashboardRepository.uidFromName(dashboardname);
+        dashboardRepository.deleteDashboard(uuid);
+        UUID shouldNotExist = dashboardRepository.uidFromName(dashboardname);
+
+        //Assert
+        Assertions.assertThat(shouldExist).isEqualTo(uuid);
+        Assertions.assertThat(shouldNotExist).isNull();
+
+
         //TODO denne
+
     }
 }
