@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,6 +70,23 @@ class AreaRepositoryTest {
     @Test
     void deleteArea() {
         //TODO denne
+        //Arrange - Lag area
+        List<AreaEntity> areas = sampleData.getRandomLengthNonEmptyListOfAreaEntity();
+        for(AreaEntity area :areas){
+             area.setId(areaRepository.save(area));
+        }
+        AreaEntity areaToBeDeleted = areas.get(0);
+
+        //Act
+        List<AreaEntity> retrievedbeforeDelete = areaRepository.retriveAllShallow();
+        boolean isDeleted = areaRepository.deleteArea(areaToBeDeleted.getId());
+        List<AreaEntity> retrievedAreasAfterDelete = areaRepository.retriveAllShallow();
+        retrievedbeforeDelete.removeAll(retrievedAreasAfterDelete);
+        //Assert
+        Assertions.assertThat(isDeleted).isTrue();
+        Assertions.assertThat(retrievedbeforeDelete.size()).isEqualTo(1);
+        Assertions.assertThat(retrievedbeforeDelete.get(0)).isEqualTo(areaToBeDeleted);
+
     }
 
     @Test
