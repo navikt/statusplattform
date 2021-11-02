@@ -42,11 +42,14 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(5));
 
     private static URL openIdConfiguration;
-    private String clientId = System.getenv("AZURE_APP_CLIENT_ID");
-    private String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
+    private static String clientId = System.getenv("AZURE_APP_CLIENT_ID");
+    private static String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
     static {
         try{
             openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
+            System.out.println("clientId: " +clientId);
+            System.out.println("OpenIdConfig: "+ openIdConfiguration);
+
         }
         catch (MalformedURLException e){
 
