@@ -160,6 +160,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         }
 
         JsonObject tokenResponse = JsonObject.read(tokenRequest);
+        System.out.println(tokenResponse);
         response.addCookie(createCookie(request, ACCESS_TOKEN_COOKIE, tokenResponse.requiredString("access_token")));
         response.sendRedirect(request.getContextPath());
         return Authentication.SEND_CONTINUE;

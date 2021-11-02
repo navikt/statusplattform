@@ -23,5 +23,16 @@ spec:
         databases:
           - name: navstatus
             envVarPrefix: DB
-  #image: ghcr.io/navikt/myapplication:417dcaa2c839b9da72e0189e2cfdd4e90e9cc6fd
-  #       ^--- interpolated from the ${{ env.docker_image }} variable in the action
+  azure:
+    application:
+      enabled: true
+      # optional, enum of {trygdeetaten.no, nav.no}
+      # defaults to trygdeetaten.no in dev-* clusters, nav.no in production
+      tenant: nav.no
+      # optional
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
+      # optional, defaults shown
+      singlePageApplication: false
