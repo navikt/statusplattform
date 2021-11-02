@@ -126,7 +126,7 @@ public class ServiceRepository {
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
         service.leftJoin(service.column("id"), s2s.column("service1_id"))
                 .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
-                .orderBy("name")
+                .orderBy(service.column("name"))
                 .list(row -> {
                     List<ServiceEntity> serviceList = result
                             .computeIfAbsent(toService(row.table(service)), ignored -> new ArrayList<>());
