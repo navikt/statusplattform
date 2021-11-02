@@ -16,12 +16,7 @@ import java.util.List;
 public class PortalRestApi extends ClasspathWebAppContext {
 
     private final DbContext dbContext = new DbContext();
-    private final Authentication authentication = new Authentication() {
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
-    };
+    private final Authentication authentication = new OpenIdConnectAuthentication();
 
     private final ApiFilter filter;
     private final CORSFilter corsFilter;

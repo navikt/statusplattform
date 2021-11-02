@@ -20,7 +20,7 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         MDC.clear();
         ((Request)request).setAuthentication(authentication);
-        if (((Request) request).getServletPath().startsWith("/login")) {
+        if (((Request) request).getServletPath().startsWith("/oauth2")) {
             ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
             return;
         }

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 import static java.net.URLEncoder.encode;
 
-public abstract class OpenIdConnectAuthentication implements Authentication.Deferred {
+public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenIdConnectAuthentication.class);
     public static final String ACCESS_TOKEN_COOKIE = "access_token";
@@ -46,12 +46,13 @@ public abstract class OpenIdConnectAuthentication implements Authentication.Defe
     private String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
     static {
         try{
-            openIdConfiguration = new URL(System.getenv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"));
+            openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
         }
         catch (MalformedURLException e){
 
         }
     }
+
 
 
     @Override
@@ -71,9 +72,9 @@ public abstract class OpenIdConnectAuthentication implements Authentication.Defe
     }
 
     protected Authentication doAuthenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getRequestURI().startsWith(request.getContextPath() + "/login/oauth2callback")) {
+        if (request.getRequestURI().startsWith(request.getContextPath() + "/oauth2/callback")) {
             return oauth2callback(request, response);
-        } else if (request.getRequestURI().startsWith(request.getContextPath() + "/login")) {
+        } else if (request.getRequestURI().startsWith(request.getContextPath() + "/oauth2")) {
             return redirectToAuthorize(request, response);
         }
         return null;
@@ -113,7 +114,10 @@ public abstract class OpenIdConnectAuthentication implements Authentication.Defe
         }
     }
 
-    protected abstract Principal createPrincipal(JsonObject userinfo);
+    public Principal createPrincipal(JsonObject userinfo){
+        System.out.println(userinfo);
+        return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.requiredString("NAVident"));
+    }
 
     private DefaultUserIdentity createUserIdentity(Principal principal) {
         Subject subject = new Subject();
