@@ -46,12 +46,13 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
     static {
         try{
-            openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
             System.out.println("clientId: " +clientId);
+            openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
             System.out.println("OpenIdConfig: "+ openIdConfiguration);
 
         }
         catch (MalformedURLException e){
+            System.out.println(e);
 
         }
     }
