@@ -30,7 +30,9 @@ public class DataSourceTransformer {
                 dataSource = new HikariDataSource(new HikariConfig(properties));
                 break;
             } catch (Exception e) {
-                if (++count == maxTries) throw e;
+                if (++count == maxTries) {
+                    throw e;
+                };
             }
         }
 
