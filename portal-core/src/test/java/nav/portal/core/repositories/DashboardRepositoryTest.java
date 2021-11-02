@@ -152,21 +152,61 @@ class DashboardRepositoryTest {
     @Test
     void retrieveOne() {
         //TODO denne
+        //Arrange -
+        String dashboardname = "Dashboard";
+        UUID dashboardId = dashboardRepository.save(dashboardname);
+
+        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
+
+        dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
+        //Act
+        Map.Entry<DashboardEntity, List<AreaWithServices>>exists = dashboardRepository.retrieveOne(dashboardId);
+        //Assert
+        Assertions.assertThat(exists.getKey().getName()).isEqualTo(dashboardname);
+        Assertions.assertThat(exists.getValue().size()).isEqualTo(areaIds.size());
     }
+
 
     @Test
     void retrieveOneFromName() {
         //TODO denne
+        //Arrange -
+        String dashboardname = "Dashboard";
+        //Act
+        Map.Entry<DashboardEntity, List<AreaWithServices>>aName = dashboardRepository.retrieveOneFromName(dashboardname);
+        //Assert
+        Assertions.assertThat(aName.getKey().getName()).isEqualTo(dashboardname);
+        UUID uuid = dashboardRepository.save(dashboardname);
     }
 
     @Test
     void retrieveAll() {
+
+
     }
 
     @Test
     void deleteAreasFromDashboard() {
-    }
 
+        //Arrange
+        String dashboardname = "Dashboard";
+        UUID dashboardId = dashboardRepository.save(dashboardname);
+
+        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<UUID> areaIds = areas.stream()
+                .map(areaRepository::save)
+                .collect(Collectors.toList());
+        dashboardRepository.settAreasOnDashboard(dashboardId, areaIds);
+
+
+        //Act
+        dashboardRepository.deleteAreasFromDashboard(dashboardId);
+        Map.Entry<DashboardEntity, List<AreaWithServices>> result = dashboardRepository.retrieveOneFromName(dashboardname);
+        //Assert
+
+        Assertions.assertThat(result.getValue().size()).isEqualTo(0);
+    }
     @Test
     void deleteDashboard() {
         //Arrange

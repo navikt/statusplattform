@@ -36,6 +36,7 @@ class AreaRepositoryTest {
     }
 
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @Test
     void save() {
@@ -91,10 +92,38 @@ class AreaRepositoryTest {
 
     @Test
     void addServiceToArea() {
+       //Arrange
+       AreaEntity area = sampleData.getRandomizedAreaEntity();
+       UUID areaId = areaRepository.save(area);
+
+       ServiceEntity service = sampleData.getRandomizedServiceEntity();
+       UUID serviceId = serviceRepository.save(service);
+       service.setId(serviceId);
+       //Act
+       areaRepository.addServiceToArea(areaId, serviceId);
+       Map.Entry<AreaEntity,List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
+       //Assert
+       Assertions.assertThat(retrievedArea.getValue()).containsExactly(service);
+
     }
 
     @Test
     void removeServiceFromArea() {
+        //Arrange
+        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        UUID areaId = areaRepository.save(area);
+
+        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        areaRepository.addServiceToArea(areaId, serviceId);
+        Map.Entry<AreaEntity, List<ServiceEntity>> before = areaRepository.retrieveOne(areaId);
+        //Act
+        areaRepository.removeServiceFromArea(areaId, serviceId);
+        Map.Entry<AreaEntity, List<ServiceEntity>> after = areaRepository.retrieveOne(areaId);
+        //Assert
+        Assertions.assertThat(before.getValue()).containsExactly(service);
+        Assertions.assertThat(after.getValue()).isEmpty();
     }
 
 
