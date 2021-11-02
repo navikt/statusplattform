@@ -72,7 +72,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected Authentication doAuthenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println(request.getRequestURI().startsWith(request.getContextPath()));
+        System.out.println(request.getRequestURI());
         if (request.getRequestURI().startsWith(request.getContextPath() + "/oauth2/callback")) {
             return oauth2callback(request, response);
         } else if (request.getRequestURI().startsWith(request.getContextPath() + "/oauth2")) {
