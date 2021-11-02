@@ -34,7 +34,7 @@ public class DashboardController {
 
     @GET("/Dashboards")
     @JsonBody
-    public List<DashboardNameIdDto> getDashboards(@UserPrincipal PortalRestPrincipal portalRestPrincipal) {
+    public List<DashboardNameIdDto> getDashboards() {
         return EntityDtoMappers.toDashboardDtoShallow(dashboardRepository.getAllDashboardUUIDsAndNames());
     }
 
