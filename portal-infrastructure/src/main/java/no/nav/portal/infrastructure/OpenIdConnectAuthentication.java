@@ -49,6 +49,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
             System.out.println("clientId: " +clientId);
             openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
             System.out.println("OpenIdConfig: "+ openIdConfiguration);
+            System.out.println("clientSecret length: " + clientSecret.length());
 
         }
         catch (MalformedURLException e){
@@ -61,6 +62,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     @Override
     public Authentication authenticate(ServletRequest servletRequest) {
+        System.out.println("authenticate(ServletRequest servletRequest) ---------------------------");
         return getCookie(servletRequest, ACCESS_TOKEN_COOKIE)
                 .flatMap(this::getUser)
                 .orElse(this);
@@ -68,6 +70,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     @Override
     public Authentication authenticate(ServletRequest servletRequest, ServletResponse servletResponse) {
+        System.out.println("authenticate ---------------------------");
         try {
             return doAuthenticate((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
         } catch (IOException e) {
@@ -96,6 +99,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     private Optional<Authentication> getUser(String accessToken) {
+        System.out.println("getUser ---------------------------");
         Principal principal = cache.getOrCompute(accessToken, () -> getPrincipal(accessToken));
         if (principal == null) {
             return Optional.empty();
@@ -105,6 +109,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected Optional<Principal> getPrincipal(String accessToken) {
+        System.out.println("getPrincipal ---------------------------");
         try {
             OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
             HttpURLConnection userRequest = configuration.openUserinfoConnection();
@@ -120,17 +125,20 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     public Principal createPrincipal(JsonObject userinfo){
+        System.out.println("createPrincipal ---------------------------");
         System.out.println(userinfo);
         return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.requiredString("NAVident"));
     }
 
     private DefaultUserIdentity createUserIdentity(Principal principal) {
+        System.out.println("createUserIdentity ---------------------------");
         Subject subject = new Subject();
         subject.getPrincipals().add(principal);
         return new DefaultUserIdentity(subject, principal, new String[0]);
     }
 
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("redirectToAuthorize ---------------------------");
         response.addCookie(removeCookie(request, ACCESS_TOKEN_COOKIE));
         String authorizationState = UUID.randomUUID().toString();
         response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
@@ -139,6 +147,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("oauth2callback ---------------------------");
         boolean secure = request.isSecure();
         if (!secure && !request.getServerName().equals("localhost")) {
             response.sendError(400, "Must use https");
