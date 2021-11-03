@@ -2,6 +2,7 @@ package no.nav.portal.rest.api.v3.controllers;
 
 
 import nav.portal.core.repositories.ServiceRepository;
+import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.ServiceTypeDto;
@@ -67,7 +68,7 @@ public class ServiceController {
 
     @GET("/Services/Types")
     @JsonBody
-    public List<String> getServicetyper() {
+    public List<String> getServicetyper(@UserPrincipal PortalRestPrincipal portalRestPrincipal) {
         return Arrays.stream(ServiceTypeDto.values()).map(ServiceTypeDto::toString).collect(Collectors.toList());
     }
 }
