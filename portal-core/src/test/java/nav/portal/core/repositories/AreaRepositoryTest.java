@@ -12,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AreaRepositoryTest {
 
@@ -63,9 +60,26 @@ class AreaRepositoryTest {
         Assertions.assertThat(retrievedArea.getKey()).isEqualTo(area);
     }
 
+
     @Test
     void update() {
+        //TODO denne
+        //Arrange
+        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(2);
+
+        UUID uuid = areaRepository.save(areas.get(0));
+        areas.forEach(area -> area.setId(uuid));
+
+        AreaEntity before = areaRepository.retrieveOne(uuid).getKey();
+        //Act
+        areaRepository.update(areas.get(1));
+        AreaEntity after = areaRepository.retrieveOne(uuid).getKey();
+        //Assert
+        Assertions.assertThat(before).isEqualTo(areas.get(0));
+        Assertions.assertThat(after).isEqualTo(areas.get(1));
+
     }
+
 
 
     @Test
@@ -83,6 +97,7 @@ class AreaRepositoryTest {
         boolean isDeleted = areaRepository.deleteArea(areaToBeDeleted.getId());
         List<AreaEntity> retrievedAreasAfterDelete = areaRepository.retriveAllShallow();
         retrievedbeforeDelete.removeAll(retrievedAreasAfterDelete);
+
         //Assert
         Assertions.assertThat(isDeleted).isTrue();
         Assertions.assertThat(retrievedbeforeDelete.size()).isEqualTo(1);

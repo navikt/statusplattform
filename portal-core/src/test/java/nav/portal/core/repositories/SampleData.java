@@ -67,6 +67,16 @@ public List<AreaEntity> getRandomLengthListOfAreaEntity(){
         return areas;
     }
 
+    public List<AreaEntity> getNonEmptyListOfAreaEntity(int length){
+        Random random = new Random();
+        int numberOfAreas = length;
+        List<AreaEntity> areas = new ArrayList<>();
+        for(int i = 0; i < numberOfAreas; i++ ){
+            areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
+        }
+        return areas;
+    }
+
 public ServiceEntity getRandomizedServiceEntity() {
     return new ServiceEntity()
             .setName(getRandomFromArray(serviceNames))
