@@ -43,7 +43,7 @@ public class AreaRepository {
                 .execute();
         return result.getId();
     }
-    public DatabaseSaveResult.SaveStatus uppdate(AreaEntity entity) {
+    public DatabaseSaveResult.SaveStatus update(AreaEntity entity) {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
                 .setField("description", entity.getDescription())
@@ -127,6 +127,7 @@ public class AreaRepository {
                             .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
                     return null;
                 });
+
         return result;
     }
 
