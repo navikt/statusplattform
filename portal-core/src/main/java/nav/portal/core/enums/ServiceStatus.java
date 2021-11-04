@@ -21,7 +21,7 @@ public enum ServiceStatus implements DbEnum {
 
     public static Optional<ServiceStatus> fromDb(String dbRepresentation){
         try{
-            return Optional.of((ServiceStatus) DbEnum.findEnum(dbRepresentation.toLowerCase(), values(), ServiceStatus.class.getSimpleName()));
+            return Optional.of((ServiceStatus) DbEnum.findEnum(dbRepresentation, values(), ServiceStatus.class.getSimpleName()));
         }
         catch (IllegalArgumentException e){
             return Optional.empty();
