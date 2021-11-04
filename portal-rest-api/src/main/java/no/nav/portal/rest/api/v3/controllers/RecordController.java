@@ -23,7 +23,7 @@ public class RecordController {
         //TODO denne må utbedres
         RecordEntity entity = new RecordEntity()
                 .setServiceId(serviceStatusDto.getServiceId())
-                .setStatus(ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue()))
+                .setStatus(ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue()).orElse(ServiceStatus.ISSUE))
                 .setCreated_at(ZonedDateTime.now())
                 .setResponsetime(42);
         recordRepository.save(entity);

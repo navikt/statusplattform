@@ -1,5 +1,6 @@
 package nav.portal.core.enums;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public enum ServiceStatus implements DbEnum {
@@ -18,7 +19,12 @@ public enum ServiceStatus implements DbEnum {
         return dbRepresentation;
     }
 
-    public static ServiceStatus fromDb(String dbRepresentation){
-        return (ServiceStatus) DbEnum.findEnum(dbRepresentation.toLowerCase(), values(), ServiceStatus.class.getSimpleName());
+    public static Optional<ServiceStatus> fromDb(String dbRepresentation){
+        try{
+            return Optional.of((ServiceStatus) DbEnum.findEnum(dbRepresentation.toLowerCase(), values(), ServiceStatus.class.getSimpleName()));
+        }
+        catch (IllegalArgumentException e){
+            return Optional.empty();
+        }
     }
 }
