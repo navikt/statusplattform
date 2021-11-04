@@ -68,7 +68,7 @@ public class EntityDtoMappers {
     public static List<AreaDto> toAreaDtoDeep(Map<AreaEntity,List<ServiceEntity>> areasWithservices){
         List<AreaDto> dtos = new ArrayList<>();
         areasWithservices.forEach((area, services) -> dtos.add(toAreaDtoDeep(area, services)));
-        return dtos;
+        return dtos.stream().sorted(Comparator.comparing(AreaDto::getName)).collect(Collectors.toList());
     }
 
     public static AreaDto toAreaDtoDeep(AreaEntity area, List<ServiceEntity> services){
