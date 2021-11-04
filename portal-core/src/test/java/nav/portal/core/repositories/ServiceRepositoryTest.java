@@ -112,9 +112,59 @@ class ServiceRepositoryTest {
    }
 
 
+   @Test
+   void save() {
+   }
 
+   @Test
+   void update() {
+   }
 
+   @Test
+   void retrieve() {
+   }
 
+   @Test
+   void addDependencyToService() {
+   }
 
+   @Test
+   void testAddDependencyToService() {
+   }
 
+   @Test
+   void removeDependencyFromService() {
+   }
+
+   @Test
+   void removeAllDependenciesFromService() {
+   }
+
+   @Test
+   void isOtherServicesDependentOn() {
+   }
+
+   @Test
+   void retrieveOneWithDependencies() {
+   }
+
+   @Test
+   void retriveAll() {
+   }
+
+   @Test
+   void doesEntryExist() {
+   }
+
+   @Test
+   void testRetrieve() {
+   }
+
+   @Test
+   void delete() {
+   }
+
+   @Test
+   void toService() {
+   }
 }
