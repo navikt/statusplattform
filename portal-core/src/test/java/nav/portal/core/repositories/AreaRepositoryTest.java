@@ -144,12 +144,16 @@ class AreaRepositoryTest {
 
     @Test
     void retriveAllShallow() {
-        //Arrange
-        //Act
-        areaRepository.retriveAllShallow();
-        //Assert
-
         //TODO denne
+        //Arrange
+        List<AreaEntity> areas = sampleData.getRandomLengthNonEmptyListOfAreaEntity();
+        areas.forEach(area -> area.setId(areaRepository.save(area)));
+
+        //Act
+        List<AreaEntity>allAreas = areaRepository.retriveAllShallow();
+        //Assert
+        Assertions.assertThat(areas.size()).isEqualTo(allAreas.size());
+        Assertions.assertThat(areas.containsAll(allAreas));
     }
 
     @Test
