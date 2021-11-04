@@ -5,7 +5,9 @@ import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
 import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.ServiceStatusDto;
 import no.portal.web.generated.api.ServiceTypeDto;
+import no.portal.web.generated.api.StatusDto;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -68,7 +70,13 @@ public class ServiceController {
 
     @GET("/Services/Types")
     @JsonBody
-    public List<String> getServicetyper() {
-        return Arrays.stream(ServiceTypeDto.values()).map(ServiceTypeDto::toString).collect(Collectors.toList());
+    public List<String> getServicetypes() {
+        return ServiceTypeDto.getValues();
+    }
+
+    @GET("/Services/Status")
+    @JsonBody
+    public List<String> getServiceStatuses() {
+        return StatusDto.getValues();
     }
 }

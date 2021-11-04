@@ -338,6 +338,33 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
+  /Services/Status:
+    get:
+      tags:
+        - Service
+      summary: Hent alle statuser tjenester kan ha
+      operationId: ServiceStatus
+      description: Alle tjenester kan ha et utvalg statuser. Dette endepunktet skriver ut disse.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Applikasjon
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /Services:
     get:
       tags:
