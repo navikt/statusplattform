@@ -1,6 +1,7 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
@@ -28,7 +29,7 @@ public class ServiceRepositoryHelper {
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
-        return result;
+        return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
 
 
     }
