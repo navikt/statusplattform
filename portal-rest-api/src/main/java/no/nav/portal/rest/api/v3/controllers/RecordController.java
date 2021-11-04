@@ -21,7 +21,7 @@ public class RecordController {
 
 
     @POST("/ServiceStatus")
-    public  void addServiceStatus(@JsonBody ServiceStatusDto serviceStatusDto,@UserPrincipal PortalRestPrincipal portalRestPrincipal){
+    public  void addServiceStatus(@JsonBody ServiceStatusDto serviceStatusDto){
         //TODO denne må utbedres
         RecordEntity entity = new RecordEntity()
                 .setServiceId(serviceStatusDto.getServiceId())
