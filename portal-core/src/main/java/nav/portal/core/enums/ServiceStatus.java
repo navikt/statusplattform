@@ -3,9 +3,9 @@ package nav.portal.core.enums;
 import java.util.stream.Stream;
 
 public enum ServiceStatus implements DbEnum {
-    OK("ok"),
-    DOWN("down"),
-    ISSUE("issue");
+    OK("OK"),
+    DOWN("DOWN"),
+    ISSUE("ISSUE");
 
     private String dbRepresentation;
 

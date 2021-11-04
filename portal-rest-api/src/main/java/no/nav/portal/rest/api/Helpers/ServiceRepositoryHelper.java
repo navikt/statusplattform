@@ -36,7 +36,7 @@ public class ServiceRepositoryHelper {
     private void settStatusOnService(ServiceDto service){
         service.getDependencies().forEach(this::settStatusOnService);
         if(recordRepository.getLatestRecord(service.getId()).isPresent()){
-            service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation()));
+            service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation().toUpperCase()));
             return;
         }
         service.setStatus(StatusDto.ISSUE);
