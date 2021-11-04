@@ -1,9 +1,11 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.StatusDto;
 import org.fluentjdbc.DbContext;
 
 import java.util.*;
@@ -11,9 +13,11 @@ import java.util.stream.Collectors;
 
 public class ServiceRepositoryHelper {
     ServiceRepository serviceRepository;
+    RecordRepository recordRepository;
 
     public ServiceRepositoryHelper(DbContext context){
         this.serviceRepository = new ServiceRepository(context);
+        this.recordRepository = new RecordRepository(context);
     }
 
 
@@ -21,7 +25,21 @@ public class ServiceRepositoryHelper {
 
     public List<ServiceDto> getAllServices2() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retriveAll();
-        return services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        //TODO status skal hentes i dbspørringer, ikke slik som dette:
+        result.forEach(this::settStatusOnService);
+        return result;
+
+
+    }
+
+    private void settStatusOnService(ServiceDto service){
+        service.getDependencies().forEach(this::settStatusOnService);
+        if(recordRepository.getLatestRecord(service.getId()).isPresent()){
+            service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation()));
+            return;
+        }
+        service.setStatus(StatusDto.ISSUE);
     }
 
 
