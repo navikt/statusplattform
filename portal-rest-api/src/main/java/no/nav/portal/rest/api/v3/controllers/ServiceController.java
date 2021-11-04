@@ -68,7 +68,7 @@ public class ServiceController {
 
     @GET("/Services/Types")
     @JsonBody
-    public List<String> getServicetyper(@UserPrincipal PortalRestPrincipal portalRestPrincipal) {
+    public List<String> getServicetyper() {
         return Arrays.stream(ServiceTypeDto.values()).map(ServiceTypeDto::toString).collect(Collectors.toList());
     }
 }
