@@ -1,6 +1,9 @@
 package no.nav.portal.rest.api.Helpers;
 
+import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.DashboardRepository;
+import nav.portal.core.repositories.RecordRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
@@ -12,16 +15,29 @@ import java.util.stream.Collectors;
 public class DashboardRepositoryHelper {
 
     private final DashboardRepository dashboardRepository;
+    private final RecordRepository recordRepository;
 
 
     public DashboardRepositoryHelper(DbContext dbContext) {
         this.dashboardRepository = new DashboardRepository(dbContext);
+        this.recordRepository = new RecordRepository(dbContext);
     }
 
     public DashboardDto getDashboard(UUID dashboard_id){
         DashboardDto dashboardDto = EntityDtoMappers.toDashboardDtoDeep(dashboardRepository.retrieveOne(dashboard_id));
+        dashboardDto.getAreas()
+                .forEach(area -> area.getServices()
+                        .forEach(this::settStatusOnService));
         dashboardDto.getAreas().forEach(areaDto -> areaDto.setStatus(getAreaStatus(areaDto)));
         return dashboardDto;
+    }
+
+    private void settStatusOnService(ServiceDto service){
+        if(recordRepository.getLatestRecord(service.getId()).isPresent()){
+            service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation()));
+            return;
+        }
+        service.setStatus(StatusDto.ISSUE);
     }
 
     private StatusDto getAreaStatus(AreaDto dto){
