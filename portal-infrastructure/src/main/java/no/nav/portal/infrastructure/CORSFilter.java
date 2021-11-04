@@ -41,7 +41,6 @@ public class CORSFilter implements Filter {
             throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        System.out.println("CORSFilter HTTP Request: " + request.getMethod());
 
         // Authorize (allow) all domains to consume the content
         //TODO hvordan skal dette håndteres? Dersom frontend og backend hostes på samme server trenger ikke
