@@ -37,8 +37,7 @@ import static java.net.URLEncoder.encode;
 public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenIdConnectAuthentication.class);
-    public static final String ACCESS_TOKEN_COOKIE = "access_token";
-    public static final String ID_TOKEN_COOKIE = "id_token";
+    public static final String ID_TOKEN_COOKIE = "tmp_token";
     public static final String AUTHORIZATION_STATE_COOKIE = "authorization_state";
 
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(5));
@@ -142,7 +141,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("redirectToAuthorize ---------------------------");
-        response.addCookie(removeCookie(request, ACCESS_TOKEN_COOKIE));
         response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
         String authorizationState = UUID.randomUUID().toString();
         response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
@@ -180,8 +178,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         JsonObject tokenResponse = JsonObject.read(tokenRequest);
         logger.info(tokenResponse.toJson());
         String id_token = tokenResponse.requiredString("id_token");
-        String access_token = tokenResponse.requiredString("access_token");
-        response.addCookie(createCookie(request, ACCESS_TOKEN_COOKIE, access_token));
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
         response.sendRedirect(request.getContextPath());
         return Authentication.SEND_CONTINUE;
