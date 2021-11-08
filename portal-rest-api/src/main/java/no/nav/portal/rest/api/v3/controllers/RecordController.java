@@ -21,7 +21,7 @@ public class RecordController {
 
 
     @POST("/ServiceStatus")
-    public  void addServiceStatus(@JsonBody ServiceStatusDto serviceStatusDto,@UserPrincipal PortalRestPrincipal portalRestPrincipal){
+    public  void addServiceStatus(@JsonBody ServiceStatusDto serviceStatusDto){
         //TODO denne må utbedres
         RecordEntity entity = new RecordEntity()
                 .setServiceId(serviceStatusDto.getServiceId())
@@ -29,6 +29,12 @@ public class RecordController {
                 .setCreated_at(ZonedDateTime.now())
                 .setResponsetime(42);
         recordRepository.save(entity);
+
+    }
+
+    @POST("/test")
+    public  void test(@UserPrincipal PortalRestPrincipal portalRestPrincipal){
+
 
     }
 

@@ -538,6 +538,31 @@ paths:
         '404':
           description: Not Found
           content: { }
+    /test:
+      post:
+        tags:
+          - Service
+        summary: Legg til tjeneste
+        description: Opprett en ny tjeneste. Merk at type er predefinert og strengt, se endepunkt /Services/Types for en liste over mulige verdier.
+        requestBody:
+          description: Legg til en ny tjeneste
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+            text/plain:
+              schema:
+                type: string
+        responses:
+          '201':
+            description: Created
+          '403':
+            description: Forbidden
+            content: { }
+          '404':
+            description: Not Found
+            content: { }
 components:
   schemas:
     DashboardNameId:
