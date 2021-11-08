@@ -441,6 +441,38 @@ paths:
           description: Not Found
           content: { }
   /Service/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent en spesifikk tjeneste med tjenesteavhengigheter
+      operationId: GetService
+      description: Henter tjenestedata med tjenesteavhengigheter - ett lag dypt. Det vil si at dersom tjeneste A er avhengig av tjeneste B som er avhengig av tjeneste C, vil ikke avhengighet B => C dukke opp.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
     delete:
       tags:
         - Service
@@ -478,6 +510,28 @@ paths:
           text/plain:
             schema:
               type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /ServiceStatus/{Service_id}:
+    get:
+      tags:
+        - Record
+      summary: Hent status-records fra en tjeneste med id Service_id
+      description: Hent rapport på alle statuser lagt inn på en spesifikk service
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '201':
           description: Deleted

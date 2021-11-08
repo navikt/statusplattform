@@ -3,6 +3,7 @@ package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.infrastructure.PortalRestPrincipal;
+import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.ServiceStatusDto;
@@ -33,6 +34,12 @@ public class ServiceController {
     @JsonBody
     public List<ServiceDto> getServices() {
         return serviceRepositoryHelper.getAllServices2();
+    }
+
+    @GET("/Service/:Service_id")
+    @JsonBody
+    public ServiceDto getService(@PathParam("Service_id") UUID service_id) {
+        return serviceRepositoryHelper.retrieveOneService(service_id);
     }
 
     @POST("/Service")

@@ -70,4 +70,8 @@ public class ServiceRepositoryHelper {
 
 
     }
+
+    public ServiceDto retrieveOneService(UUID service_id) {
+        return EntityDtoMappers.toServiceDtoDeep(serviceRepository.retrieveOneWithDependencies(service_id));
+    }
 }
