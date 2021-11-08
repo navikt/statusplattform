@@ -30,6 +30,8 @@ spec:
       # defaults to trygdeetaten.no in dev-* clusters, nav.no in production
       tenant: nav.no
       # optional
+      replyURLs:
+      - "https://digitalstatus.ekstern.dev.nav.no/rest/oauth2/callback"
       claims:
         extra:
           - "NAVident"

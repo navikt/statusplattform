@@ -259,7 +259,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected String getRedirectUri(String contextPath) {
-        return contextPath + "/login/oauth2callback";
+        return contextPath + "/oauth2/callback";
     }
 
 
