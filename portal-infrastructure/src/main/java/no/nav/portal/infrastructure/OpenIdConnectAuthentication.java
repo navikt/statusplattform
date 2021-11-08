@@ -197,7 +197,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
             throw new IllegalArgumentException("Mangler code param");
         }
 
-        String regex = "^[a-zA-Z0-9_-]+$";
+        String regex = "^[a-zA-Z0-9_\\-.]+$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(code);
         if(!matcher.matches()){
