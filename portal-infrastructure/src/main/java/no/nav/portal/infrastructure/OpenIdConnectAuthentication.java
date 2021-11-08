@@ -126,7 +126,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     public Principal createPrincipal(JsonObject userinfo){
         System.out.println("createPrincipal ---------------------------");
-        System.out.println(userinfo);
+        logger.info(userinfo.toJson());
         return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.requiredString("NAVident"));
     }
 
@@ -147,7 +147,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("oauth2callback ---------------------------");
+        logger.info("oauth2callback ---------------------------");
         boolean secure = request.isSecure();
         if (!secure && !request.getServerName().equals("localhost")) {
             response.sendError(400, "Must use https");
@@ -174,7 +174,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         }
 
         JsonObject tokenResponse = JsonObject.read(tokenRequest);
-        System.out.println(tokenResponse);
+        logger.info(tokenResponse.toJson());
         response.addCookie(createCookie(request, ACCESS_TOKEN_COOKIE, tokenResponse.requiredString("access_token")));
         response.sendRedirect(request.getContextPath());
         return Authentication.SEND_CONTINUE;
