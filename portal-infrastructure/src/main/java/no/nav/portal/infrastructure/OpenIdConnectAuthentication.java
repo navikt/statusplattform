@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -37,6 +38,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenIdConnectAuthentication.class);
     public static final String ACCESS_TOKEN_COOKIE = "access_token";
+    public static final String ID_TOKEN_COOKIE = "id_token";
     public static final String AUTHORIZATION_STATE_COOKIE = "authorization_state";
 
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(5));
@@ -63,7 +65,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     @Override
     public Authentication authenticate(ServletRequest servletRequest) {
         System.out.println("authenticate(ServletRequest servletRequest) ---------------------------");
-        return getCookie(servletRequest, ACCESS_TOKEN_COOKIE)
+        return getCookie(servletRequest, ID_TOKEN_COOKIE)
                 .flatMap(this::getUser)
                 .orElse(this);
     }
@@ -98,9 +100,9 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         return null;
     }
 
-    private Optional<Authentication> getUser(String accessToken) {
+    private Optional<Authentication> getUser(String idToken) {
         System.out.println("getUser ---------------------------");
-        Principal principal = cache.getOrCompute(accessToken, () -> getPrincipal(accessToken));
+        Principal principal = cache.getOrCompute(idToken, () -> getPrincipal(idToken));
         if (principal == null) {
             return Optional.empty();
         }
@@ -108,19 +110,20 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         return Optional.of(new UserAuthentication("brukergrupper-identity", createUserIdentity(principal)));
     }
 
-    protected Optional<Principal> getPrincipal(String accessToken) {
+    protected Optional<Principal> getPrincipal(String idToken) {
         System.out.println("getPrincipal ---------------------------");
         try {
-            OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
+            /*OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
             HttpURLConnection userRequest = configuration.openUserinfoConnection();
             logger.debug("Fetching userinfo");
-            userRequest.setRequestProperty("Authorization", "Bearer " + accessToken);
-            return Optional.of(createPrincipal(JsonObject.read(userRequest)));
+            userRequest.setRequestProperty("Authorization", "Bearer " + idToken);
+            return Optional.of(createPrincipal(JsonObject.read(userRequest)));*/
+
+            String jsonIdToken = new String(Base64.getDecoder().decode(idToken.split("\\.")[1]), StandardCharsets.UTF_8);
+            return Optional.of(createPrincipal(JsonObject.parse(jsonIdToken)));
         } catch (JsonHttpException e) {
             logger.warn("Failed to fetch userinfo: {}: {}", e, e.getJsonError());
             return Optional.empty();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -140,6 +143,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("redirectToAuthorize ---------------------------");
         response.addCookie(removeCookie(request, ACCESS_TOKEN_COOKIE));
+        response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
         String authorizationState = UUID.randomUUID().toString();
         response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
         response.sendRedirect(getAuthorizationUrl(request, authorizationState));
@@ -175,7 +179,10 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         JsonObject tokenResponse = JsonObject.read(tokenRequest);
         logger.info(tokenResponse.toJson());
-        response.addCookie(createCookie(request, ACCESS_TOKEN_COOKIE, tokenResponse.requiredString("access_token")));
+        String id_token = tokenResponse.requiredString("id_token");
+        String access_token = tokenResponse.requiredString("access_token");
+        response.addCookie(createCookie(request, ACCESS_TOKEN_COOKIE, access_token));
+        response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
         response.sendRedirect(request.getContextPath());
         return Authentication.SEND_CONTINUE;
     }
