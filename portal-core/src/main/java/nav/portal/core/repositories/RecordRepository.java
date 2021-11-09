@@ -5,6 +5,7 @@ import nav.portal.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -32,6 +33,14 @@ public class RecordRepository {
                 .orderBy("created_at DESC")
                 .limit(1)
                 .singleObject(RecordRepository::toRecord);
+    }
+
+    //TODO denne skal bli paginert
+    public List<RecordEntity> getRecordHistory(UUID serviceId, int maxNumberOfRecords) {
+        return recordTable.where("service_id", serviceId)
+                .orderBy("created_at DESC")
+                .limit(maxNumberOfRecords)
+                .list(RecordRepository::toRecord);
     }
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
