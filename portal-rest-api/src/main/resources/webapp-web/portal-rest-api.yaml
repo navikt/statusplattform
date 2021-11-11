@@ -512,7 +512,7 @@ paths:
               type: string
       responses:
         '201':
-          description: Deleted
+          description: Created
         '403':
           description: Forbidden
           content: { }
@@ -592,21 +592,12 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /test:
+  /LoggInNavUser:
     post:
       tags:
         - test
       summary: sso testing
-      requestBody:
-        description: Legg til en ny tjeneste
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Service'
-          text/plain:
-            schema:
-              type: string
+
       responses:
         '201':
           description: Created
@@ -618,6 +609,16 @@ paths:
           content: { }
 components:
   schemas:
+    NavUser:
+      title: NavUser
+      type: object
+      properties:
+        navIdent:
+          type: string
+          example: "L154326"
+        name:
+          type: string
+          example: "Ola Norman"
     DashboardNameId:
       title: Dashboard
       type: object

@@ -6,6 +6,7 @@ import nav.portal.core.repositories.RecordRepository;
 import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.AreaDto;
+import no.portal.web.generated.api.NavUserDto;
 import no.portal.web.generated.api.ServiceStatusDto;
 import org.actioncontroller.GET;
 import org.actioncontroller.POST;
@@ -46,9 +47,13 @@ public class RecordController {
                 recordRepository.getRecordHistory(service_id,100));
     }
 
-    @POST("/test")
-    public  void test(@UserPrincipal PortalRestPrincipal portalRestPrincipal){
-
+    @POST("/LoggInNavUser")
+    @JsonBody
+    public NavUserDto logInnNavUser(@UserPrincipal PortalRestPrincipal portalRestPrincipal){
+            NavUserDto navUserDto = new NavUserDto();
+            navUserDto.setName(portalRestPrincipal.getName());
+            navUserDto.setNavIdent(portalRestPrincipal.getNavIdent());
+            return navUserDto;
 
     }
 
