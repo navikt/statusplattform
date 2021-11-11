@@ -126,4 +126,13 @@ public class EntityDtoMappers {
         return entities.stream().map(EntityDtoMappers::toDashboardDtoShallow).collect(Collectors.toList());
     }
 
+    public static List<ServiceStatusDto> toServiceStatusDto(List<RecordEntity> recordHistory) {
+        return recordHistory.stream().map(EntityDtoMappers::serviceStatusDto).collect(Collectors.toList());
+    }
+    public static ServiceStatusDto serviceStatusDto(RecordEntity recordEntity){
+        ServiceStatusDto dto = new ServiceStatusDto();
+        dto.serviceId(recordEntity.getServiceId());
+        dto.setStatus(StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation()));
+        return dto;
+    }
 }
