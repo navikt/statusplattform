@@ -179,7 +179,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         logger.info(tokenResponse.toJson());
         String id_token = tokenResponse.requiredString("id_token");
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
-        String frontEndUrl = "https://portal.labs.nais.io";
+        String frontEndUrl = "https://portal.labs.nais.io/Dashboard/Privatperson";
         response.sendRedirect(frontEndUrl);
         return Authentication.SEND_CONTINUE;
     }
