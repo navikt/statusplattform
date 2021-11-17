@@ -1,4 +1,4 @@
-openid.discovery_url=https://test-idp.prodreg.no/opensso/oauth2/realms/root/realms/prodreg/.well-known/openid-configuration
+openid.discovery_url=https://test-idp.prodreg.no/opensso/no.nav.portal.oauth2/realms/root/realms/prodreg/.well-known/openid-configuration
 openid.client_id=Test
 openid.client_secret=
 

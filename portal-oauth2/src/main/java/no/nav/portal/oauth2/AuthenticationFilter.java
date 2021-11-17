@@ -1,4 +1,4 @@
-package no.nav.portal.infrastructure;
+package no.nav.portal.oauth2;
 
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
@@ -20,6 +20,11 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         MDC.clear();
         ((Request)request).setAuthentication(authentication);
+        String pathInfo = ((Request) request).getPathInfo();
+        if (pathInfo.startsWith("/login") || pathInfo.startsWith("/callback")) {
+            ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
+            return;
+        }
         chain.doFilter(request, response);
     }
 

@@ -47,15 +47,7 @@ public class RecordController {
                 recordRepository.getRecordHistory(service_id,100));
     }
 
-    @POST("/LoggInNavUser")
-    @JsonBody
-    public NavUserDto logInnNavUser(@UserPrincipal PortalRestPrincipal portalRestPrincipal){
-            NavUserDto navUserDto = new NavUserDto();
-            navUserDto.setName(portalRestPrincipal.getName());
-            navUserDto.setNavIdent(portalRestPrincipal.getNavIdent());
-            return navUserDto;
 
-    }
 
 
 

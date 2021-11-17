@@ -2,6 +2,7 @@ package no.nav.server;
 
 
 import no.nav.portal.infrastructure.RedirectHandler;
+import no.nav.portal.oauth2.LogInnApi;
 import no.nav.portal.rest.api.PortalRestApi;
 import no.nav.portal.rest.api.SwaggerDocumentation;
 import org.actioncontroller.config.ConfigObserver;
@@ -22,6 +23,8 @@ public class PortalServer {
     private final Server server = new Server();
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
+    private final LogInnApi logInnApi = new LogInnApi("/oauth2");
+    //private final PortalPoller portalPoller = new PortalPoller();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
 
     public PortalServer() {
@@ -33,14 +36,15 @@ public class PortalServer {
         server.setHandler(new HandlerList(
               new RedirectHandler("/", "/doc"),
                 portalRestApi,
+                logInnApi,
                 swaggerDocumentation
-        ));
+                ));
         setupConfiguration();
     }
 
     private void setupConfiguration() {
         int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt)
-                .orElse(3001);
+                .orElse(3000);
         connector.setPort(port);
         setDataSource(DataSourceTransformer.create());
 
@@ -57,10 +61,13 @@ public class PortalServer {
     }
 
     private void setIsLocal(String isLocal) {
-        portalRestApi.setIsLocal(Boolean.parseBoolean(isLocal));
+        boolean isLocalBool= Boolean.parseBoolean(isLocal);
+        logInnApi.setIsLocal(isLocalBool);
+        portalRestApi.setIsLocal(isLocalBool);
     }
 
     private void setDataSource(DataSource dataSource) {
+        //portalPoller.setDataSource(dataSource);
         portalRestApi.setDataSource(dataSource);
     }
 

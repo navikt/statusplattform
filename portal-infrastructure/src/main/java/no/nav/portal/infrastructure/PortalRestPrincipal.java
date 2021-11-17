@@ -14,7 +14,7 @@ public class PortalRestPrincipal implements Principal {
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override

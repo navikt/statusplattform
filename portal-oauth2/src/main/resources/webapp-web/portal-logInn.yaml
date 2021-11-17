@@ -1,0 +1,36 @@
+openapi: 3.0.3
+info:
+  description: Documentation Nav portal
+  version: '0.1'
+  title: Nav LogIn Api
+servers:
+  - url: /no.nav.portal.oauth2
+paths:
+
+  /NavUser:
+    get:
+      tags:
+        - test
+      summary: sso testing
+
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+components:
+  schemas:
+    NavUser:
+      title: NavUser
+      type: object
+      properties:
+        navIdent:
+          type: string
+          example: "L154326"
+        name:
+          type: string
+          example: "Ola Norman"

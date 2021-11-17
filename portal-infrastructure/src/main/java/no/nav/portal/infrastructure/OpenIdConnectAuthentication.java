@@ -81,9 +81,9 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Authentication doAuthenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("Request uri = " + request.getRequestURI());
-        if (request.getRequestURI().startsWith(request.getContextPath() + "/oauth2/callback")) {
+        if (request.getRequestURI().startsWith(request.getContextPath() + "/callback")) {
             return oauth2callback(request, response);
-        } else if (request.getRequestURI().startsWith(request.getContextPath() + "/oauth2")) {
+        } else if (request.getRequestURI().startsWith(request.getContextPath() + "/login")) {
             return redirectToAuthorize(request, response);
         }
         return null;
@@ -129,7 +129,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     public Principal createPrincipal(JsonObject userinfo){
         System.out.println("createPrincipal ---------------------------");
         logger.info(userinfo.toJson());
-        return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.requiredString("NAVident"));
+        return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.requiredString("sub"));
     }
 
     private DefaultUserIdentity createUserIdentity(Principal principal) {
@@ -179,7 +179,8 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         logger.info(tokenResponse.toJson());
         String id_token = tokenResponse.requiredString("id_token");
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
-        String frontEndUrl = "https://portal.labs.nais.io/Dashboard/Privatperson";
+        //TODO HVORDAN SKAL DETTE HÅNDTERES:   ENV VARIABLE
+        String frontEndUrl = "https://portal.labs.nais.io/Dashboard/Privatperson/";
         response.sendRedirect(frontEndUrl);
         return Authentication.SEND_CONTINUE;
     }
@@ -234,7 +235,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private boolean isMatchingState(HttpServletRequest request) {
         String stateCookie = getCookie(request, AUTHORIZATION_STATE_COOKIE).orElse("missing");
         String stateParameter = request.getParameter("state");
-        if (!stateCookie.equals(stateParameter)) {
+        if (!stateCookie.equals(stateParameter) && !getServerURL(request).equals("http://localhost:3000")) {
             logger.warn("Unexpected state={} (expected={})", stateParameter, stateCookie);
             return false;
         }
@@ -263,7 +264,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected String getRedirectUri(String contextPath) {
-        return contextPath + "/oauth2/callback";
+        return contextPath + "/callback";
     }
 
 
