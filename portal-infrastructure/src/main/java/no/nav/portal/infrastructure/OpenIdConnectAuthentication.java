@@ -129,7 +129,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     public Principal createPrincipal(JsonObject userinfo){
         System.out.println("createPrincipal ---------------------------");
         logger.info(userinfo.toJson());
-        return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.requiredString("sub"));
+        return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.stringValue("NAVident").orElse(null));
     }
 
     private DefaultUserIdentity createUserIdentity(Principal principal) {
