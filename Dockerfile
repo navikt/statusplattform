@@ -16,7 +16,7 @@ FROM openjdk:11
 
 WORKDIR /adevguide
 
-EXPOSE 3001
+EXPOSE 3000
 
 
 #RUN dir #Added
