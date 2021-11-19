@@ -44,7 +44,7 @@ public class PortalServer {
 
     private void setupConfiguration() {
         int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt)
-                .orElse(3000);
+                .orElse(3005);
         connector.setPort(port);
         setDataSource(DataSourceTransformer.create());
 

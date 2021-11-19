@@ -11,7 +11,7 @@ spec:
   secureLogs:
     enabled: true
   image: {{ image }}
-  port: 3000
+  port: 3005
   ingresses:
     - https://digitalstatus.ekstern.dev.nav.no
   gcp:
@@ -31,7 +31,7 @@ spec:
       tenant: nav.no
       # optional
       replyURLs:
-      - "https://digitalstatus.ekstern.dev.nav.no/oauth2/callback"
+      - "https://portal.labs.nais.io/oauth2/callback"
       claims:
         extra:
           - "NAVident"

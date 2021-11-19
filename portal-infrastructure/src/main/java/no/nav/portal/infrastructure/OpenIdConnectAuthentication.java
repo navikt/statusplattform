@@ -264,7 +264,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected String getRedirectUri(String contextPath) {
-        return contextPath + "/callback";
+        return  "https://portal.labs.nais.io/oauth2/callback";
     }
 
 
