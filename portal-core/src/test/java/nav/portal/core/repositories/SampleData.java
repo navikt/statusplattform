@@ -41,7 +41,6 @@ public AreaEntity getRandomizedAreaEntityWithNameNotInList(List<AreaEntity> area
     List<String> usedNames = areas.stream().map(AreaEntity::getName).collect(Collectors.toList());
     ArrayList<String> possibleNames = areaNames;
     possibleNames.removeAll(usedNames);
-
     return new AreaEntity()
             .setName(getRandomFromArray(possibleNames))
             .setDescription(getRandomFromArray(descriptions))
@@ -57,25 +56,28 @@ public List<AreaEntity> getRandomLengthListOfAreaEntity(){
     }
     return areas;
 }
-    public List<AreaEntity> getRandomLengthNonEmptyListOfAreaEntity(){
-        Random random = new Random();
-        int numberOfAreas = 1+ random.nextInt(12);
-        List<AreaEntity> areas = new ArrayList<>();
-        for(int i = 0; i < numberOfAreas; i++ ){
-            areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
-        }
-        return areas;
-    }
 
-    public List<AreaEntity> getNonEmptyListOfAreaEntity(int length){
-        Random random = new Random();
-        int numberOfAreas = length;
-        List<AreaEntity> areas = new ArrayList<>();
-        for(int i = 0; i < numberOfAreas; i++ ){
-            areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
-        }
-        return areas;
+public List<AreaEntity> getRandomLengthNonEmptyListOfAreaEntity(){
+    Random random = new Random();
+    int numberOfAreas = 1+ random.nextInt(12);
+    List<AreaEntity> areas = new ArrayList<>();
+    for(int i = 0; i < numberOfAreas; i++ ){
+        areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
     }
+    return areas;
+}
+
+public List<AreaEntity> getNonEmptyListOfAreaEntity(int length){
+    Random random = new Random();
+    int numberOfAreas = length;
+    List<AreaEntity> areas = new ArrayList<>();
+    for(int i = 0; i < numberOfAreas; i++ ){
+        areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
+    }
+    return areas;
+}
+
+
 
 public ServiceEntity getRandomizedServiceEntity() {
     return new ServiceEntity()
@@ -86,6 +88,50 @@ public ServiceEntity getRandomizedServiceEntity() {
             .setDescription(getRandomFromArray(descriptions))
             .setLogglink(getRandomFromArray(urlStrings));
     }
+
+public ServiceEntity getRandomizedServiceEntityWithNameNotInList(List<ServiceEntity> services){
+    List<String> usedNames = services.stream().map(ServiceEntity::getName).collect(Collectors.toList());
+    ArrayList<String> possibleNames = serviceNames;
+    possibleNames.removeAll(usedNames);
+    return new ServiceEntity()
+            .setName(getRandomFromArray(serviceNames))
+            .setType(getRandomServiceType())
+            .setTeam(getRandomFromArray(teamNames))
+            .setMonitorlink(getRandomFromArray(urlStrings))
+            .setDescription(getRandomFromArray(descriptions))
+            .setLogglink(getRandomFromArray(urlStrings));
+}
+
+public List<ServiceEntity> getRandomLengthListOfServiceEntity(){
+    Random random = new Random();
+    int numberOfAreas = random.nextInt(12);
+    List<ServiceEntity> services = new ArrayList<>();
+    for(int i = 0; i < numberOfAreas; i++ ){
+        services.add(getRandomizedServiceEntityWithNameNotInList(services));
+    }
+    return services;
+}
+
+public List<ServiceEntity> getRandomLengthNonEmptyListOfServiceEntity(){
+    Random random = new Random();
+    int numberOfServices = 1+ random.nextInt(12);
+    List<ServiceEntity> services = new ArrayList<>();
+    for(int i = 0; i < numberOfServices; i++ ){
+        services.add(getRandomizedServiceEntityWithNameNotInList(services));
+    }
+    return services;
+}
+
+public List<ServiceEntity> getNonEmptyListOfServiceEntity(int length){
+    Random random = new Random();
+    int numberOfServices = length;
+    List<ServiceEntity> services = new ArrayList<>();
+    for(int i = 0; i < numberOfServices; i++ ){
+        services.add(getRandomizedServiceEntityWithNameNotInList(services));
+    }
+    return services;
+}
+
 
 private String getRandomFromArray(ArrayList<String> array){
     Random random = new Random();
