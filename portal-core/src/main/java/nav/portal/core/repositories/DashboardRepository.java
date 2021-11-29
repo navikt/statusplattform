@@ -46,6 +46,10 @@ public class DashboardRepository {
 
     }
 
+    public void updateNameOfDashboard(UUID dashboardId, String name) {
+        dashboardTable.where("id", dashboardId).update().setField("name", name).execute();
+    }
+
     public List<DashboardEntity> getAllDashboardUUIDsAndNames(){
         return dashboardTable.orderedBy("name").stream(DashboardRepository::toDashboard).collect(Collectors.toList());
     }

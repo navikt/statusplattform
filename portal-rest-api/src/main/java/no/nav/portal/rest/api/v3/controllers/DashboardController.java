@@ -56,6 +56,11 @@ public class DashboardController {
         dashboardRepository.settAreasOnDashboard(dashboard_id,areaIds);
     }
 
+    @PUT("/Dashboard/Update/:Dashboard_id")
+    public void updateNameOfDashboard(@PathParam("Dashboard_id") UUID dashboard_id, @JsonBody DashboardDto dashboard) {
+        dashboardRepository.updateNameOfDashboard(dashboard_id, dashboard.getName());
+    }
+
     @GET("/Dashboard/:Dashboard_id")
     @JsonBody
     public DashboardDto getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
