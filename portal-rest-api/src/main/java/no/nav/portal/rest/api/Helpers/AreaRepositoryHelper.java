@@ -38,6 +38,13 @@ public class AreaRepositoryHelper {
             return EntityDtoMappers.toAreaDtoDeep(area.getKey(),area.getValue());
     }
 
+    public AreaDto updateArea(UUID areaId, AreaDto areaDto){
+        areaDto.setId((areaId));
+        areaRepository.updateArea(EntityDtoMappers.toAreaEntity(areaDto));
+        Map.Entry<AreaEntity,List<ServiceEntity>> area = areaRepository.retrieveOne(areaId);
+        return EntityDtoMappers.toAreaDtoDeep(area.getKey(),area.getValue());
+    }
+
 
     public List<AreaDto> getAreasOnDashboard(UUID dashboardName_id){
         return dashboardRepository.retrieveOne(dashboardName_id)

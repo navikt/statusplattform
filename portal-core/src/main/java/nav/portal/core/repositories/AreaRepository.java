@@ -52,6 +52,15 @@ public class AreaRepository {
         return result.getSaveStatus();
     }
 
+    public void updateArea(AreaEntity areaEntity) {
+        areaTable.where("id", areaEntity.getId()).update()
+                .setField("id", areaEntity.getId())
+                .setField("name", areaEntity.getName())
+                .setField("description", areaEntity.getDescription())
+                .setField("icon", areaEntity.getIcon())
+                .execute();
+    }
+
 
     public boolean deleteArea(UUID areaId){
         if(areaTable.where("id",areaId).singleObject(AreaRepository::toArea).isEmpty()){

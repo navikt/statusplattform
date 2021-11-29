@@ -265,7 +265,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-
   /Area/{Area_id}/{Service_id}:
     put:
       tags:
@@ -321,6 +320,36 @@ paths:
           description: Not Found
           content: { }
   /Area/{Area_id}:
+    put:
+      tags:
+        - Area
+      summary: Oppdater område
+      description: Endre feltene i et område
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Oppdater område - services trenger ikke være med.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Area'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
     delete:
       tags:
         - Area

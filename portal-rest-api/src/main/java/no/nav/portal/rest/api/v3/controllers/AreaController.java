@@ -35,12 +35,18 @@ public class AreaController {
          return areaRepositoryHelper.newArea(areaDto);
    }
 
+   @PUT("/Area/:Area_id")
+   @JsonBody
+   public void updateArea(@PathParam("Area_id") UUID area_id, @JsonBody AreaDto areaDto ) {
+      areaRepositoryHelper.updateArea(area_id, areaDto);
+   }
+
    @DELETE("/Area/:Area_id")
    @JsonBody
    public void deleteArea(@PathParam("Area_id") UUID area_id ) {
       if(!areaRepository.deleteArea(area_id)){
          throw new HttpNotFoundException("Fant ikke område med id: " + area_id);
-      };
+      }
    }
 
 
