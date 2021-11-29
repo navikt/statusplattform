@@ -64,6 +64,7 @@ public class ServiceRepositoryHelper {
 
     public void updateService(ServiceDto serviceDto) {
         serviceRepository.update(EntityDtoMappers.toServiceEntity(serviceDto));
+        serviceRepository.removeAllDependenciesFromService(serviceDto.getId());
         serviceRepository.addDependencyToService(EntityDtoMappers.toServiceEntity(serviceDto),
                 serviceDto.getDependencies().stream().map(EntityDtoMappers::toServiceEntity)
                         .collect(Collectors.toList()));

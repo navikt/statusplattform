@@ -533,6 +533,37 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
+    put:
+      tags:
+        - Service
+      summary: Rediger tjeneste
+      description: Rediger en tjeneste ved å legge ved UUIDen som er knyttet til denne. Merk at type er predefinert og strengt, se endepunkt /Services/Types for en liste over mulige verdier.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Rediger eksisterende tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
     delete:
       tags:
         - Service
