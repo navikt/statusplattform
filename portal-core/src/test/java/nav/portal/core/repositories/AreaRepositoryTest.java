@@ -77,10 +77,7 @@ class AreaRepositoryTest {
         //Assert
         Assertions.assertThat(before).isEqualTo(areas.get(0));
         Assertions.assertThat(after).isEqualTo(areas.get(1));
-
     }
-
-
 
     @Test
     void deleteArea() {
@@ -102,7 +99,6 @@ class AreaRepositoryTest {
         Assertions.assertThat(isDeleted).isTrue();
         Assertions.assertThat(retrievedbeforeDelete.size()).isEqualTo(1);
         Assertions.assertThat(retrievedbeforeDelete.get(0)).isEqualTo(areaToBeDeleted);
-
     }
 
     @Test
@@ -119,7 +115,6 @@ class AreaRepositoryTest {
        Map.Entry<AreaEntity,List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
        //Assert
        Assertions.assertThat(retrievedArea.getValue()).containsExactly(service);
-
     }
 
     @Test

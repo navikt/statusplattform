@@ -1,5 +1,6 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
@@ -39,63 +40,201 @@ class ServiceRepositoryTest {
 
    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
-
-
-
    @Test
    void save() {
+      //Arrange
+      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      //Act
+      UUID uuid = serviceRepository.save(service);
+      service.setId(uuid);
+      Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
+      //Assert
+      Assertions.assertThat(retrievedService.get()).isEqualTo(service);
    }
 
    @Test
    void update() {
+      //Arrange
+      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(2);
+
+      UUID uuid = serviceRepository.save(services.get(0));
+      services.forEach(service -> service.setId(uuid));
+
+      ServiceEntity before = serviceRepository.retrieve(uuid).get();
+      //Act
+      serviceRepository.update(services.get(1));
+      ServiceEntity after = serviceRepository.retrieve(uuid).get();
+      //Assert
+      Assertions.assertThat(before).isEqualTo(services.get(0));
+      Assertions.assertThat(after).isEqualTo(services.get(1));
    }
 
    @Test
    void retrieve() {
+      //Arrange
+      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      //Act
+      UUID uuid = serviceRepository.save(service);
+      service.setId(uuid);
+      Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
+      //Assert
+      Assertions.assertThat(retrievedService.get()).isEqualTo(service);
    }
 
    @Test
    void addDependencyToService() {
-   }
-
-   @Test
-   void testAddDependencyToService() {
+      //Arrange
+      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = sampleData.getRandomizedServiceEntity();
+      UUID uuid1 = serviceRepository.save(service1);
+      UUID uuid2 = serviceRepository.save(service2);
+      service1.setId(uuid1);
+      service2.setId(uuid2);
+      //Act
+      serviceRepository.addDependencyToService(uuid1, uuid2);
+      Map.Entry<ServiceEntity, List<ServiceEntity>> retrievedDependency =
+              serviceRepository.retrieveOneWithDependencies(uuid1);
+      //Assert
+      Assertions.assertThat(retrievedDependency.getValue()).containsExactly(service2);
    }
 
    @Test
    void removeDependencyFromService() {
+      //Arrange
+      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = sampleData.getRandomizedServiceEntity();
+      UUID uuid1 = serviceRepository.save(service1);
+      UUID uuid2 = serviceRepository.save(service2);
+      service1.setId(uuid1);
+      service2.setId(uuid2);
+      serviceRepository.addDependencyToService(uuid1, uuid2);
+      Map.Entry<ServiceEntity, List<ServiceEntity>> before =
+              serviceRepository.retrieveOneWithDependencies(uuid1);
+      //Act
+      serviceRepository.removeDependencyFromService(uuid1, uuid2);
+      Map.Entry<ServiceEntity, List<ServiceEntity>> after =
+              serviceRepository.retrieveOneWithDependencies(uuid1);
+      //Assert
+      Assertions.assertThat(before.getValue()).containsExactly(service2);
+      Assertions.assertThat(after.getValue()).isEmpty();
    }
 
    @Test
    void removeAllDependenciesFromService() {
+      //Arrange
+      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+      ServiceEntity service1 = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+      UUID service1Id = serviceRepository.save(service1);
+      service1.setId(service1Id);
+
+      for(ServiceEntity service : services){
+         service.setId(serviceRepository.save(service));
+      }
+      //Act
+      serviceRepository.addDependencyToService(service1, services);
+      Map.Entry<ServiceEntity, List<ServiceEntity>> before =
+              serviceRepository.retrieveOneWithDependencies(service1Id);
+      serviceRepository.removeAllDependenciesFromService(service1Id);
+      Map.Entry<ServiceEntity, List<ServiceEntity>> after =
+              serviceRepository.retrieveOneWithDependencies(service1Id);
+      //Assert
+      Assertions.assertThat(before.getValue()).containsAll(services);
+      Assertions.assertThat(after.getValue()).isEmpty();
    }
 
    @Test
    void isOtherServicesDependentOn() {
+      //Arrange
+      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+      ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+      ServiceEntity service3 = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+      UUID uuid1 = serviceRepository.save(service);
+      service.setId(uuid1);
+      for(ServiceEntity serv : services){
+         serv.setId(serviceRepository.save(serv));
+      }
+      UUID uuid2 = services.get(0).getId();
+      UUID uuid3 = serviceRepository.save(service3);
+      service3.setId(uuid3);
+      //Act
+      serviceRepository.addDependencyToService(uuid1, uuid2);
+      boolean isDependantOnAnotherY = serviceRepository.isOtherServicesDependentOn(uuid2);
+      serviceRepository.removeAllDependenciesFromService(uuid1);
+      boolean isDependantOnAnotherN = serviceRepository.isOtherServicesDependentOn(uuid2);
+      boolean isDependantOnAnotherND = serviceRepository.isOtherServicesDependentOn(uuid3);
+      //Assert
+      Assertions.assertThat(isDependantOnAnotherY).isTrue();
+      Assertions.assertThat(isDependantOnAnotherN).isFalse();
+      Assertions.assertThat(isDependantOnAnotherND).isFalse();
    }
 
    @Test
    void retrieveOneWithDependencies() {
+      //Arrange
+      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+      ServiceEntity service1 = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+      UUID service1Id = serviceRepository.save(service1);
+      service1.setId(service1Id);
+
+      for(ServiceEntity service : services){
+         service.setId(serviceRepository.save(service));
+      }
+
+      serviceRepository.addDependencyToService(service1, services);
+      //Act
+      Map.Entry<ServiceEntity, List<ServiceEntity>> retrievedService =
+              serviceRepository.retrieveOneWithDependencies(service1Id);
+      //Assert
+      Assertions.assertThat(retrievedService.getValue().size()).isEqualTo(services.size());
+      Assertions.assertThat(retrievedService.getKey()).isEqualTo(service1);
    }
 
    @Test
    void retriveAll() {
+      //Arrange
+      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+      for(ServiceEntity service : services){
+         service.setId(serviceRepository.save(service));
+      }
+      //Act
+      Map<ServiceEntity, List<ServiceEntity>> allRetrieved =
+              serviceRepository.retriveAll();
+      //Assert
+      Assertions.assertThat(services.size()).isEqualTo(allRetrieved.size());
+      Assertions.assertThat(services).containsAll(allRetrieved.keySet());
    }
 
    @Test
    void doesEntryExist() {
-   }
+      //Arrange
+      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = sampleData.getRandomizedServiceEntity();
+      UUID uuid1 = serviceRepository.save(service1);
+      UUID uuid2 = serviceRepository.save(service2);
+      service1.setId(uuid1);
+      service2.setId(uuid2);
+      //Act
+      Optional<ServiceEntity> exists = serviceRepository.retrieve(uuid1);
+      boolean isExisting1 =  serviceRepository.doesEntryExist(uuid1);
+      int deleted = serviceRepository.delete(uuid2);
+      boolean isExisting2 =  serviceRepository.doesEntryExist(uuid2);
+      //Assert
+      Assertions.assertThat(isExisting1).isTrue();
+      Assertions.assertThat(isExisting2).isFalse();
 
-   @Test
-   void testRetrieve() {
    }
 
    @Test
    void delete() {
-   }
-
-   @Test
-   void toService() {
+      //Arrange
+      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      //Act
+      UUID uuid = serviceRepository.save(service);
+      service.setId(uuid);
+      int deleted = serviceRepository.delete(uuid);
+      //Assert
+      Assertions.assertThat(deleted).isGreaterThan(-1);
+      Assertions.assertThat(serviceRepository.retrieve(uuid)).isEmpty();
    }
 
 
@@ -120,26 +259,37 @@ class ServiceRepositoryTest {
 
    @Test
    void save_and_confirm_dependencies() {
-      // Arrange
-      ServiceEntity service = sampleData.getRandomizedServiceEntity();
-      List<ServiceEntity> dependentServices = List.of(sampleData.getRandomizedServiceEntity());
+      ServiceEntity service1 = new ServiceEntity()
+              .setName("Hei")
+              .setType(ServiceType.TJENESTE)
+              .setTeam("Status")
+              .setMonitorlink("Yes")
+              .setDescription("Cookie data")
+              .setLogglink("No");
 
+      ServiceEntity service2 = new ServiceEntity()
+              .setName("Bye")
+              .setType(ServiceType.TJENESTE)
+              .setTeam("Status")
+              .setMonitorlink("Yes")
+              .setDescription("Cookie data")
+              .setLogglink("No");
       // Act
-      serviceRepository.save(service);
-      dependentServices.forEach(serviceRepository::save);
-      serviceRepository.addDependencyToService(service, dependentServices);
-
+      UUID serviceId1 = serviceRepository.save(service1);
+      service1.setId(serviceId1);
+      UUID serviceId2 = serviceRepository.save(service2);
+      service2.setId(serviceId2);
+      serviceRepository.addDependencyToService(serviceId1, serviceId2);
+      Map.Entry<ServiceEntity, List<ServiceEntity>> retrievedDependency =
+              serviceRepository.retrieveOneWithDependencies(serviceId1);
       // Assert
-      Map.Entry<ServiceEntity,List<ServiceEntity>> retrievedService = serviceRepository.retrieveOneWithDependencies(service.getId());
-      List<ServiceEntity> retrievedDependentServices = retrievedService.getValue();
-      Assertions.assertThat(retrievedDependentServices).isEqualTo(dependentServices);
-
+      Assertions.assertThat(retrievedDependency.getValue()).containsExactly(service2);
    }
 
    @Test
    void save_and_retrieve_service_2() {
       // Arrange
-      /*    private String name;
+      /*private String name;
     private ServiceType type;
     private String team;
     private String monitorlink;
@@ -158,9 +308,6 @@ class ServiceRepositoryTest {
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
       Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
-
-
-
 
 
       // Assert
