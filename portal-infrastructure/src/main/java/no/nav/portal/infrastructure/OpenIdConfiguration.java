@@ -16,6 +16,7 @@ public class OpenIdConfiguration {
     private URL authorizationEndpoint;
     private URL tokenEndpoint;
     private URL userinfoEndpoint;
+    private URL endSessionEndpoint;
 
     public HttpURLConnection openUserinfoConnection() throws IOException {
         return (HttpURLConnection) getUserinfoEndpoint().openConnection();
@@ -47,5 +48,17 @@ public class OpenIdConfiguration {
 
     public void setTokenEndpoint(URL tokenEndpoint) {
         this.tokenEndpoint = tokenEndpoint;
+    }
+
+    public URL getEndSessionEndpoint() {
+        return endSessionEndpoint;
+    }
+    public HttpURLConnection openLogoutConnection() throws IOException{
+        return (HttpURLConnection) getEndSessionEndpoint().openConnection();
+    }
+
+    public OpenIdConfiguration setEndSessionEndpoint(URL endSessionEndpoint) {
+        this.endSessionEndpoint = endSessionEndpoint;
+        return this;
     }
 }

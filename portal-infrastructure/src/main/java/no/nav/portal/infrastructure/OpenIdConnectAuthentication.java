@@ -45,12 +45,12 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static URL openIdConfiguration;
     private static String clientId = System.getenv("AZURE_APP_CLIENT_ID");
     private static String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
+    private static String frontEndUrl = System.getenv("FRONTEND_LOCATION");
+
     static {
         try{
-            System.out.println("clientId: " +clientId);
+
             openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
-            System.out.println("OpenIdConfig: "+ openIdConfiguration);
-            System.out.println("clientSecret length: " + clientSecret.length());
 
         }
         catch (MalformedURLException e){
@@ -179,9 +179,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         logger.info(tokenResponse.toJson());
         String id_token = tokenResponse.requiredString("id_token");
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
-        //TODO HVORDAN SKAL DETTE HÅNDTERES:   ENV VARIABLE
-        String frontEndUrl = System.getenv("FRONTEND_LOCATION") + "Dashboard/Privatperson/";
-        response.sendRedirect(frontEndUrl);
+        response.sendRedirect(frontEndUrl + "/Dashboard/Privatperson/");
         return Authentication.SEND_CONTINUE;
     }
     //Flytte denne?
@@ -194,6 +192,17 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
             }
             return result.toString();
         }
+    }
+
+    private boolean logOut() throws IOException {
+        OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
+        HttpURLConnection logOutRequest = configuration.openLogoutConnection();
+        logOutRequest.setRequestMethod("POST");
+        logOutRequest.setDoOutput(true);
+        logOutRequest.getOutputStream().write(getEndSessionPayload(
+                frontEndUrl+ "/Dashboard/Privatperson/"
+        ).getBytes());
+        return false;
     }
 
     private String getValidatedCode(HttpServletRequest request) {
@@ -213,6 +222,10 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected String getTokenPayload(String code, String redirectUri) {
         return "client_id=" + clientId + "&client_secret=" + clientSecret + "&redirect_uri=" + redirectUri + "&code=" + code + "&grant_type=authorization_code";
+    }
+    protected String getEndSessionPayload(String redirectUri){
+        return "client_id=" + clientId + "&client_secret=" + clientSecret + "&post_logout_redirect_uri=" + redirectUri  ;
+
     }
 
     protected Cookie createCookie(HttpServletRequest request, String name, String value) {
@@ -264,7 +277,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected String getRedirectUri(String contextPath) {
-        return  "http://localhost:3000/oauth2/callback";
+        return  frontEndUrl + "/oauth2/callback";
     }
 
 
