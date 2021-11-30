@@ -180,7 +180,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         String id_token = tokenResponse.requiredString("id_token");
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
         //TODO HVORDAN SKAL DETTE HÅNDTERES:   ENV VARIABLE
-        String frontEndUrl = "https://portal.labs.nais.io/Dashboard/Privatperson/";
+        String frontEndUrl = System.getenv("FRONTEND_LOCATION") + "Dashboard/Privatperson/";
         response.sendRedirect(frontEndUrl);
         return Authentication.SEND_CONTINUE;
     }
@@ -264,7 +264,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected String getRedirectUri(String contextPath) {
-        return  "https://portal.labs.nais.io/oauth2/callback";
+        return  "http://localhost:3000/oauth2/callback";
     }
 
 

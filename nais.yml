@@ -8,6 +8,9 @@ metadata:
 spec:
   envFrom:
     - secret: nav-status-db-pass
+  env:
+    - name: FRONTEND_LOCATION
+      value: https://portal.labs.nais.io/
   secureLogs:
     enabled: true
   image: {{ image }}
