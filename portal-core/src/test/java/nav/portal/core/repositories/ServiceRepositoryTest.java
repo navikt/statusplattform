@@ -1,6 +1,5 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
@@ -134,7 +133,7 @@ class ServiceRepositoryTest {
       serviceRepository.addDependencyToService(service1, services);
       Map.Entry<ServiceEntity, List<ServiceEntity>> before =
               serviceRepository.retrieveOneWithDependencies(service1Id);
-      serviceRepository.removeAllDependenciesFromService(service1Id);
+      serviceRepository.resetDependenciesOnService(service1Id);
       Map.Entry<ServiceEntity, List<ServiceEntity>> after =
               serviceRepository.retrieveOneWithDependencies(service1Id);
       //Assert
@@ -159,7 +158,7 @@ class ServiceRepositoryTest {
       //Act
       serviceRepository.addDependencyToService(uuid1, uuid2);
       boolean isDependantOnAnotherY = serviceRepository.isOtherServicesDependentOn(uuid2);
-      serviceRepository.removeAllDependenciesFromService(uuid1);
+      serviceRepository.resetDependenciesOnService(uuid1);
       boolean isDependantOnAnotherN = serviceRepository.isOtherServicesDependentOn(uuid2);
       boolean isDependantOnAnotherND = serviceRepository.isOtherServicesDependentOn(uuid3);
       //Assert

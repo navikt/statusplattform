@@ -1,7 +1,6 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
@@ -57,7 +56,7 @@ public class ServiceRepositoryHelper {
     }
 
     public void deleteService(UUID service_id){
-        serviceRepository.removeAllDependenciesFromService(service_id);
+        serviceRepository.resetDependenciesOnService(service_id);
         serviceRepository.delete(service_id);
     }
 
