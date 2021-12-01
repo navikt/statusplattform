@@ -84,6 +84,9 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         } else if (request.getRequestURI().startsWith(request.getContextPath() + "/login")) {
             return redirectToAuthorize(request, response);
         }
+        else if (request.getRequestURI().startsWith(request.getContextPath() + "/logout")) {
+            return logout(request);
+        }
         return null;
     }
 
@@ -94,6 +97,12 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     @Override
     public Authentication logout(ServletRequest servletRequest) {
+        try {
+            logOut();
+
+        }catch (Exception e){
+
+        }
         return null;
     }
 
@@ -192,15 +201,14 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         }
     }
 
-    private boolean logOut() throws IOException {
+    private void logOut() throws IOException {
         OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
         HttpURLConnection logOutRequest = configuration.openLogoutConnection();
-        logOutRequest.setRequestMethod("POST");
+        logOutRequest.setRequestMethod("GET");
         logOutRequest.setDoOutput(true);
         logOutRequest.getOutputStream().write(getEndSessionPayload(
                 frontEndUrl+ "/Dashboard/Privatperson/"
         ).getBytes());
-        return false;
     }
 
     private String getValidatedCode(HttpServletRequest request) {

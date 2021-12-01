@@ -25,6 +25,10 @@ public class AuthenticationFilter implements Filter {
             ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
             return;
         }
+        if (pathInfo.startsWith("/logout")) {
+            ((HttpServletRequest)request).logout();
+            return;
+        }
         chain.doFilter(request, response);
     }
 
