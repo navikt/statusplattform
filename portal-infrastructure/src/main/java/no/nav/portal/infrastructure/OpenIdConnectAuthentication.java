@@ -216,6 +216,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     private void logOutAzure() throws IOException {
         OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
+        System.out.println("Endsession!:" +configuration.getEndSessionEndpoint().toString());
         HttpURLConnection logOutRequest = configuration.openLogoutConnection();
         logOutRequest.setRequestMethod("GET");
         logOutRequest.setDoOutput(true);

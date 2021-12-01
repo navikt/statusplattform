@@ -57,9 +57,9 @@ public class OpenIdConfiguration {
         return (HttpURLConnection) getEndSessionEndpoint().openConnection();
     }
 
-    public OpenIdConfiguration setEndSessionEndpoint(URL endSessionEndpoint) {
-        this.endSessionEndpoint = endSessionEndpoint;
+    public void setEndSessionEndpoint(URL endSessionEndpoint) {
         System.out.println("EndSession endpoint: " + endSessionEndpoint);
-        return this;
+        this.endSessionEndpoint = endSessionEndpoint;
+
     }
 }
