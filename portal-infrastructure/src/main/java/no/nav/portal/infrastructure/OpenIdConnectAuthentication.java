@@ -97,13 +97,25 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     @Override
     public Authentication logout(ServletRequest servletRequest) {
+        /*Authentication authentication = getCookie(servletRequest, ID_TOKEN_COOKIE)
+                .flatMap(this::getUser)
+                .orElse(this);
+        */
         try {
             logOut();
+            removeCookie(servletRequest);
+            System.out.println("Logger jo ut jo");
 
         }catch (Exception e){
 
         }
         return null;
+    }
+    private void removeCookie(ServletRequest request) {
+        removeCookie((HttpServletRequest) request, ID_TOKEN_COOKIE);
+        System.out.println("remove cookie ---------------------------");
+
+
     }
 
     private Optional<Authentication> getUser(String idToken) {
@@ -115,6 +127,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         MDC.put("remoteUser", principal.getName());
         return Optional.of(new UserAuthentication("brukergrupper-identity", createUserIdentity(principal)));
     }
+
 
     protected Optional<Principal> getPrincipal(String idToken) {
         System.out.println("getPrincipal ---------------------------");
