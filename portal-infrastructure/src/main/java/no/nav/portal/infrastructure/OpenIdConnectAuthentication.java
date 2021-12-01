@@ -102,7 +102,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
                 .orElse(this);
         */
         try {
-            logOut();
+            logOutAzure();
             removeCookie(servletRequest);
             System.out.println("Logger jo ut jo");
 
@@ -214,7 +214,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         }
     }
 
-    private void logOut() throws IOException {
+    private void logOutAzure() throws IOException {
         OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
         HttpURLConnection logOutRequest = configuration.openLogoutConnection();
         logOutRequest.setRequestMethod("GET");
@@ -222,6 +222,10 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         logOutRequest.getOutputStream().write(getEndSessionPayload(
                 frontEndUrl+ "/Dashboard/Privatperson/"
         ).getBytes());
+        int responseCode = logOutRequest.getResponseCode();
+        if(responseCode >= 400){
+            throw new RuntimeException(String.format("OIDC Logout failed with %s",  responseCode, stringify(logOutRequest.getErrorStream())));
+        }
     }
 
     private String getValidatedCode(HttpServletRequest request) {
