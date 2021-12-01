@@ -197,7 +197,7 @@ class ServiceRepositoryTest {
       }
       //Act
       Map<ServiceEntity, List<ServiceEntity>> allRetrieved =
-              serviceRepository.retriveAll();
+              serviceRepository.retrieveAll();
       //Assert
       Assertions.assertThat(services.size()).isEqualTo(allRetrieved.size());
       Assertions.assertThat(services).containsAll(allRetrieved.keySet());

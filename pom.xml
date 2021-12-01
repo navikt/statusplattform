@@ -13,8 +13,8 @@
         <module>portal-infrastructure</module>
         <module>portal-rest-api</module>
         <module>portal-server</module>
-        <module>portal-nav-employee</module>
         <module>portal-oauth2</module>
+        <module>portal-polling</module>
     </modules>
 
 

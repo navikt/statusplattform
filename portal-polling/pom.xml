@@ -9,7 +9,21 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>portal-nav-employee</artifactId>
+    <artifactId>portal-polling</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>no.nav</groupId>
+            <artifactId>portal-core</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jhannes</groupId>
+            <artifactId>fluent-jdbc</artifactId>
+            <version>0.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

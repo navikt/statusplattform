@@ -120,7 +120,7 @@ public class ServiceRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Service with id " + service_id));
     }
 
-    public Map<ServiceEntity, List<ServiceEntity>> retriveAll() {
+    public Map<ServiceEntity, List<ServiceEntity>> retrieveAll() {
         DbContextTableAlias s2s = service_serviceTable.alias("s2s");
         DbContextTableAlias service = serviceTable.alias("service");
         DbContextTableAlias dependentService = serviceTable.alias("dependent_service");
@@ -140,6 +140,10 @@ public class ServiceRepository {
                     return null;
                 });
         return result;
+    }
+
+    public List<ServiceEntity> retrieveServicesWithPolling() {
+        return serviceTable.query().whereExpression("polling_url is not null").stream(ServiceRepository::toService).collect(Collectors.toList());
     }
 
     public Boolean doesEntryExist(UUID id){

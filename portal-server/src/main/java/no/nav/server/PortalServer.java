@@ -1,6 +1,7 @@
 package no.nav.server;
 
 
+import nav.portal.polling.PortalPoller;
 import no.nav.portal.infrastructure.RedirectHandler;
 import no.nav.portal.oauth2.LogInnApi;
 import no.nav.portal.rest.api.PortalRestApi;
@@ -24,7 +25,7 @@ public class PortalServer {
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
     private final LogInnApi logInnApi = new LogInnApi("/oauth2");
-    //private final PortalPoller portalPoller = new PortalPoller();
+    private final PortalPoller portalPoller = new PortalPoller();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
 
     public PortalServer() {
@@ -67,7 +68,7 @@ public class PortalServer {
     }
 
     private void setDataSource(DataSource dataSource) {
-        //portalPoller.setDataSource(dataSource);
+        portalPoller.setDataSource(dataSource);
         portalRestApi.setDataSource(dataSource);
     }
 
@@ -87,6 +88,7 @@ public class PortalServer {
     public void start() throws Exception {
         server.start();
         connector.start();
+        //portalPoller.start();
         logger.warn("Started on {}", getURI());
     }
 

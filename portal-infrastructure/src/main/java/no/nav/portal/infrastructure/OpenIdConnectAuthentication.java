@@ -49,9 +49,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     static {
         try{
-
             openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
-
         }
         catch (MalformedURLException e){
             System.out.println(e);
