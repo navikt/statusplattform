@@ -98,8 +98,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         try {
-            removeCookie(request,ID_TOKEN_COOKIE);
-            removeCookie(ID_TOKEN_COOKIE);
+            response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
             request.getSession().invalidate();
             logOutAzure(response);
 
