@@ -99,9 +99,9 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         try {
             removeCookie(request,ID_TOKEN_COOKIE);
+            removeCookie(ID_TOKEN_COOKIE);
             request.getSession().invalidate();
             logOutAzure(response);
-            System.out.println("Logger jo ut jo");
 
         }catch (Exception e){
 
@@ -237,6 +237,13 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         cookie.setPath(request.getContextPath());
         cookie.setHttpOnly(true);
         cookie.setSecure(request.isSecure());
+        return cookie;
+    }
+
+    protected Cookie removeCookie(String name) {
+        Cookie cookie = new Cookie(name, "");
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
         return cookie;
     }
 
