@@ -95,27 +95,17 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         return null;
     }
 
-    @Override
-    public Authentication logout(ServletRequest servletRequest) {
-        /*Authentication authentication = getCookie(servletRequest, ID_TOKEN_COOKIE)
-                .flatMap(this::getUser)
-                .orElse(this);
-        */
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
         try {
-            logOutAzure();
-            removeCookie(servletRequest);
+            removeCookie(request,ID_TOKEN_COOKIE);
+            request.getSession().invalidate();
+            logOutAzure(response);
             System.out.println("Logger jo ut jo");
 
         }catch (Exception e){
 
         }
-        return null;
-    }
-    private void removeCookie(ServletRequest request) {
-        removeCookie((HttpServletRequest) request, ID_TOKEN_COOKIE);
-        System.out.println("remove cookie ---------------------------");
-
-
     }
 
     private Optional<Authentication> getUser(String idToken) {
@@ -214,19 +204,12 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         }
     }
 
-    private void logOutAzure() throws IOException {
+    private void logOutAzure(HttpServletResponse response) throws IOException {
         OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
         System.out.println("Endsession!:" +configuration.getEndSessionEndpoint().toString());
-        HttpURLConnection logOutRequest = configuration.openLogoutConnection();
-        logOutRequest.setRequestMethod("GET");
-        logOutRequest.setDoOutput(true);
-        logOutRequest.getOutputStream().write(getEndSessionPayload(
-                frontEndUrl+ "/Dashboard/Privatperson/"
-        ).getBytes());
-        int responseCode = logOutRequest.getResponseCode();
-        if(responseCode >= 400){
-            throw new RuntimeException(String.format("OIDC Logout failed with %s",  responseCode, stringify(logOutRequest.getErrorStream())));
-        }
+
+        response.sendRedirect(configuration.getEndSessionEndpoint() + "?post_logout_redirect_uri=" + (frontEndUrl + "/Dashboard/Privatperson/"));
+
     }
 
     private String getValidatedCode(HttpServletRequest request) {
@@ -246,10 +229,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected String getTokenPayload(String code, String redirectUri) {
         return "client_id=" + clientId + "&client_secret=" + clientSecret + "&redirect_uri=" + redirectUri + "&code=" + code + "&grant_type=authorization_code";
-    }
-    protected String getEndSessionPayload(String redirectUri){
-        return "client_id=" + clientId + "&client_secret=" + clientSecret + "&post_logout_redirect_uri=" + redirectUri  ;
-
     }
 
     protected Cookie createCookie(HttpServletRequest request, String name, String value) {
@@ -338,4 +317,8 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         return getScheme(req).equals("https") ? 443 : (getScheme(req).equals("http") ? 80 : -1);
     }
 
+    @Override
+    public Authentication logout(ServletRequest request) {
+        return null;
+    }
 }

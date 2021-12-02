@@ -1,5 +1,6 @@
 package no.nav.portal.oauth2;
 
+import no.nav.portal.infrastructure.OpenIdConnectAuthentication;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
 import org.slf4j.MDC;
@@ -26,7 +27,7 @@ public class AuthenticationFilter implements Filter {
             return;
         }
         if (pathInfo.startsWith("/logout")) {
-            ((HttpServletRequest)request).logout();
+            ((OpenIdConnectAuthentication) authentication).logout(((HttpServletRequest)request), (HttpServletResponse)response);
             return;
         }
         chain.doFilter(request, response);
