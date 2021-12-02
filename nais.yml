@@ -35,6 +35,7 @@ spec:
       # optional
       replyURLs:
       - "https://portal.labs.nais.io/oauth2/callback"
+      - "https://portal.labs.nais.io/oauth2/logout"
       claims:
         extra:
           - "NAVident"
