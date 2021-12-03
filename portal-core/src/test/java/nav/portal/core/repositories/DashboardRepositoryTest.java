@@ -182,7 +182,10 @@ class DashboardRepositoryTest {
 
     @Test
     void retrieveAll() {
+        //Arrange
 
+        //Act
+        //Assert
 
     }
 

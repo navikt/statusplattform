@@ -2,6 +2,7 @@ package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
+import org.assertj.core.api.Assert;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -153,5 +154,24 @@ class AreaRepositoryTest {
 
     @Test
     void retrieveAll() {
+        //Arrange
+        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        UUID areaId = areaRepository.save(area);
+        area.setId(areaId);
+        ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
+        ServiceEntity service2 = sampleData.getRandomizedServiceEntity();
+        UUID service1Id = serviceRepository.save(service1);
+        UUID service2Id = serviceRepository.save(service2);
+        service1.setId(service1Id);
+        service2.setId(service2Id);
+        areaRepository.addServiceToArea(areaId, service1Id);
+        areaRepository.addServiceToArea(areaId, service2Id);
+        //Act
+        Map<AreaEntity, List<ServiceEntity>> retrievedAll = areaRepository.retrieveAll();
+        Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
+        List<ServiceEntity>services = retrievedArea.setValue(retrievedArea.getValue());
+        //Assert
+        Assertions.assertThat(retrievedAll.containsKey(area));
+        Assertions.assertThat(retrievedAll.containsValue(services));
     }
 }

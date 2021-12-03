@@ -144,17 +144,12 @@ class ServiceRepositoryTest {
    @Test
    void isOtherServicesDependentOn() {
       //Arrange
-      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-      ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
-      ServiceEntity service3 = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
-      UUID uuid1 = serviceRepository.save(service);
-      service.setId(uuid1);
-      for(ServiceEntity serv : services){
-         serv.setId(serviceRepository.save(serv));
-      }
-      UUID uuid2 = services.get(0).getId();
+      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
+      ServiceEntity service3 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1,service2));
+      UUID uuid1 = serviceRepository.save(service1);
+      UUID uuid2 = serviceRepository.save(service2);
       UUID uuid3 = serviceRepository.save(service3);
-      service3.setId(uuid3);
       //Act
       serviceRepository.addDependencyToService(uuid1, uuid2);
       boolean isDependantOnAnotherY = serviceRepository.isOtherServicesDependentOn(uuid2);
@@ -184,7 +179,7 @@ class ServiceRepositoryTest {
       Map.Entry<ServiceEntity, List<ServiceEntity>> retrievedService =
               serviceRepository.retrieveOneWithDependencies(service1Id);
       //Assert
-      Assertions.assertThat(retrievedService.getValue().size()).isEqualTo(services.size());
+      Assertions.assertThat(retrievedService.getValue()).containsExactlyElementsOf(services);
       Assertions.assertThat(retrievedService.getKey()).isEqualTo(service1);
    }
 
@@ -195,12 +190,13 @@ class ServiceRepositoryTest {
       for(ServiceEntity service : services){
          service.setId(serviceRepository.save(service));
       }
+      //TODO legge til dependencies/ gjøre assertioens motsatt vei: Det vi kontrollerer .someComparingFunction(Forventet verdi)
       //Act
       Map<ServiceEntity, List<ServiceEntity>> allRetrieved =
               serviceRepository.retrieveAll();
       //Assert
-      Assertions.assertThat(services.size()).isEqualTo(allRetrieved.size());
-      Assertions.assertThat(services).containsAll(allRetrieved.keySet());
+      Assertions.assertThat(allRetrieved.size()).isEqualTo(services.size());
+      Assertions.assertThat(allRetrieved.keySet()).containsAll(services);
    }
 
    @Test
@@ -214,12 +210,12 @@ class ServiceRepositoryTest {
       service2.setId(uuid2);
       //Act
       Optional<ServiceEntity> exists = serviceRepository.retrieve(uuid1);
-      boolean isExisting1 =  serviceRepository.doesEntryExist(uuid1);
-      int deleted = serviceRepository.delete(uuid2);
-      boolean isExisting2 =  serviceRepository.doesEntryExist(uuid2);
+      boolean shouldExist =  serviceRepository.doesEntryExist(uuid1);
+      serviceRepository.delete(uuid2);
+      boolean shouldNotExist =  serviceRepository.doesEntryExist(uuid2);
       //Assert
-      Assertions.assertThat(isExisting1).isTrue();
-      Assertions.assertThat(isExisting2).isFalse();
+      Assertions.assertThat(shouldExist).isTrue();
+      Assertions.assertThat(shouldNotExist).isFalse();
 
    }
 
@@ -231,9 +227,10 @@ class ServiceRepositoryTest {
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
       int deleted = serviceRepository.delete(uuid);
+      Optional<ServiceEntity> shouldBeEmpty = serviceRepository.retrieve(uuid);
       //Assert
-      Assertions.assertThat(deleted).isGreaterThan(-1);
-      Assertions.assertThat(serviceRepository.retrieve(uuid)).isEmpty();
+      Assertions.assertThat(deleted).isEqualTo(1);
+      Assertions.assertThat(shouldBeEmpty).isEmpty();
    }
 
 

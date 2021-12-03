@@ -19,13 +19,13 @@ public class RecordRepository {
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
     }
 
-    public DatabaseSaveResult.SaveStatus save(RecordEntity entity) {
+    public UUID save(RecordEntity entity) {
         DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
                 .setField("response_time", entity.getResponsetime())
                 .execute();
-        return result.getSaveStatus();
+        return result.getId();
     }
 
     public Optional<RecordEntity> getLatestRecord(UUID serviceId) {
@@ -51,7 +51,6 @@ public class RecordRepository {
                 .setCreated_at(row.getZonedDateTime("created_at"))
                 .setResponsetime(row.getInt("response_time"));
     }
-
 
     public static class Query {
 

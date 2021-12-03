@@ -133,11 +133,6 @@ public class DashboardRepository {
         return result;
     }
 
-
-
-
-
-
     private static DashboardEntity toDashboard(DatabaseRow row) {
         try {
             return new DashboardEntity()

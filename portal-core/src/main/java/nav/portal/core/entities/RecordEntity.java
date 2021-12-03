@@ -4,6 +4,7 @@ package nav.portal.core.entities;
 import nav.portal.core.enums.ServiceStatus;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class RecordEntity {
@@ -47,6 +48,19 @@ public class RecordEntity {
 
     public ZonedDateTime getCreated_at() {
         return created_at;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RecordEntity that = (RecordEntity) o;
+        return id.equals(that.id) && serviceId.equals(that.serviceId) && status == that.status && created_at.equals(that.created_at) && responsetime.equals(that.responsetime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, serviceId, status, created_at, responsetime);
     }
 
     public RecordEntity setCreated_at(ZonedDateTime created_at) {

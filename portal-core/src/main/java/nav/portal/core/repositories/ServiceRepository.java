@@ -161,8 +161,6 @@ public class ServiceRepository {
     }
 
 
-
-
     static ServiceEntity toService(DatabaseRow row) {
         try {
             return new ServiceEntity(row.getString("name"),
