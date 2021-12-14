@@ -33,6 +33,7 @@ class DashboardRepositoryTest {
 
     @AfterEach
     void endConnection() {
+        TestUtil.clearAllTableData(dbContext);
         connection.close();
     }
 

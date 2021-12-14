@@ -13,7 +13,7 @@ public class SampleData {
 
     ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Arbeidsøker eller permitert", "Pensjon", "Venter barn", "Alene med barn", "Sykmeldt",
             "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
-            "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken"));
+            "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken","Ett navn til"));
 
     ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ"));
 
@@ -53,7 +53,7 @@ public class SampleData {
         Random random = new Random();
         int numberOfAreas = random.nextInt(12);
         List<AreaEntity> areas = new ArrayList<>();
-        for (int i = 0; i < numberOfAreas; i++) {
+        for (int i = 0; i <= numberOfAreas; i++) {
             areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
         }
         return areas;
@@ -63,7 +63,7 @@ public class SampleData {
         Random random = new Random();
         int numberOfAreas = 1 + random.nextInt(12);
         List<AreaEntity> areas = new ArrayList<>();
-        for (int i = 0; i < numberOfAreas; i++) {
+        for (int i = 0; i <= numberOfAreas; i++) {
             areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
         }
         return areas;

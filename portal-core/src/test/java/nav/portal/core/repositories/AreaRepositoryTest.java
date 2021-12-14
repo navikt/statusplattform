@@ -30,6 +30,7 @@ class AreaRepositoryTest {
 
     @AfterEach
     void endConnection() {
+        TestUtil.clearAllTableData(dbContext);
         connection.close();
     }
 

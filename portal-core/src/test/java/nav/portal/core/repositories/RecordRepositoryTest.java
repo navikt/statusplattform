@@ -32,6 +32,7 @@ class RecordRepositoryTest {
 
     @AfterEach
     void endConnection() {
+        TestUtil.clearAllTableData(dbContext);
         connection.close();
     }
 
