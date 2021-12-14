@@ -85,7 +85,7 @@ class ServiceRepositoryTest {
    void addDependencyToService() {
       //Arrange
       ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
-      ServiceEntity service2 = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
       UUID uuid1 = serviceRepository.save(service1);
       UUID uuid2 = serviceRepository.save(service2);
       service1.setId(uuid1);
@@ -102,7 +102,7 @@ class ServiceRepositoryTest {
    void removeDependencyFromService() {
       //Arrange
       ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
-      ServiceEntity service2 = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
       UUID uuid1 = serviceRepository.save(service1);
       UUID uuid2 = serviceRepository.save(service2);
       service1.setId(uuid1);
@@ -204,7 +204,7 @@ class ServiceRepositoryTest {
    void doesEntryExist() {
       //Arrange
       ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
-      ServiceEntity service2 = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
       UUID uuid1 = serviceRepository.save(service1);
       UUID uuid2 = serviceRepository.save(service2);
       service1.setId(uuid1);

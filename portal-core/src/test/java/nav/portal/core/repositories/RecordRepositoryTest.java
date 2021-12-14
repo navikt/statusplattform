@@ -52,7 +52,7 @@ class RecordRepositoryTest {
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
         RecordEntity record = sampleData.getRandomizedRecordEntity();
-        record.setServiceId(serviceId);
+        record.setServiceId(service.getId());
         //Act
         record.setId(recordRepository.save(record));
         Optional<RecordEntity>retrievedEntity = recordRepository.getLatestRecord(serviceId);
@@ -63,17 +63,7 @@ class RecordRepositoryTest {
 
     @Test
     void getLatestRecord() {
-        //Arrange
-        ServiceEntity service = sampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        RecordEntity record = sampleData.getRandomizedRecordEntity();
-        record.setServiceId(serviceId);
-        //Act
-        recordRepository.save(record);
-        Optional<RecordEntity>retrievedEntity = recordRepository.getLatestRecord(serviceId);
-        //Assert
-        Assertions.assertThat(retrievedEntity.get().getId()).isEqualTo(record.getId());
+
 
     }
 }
