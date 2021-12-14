@@ -39,6 +39,7 @@ class DashboardRepositoryTest {
 
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @Test
     void save() {
@@ -173,12 +174,13 @@ class DashboardRepositoryTest {
     void retrieveOneFromName() {
         //TODO denne
         //Arrange -
-        String dashboardname = "Dashboard";
+        String dashboardname = sampleData.getRandomizedDashboardName();
+        UUID uuid = dashboardRepository.save(dashboardname);
         //Act
         Map.Entry<DashboardEntity, List<AreaWithServices>>aName = dashboardRepository.retrieveOneFromName(dashboardname);
         //Assert
         Assertions.assertThat(aName.getKey().getName()).isEqualTo(dashboardname);
-        UUID uuid = dashboardRepository.save(dashboardname);
+
     }
 
     @Test
@@ -194,7 +196,7 @@ class DashboardRepositoryTest {
     void deleteAreasFromDashboard() {
 
         //Arrange
-        String dashboardname = "Dashboard";
+        String dashboardname = sampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardname);
 
         List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
@@ -214,19 +216,13 @@ class DashboardRepositoryTest {
     @Test
     void deleteDashboard() {
         //Arrange
-        String dashboardname = "Dashboard";
+        String dashboardname = sampleData.getRandomizedDashboardName();
         UUID uuid = dashboardRepository.save(dashboardname);
         //Act
         UUID shouldExist = dashboardRepository.uidFromName(dashboardname);
         dashboardRepository.deleteDashboard(uuid);
-        UUID shouldNotExist = dashboardRepository.uidFromName(dashboardname);
-
         //Assert
         Assertions.assertThat(shouldExist).isEqualTo(uuid);
-        Assertions.assertThat(shouldNotExist).isNull();
-
-
-        //TODO denne
-
+        Assertions.assertThat(dashboardRepository.getAllDashboardUUIDsAndNames()).isEmpty();
     }
 }
