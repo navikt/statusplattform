@@ -49,6 +49,7 @@ class ServiceControllerTest {
         for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
         }
+        //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
 
         //Act
         List<ServiceDto> resultingDtos = serviceController.getServices();
