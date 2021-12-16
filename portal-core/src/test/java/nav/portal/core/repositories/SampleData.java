@@ -147,12 +147,12 @@ public class SampleData {
         return dashboardNames;
     }
 
-    private ServiceStatus getRandomServiceStatus() {
+    private static ServiceStatus getRandomServiceStatus() {
         Random random = new Random();
         return ServiceStatus.values()[random.nextInt(ServiceStatus.values().length)];
     }
 
-    private Integer getRandomResponseTime() {
+    private static Integer getRandomResponseTime() {
         List<Integer> responseTime = Arrays.asList(10, 20, 30, 100, 1000);
         Random random = new Random();
         return responseTime.get(random.nextInt(responseTime.size()));
@@ -162,5 +162,12 @@ public class SampleData {
            return new RecordEntity()
                 .setStatus(getRandomServiceStatus())
                 .setResponsetime(getRandomResponseTime());
+    }
+
+    public static RecordEntity getRandomizedRecordEntityForService(ServiceEntity serviceEntity){
+       return new RecordEntity()
+               .setServiceId(serviceEntity.getId())
+               .setStatus(getRandomServiceStatus())
+               .setResponsetime(getRandomResponseTime());
     }
 }

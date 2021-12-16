@@ -1,5 +1,6 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
@@ -13,9 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +28,7 @@ class ServiceControllerTest {
 
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
+    private final RecordRepository recordRepository = new RecordRepository(dbContext);
 
 
     @BeforeEach
@@ -45,23 +45,48 @@ class ServiceControllerTest {
     @Test
     void getServices() {
         //Arrange
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-        for(ServiceEntity service : services){
-            service.setId(serviceRepository.save(service));
-        }
-        //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
+        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(4);
 
+        //Lagrer tjenester
+        services.forEach(s -> s.setId(serviceRepository.save(s)));
+
+        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
+
+        //Lager tilfeldig status for hver tjeneste
+        services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
+        //Lagrer statusen på tjenesten
+        servicesWithStatus.keySet().forEach(id -> recordRepository.save(servicesWithStatus.get(id)));
+
+
+        //TODO legg in avhengigheter her før mappingen:
+        //serviceRepository.addDependencyToService();
+        //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
+        List<ServiceDto> expectedDtos = services.stream()
+                .map(s->
+                        EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
+                .map(dto -> setStatus(servicesWithStatus, dto))
+                .collect(Collectors.toList());
+
+        //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
+        // Først lagre avhengigheter til repository
+        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
+
+
+        //recordRepository.save()
         //Act
         List<ServiceDto> resultingDtos = serviceController.getServices();
 
         //Assert
-        List<ServiceDto> expectedDtos = services.stream()
-                .map(s->EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
-                .collect(Collectors.toList());
 
         Assertions.assertThat(resultingDtos).containsExactlyInAnyOrderElementsOf(expectedDtos);
 
     }
+
+    private ServiceDto setStatus(Map<UUID, RecordEntity> servicesWithStatus, ServiceDto dto) {
+        dto.setStatus(EntityDtoMappers.toStatusDto(servicesWithStatus.get(dto.getId())));
+        return dto;
+    }
+
 
     @Test
     void getService() {

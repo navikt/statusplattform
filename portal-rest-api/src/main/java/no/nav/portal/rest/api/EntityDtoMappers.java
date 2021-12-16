@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
 
 public class EntityDtoMappers {
 
+    public static StatusDto toStatusDto(RecordEntity recordEntity){
+        return StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation());
+    }
+
     public static ServiceEntity toServiceEntity(ServiceDto dto){
         ServiceEntity entity = new ServiceEntity();
         entity.setId(dto.getId());
