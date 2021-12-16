@@ -2,45 +2,34 @@ package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
-import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
 import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.ServiceStatusDto;
-import no.portal.web.generated.api.ServiceTypeDto;
-import no.portal.web.generated.api.StatusDto;
-import org.actioncontroller.*;
-import org.actioncontroller.json.JsonBody;
+
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
 class ServiceControllerTest {
-    private SampleData sampleData = new SampleData();
 
-    private DataSource dataSource = TestDataSource.create();
+    private final SampleData sampleData = new SampleData();
+    private final DataSource dataSource = TestDataSource.create();
+    private final DbContext dbContext = new DbContext();
 
-    private DbContext dbContext = new DbContext();
     private DbContextConnection connection;
 
-    private final ServiceController serviceController;
-    private final ServiceRepository serviceRepository;
+    private final ServiceController serviceController = new ServiceController(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
-
-    public ServiceControllerTest(DbContext dbContext) {
-
-        this.serviceController = new ServiceController(dbContext);
-        this.serviceRepository = new ServiceRepository(dbContext);
-    }
 
     @BeforeEach
     void startConnection() {
@@ -55,18 +44,21 @@ class ServiceControllerTest {
 
     @Test
     void getServices() {
-        //Assign
+        //Arrange
         List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
         for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
         }
-        //Arrange
-        List<ServiceDto> servicesDto = serviceController.getServices();
 
         //Act
+        List<ServiceDto> resultingDtos = serviceController.getServices();
 
         //Assert
+        List<ServiceDto> expectedDtos = services.stream()
+                .map(s->EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
+                .collect(Collectors.toList());
 
+        Assertions.assertThat(resultingDtos).containsExactlyInAnyOrderElementsOf(expectedDtos);
 
     }
 

@@ -5,7 +5,7 @@ import org.fluentjdbc.DbContextTable;
 
 public class TestUtil {
 
-    static void clearAllTableData(DbContext dbContext){
+    public static void clearAllTableData(DbContext dbContext){
         DbContextTable serviceServiceTable = dbContext.table("service_service");
         serviceServiceTable.whereExpression("service1_id is NOT null").executeDelete();
 

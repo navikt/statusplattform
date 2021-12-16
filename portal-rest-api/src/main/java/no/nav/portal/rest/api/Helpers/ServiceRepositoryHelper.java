@@ -39,7 +39,7 @@ public class ServiceRepositoryHelper {
             service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation().toUpperCase()));
             return;
         }
-        service.setStatus(StatusDto.ISSUE);
+        service.setStatus(null);
     }
 
 
