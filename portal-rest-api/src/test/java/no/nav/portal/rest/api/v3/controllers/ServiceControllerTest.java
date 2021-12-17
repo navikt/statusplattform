@@ -45,7 +45,7 @@ class ServiceControllerTest {
     @Test
     void getServices() {
         //Arrange
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(4);
+        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
 
         //Lagrer tjenester
         services.forEach(s -> s.setId(serviceRepository.save(s)));
@@ -69,16 +69,21 @@ class ServiceControllerTest {
 
         //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
         // Først lagre avhengigheter til repository
-        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
+        ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+        service.setId(serviceRepository.save(service));
+        RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
 
+        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
+        serviceRepository.addDependencyToService(service, services);
 
         //recordRepository.save()
+        UUID serviceRecId = recordRepository.save(serviceRecord);
         //Act
         List<ServiceDto> resultingDtos = serviceController.getServices();
 
         //Assert
+        Assertions.assertThat(resultingDtos).containsAll(expectedDtos);
 
-        Assertions.assertThat(resultingDtos).containsExactlyInAnyOrderElementsOf(expectedDtos);
 
     }
 
@@ -90,6 +95,15 @@ class ServiceControllerTest {
 
     @Test
     void getService() {
+        //Arrange
+        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
+        UUID serviceRecId = recordRepository.save(serviceRecord);
+        //Act
+        ServiceDto serviceDto = serviceController.getService(serviceId);
+        //Assert
     }
 
     @Test

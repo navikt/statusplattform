@@ -32,7 +32,7 @@ public class ServiceController {
 
     @GET("/Services")
     @JsonBody
-    public List<ServiceDto> getServices() {
+    public  List<ServiceDto> getServices() {
         return serviceRepositoryHelper.getAllServices2();
     }
 
