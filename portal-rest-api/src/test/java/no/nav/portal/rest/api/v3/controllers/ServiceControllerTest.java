@@ -51,12 +51,12 @@ class ServiceControllerTest {
         //Lagrer tjenester
         services.forEach(s -> s.setId(serviceRepository.save(s)));
 
-        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
 
         //Lager tilfeldig status for hver tjeneste
+        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
         services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
 
-        //Lagrer statusen på tjenesten
+        //Lagrer statusen på tjenesten til DB
         servicesWithStatus.values().forEach(recordRepository::save);
 
         //En av tjenestene er avhengig av resten
@@ -72,12 +72,14 @@ class ServiceControllerTest {
         //Assert
         Assertions.assertThat(resultingDtos.size()).isEqualTo(NumberOfServices);
 
+        //Finner alle tjenester med avhengigheter fra resultatet
         List<ServiceDto> retrievedServicesWithDependencies = resultingDtos
                 .stream()
                 .filter(dto -> dto.getDependencies().size() > 0)
                 .collect(Collectors.toList());
-
+        //Forventer at det bare er en tjeneste med avhengighet
         Assertions.assertThat(retrievedServicesWithDependencies.size()).isEqualTo(1);
+        //Forventer at den har samme UUID som entiteten vi valgte skulle ha avhengigheter
         Assertions.assertThat(retrievedServicesWithDependencies.get(0).getId()).isEqualTo(expectedUUIDOfServiceWithDependecies);
 
     }
