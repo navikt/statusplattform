@@ -45,7 +45,8 @@ class ServiceControllerTest {
     @Test
     void getServices() {
         //Arrange
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(4);
+        int NumberOfServices = 4;
+        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(NumberOfServices);
 
         //Lagrer tjenester
         services.forEach(s -> s.setId(serviceRepository.save(s)));
@@ -54,39 +55,30 @@ class ServiceControllerTest {
 
         //Lager tilfeldig status for hver tjeneste
         services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
+
         //Lagrer statusen på tjenesten
-        servicesWithStatus.keySet().forEach(id -> recordRepository.save(servicesWithStatus.get(id)));
+        servicesWithStatus.values().forEach(recordRepository::save);
 
         //En av tjenestene er avhengig av resten
         ServiceEntity serviceWithDependensies = services.get(0);
         List<ServiceEntity> dependencies = services.subList(1,services.size());
+        UUID expectedUUIDOfServiceWithDependecies = serviceWithDependensies.getId();
 
         serviceRepository.addDependencyToService(serviceWithDependensies, dependencies);
 
-        //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
-        List<ServiceDto> expectedDtos = services.stream()
-                .map(s->
-                        EntityDtoMappers.toServiceDtoDeep(s,
-                                s.getId().equals(serviceWithDependensies.getId()) ? dependencies :
-                                Collections.emptyList()))
-                .map(dto -> setStatus(servicesWithStatus, dto))
-                .collect(Collectors.toList());
-
-
-        //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
-        // Først lagre avhengigheter til repository
-
-
-        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
-
-        //recordRepository.save()
-       // UUID serviceRecId = recordRepository.save(serviceRecord);
         //Act
         List<ServiceDto> resultingDtos = serviceController.getServices();
 
         //Assert
-        Assertions.assertThat(resultingDtos).containsExactlyInAnyOrderElementsOf(expectedDtos);
+        Assertions.assertThat(resultingDtos.size()).isEqualTo(NumberOfServices);
 
+        List<ServiceDto> retrievedServicesWithDependencies = resultingDtos
+                .stream()
+                .filter(dto -> dto.getDependencies().size() > 0)
+                .collect(Collectors.toList());
+
+        Assertions.assertThat(retrievedServicesWithDependencies.size()).isEqualTo(1);
+        Assertions.assertThat(retrievedServicesWithDependencies.get(0).getId()).isEqualTo(expectedUUIDOfServiceWithDependecies);
 
     }
 
@@ -111,14 +103,20 @@ class ServiceControllerTest {
 
     @Test
     void newService() {
+        //Arrange
+        //Denne har ingen avhengigheter: TODO lage tilsvarende med avhengigheter
+        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        ServiceDto inputDto = EntityDtoMappers.toServiceDtoShallow(service);
+        //Act
+        ServiceDto actualDto  = serviceController.newService(inputDto);
+        //Assert
+        Assertions.assertThat(actualDto.getId()).isNotNull();
+        inputDto.setId(actualDto.getId());
+        Assertions.assertThat(inputDto).isEqualTo(actualDto);
     }
 
     @Test
     void updateService() {
-    }
-
-    @Test
-    void testNewService() {
     }
 
     @Test
