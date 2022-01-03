@@ -17,7 +17,7 @@ public class SampleData {
 
     ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ"));
 
-    ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste"));
+    ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste","tjeneste123","tjeneste213"));
 
     ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("www.random.com", "www.æøå.com", "wwww.123abc.com"));
 
@@ -123,7 +123,6 @@ public class SampleData {
     }
 
     public List<ServiceEntity> getNonEmptyListOfServiceEntity(int length) {
-        Random random = new Random();
         int numberOfServices = length;
         List<ServiceEntity> services = new ArrayList<>();
         for (int i = 0; i < numberOfServices; i++) {
