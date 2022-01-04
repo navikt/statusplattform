@@ -55,7 +55,7 @@ public class ServiceController {
 
     @PUT("/Service/:Service_id/:DependentOnService_id")
     @JsonBody
-    public void newService(@PathParam("Service_id") UUID service_id
+    public void addDependencyToService(@PathParam("Service_id") UUID service_id
             ,@PathParam("DependentOnService_id") UUID dependentOnService_id) {
         serviceRepository.addDependencyToService(service_id,dependentOnService_id);
     }
