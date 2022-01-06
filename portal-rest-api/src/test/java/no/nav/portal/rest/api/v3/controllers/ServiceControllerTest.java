@@ -192,7 +192,50 @@ class ServiceControllerTest {
 
     @Test
     void getServicetypes() {
+        //Arrange
+        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+
+        //Lagrer tjenester
+        services.forEach(s -> s.setId(serviceRepository.save(s)));
+
+        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
+
+        //Lager tilfeldig status for hver tjeneste
+        services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
+        //Lagrer statusen på tjenesten
+        servicesWithStatus.keySet().forEach(id -> recordRepository.save(servicesWithStatus.get(id)));
+
+
+        //TODO legg in avhengigheter her før mappingen:
+        //serviceRepository.addDependencyToService();
+        //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
+        List<ServiceDto> expectedDtos = services.stream()
+                .map(s->
+                        EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
+                .map(dto -> setStatus(servicesWithStatus, dto))
+                .collect(Collectors.toList());
+
+        // Først lagre avhengigheter til repository
+        ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
+
+        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
+        serviceRepository.addDependencyToService(service, services);
+        Map.Entry<ServiceEntity, List<ServiceEntity>> before =
+                serviceRepository.retrieveOneWithDependencies(serviceId);
+
+        //recordRepository.save()
+        UUID serviceRecId = recordRepository.save(serviceRecord);
+        //Act
+        List<String> resultingServiceTypes = serviceController.getServicetypes();
+        //Assert
+        Assertions.assertThat(resultingServiceTypes).isNotEmpty();
+
+
     }
+
 
     @Test
     void getServiceStatuses() {
