@@ -2,7 +2,6 @@ package nav.portal.core.entities;
 
 import nav.portal.core.enums.ServiceType;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,11 +13,12 @@ public class ServiceEntity {
     private String monitorlink;
     private String description;
     private String logglink;
+    private String polling_url;
 
     public ServiceEntity() {
     }
 
-    public ServiceEntity(String name, UUID id, ServiceType type, String team, String monitorlink, String description, String logglink) {
+    public ServiceEntity(String name, UUID id, ServiceType type, String team, String monitorlink, String description, String logglink, String polling_url) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -26,6 +26,7 @@ public class ServiceEntity {
         this.monitorlink = monitorlink;
         this.description = description;
         this.logglink = logglink;
+        this.polling_url = polling_url;
     }
 
     public String getName() {
@@ -88,6 +89,14 @@ public class ServiceEntity {
 
     public ServiceEntity setLogglink(String logglink) {
         this.logglink = logglink;
+        return this;
+    }
+    public String getPolling_url() {
+        return polling_url;
+    }
+
+    public ServiceEntity setPolling_url(String polling_url) {
+        this.polling_url = polling_url;
         return this;
     }
 
