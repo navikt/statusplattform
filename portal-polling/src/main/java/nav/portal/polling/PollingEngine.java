@@ -31,7 +31,7 @@ public class PollingEngine  extends Thread{
     private final RecordRepository recordRepository;
     private final DbContext dbContext;
     private DataSource dataSource;
-    private final int POLLING_INTERVAL_IN_SECONDS = 60;
+
 
     public PollingEngine(DbContext dbContext) {
         this.serviceRepository = new ServiceRepository(dbContext);
@@ -150,17 +150,9 @@ public class PollingEngine  extends Thread{
 
 
     public void run(){
-        Integer i = 0;
-        while (true){
-            try {
-                System.out.println("Poller --- : " + i++);
-                startPoll();
-                PollingEngine.sleep(POLLING_INTERVAL_IN_SECONDS*1000);
-            }
-            catch (InterruptedException e){
-                System.out.println(e);
-            }
-        }
+        System.out.println("Started polling ....... ");
+        startPoll();
+        System.out.println("Polling completed");
     }
 
     public void setDataSource(DataSource dataSource) {
