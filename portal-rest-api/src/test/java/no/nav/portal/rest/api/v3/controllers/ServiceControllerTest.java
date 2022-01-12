@@ -47,44 +47,42 @@ class ServiceControllerTest {
     @Test
     void getServices() {
         //Arrange
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+        int NumberOfServices = 4;
+        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(NumberOfServices);
 
         //Lagrer tjenester
         services.forEach(s -> s.setId(serviceRepository.save(s)));
 
-        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
 
         //Lager tilfeldig status for hver tjeneste
+        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
         services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
-        //Lagrer statusen på tjenesten
-        servicesWithStatus.keySet().forEach(id -> recordRepository.save(servicesWithStatus.get(id)));
 
+        //Lagrer statusen på tjenesten til DB
+        servicesWithStatus.values().forEach(recordRepository::save);
 
-        //TODO legg in avhengigheter her før mappingen:
-        //serviceRepository.addDependencyToService();
-        //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
-        List<ServiceDto> expectedDtos = services.stream()
-                .map(s->
-                        EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
-                .map(dto -> setStatus(servicesWithStatus, dto))
-                .collect(Collectors.toList());
+        //En av tjenestene er avhengig av resten
+        ServiceEntity serviceWithDependensies = services.get(0);
+        List<ServiceEntity> dependencies = services.subList(1,services.size());
+        UUID expectedUUIDOfServiceWithDependecies = serviceWithDependensies.getId();
 
-        //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
-        // Først lagre avhengigheter til repository
-        ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
-        service.setId(serviceRepository.save(service));
-        RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
+        serviceRepository.addDependencyToService(serviceWithDependensies, dependencies);
 
-        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
-        serviceRepository.addDependencyToService(service, services);
-
-        //recordRepository.save()
-        UUID serviceRecId = recordRepository.save(serviceRecord);
         //Act
         List<ServiceDto> resultingDtos = serviceController.getServices();
 
         //Assert
-        Assertions.assertThat(resultingDtos).containsAll(expectedDtos);
+        Assertions.assertThat(resultingDtos.size()).isEqualTo(NumberOfServices);
+
+        //Finner alle tjenester med avhengigheter fra resultatet
+        List<ServiceDto> retrievedServicesWithDependencies = resultingDtos
+                .stream()
+                .filter(dto -> dto.getDependencies().size() > 0)
+                .collect(Collectors.toList());
+        //Forventer at det bare er en tjeneste med avhengighet
+        Assertions.assertThat(retrievedServicesWithDependencies.size()).isEqualTo(1);
+        //Forventer at den har samme UUID som entiteten vi valgte skulle ha avhengigheter
+        Assertions.assertThat(retrievedServicesWithDependencies.get(0).getId()).isEqualTo(expectedUUIDOfServiceWithDependecies);
 
 
     }
