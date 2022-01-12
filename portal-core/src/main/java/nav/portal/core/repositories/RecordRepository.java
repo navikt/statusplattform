@@ -23,6 +23,8 @@ public class RecordRepository {
         DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
+                .setField("description", entity.getDescription())
+                .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
                 .execute();
         return result.getId();

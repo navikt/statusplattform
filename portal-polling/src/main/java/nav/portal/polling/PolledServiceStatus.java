@@ -9,8 +9,29 @@ public class PolledServiceStatus {
     private ServiceStatus status;
     private String team;
     private ZonedDateTime timestamp;
+    private String description;
+    private String logglink;
+
+
 
     public PolledServiceStatus() {
+    }
+    public String getDescrption() {
+        return description;
+    }
+
+    public String getLogglink() {
+        return logglink;
+    }
+
+    public PolledServiceStatus setLogglink(String logglink) {
+        this.logglink = logglink;
+        return this;
+    }
+
+    public PolledServiceStatus setDescrption(String description) {
+        this.description = description;
+        return this;
     }
 
     public String getName() {

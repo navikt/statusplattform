@@ -12,6 +12,8 @@ public class RecordEntity {
     private UUID id;
     private UUID serviceId;
     private ServiceStatus status;
+    private String description;
+    private String logglink;
     private ZonedDateTime created_at;
     private Integer responsetime;
 
@@ -21,6 +23,24 @@ public class RecordEntity {
 
     public UUID getId() {
         return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLogglink() {
+        return logglink;
+    }
+
+    public RecordEntity setLogglink(String logglink) {
+        this.logglink = logglink;
+        return this;
+    }
+
+    public RecordEntity setDescription(String description) {
+        this.description = description;
+        return this;
     }
 
     public RecordEntity setId(UUID id) {

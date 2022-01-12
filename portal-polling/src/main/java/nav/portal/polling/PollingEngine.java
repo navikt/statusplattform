@@ -69,8 +69,10 @@ public class PollingEngine  extends Thread{
 
         }
         catch (Exception e){
-            //TODO Hva skal skje her?
-            System.out.println(e);
+
+            PolledServiceStatus polledServiceStatus =  createPolledServiceStatusForUnresponsiveEndpoint();
+            updateRecordForService(polledServiceStatus,serviceEntity, 0);
+
         }
 
 
@@ -85,6 +87,8 @@ public class PollingEngine  extends Thread{
         PolledServiceStatus polledServiceStatus = new PolledServiceStatus();
         polledServiceStatus.setName(jsonObject.getString("name"));
         polledServiceStatus.setTeam(jsonObject.getString("team"));
+        polledServiceStatus.setDescrption(jsonObject.getString("description",null));
+        polledServiceStatus.setLogglink(jsonObject.getString("logglink",null));
         polledServiceStatus.setStatus(ServiceStatus.valueOf(jsonObject.getString("status")));
         polledServiceStatus.setTimestamp(readDateTimeFromString(jsonObject.getString("timestamp")));
 
@@ -95,9 +99,19 @@ public class PollingEngine  extends Thread{
         RecordEntity recordEntity = new RecordEntity()
                 .setServiceId(serviceEntity.getId())
                 .setStatus(polledServiceStatus.getStatus())
+                .setDescription(polledServiceStatus.getDescrption())
+                .setLogglink(polledServiceStatus.getLogglink())
                 .setCreated_at(polledServiceStatus.getTimestamp())
                 .setResponsetime(responseTime);
         recordRepository.save(recordEntity);
+    }
+
+    private PolledServiceStatus createPolledServiceStatusForUnresponsiveEndpoint(){
+        PolledServiceStatus polledServiceStatus = new PolledServiceStatus()
+                .setDescrption("Service status endpoint is not responding")
+                .setStatus(ServiceStatus.ISSUE)
+                .setTimestamp(ZonedDateTime.now());
+        return polledServiceStatus;
     }
 
     private ZonedDateTime readDateTimeFromString(String str){
