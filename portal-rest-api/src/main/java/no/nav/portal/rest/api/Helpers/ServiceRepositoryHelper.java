@@ -1,6 +1,7 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
@@ -14,8 +15,10 @@ import java.util.stream.Collectors;
 public class ServiceRepositoryHelper {
     ServiceRepository serviceRepository;
     RecordRepository recordRepository;
+    AreaRepository areaRepository;
 
     public ServiceRepositoryHelper(DbContext context){
+        this.areaRepository = new AreaRepository(context);
         this.serviceRepository = new ServiceRepository(context);
         this.recordRepository = new RecordRepository(context);
     }
@@ -57,6 +60,8 @@ public class ServiceRepositoryHelper {
 
     public void deleteService(UUID service_id){
         serviceRepository.resetDependenciesOnService(service_id);
+        areaRepository.removeServiceFromAllAreas(service_id);
+
         serviceRepository.delete(service_id);
     }
 
