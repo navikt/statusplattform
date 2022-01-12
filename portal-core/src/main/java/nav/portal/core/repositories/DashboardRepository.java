@@ -30,7 +30,7 @@ public class DashboardRepository {
                 .newSaveBuilderWithUUID("id", UUID.randomUUID())
                 .setField("name", name)
                 .execute();
-        return  result.getId();
+        return result.getId();
     }
 
     public void settAreasOnDashboard(UUID dashboardId, List<UUID> areas) {

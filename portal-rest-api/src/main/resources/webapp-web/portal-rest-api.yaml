@@ -762,6 +762,8 @@ components:
           type: string
         description:
           type: string
+        pollingUrl:
+          type: string
         logglink:
           type: string
         status:

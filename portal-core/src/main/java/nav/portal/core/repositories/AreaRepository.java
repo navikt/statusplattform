@@ -80,6 +80,12 @@ public class AreaRepository {
                 .execute();
     }
 
+
+    public void removeServiceFromAllAreas(UUID serviceId){
+        areaServiceTable.where("service_id",serviceId)
+                .executeDelete();
+
+    }
     public void removeServiceFromArea(UUID areaId, UUID serviceId) {
         areaServiceTable.where("area_id",areaId)
                 .where("service_id",serviceId)

@@ -23,6 +23,7 @@ public class EntityDtoMappers {
         entity.setMonitorlink(dto.getMonitorlink());
         entity.setDescription(dto.getDescription());
         entity.setLogglink(dto.getLogglink());
+        entity.setPolling_url(dto.getPollingUrl());
         return entity;
     }
 

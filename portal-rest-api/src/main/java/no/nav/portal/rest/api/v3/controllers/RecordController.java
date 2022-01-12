@@ -42,7 +42,7 @@ public class RecordController {
 
     @GET("/ServiceStatus/:Service_id")
     @JsonBody
-    public List<ServiceStatusDto> getAreas(@PathParam("Service_id") UUID service_id) {
+    public List<ServiceStatusDto> getRecordHistory(@PathParam("Service_id") UUID service_id) {
         return EntityDtoMappers.toServiceStatusDto(
                 recordRepository.getRecordHistory(service_id,100));
     }

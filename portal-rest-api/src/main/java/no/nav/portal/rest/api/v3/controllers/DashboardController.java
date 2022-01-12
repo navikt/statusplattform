@@ -16,6 +16,7 @@ import org.fluentjdbc.DbContext;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DashboardController {
 
@@ -41,7 +42,11 @@ public class DashboardController {
     @POST("/Dashboard")
     @JsonBody
     public UUID postDashboard(@JsonBody DashboardDto dashboardDto) {
-        return dashboardRepository.save(dashboardDto.getName());
+        UUID uuid = dashboardRepository.save(dashboardDto.getName());
+        dashboardRepository.settAreasOnDashboard(uuid,
+                dashboardDto.getAreas().stream().map(
+                        area -> area.getId()).collect(Collectors.toList()));
+        return uuid;
     }
 
     @DELETE("/Dashboard/:Dashboard_id")
@@ -53,7 +58,7 @@ public class DashboardController {
 
     @PUT("/Dashboard/:Dashboard_id")
     public void addAreaToDashboard(@PathParam("Dashboard_id") UUID dashboard_id, @UuidListBody List<UUID> areaIds) {
-        dashboardRepository.settAreasOnDashboard(dashboard_id,areaIds);
+        dashboardRepository.settAreasOnDashboard(dashboard_id, areaIds);
     }
 
     @PUT("/Dashboard/Update/:Dashboard_id")

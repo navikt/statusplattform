@@ -88,7 +88,7 @@ public class PortalServer {
     public void start() throws Exception {
         server.start();
         connector.start();
-        //portalPoller.start();
+        portalPoller.start();
         logger.warn("Started on {}", getURI());
     }
 
