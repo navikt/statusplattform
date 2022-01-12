@@ -34,8 +34,6 @@ public class ServiceRepository {
                 .setField("type", service.getType().getDbRepresentation())
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
-                .setField("description", service.getDescription())
-                .setField("logglink", service.getLogglink())
                 .setField("polling_url", service.getPolling_url())
                 .execute()
                 .getId();
@@ -48,8 +46,6 @@ public class ServiceRepository {
                 .setField("type", service.getType().getDbRepresentation())
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
-                .setField("description", service.getDescription())
-                .setField("logglink", service.getLogglink())
                 .setField("polling_url", service.getPolling_url())
                 .execute();
     }
@@ -170,8 +166,6 @@ public class ServiceRepository {
                     ServiceType.fromDb(row.getString("type")),
                     row.getString("team"),
                     row.getString("monitorlink"),
-                    row.getString("description"),
-                    row.getString("logglink"),
                     row.getString("polling_url"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);

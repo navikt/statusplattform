@@ -260,17 +260,12 @@ class ServiceRepositoryTest {
               .setName("Hei")
               .setType(ServiceType.TJENESTE)
               .setTeam("Status")
-              .setMonitorlink("Yes")
-              .setDescription("Cookie data")
-              .setLogglink("No");
-
+              .setMonitorlink("Yes");
       ServiceEntity service2 = new ServiceEntity()
               .setName("Bye")
               .setType(ServiceType.TJENESTE)
               .setTeam("Status")
-              .setMonitorlink("Yes")
-              .setDescription("Cookie data")
-              .setLogglink("No");
+              .setMonitorlink("Yes");
       // Act
       UUID serviceId1 = serviceRepository.save(service1);
       service1.setId(serviceId1);
@@ -298,9 +293,7 @@ class ServiceRepositoryTest {
               .setName("Hei")
               .setType(ServiceType.TJENESTE)
               .setTeam("Digital")
-              .setMonitorlink("Yes")
-              .setDescription("Orlenes data")
-              .setLogglink("No");
+              .setMonitorlink("Yes");
       // Act
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);

@@ -760,11 +760,7 @@ components:
             $ref: '#/components/schemas/Service'
         monitorlink:
           type: string
-        description:
-          type: string
         pollingUrl:
-          type: string
-        logglink:
           type: string
         status:
           readOnly: true

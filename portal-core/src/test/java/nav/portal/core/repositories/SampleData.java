@@ -84,9 +84,7 @@ public class SampleData {
                 .setName(getRandomFromArray(serviceNames))
                 .setType(getRandomServiceType())
                 .setTeam(getRandomFromArray(teamNames))
-                .setMonitorlink(getRandomFromArray(urlStrings))
-                .setDescription(getRandomFromArray(descriptions))
-                .setLogglink(getRandomFromArray(urlStrings));
+                .setMonitorlink(getRandomFromArray(urlStrings));
     }
 
     public ServiceEntity getRandomizedServiceEntityWithNameNotInList(List<ServiceEntity> services) {
@@ -97,9 +95,7 @@ public class SampleData {
                 .setName(getRandomFromArray(serviceNames))
                 .setType(getRandomServiceType())
                 .setTeam(getRandomFromArray(teamNames))
-                .setMonitorlink(getRandomFromArray(urlStrings))
-                .setDescription(getRandomFromArray(descriptions))
-                .setLogglink(getRandomFromArray(urlStrings));
+                .setMonitorlink(getRandomFromArray(urlStrings));
     }
 
     public List<ServiceEntity> getRandomLengthListOfServiceEntity() {
