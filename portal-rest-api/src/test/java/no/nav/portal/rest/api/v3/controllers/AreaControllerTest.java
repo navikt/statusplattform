@@ -69,9 +69,9 @@ class AreaControllerTest {
         //Arrange
         AreaEntity area = sampleData.getRandomizedAreaEntity();
         //Act
-        AreaDto areaDto = areaController.newArea(EntityDtoMappers.toAreaDtoShallow(area));
+        UUID uuid = areaController.newArea(EntityDtoMappers.toAreaDtoShallow(area));
         //Assert
-        Assertions.assertThat(areaDto).isNotNull();
+        Assertions.assertThat(uuid).isNotNull();
     }
 
     @Test
