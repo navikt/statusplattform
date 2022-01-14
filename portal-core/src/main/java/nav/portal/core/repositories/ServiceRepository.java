@@ -161,12 +161,13 @@ public class ServiceRepository {
 
     static ServiceEntity toService(DatabaseRow row) {
         try {
-            return new ServiceEntity(row.getString("name"),
-                    row.getUUID("id"),
-                    ServiceType.fromDb(row.getString("type")),
-                    row.getString("team"),
-                    row.getString("monitorlink"),
-                    row.getString("polling_url"));
+            return new ServiceEntity()
+                    .setId(row.getUUID("id"))
+                    .setName(row.getString("name"))
+                    .setTeam(row.getString("team"))
+                    .setType(ServiceType.fromDb(row.getString("type")))
+                    .setMonitorlink(row.getString("monitorlink"))
+                    .setPolling_url(row.getString("polling_url"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }

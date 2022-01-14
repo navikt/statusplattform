@@ -343,7 +343,7 @@ paths:
               type: string
       responses:
         '201':
-          description: Deleted
+          description: Created
         '403':
           description: Forbidden
           content: { }
@@ -758,6 +758,12 @@ components:
           example: "[Liste av service objekter]"
           items:
             $ref: '#/components/schemas/Service'
+        areasContainingThisService:
+          type: array
+          example: "[Liste av område UUIDer]"
+          items:
+            type: string
+            format: uuid
         monitorlink:
           type: string
         pollingUrl:
@@ -785,5 +791,5 @@ components:
     ServiceType:
       type: string
       enum:
-        - APPLIKASJON
+        - KOMPONENT
         - TJENESTE

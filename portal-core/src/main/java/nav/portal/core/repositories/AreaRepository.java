@@ -80,6 +80,15 @@ public class AreaRepository {
                 .execute();
     }
 
+    public void addServiceToAreas(List<UUID> areaIds, UUID serviceId) {
+        for(UUID areaId: areaIds) {
+            areaServiceTable.insert()
+                    .setField("area_id", areaId)
+                    .setField("service_id", serviceId)
+                    .execute();
+        }
+    }
+
     public void setServicesOnArea(UUID areaId, List<UUID> services) {
         areaServiceTable.where("area_id", areaId).executeDelete();
 

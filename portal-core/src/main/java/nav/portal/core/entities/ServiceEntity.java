@@ -16,14 +16,6 @@ public class ServiceEntity {
     public ServiceEntity() {
     }
 
-    public ServiceEntity(String name, UUID id, ServiceType type, String team, String monitorlink, String polling_url) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.team = team;
-        this.monitorlink = monitorlink;
-        this.polling_url = polling_url;
-    }
 
     public String getName() {
         return name;

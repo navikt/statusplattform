@@ -55,6 +55,7 @@ public class ServiceRepositoryHelper {
         UUID uuid = serviceRepository.save(service);
         service.setId(uuid);
         serviceRepository.addDependencyToService(service,dependencies);
+        areaRepository.addServiceToAreas(serviceDto.getAreasContainingThisService(),serviceDto.getId());
         return EntityDtoMappers.toServiceDtoDeep(service,dependencies);
     }
 
