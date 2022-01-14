@@ -35,9 +35,9 @@ public class AreaController {
    @JsonBody
    public UUID newArea(@JsonBody AreaDto areaDto) {
       UUID uuid = areaRepositoryHelper.newArea(areaDto).getId();
-      areaRepository.setServiceOnArea(uuid,
+      areaRepository.setServicesOnArea(uuid,
               areaDto.getServices().stream().map(
-                      area -> area.getId()).collect(Collectors.toList()));
+                      service -> service.getId()).collect(Collectors.toList()));
       return uuid;
    }
 

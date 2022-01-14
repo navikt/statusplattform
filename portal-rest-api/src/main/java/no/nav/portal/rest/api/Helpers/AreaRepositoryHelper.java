@@ -33,9 +33,9 @@ public class AreaRepositoryHelper {
 
 
     public AreaDto newArea(AreaDto areaDto){
-            UUID id = areaRepository.save(EntityDtoMappers.toAreaEntity(areaDto));
-            Map.Entry<AreaEntity,List<ServiceEntity>> area = areaRepository.retrieveOne(id);
-            return EntityDtoMappers.toAreaDtoDeep(area.getKey(),area.getValue());
+        UUID uuid = areaRepository.save(EntityDtoMappers.toAreaEntity(areaDto));
+        Map.Entry<AreaEntity, List<ServiceEntity>> area = areaRepository.retrieveOne(uuid);
+        return EntityDtoMappers.toAreaDtoDeep(area.getKey(), area.getValue());
     }
 
     public AreaDto updateArea(UUID areaId, AreaDto areaDto){

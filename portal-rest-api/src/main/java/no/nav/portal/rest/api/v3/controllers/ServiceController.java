@@ -47,6 +47,7 @@ public class ServiceController {
     public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
         return serviceRepositoryHelper.saveNewService(serviceDto);
     }
+
     @PUT("/Service/:Service_id")
     @JsonBody
     public void updateService(@PathParam("Service_id") UUID service_id, @JsonBody ServiceDto serviceDto) {
