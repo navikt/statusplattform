@@ -81,7 +81,7 @@ public class AreaRepository {
     }
 
     public void setServicesOnArea(UUID areaId, List<UUID> services) {
-        areaTable.where("id", areaId).executeDelete();
+        areaServiceTable.where("id", areaId).executeDelete();
 
         for(int i = 0; i < services.size(); i++){
             areaServiceTable.insert()
