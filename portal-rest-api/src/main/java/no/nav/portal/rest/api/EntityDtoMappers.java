@@ -60,6 +60,7 @@ public class EntityDtoMappers {
         dto.setType(ServiceTypeDto.fromValue(service.getType().getDbRepresentation()));
         dto.setTeam(service.getTeam());
         dto.setMonitorlink(service.getMonitorlink());
+        dto.pollingUrl(service.getPolling_url());
         dto.setDependencies(dependencies.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
         return dto;
     }
