@@ -51,6 +51,7 @@ public class ServiceController {
     @PUT("/Service/:Service_id")
     @JsonBody
     public void updateService(@PathParam("Service_id") UUID service_id, @JsonBody ServiceDto serviceDto) {
+        serviceDto.setId(service_id);
         serviceRepositoryHelper.updateService(serviceDto);
     }
 
