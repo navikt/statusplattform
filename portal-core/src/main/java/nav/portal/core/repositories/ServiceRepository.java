@@ -46,7 +46,7 @@ public class ServiceRepository {
                 .setField("type", service.getType().getDbRepresentation())
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
-                .setField("polling_url", service.getPolling_url())
+                .setField("polling_url", service.getPolling_url().isEmpty()? null:service.getPolling_url())
                 .execute();
     }
 
