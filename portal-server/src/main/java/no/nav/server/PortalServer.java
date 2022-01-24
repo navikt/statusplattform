@@ -27,6 +27,7 @@ public class PortalServer {
     private final LogInnApi logInnApi = new LogInnApi("/oauth2");
     private final PortalPoller portalPoller = new PortalPoller();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
+    private Boolean isLocal = false;
 
     public PortalServer() {
         HttpConfiguration config = new HttpConfiguration();
@@ -63,6 +64,7 @@ public class PortalServer {
 
     private void setIsLocal(String isLocal) {
         boolean isLocalBool= Boolean.parseBoolean(isLocal);
+        this.isLocal = isLocalBool;
         logInnApi.setIsLocal(isLocalBool);
         portalRestApi.setIsLocal(isLocalBool);
     }
@@ -87,8 +89,10 @@ public class PortalServer {
 
     public void start() throws Exception {
         server.start();
+        if(!isLocal){
+            portalPoller.start();
+        }
         connector.start();
-        portalPoller.start();
         logger.warn("Started on {}", getURI());
     }
 
