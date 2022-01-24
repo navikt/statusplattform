@@ -10,6 +10,7 @@ import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AreaController {
@@ -29,10 +30,15 @@ public class AreaController {
    public List<AreaDto> getAllAreas() {
       return EntityDtoMappers.toAreaDtoDeep(areaRepository.retrieveAll());
    }
+
    @POST("/Areas")
    @JsonBody
-   public AreaDto newArea(@JsonBody AreaDto areaDto) {
-         return areaRepositoryHelper.newArea(areaDto);
+   public UUID newArea(@JsonBody AreaDto areaDto) {
+      UUID uuid = areaRepositoryHelper.newArea(areaDto).getId();
+      areaRepository.setServicesOnArea(uuid,
+              areaDto.getServices().stream().map(
+                      service -> service.getId()).collect(Collectors.toList()));
+      return uuid;
    }
 
    @PUT("/Area/:Area_id")

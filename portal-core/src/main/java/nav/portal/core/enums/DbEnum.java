@@ -10,7 +10,7 @@ public interface DbEnum {
                 .filter(serviceStatus -> serviceStatus.getDbRepresentation().equals(dbRepresentation))
                 .findAny()
                 .orElseThrow(() -> {
-                    String errorMessage = String.format("dbRepresentation %s npt fpund in enum %s",
+                    String errorMessage = String.format("dbRepresentation %s not fpund in enum %s",
                             dbRepresentation,
                             simpleName);
                     return new IllegalArgumentException(errorMessage);

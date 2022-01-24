@@ -24,9 +24,10 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PollingEngine  extends Thread{
+    private static final String MOCK_URL = "https://mockservice.labs.nais.io/";
+    private static final  String MOCK = "MOCK";
     private final ServiceRepository serviceRepository;
     private final RecordRepository recordRepository;
     private final DbContext dbContext;
@@ -51,7 +52,7 @@ public class PollingEngine  extends Thread{
     private void getPollingServicesAndPoll(){
         List<ServiceEntity> pollingServices = serviceRepository.retrieveServicesWithPolling();
         //System.out.println(pollingServices.stream().map(ServiceEntity::getName).collect(Collectors.toList()));
-        pollingServices.forEach(s -> poll(s));
+        pollingServices.forEach(this::poll);
     }
 
     private void poll(ServiceEntity serviceEntity){
@@ -142,7 +143,10 @@ public class PollingEngine  extends Thread{
 
 
     private HttpURLConnection getConnectionToServicePollEndpoint(ServiceEntity serviceEntity) throws IOException {
-        URL url = new URL(serviceEntity.getPolling_url());
+        //Logikken under må bort på et tidspunkt. Dette er for polling av mock data.
+        String urlString = serviceEntity.getPolling_url().equals(MOCK)? MOCK_URL + serviceEntity.getId():
+               serviceEntity.getPolling_url();
+        URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         return con;

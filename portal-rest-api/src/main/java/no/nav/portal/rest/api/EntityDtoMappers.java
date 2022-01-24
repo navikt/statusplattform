@@ -21,8 +21,6 @@ public class EntityDtoMappers {
         entity.setType(ServiceType.fromDb(dto.getType().getValue()));
         entity.setTeam(dto.getTeam());
         entity.setMonitorlink(dto.getMonitorlink());
-        entity.setDescription(dto.getDescription());
-        entity.setLogglink(dto.getLogglink());
         entity.setPolling_url(dto.getPollingUrl());
         return entity;
     }
@@ -44,8 +42,6 @@ public class EntityDtoMappers {
         dto.setType(ServiceTypeDto.fromValue(entity.getType().getDbRepresentation()));
         dto.setTeam(entity.getTeam());
         dto.setMonitorlink(entity.getMonitorlink());
-        dto.setDescription(entity.getDescription());
-        dto.setLogglink(entity.getLogglink());
         return dto;
     }
 
@@ -64,8 +60,7 @@ public class EntityDtoMappers {
         dto.setType(ServiceTypeDto.fromValue(service.getType().getDbRepresentation()));
         dto.setTeam(service.getTeam());
         dto.setMonitorlink(service.getMonitorlink());
-        dto.setDescription(service.getDescription());
-        dto.setLogglink(service.getLogglink());
+        dto.pollingUrl(service.getPolling_url());
         dto.setDependencies(dependencies.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
         return dto;
     }
