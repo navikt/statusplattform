@@ -585,6 +585,63 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Service/Maintenance:
+    put:
+      tags:
+        - Service
+      summary: Legg til vedlikeholdsmelding på tjeneste
+      description: Legg til vedlikeholdsmelding på tjeneste
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Maintenance'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+  /Service/Maintenance/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent alle vedlikeholdsmeldinger på tjeneste
+      description: Hent alle vedlikeholdsmeldinger på tjeneste
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Maintenance'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
 
   /ServiceStatus:
     post:
@@ -781,7 +838,27 @@ components:
           format: uuid
         status:
           $ref: '#/components/schemas/Status'
-
+        description:
+          type: string
+    Maintenance:
+      title: Maintenance
+      type: object
+      properties:
+        service_id:
+          type: string
+          format: uuid
+          readOnly: true
+          example: "84e49ba0-7409-41ed-8ebe-949ad94dc1d3"
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        endTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T19:32:28Z"
     Status:
       type: string
       enum:

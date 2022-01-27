@@ -1,6 +1,7 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.MaintenanceEntity;
 import nav.portal.core.enums.ServiceType;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.actioncontroller.HttpRequestException;
@@ -15,12 +16,30 @@ public class ServiceRepository {
 
     private final DbContextTable serviceTable;
     private final DbContextTable service_serviceTable;
+    private final DbContextTable service_maintenanceTable;
 
 
     public ServiceRepository(DbContext dbContext) {
         serviceTable = dbContext.table("service");
         service_serviceTable = dbContext.table("service_service");
+        service_maintenanceTable = dbContext.table("service_maintenance");
     }
+
+    public UUID saveMaintenance(MaintenanceEntity maintenanceEntity) {
+        return service_maintenanceTable.newSaveBuilderWithUUID("id", maintenanceEntity.getId())
+                .setField("service_id", maintenanceEntity.getServiceId())
+                .setField("description", maintenanceEntity.getDescription())
+                .setField("start_time", maintenanceEntity.getStart_time())
+                .setField("end_time", maintenanceEntity.getEnd_time())
+                .execute()
+                .getId();
+    }
+
+    public List<MaintenanceEntity> getMaintenanceForService(UUID serviceId){
+        return service_maintenanceTable.where("service_id", serviceId)
+                .list(ServiceRepository::toMaintenanceEntity);
+    }
+
 
     public UUID save(ServiceEntity service) {
         //Sjekk på navn+type kombinasjon
@@ -172,6 +191,20 @@ public class ServiceRepository {
                     .setType(ServiceType.fromDb(row.getString("type")))
                     .setMonitorlink(row.getString("monitorlink"))
                     .setPolling_url(row.getString("polling_url"));
+        } catch (SQLException e) {
+            throw ExceptionUtil.soften(e);
+        }
+
+    }
+
+    static MaintenanceEntity toMaintenanceEntity(DatabaseRow row) {
+        try {
+            return new MaintenanceEntity()
+                    .setId(row.getUUID("id"))
+                    .setServiceId(row.getUUID("service_id"))
+                    .setDescription(row.getString("description"))
+                    .setStart_time(row.getZonedDateTime("start_time"))
+                    .setEnd_time(row.getZonedDateTime("end_time"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }

@@ -2,7 +2,9 @@ package no.nav.portal.rest.api.v3.controllers;
 
 
 import nav.portal.core.repositories.ServiceRepository;
+import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
+import no.portal.web.generated.api.MaintenanceDto;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.ServiceTypeDto;
 import no.portal.web.generated.api.StatusDto;
@@ -12,6 +14,7 @@ import org.fluentjdbc.DbContext;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 public class ServiceController {
@@ -70,6 +73,26 @@ public class ServiceController {
     public void deleteService(@PathParam("Service_id") UUID service_id) {
         serviceRepositoryHelper.deleteService(service_id);
     }
+
+
+
+    @PUT("/Service/Maintenance")
+    @JsonBody
+    public void addMaintenance(@JsonBody MaintenanceDto maintenanceDto) {
+        serviceRepository.saveMaintenance(EntityDtoMappers.toMaintenanceEntity(maintenanceDto));
+    }
+
+    @GET("/Service/Maintenance/:Service_id")
+    @JsonBody
+    public List<MaintenanceDto> addMaintenance(@PathParam("Service_id") UUID service_id) {
+        return serviceRepository.getMaintenanceForService(service_id).stream().map(EntityDtoMappers::toMaintenanceDto).collect(Collectors.toList());
+    }
+
+
+
+
+
+
 
 
     @GET("/Services/Types")
