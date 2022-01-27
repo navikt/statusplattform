@@ -1,7 +1,6 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.DashboardEntity;
-import nav.portal.core.entities.RecordEntity;
+
 import nav.portal.core.entities.ServiceEntity;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -15,11 +14,6 @@ import org.junit.jupiter.api.Test;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 
-import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
-import no.portal.web.generated.api.*;
-import org.actioncontroller.*;
-import org.actioncontroller.json.JsonBody;
-import org.fluentjdbc.DbContext;
 
 
 import javax.sql.DataSource;
@@ -27,8 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-import static no.nav.portal.rest.api.EntityDtoMappers.toAreaDtoShallow;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AreaControllerTest {
 
@@ -69,11 +61,10 @@ class AreaControllerTest {
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
         }
-        AreaDto areaDto = EntityDtoMappers.toAreaDtoDeep(area, services);
         //Act
         List<AreaDto> retrievedArea = areaController.getAllAreas();
         //Assert
-        Assertions.assertThat(retrievedArea.get(0).getId().equals(areaId));
+        Assertions.assertThat(retrievedArea.get(0).getId()).isEqualTo(areaId);
     }
 
 
@@ -104,8 +95,10 @@ class AreaControllerTest {
         AreaEntity before = areaRepository.retrieveOne(areaId1).getKey();
         //Act
         areaController.updateArea(areaId1, areaDtos.get(1));
-        List<AreaDto> updated = EntityDtoMappers.toAreaDtoShallow(areas);
         //Assert
+        AreaEntity after = areaRepository.retrieveOne(areaId1).getKey();
+        Assertions.assertThat(after.getId()).isEqualTo(before.getId());
+        Assertions.assertThat(after).isNotEqualTo(before);
 
 
     }
