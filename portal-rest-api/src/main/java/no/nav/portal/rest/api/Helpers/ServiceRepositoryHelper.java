@@ -58,16 +58,16 @@ public class ServiceRepositoryHelper {
     }
 
     public void deleteService(UUID service_id){
-        serviceRepository.resetDependenciesOnService(service_id);
         areaRepository.removeServiceFromAllAreas(service_id);
-
+        //Skal ikke fjerne avhengigheter her.
         serviceRepository.delete(service_id);
     }
 
     public void updateService(ServiceDto serviceDto) {
-        serviceRepository.update(EntityDtoMappers.toServiceEntity(serviceDto));
+        ServiceEntity serviceEntity = EntityDtoMappers.toServiceEntity(serviceDto);
+        serviceRepository.update(serviceEntity);
         serviceRepository.removeAllDependenciesFromService(serviceDto.getId());
-        serviceRepository.addDependencyToService(EntityDtoMappers.toServiceEntity(serviceDto),
+        serviceRepository.addDependencyToService(serviceEntity,
                 serviceDto.getDependencies().stream().map(EntityDtoMappers::toServiceEntity)
                         .collect(Collectors.toList()));
 

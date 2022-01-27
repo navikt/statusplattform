@@ -46,7 +46,7 @@ public class ServiceRepository {
                 .setField("type", service.getType().getDbRepresentation())
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
-                .setField("polling_url", service.getPolling_url().isEmpty()? null:service.getPolling_url())
+                .setField("polling_url", service.getPolling_url()== null? null:service.getPolling_url())
                 .execute();
     }
 
@@ -101,6 +101,7 @@ public class ServiceRepository {
 
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
         service.where("id", service_id)
+                .where("deleted", Boolean.FALSE)
                 .leftJoin(service.column("id"), s2s.column("service1_id"))
                 .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
                 .list(row -> {
@@ -125,7 +126,8 @@ public class ServiceRepository {
 
 
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
-        service.leftJoin(service.column("id"), s2s.column("service1_id"))
+        service.where("deleted",Boolean.FALSE)
+                .leftJoin(service.column("id"), s2s.column("service1_id"))
                 .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
                 .orderBy(service.column("name"))
                 .list(row -> {
@@ -154,8 +156,10 @@ public class ServiceRepository {
                 .collect(Collectors.toList());
     }
 
-    public int delete(UUID id) {
-        return serviceTable.where("id", id).executeDelete();
+    public void delete(UUID id) {
+        serviceTable.where("id", id)
+                .update()
+                .setField("deleted", Boolean.TRUE);
     }
 
 
