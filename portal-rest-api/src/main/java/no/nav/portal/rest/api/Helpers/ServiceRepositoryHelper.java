@@ -45,8 +45,6 @@ public class ServiceRepositoryHelper {
         service.setStatus(null);
     }
 
-
-
     public ServiceDto saveNewService(ServiceDto serviceDto){
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);
         List<ServiceEntity> dependencies = serviceDto.getDependencies()
@@ -65,7 +63,6 @@ public class ServiceRepositoryHelper {
 
         serviceRepository.delete(service_id);
     }
-
 
     public void updateService(ServiceDto serviceDto) {
         serviceRepository.update(EntityDtoMappers.toServiceEntity(serviceDto));

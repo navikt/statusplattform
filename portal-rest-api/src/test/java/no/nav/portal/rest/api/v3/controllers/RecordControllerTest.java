@@ -1,16 +1,112 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.ServiceType;
+import nav.portal.core.repositories.*;
+import no.nav.portal.rest.api.EntityDtoMappers;
+import no.portal.web.generated.api.ServiceDto;
+
+import no.portal.web.generated.api.ServiceStatusDto;
+import no.portal.web.generated.api.StatusDto;
+import org.actioncontroller.PathParam;
+import org.actioncontroller.json.JsonBody;
+import org.assertj.core.api.Assertions;
+import org.fluentjdbc.DbContext;
+import org.fluentjdbc.DbContextConnection;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.sql.DataSource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class RecordControllerTest {
+    private final SampleData sampleData = new SampleData();
+    private final DataSource dataSource = TestDataSource.create();
+    private final DbContext dbContext = new DbContext();
+
+    private DbContextConnection connection;
+
+    private final ServiceController serviceController = new ServiceController(dbContext);
+    private final RecordController recordController = new RecordController(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
+    private final RecordRepository recordRepository = new RecordRepository(dbContext);
+
+
+    @BeforeEach
+    void startConnection() {
+        connection = dbContext.startConnection(dataSource);
+    }
+
+    @AfterEach
+    void endConnection() {
+        TestUtil.clearAllTableData(dbContext);
+        connection.close();
+    }
 
     @Test
     void addServiceStatus() {
+        //Arrange
+        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity record = sampleData.getRandomizedRecordEntity();
+        record.setServiceId(service.getId());
+        record.setId(recordRepository.save(record));
+        ServiceStatusDto serviceStatusDto = EntityDtoMappers.serviceStatusDto(record);
+        UUID before = serviceStatusDto.getServiceId();
+        //Act
+        recordController.addServiceStatus(serviceStatusDto);
+        //Assert
+        ServiceDto serviceDto = serviceController.getService(serviceId);
+        Assertions.assertThat(serviceDto.getStatus()).isEqualTo(StatusDto.fromValue(record.getStatus().getDbRepresentation()));
+
+
+
     }
 
     @Test
     void getAreas() {
+        //Arrange
+        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+
+        //Lagrer tjenester
+        services.forEach(s -> s.setId(serviceRepository.save(s)));
+
+        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
+
+        //Lager tilfeldig status for hver tjeneste
+        services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
+        //Lagrer statusen på tjenesten
+        servicesWithStatus.keySet().forEach(id -> recordRepository.save(servicesWithStatus.get(id)));
+
+
+        //TODO legg in avhengigheter her før mappingen:
+        //serviceRepository.addDependencyToService();
+        //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
+        /*List<ServiceDto> expectedDtos = services.stream()
+                .map(s->
+                        EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
+                .map(dto -> setStatus(servicesWithStatus, dto))
+                .collect(Collectors.toList());*/
+
+        //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
+        // Først lagre avhengigheter til repository
+        ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+        service.setId(serviceRepository.save(service));
+        UUID serviceId = service.getId();
+        RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
+
+        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
+        serviceRepository.addDependencyToService(service, services);
+
+        //recordRepository.save()
+        UUID serviceRecId = recordRepository.save(serviceRecord);
+        //Act
+        List<ServiceStatusDto> servicesDtos = recordController.getRecordHistory(serviceId);
+        //Assert
+        Assertions.assertThat(servicesDtos).isNotEmpty();
     }
 }

@@ -1,7 +1,9 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.ServiceType;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
@@ -31,6 +33,7 @@ class ServiceControllerTest {
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private final RecordRepository recordRepository = new RecordRepository(dbContext);
+    private final AreaRepository areaRepository = new AreaRepository(dbContext);
 
 
     @BeforeEach
@@ -166,76 +169,37 @@ class ServiceControllerTest {
     @Test
     void deleteService() {
         //Arrange
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-        ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-
-        for(ServiceEntity serv : services){
-            serv.setId(serviceRepository.save(serv));
-        }
-
-        serviceRepository.addDependencyToService(service, services);
-        Map.Entry<ServiceEntity, List<ServiceEntity>> before =
-                serviceRepository.retrieveOneWithDependencies(serviceId);
-        //Act
-        serviceController.deleteService(serviceId);
-        Optional<ServiceEntity> shouldBeEmpty = serviceRepository.retrieve(serviceId);
-
-        //Assert
-        Assertions.assertThat(before.getValue().size()).isEqualTo(services.size());
-        Assertions.assertThat(shouldBeEmpty).isEmpty();
-
-    }
-
-    @Test
-    void getServicetypes() {
-        //Arrange
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+        int NumberOfServices = 4;
+        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(NumberOfServices);
 
         //Lagrer tjenester
         services.forEach(s -> s.setId(serviceRepository.save(s)));
 
-        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
 
         //Lager tilfeldig status for hver tjeneste
+        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
         services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
-        //Lagrer statusen på tjenesten
-        servicesWithStatus.keySet().forEach(id -> recordRepository.save(servicesWithStatus.get(id)));
 
+        //Lagrer statusen på tjenesten til DB
+        servicesWithStatus.values().forEach(recordRepository::save);
 
-        //TODO legg in avhengigheter her før mappingen:
-        //serviceRepository.addDependencyToService();
-        //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
-        List<ServiceDto> expectedDtos = services.stream()
-                .map(s->
-                        EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
-                .map(dto -> setStatus(servicesWithStatus, dto))
-                .collect(Collectors.toList());
+        //En av tjenestene er avhengig av resten
+        ServiceEntity serviceWithDependensies = services.get(0);
+        List<ServiceEntity> dependencies = services.subList(1,services.size());
+        UUID UUIDServiceWithDependecies = serviceWithDependensies.getId();
 
-        // Først lagre avhengigheter til repository
-        ServiceEntity service = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
-
-        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
-        serviceRepository.addDependencyToService(service, services);
-        Map.Entry<ServiceEntity, List<ServiceEntity>> before =
-                serviceRepository.retrieveOneWithDependencies(serviceId);
-
-        //recordRepository.save()
-        UUID serviceRecId = recordRepository.save(serviceRecord);
+        serviceRepository.addDependencyToService(serviceWithDependensies, dependencies);
+        Boolean exists = serviceRepository.doesEntryExist(UUIDServiceWithDependecies);
         //Act
-        List<String> resultingServiceTypes = serviceController.getServicetypes();
+        serviceController.deleteService(UUIDServiceWithDependecies);
+        Optional<ServiceEntity> shouldBeEmpty = serviceRepository.retrieve(UUIDServiceWithDependecies);
         //Assert
-        Assertions.assertThat(resultingServiceTypes).isNotEmpty();
-
+        Assertions.assertThat(exists).isTrue();
+        Assertions.assertThat(serviceRepository.doesEntryExist(UUIDServiceWithDependecies)).isFalse();
 
     }
 
 
-    @Test
-    void getServiceStatuses() {
-    }
+
+
 }
