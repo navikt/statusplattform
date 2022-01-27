@@ -2,21 +2,16 @@ package no.nav.portal.rest.api.v3.controllers;
 
 
 import nav.portal.core.repositories.ServiceRepository;
-import no.nav.portal.infrastructure.PortalRestPrincipal;
-import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
 import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.ServiceStatusDto;
 import no.portal.web.generated.api.ServiceTypeDto;
 import no.portal.web.generated.api.StatusDto;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 public class ServiceController {
@@ -33,7 +28,7 @@ public class ServiceController {
     @GET("/Services")
     @JsonBody
     public  List<ServiceDto> getServices() {
-        return serviceRepositoryHelper.getAllServices2();
+        return serviceRepositoryHelper.getAllServices();
     }
 
     @GET("/Service/:Service_id")
