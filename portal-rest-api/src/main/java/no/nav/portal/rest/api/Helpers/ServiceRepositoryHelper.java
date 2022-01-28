@@ -26,7 +26,7 @@ public class ServiceRepositoryHelper {
 
     //Denne returnerer avhengigheter ett nivå ned.
 
-    public List<ServiceDto> getAllServices2() {
+    public List<ServiceDto> getAllServices() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAll();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
@@ -58,16 +58,16 @@ public class ServiceRepositoryHelper {
     }
 
     public void deleteService(UUID service_id){
-        serviceRepository.resetDependenciesOnService(service_id);
         areaRepository.removeServiceFromAllAreas(service_id);
-
+        //Skal ikke fjerne avhengigheter her.
         serviceRepository.delete(service_id);
     }
 
     public void updateService(ServiceDto serviceDto) {
-        serviceRepository.update(EntityDtoMappers.toServiceEntity(serviceDto));
+        ServiceEntity serviceEntity = EntityDtoMappers.toServiceEntity(serviceDto);
+        serviceRepository.update(serviceEntity);
         serviceRepository.removeAllDependenciesFromService(serviceDto.getId());
-        serviceRepository.addDependencyToService(EntityDtoMappers.toServiceEntity(serviceDto),
+        serviceRepository.addDependencyToService(serviceEntity,
                 serviceDto.getDependencies().stream().map(EntityDtoMappers::toServiceEntity)
                         .collect(Collectors.toList()));
 
@@ -75,6 +75,8 @@ public class ServiceRepositoryHelper {
     }
 
     public ServiceDto retrieveOneService(UUID service_id) {
-        return EntityDtoMappers.toServiceDtoDeep(serviceRepository.retrieveOneWithDependencies(service_id));
+        ServiceDto serviceDto =  EntityDtoMappers.toServiceDtoDeep(serviceRepository.retrieveOneWithDependencies(service_id));
+        settStatusOnService(serviceDto);
+        return serviceDto;
     }
 }

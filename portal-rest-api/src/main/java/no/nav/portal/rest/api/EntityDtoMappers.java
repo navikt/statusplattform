@@ -135,4 +135,20 @@ public class EntityDtoMappers {
         dto.setStatus(StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation()));
         return dto;
     }
+
+    public static MaintenanceEntity toMaintenanceEntity(MaintenanceDto maintenanceDto) {
+        return new MaintenanceEntity()
+                .setServiceId(maintenanceDto.getServiceId())
+                .setDescription(maintenanceDto.getDescription())
+                .setStart_time(maintenanceDto.getStartTime().toZonedDateTime())
+                .setEnd_time(maintenanceDto.getEndTime().toZonedDateTime());
+    }
+
+    public static MaintenanceDto toMaintenanceDto(MaintenanceEntity maintenanceEntity){
+        return new MaintenanceDto()
+                .serviceId(maintenanceEntity.getServiceId())
+                .description(maintenanceEntity.getDescription())
+                .startTime(maintenanceEntity.getStart_time().toOffsetDateTime())
+                .endTime(maintenanceEntity.getEnd_time().toOffsetDateTime());
+    }
 }

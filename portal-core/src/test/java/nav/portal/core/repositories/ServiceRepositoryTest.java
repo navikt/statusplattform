@@ -227,10 +227,8 @@ class ServiceRepositoryTest {
       //Act
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
-      int deleted = serviceRepository.delete(uuid);
       Optional<ServiceEntity> shouldBeEmpty = serviceRepository.retrieve(uuid);
       //Assert
-      Assertions.assertThat(deleted).isEqualTo(1);
       Assertions.assertThat(shouldBeEmpty).isEmpty();
    }
 

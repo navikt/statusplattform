@@ -1,6 +1,7 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.MaintenanceEntity;
 import nav.portal.core.enums.ServiceType;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.actioncontroller.HttpRequestException;
@@ -15,12 +16,30 @@ public class ServiceRepository {
 
     private final DbContextTable serviceTable;
     private final DbContextTable service_serviceTable;
+    private final DbContextTable service_maintenanceTable;
 
 
     public ServiceRepository(DbContext dbContext) {
         serviceTable = dbContext.table("service");
         service_serviceTable = dbContext.table("service_service");
+        service_maintenanceTable = dbContext.table("service_maintenance");
     }
+
+    public UUID saveMaintenance(MaintenanceEntity maintenanceEntity) {
+        return service_maintenanceTable.newSaveBuilderWithUUID("id", maintenanceEntity.getId())
+                .setField("service_id", maintenanceEntity.getServiceId())
+                .setField("description", maintenanceEntity.getDescription())
+                .setField("start_time", maintenanceEntity.getStart_time())
+                .setField("end_time", maintenanceEntity.getEnd_time())
+                .execute()
+                .getId();
+    }
+
+    public List<MaintenanceEntity> getMaintenanceForService(UUID serviceId){
+        return service_maintenanceTable.where("service_id", serviceId)
+                .list(ServiceRepository::toMaintenanceEntity);
+    }
+
 
     public UUID save(ServiceEntity service) {
         //Sjekk på navn+type kombinasjon
@@ -46,7 +65,7 @@ public class ServiceRepository {
                 .setField("type", service.getType().getDbRepresentation())
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
-                .setField("polling_url", service.getPolling_url().isEmpty()? null:service.getPolling_url())
+                .setField("polling_url", service.getPolling_url()== null? null:service.getPolling_url())
                 .execute();
     }
 
@@ -101,6 +120,7 @@ public class ServiceRepository {
 
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
         service.where("id", service_id)
+                .where("service.deleted", Boolean.FALSE)
                 .leftJoin(service.column("id"), s2s.column("service1_id"))
                 .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
                 .list(row -> {
@@ -125,7 +145,8 @@ public class ServiceRepository {
 
 
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
-        service.leftJoin(service.column("id"), s2s.column("service1_id"))
+        service.where("deleted",Boolean.FALSE)
+                .leftJoin(service.column("id"), s2s.column("service1_id"))
                 .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
                 .orderBy(service.column("name"))
                 .list(row -> {
@@ -154,8 +175,10 @@ public class ServiceRepository {
                 .collect(Collectors.toList());
     }
 
-    public int delete(UUID id) {
-        return serviceTable.where("id", id).executeDelete();
+    public void delete(UUID id) {
+        serviceTable.where("id", id)
+                .update()
+                .setField("deleted", Boolean.TRUE);
     }
 
 
@@ -168,6 +191,20 @@ public class ServiceRepository {
                     .setType(ServiceType.fromDb(row.getString("type")))
                     .setMonitorlink(row.getString("monitorlink"))
                     .setPolling_url(row.getString("polling_url"));
+        } catch (SQLException e) {
+            throw ExceptionUtil.soften(e);
+        }
+
+    }
+
+    static MaintenanceEntity toMaintenanceEntity(DatabaseRow row) {
+        try {
+            return new MaintenanceEntity()
+                    .setId(row.getUUID("id"))
+                    .setServiceId(row.getUUID("service_id"))
+                    .setDescription(row.getString("description"))
+                    .setStart_time(row.getZonedDateTime("start_time"))
+                    .setEnd_time(row.getZonedDateTime("end_time"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }

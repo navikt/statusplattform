@@ -6,6 +6,7 @@ import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
 import no.nav.portal.rest.api.Helpers.DashboardRepositoryHelper;
+import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.DashboardDto;
 
 import no.portal.web.generated.api.DashboardNameIdDto;
@@ -45,7 +46,7 @@ public class DashboardController {
         UUID uuid = dashboardRepository.save(dashboardDto.getName());
         dashboardRepository.settAreasOnDashboard(uuid,
                 dashboardDto.getAreas().stream().map(
-                        area -> area.getId()).collect(Collectors.toList()));
+                        AreaDto::getId).collect(Collectors.toList()));
         return uuid;
     }
 
