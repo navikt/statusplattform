@@ -120,7 +120,7 @@ public class ServiceRepository {
 
         Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
         service.where("id", service_id)
-                .where("deleted", Boolean.FALSE)
+                .where("service.deleted", Boolean.FALSE)
                 .leftJoin(service.column("id"), s2s.column("service1_id"))
                 .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
                 .list(row -> {
