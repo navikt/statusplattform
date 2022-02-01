@@ -26,6 +26,10 @@ spec:
         databases:
           - name: navstatus
             envVarPrefix: DB
+  prometheus:
+    enabled: true
+    path: /metrics
+    port: "3005"
   azure:
     application:
       enabled: true
