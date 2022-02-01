@@ -585,6 +585,39 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Service/Areas/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent områder som har tjeneste med id
+      operationId: GetAreasContainingService
+      description: Hent områder som har tjeneste med id.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /Service/Maintenance:
     put:
       tags:

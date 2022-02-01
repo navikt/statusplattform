@@ -181,6 +181,18 @@ public class AreaRepository {
         return new Query(areaTable.query());
     }
 
+    public List<AreaEntity> getAreasContainingService(UUID service_id) {
+        DbContextTableAlias areaAlias = areaTable.alias("area");
+        DbContextTableAlias a2s = areaServiceTable.alias("a2s");
+        return  areaAlias
+                .leftJoin(areaAlias.column("id"), a2s.column("area_id"))
+                .orderBy(areaAlias.column("name"))
+                .where("a2s.service_id",service_id)
+                .stream(AreaRepository::toArea).collect(Collectors.toList());
+
+
+    }
+
     public static class Query {
 
         private final DbContextSelectBuilder query;
