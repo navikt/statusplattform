@@ -5,6 +5,7 @@ import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.StatusDto;
 import org.fluentjdbc.DbContext;
@@ -78,5 +79,10 @@ public class ServiceRepositoryHelper {
         ServiceDto serviceDto =  EntityDtoMappers.toServiceDtoDeep(serviceRepository.retrieveOneWithDependencies(service_id));
         settStatusOnService(serviceDto);
         return serviceDto;
+    }
+
+    public List<AreaDto> getAreasContainingService(UUID service_id) {
+        return areaRepository.getAreasContainingService(service_id).stream().
+                map(EntityDtoMappers::toAreaDtoShallow).collect(Collectors.toList());
     }
 }

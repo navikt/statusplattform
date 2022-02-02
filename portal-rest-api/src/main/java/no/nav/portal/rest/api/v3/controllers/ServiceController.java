@@ -4,10 +4,7 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.ServiceRepositoryHelper;
-import no.portal.web.generated.api.MaintenanceDto;
-import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.ServiceTypeDto;
-import no.portal.web.generated.api.StatusDto;
+import no.portal.web.generated.api.*;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -89,7 +86,12 @@ public class ServiceController {
     }
 
 
+    @GET("/Service/Areas/:Service_id")
+    @JsonBody
+    public List<AreaDto> getAreasContainingService(@PathParam("Service_id") UUID service_id) {
 
+        return serviceRepositoryHelper.getAreasContainingService(service_id);
+    }
 
 
 

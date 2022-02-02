@@ -3,15 +3,11 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
-import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.NavUserDto;
 import no.portal.web.generated.api.ServiceStatusDto;
 import org.actioncontroller.GET;
 import org.actioncontroller.POST;
 import org.actioncontroller.PathParam;
-import org.actioncontroller.UserPrincipal;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
