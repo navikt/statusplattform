@@ -63,6 +63,19 @@ class RecordRepositoryTest {
 
     @Test
     void getLatestRecord() {
+        //Arrange
+        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity record = sampleData.getRandomizedRecordEntity();
+        record.setServiceId(service.getId());
+        record.setId(recordRepository.save(record));
+        //Act
+        Optional<RecordEntity> retrievedRecord = recordRepository.getLatestRecord(service.getId());
+        record.setCreated_at(retrievedRecord.get().getCreated_at());
+        //Assert
+        Assertions.assertThat(retrievedRecord.get()).isEqualTo(record);
+
 
 
     }

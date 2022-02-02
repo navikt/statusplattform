@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 class AreaRepositoryTest {
 
@@ -60,6 +61,7 @@ class AreaRepositoryTest {
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
         }
+
         //Act
         Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
         //Assert
@@ -91,9 +93,13 @@ class AreaRepositoryTest {
         //TODO denne
         //Arrange - Lag area
         List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
-        for(AreaEntity area :areas){
+
+        /*for(AreaEntity area :areas){
              area.setId(areaRepository.save(area));
-        }
+        }*/
+
+        areas.forEach(area -> area.setId(areaRepository.save(area)));
+
         AreaEntity areaToBeDeleted = areas.get(0);
 
         //Act
@@ -170,6 +176,8 @@ class AreaRepositoryTest {
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
         }
+
+
 
         //Act
         Map<AreaEntity, List<ServiceEntity>> retrievedAll = areaRepository.retrieveAll();

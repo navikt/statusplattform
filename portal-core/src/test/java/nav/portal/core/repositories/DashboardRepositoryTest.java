@@ -63,7 +63,7 @@ class DashboardRepositoryTest {
         //Lagrer alle ned i db
 
 
-//         Alternativ 1 med bruk av for loop
+//      Alternativ 1 med bruk av for loop
         List<UUID> areas_ids = new ArrayList<>();
         for(AreaEntity area: areas){
             UUID id = areaRepository.save(area);
@@ -71,12 +71,12 @@ class DashboardRepositoryTest {
             area.setId(id);
         }
 //         * Alternativ 2 med bruk av for-each loop og lambda
-//        areas.forEach(area -> ids.add(areaRepository.save(area)));
+//          areas.forEach(area -> areas_ids.add(areaRepository.save(area)));
 //
-//        // Alternativ 3 med bruk av stream og lambda
-//        List<UUID> areas_ids =  areas.stream()
-//                .map(areaRepository::save)
-//                .collect(Collectors.toList());
+        // Alternativ 3 med bruk av stream og lambda
+        /*List<UUID> areas_ids =  areas.stream()
+               .map(areaRepository::save)
+                .collect(Collectors.toList());*/
 
         //Act
         //Knytter områdene til dashboard
@@ -186,9 +186,44 @@ class DashboardRepositoryTest {
     @Test
     void retrieveAll() {
         //Arrange
+        String dashboardName = sampleData.getRandomizedDashboardName();
+        UUID dashboard_id = dashboardRepository.save(dashboardName);
+        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<UUID> areas_ids =  areas.stream()
+                .map(areaRepository::save)
+                .collect(Collectors.toList());
+        dashboardRepository.settAreasOnDashboard(dashboard_id,areas_ids);
+        //Act;
+        Map<DashboardEntity, List<AreaWithServices>> retrievedAll = dashboardRepository.retrieveAll();
 
-        //Act
+        Map.Entry<DashboardEntity, List<AreaWithServices>> dashboardWithAreas = retrievedAll.entrySet()
+                .stream()
+                .findFirst()
+                .get();
+
         //Assert
+        //Sjekker at id på dashboard er riktig
+        Assertions.assertThat(dashboardWithAreas.getKey().getId()).isEqualTo(dashboard_id);
+
+        //Sjekker at dashboard navnet er riktig
+        Assertions.assertThat(dashboardWithAreas.getKey().getName()).isEqualTo(dashboardName);
+
+        //Sjekke at områdene er blitt lagt til riktig
+        /*List<AreaEntity> retrievedAreas =  dashboardWithAreas.getValue()
+                .stream()
+                .map(AreaWithServices::getArea)
+                .collect(Collectors.toList());
+        Assertions.assertThat(retrievedAreas).isEqualTo(areas);
+
+
+        //Sjekker at ingen av områdene har tjenester knyttet til seg
+        List<List<ServiceEntity>> servicesOnAreas =  dashboardWithAreas.getValue()
+                .stream()
+                .map(AreaWithServices::getServices)
+                .collect(Collectors.toList());
+
+        servicesOnAreas.forEach(list -> Assertions.assertThat(list).isEmpty());*/
+
 
     }
 

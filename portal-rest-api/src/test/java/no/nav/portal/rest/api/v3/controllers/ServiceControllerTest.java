@@ -1,6 +1,5 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
@@ -8,8 +7,6 @@ import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
 
-import org.actioncontroller.PathParam;
-import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -103,7 +100,6 @@ class ServiceControllerTest {
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
         RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
-        UUID serviceRecId = recordRepository.save(serviceRecord);
         //Act
         ServiceDto serviceDto = serviceController.getService(serviceId);
         //Assert
@@ -146,9 +142,12 @@ class ServiceControllerTest {
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
 
-        for(ServiceEntity serv : services){
+        /*for(ServiceEntity serv : services){
             serv.setId(serviceRepository.save(serv));
-        }
+        }*/
+
+        services.forEach(service1 -> service1.setId(serviceRepository.save(service1)));
+
 
         UUID dependency = services.get(0).getId();
         ServiceEntity removed = services.get(0);

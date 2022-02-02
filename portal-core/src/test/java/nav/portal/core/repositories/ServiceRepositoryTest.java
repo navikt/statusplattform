@@ -127,9 +127,13 @@ class ServiceRepositoryTest {
       UUID service1Id = serviceRepository.save(service1);
       service1.setId(service1Id);
 
-      for(ServiceEntity service : services){
+      /*for(ServiceEntity service : services){
          service.setId(serviceRepository.save(service));
-      }
+      }*/
+
+      services.forEach(service -> service.setId(serviceRepository.save(service)));
+
+
       //Act
       serviceRepository.addDependencyToService(service1, services);
       Map.Entry<ServiceEntity, List<ServiceEntity>> before =
@@ -171,9 +175,11 @@ class ServiceRepositoryTest {
       UUID service1Id = serviceRepository.save(service1);
       service1.setId(service1Id);
 
-      for(ServiceEntity service : services){
+      /*for(ServiceEntity service : services){
          service.setId(serviceRepository.save(service));
-      }
+      }*/
+
+      services.forEach(service -> service.setId(serviceRepository.save(service)));
 
       serviceRepository.addDependencyToService(service1, services);
       //Act
@@ -188,10 +194,12 @@ class ServiceRepositoryTest {
    void retriveAll() {
       //Arrange
       List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-      for(ServiceEntity service : services){
+      /*for(ServiceEntity service : services){
          service.setId(serviceRepository.save(service));
-      }
+      }*/
       //TODO legge til dependencies/ gjøre assertioens motsatt vei: Det vi kontrollerer .someComparingFunction(Forventet verdi)
+
+      services.forEach(service -> service.setId(serviceRepository.save(service)));
       //Act
       Map<ServiceEntity, List<ServiceEntity>> allRetrieved =
               serviceRepository.retrieveAll();
