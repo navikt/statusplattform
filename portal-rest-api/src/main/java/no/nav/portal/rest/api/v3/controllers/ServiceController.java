@@ -31,6 +31,13 @@ public class ServiceController {
         return serviceRepositoryHelper.getAllServices();
     }
 
+    @GET("/Components")
+    @JsonBody
+    public  List<ServiceDto> getComponents() {
+        return serviceRepositoryHelper.getAllComponents();
+    }
+
+
     @GET("/Service/:Service_id")
     @JsonBody
     public ServiceDto getService(@PathParam("Service_id") UUID service_id) {

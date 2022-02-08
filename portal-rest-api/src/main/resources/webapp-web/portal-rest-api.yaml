@@ -425,12 +425,38 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
+  /Components:
+    get:
+      tags:
+        - Service
+      summary: Hent alle komponenter med avhengigheter
+      operationId: getComponents
+      description: Henter alle komponenter med avhengigheter - ett lag dypt. Det vil si at dersom tjeneste A er avhengig av tjeneste B som er avhengig av tjeneste C, vil ikke avhengighet B => C dukke opp.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /Services:
     get:
       tags:
         - Service
       summary: Hent alle tjenester med tjenesteavhengigheter
-      operationId: Service
+      operationId: getServices
       description: Henter alle tjenester med tjenesteavhengigheter - ett lag dypt. Det vil si at dersom tjeneste A er avhengig av tjeneste B som er avhengig av tjeneste C, vil ikke avhengighet B => C dukke opp.
       responses:
         '200':
@@ -500,6 +526,7 @@ paths:
         '404':
           description: Not Found
           content: { }
+
   /Service/{Service_id}:
     get:
       tags:

@@ -26,15 +26,27 @@ public class ServiceRepositoryHelper {
 
 
     //Denne returnerer avhengigheter ett nivå ned.
-
-    public List<ServiceDto> getAllServices() {
+    public List<ServiceDto> getAll() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAll();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
         return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
+    }
+    public List<ServiceDto> getAllComponents() {
+        Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllComponents();
+        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        //TODO status skal hentes i dbspørringer, ikke slik som dette:
+        result.forEach(this::settStatusOnService);
+        return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
+    }
 
-
+    public List<ServiceDto> getAllServices() {
+        Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllServices();
+        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        //TODO status skal hentes i dbspørringer, ikke slik som dette:
+        result.forEach(this::settStatusOnService);
+        return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
     }
 
     private void settStatusOnService(ServiceDto service){

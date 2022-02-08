@@ -161,6 +161,40 @@ public class ServiceRepository {
         return result;
     }
 
+
+    public Map<ServiceEntity, List<ServiceEntity>> retrieveAllComponents() {
+        return retrieveAllWithType(ServiceType.KOMPONENT);
+    }
+
+    public Map<ServiceEntity, List<ServiceEntity>> retrieveAllServices() {
+        return retrieveAllWithType(ServiceType.TJENESTE);
+    }
+
+    private Map<ServiceEntity, List<ServiceEntity>> retrieveAllWithType(ServiceType serviceType) {
+
+        DbContextTableAlias s2s = service_serviceTable.alias("s2s");
+        DbContextTableAlias service = serviceTable.alias("service");
+        DbContextTableAlias dependentService = serviceTable.alias("dependent_service");
+
+
+        Map<ServiceEntity, List<ServiceEntity>> result = new HashMap<>();
+        service.where("deleted",Boolean.FALSE)
+                .where("service.type", serviceType.getDbRepresentation())
+                .leftJoin(service.column("id"), s2s.column("service1_id"))
+                .leftJoin(s2s.column("service2_id"), dependentService.column("id"))
+                .orderBy(service.column("name"))
+                .list(row -> {
+                    List<ServiceEntity> serviceList = result
+                            .computeIfAbsent(toService(row.table(service)), ignored -> new ArrayList<>());
+
+                    DatabaseRow dependentServiceRow = row.table(dependentService);
+                    Optional.ofNullable(row.getUUID("service1_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(dependentServiceRow)));
+                    return null;
+                });
+        return result;
+    }
+
     public List<ServiceEntity> retrieveServicesWithPolling() {
         return serviceTable.query().whereExpression("polling_url is not null").stream(ServiceRepository::toService).collect(Collectors.toList());
     }

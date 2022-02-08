@@ -37,7 +37,7 @@ public class AreaController {
       UUID uuid = areaRepositoryHelper.newArea(areaDto).getId();
       areaRepository.setServicesOnArea(uuid,
               areaDto.getServices().stream().map(
-                      service -> service.getId()).collect(Collectors.toList()));
+                      ServiceDto::getId).collect(Collectors.toList()));
       return uuid;
    }
 
