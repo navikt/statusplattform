@@ -61,7 +61,6 @@ class AreaRepositoryTest {
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
         }
-
         //Act
         Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
         //Assert
