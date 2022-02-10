@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class PollingEngine  extends Thread{
-    private static final String MOCK_URL = "https://mockservice.labs.nais.io/";
+    private static final String MOCK_URL = "https://mockservice.dev.nav.no/mock/Service/";
     private static final  String MOCK = "MOCK";
     private final ServiceRepository serviceRepository;
     private final RecordRepository recordRepository;
@@ -86,8 +86,8 @@ public class PollingEngine  extends Thread{
 
     private PolledServiceStatus mapToPolledServiceStatus(JsonObject jsonObject){
         PolledServiceStatus polledServiceStatus = new PolledServiceStatus();
-        polledServiceStatus.setName(jsonObject.getString("name"));
-        polledServiceStatus.setTeam(jsonObject.getString("team"));
+        polledServiceStatus.setName(jsonObject.getString("name",null));
+        polledServiceStatus.setTeam(jsonObject.getString("team",null));
         polledServiceStatus.setDescrption(jsonObject.getString("description",null));
         polledServiceStatus.setLogglink(jsonObject.getString("logglink",null));
         polledServiceStatus.setStatus(ServiceStatus.valueOf(jsonObject.getString("status")));
