@@ -265,6 +265,56 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /SubAreas:
+    get:
+      tags:
+        - Area
+      summary: Alle sub-områder
+      operationId: SubArea
+      description: Henter alle sub-områder med underliggende tjenster
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubArea'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /SubArea:
+    post:
+      tags:
+        - Area
+      summary: Legg til ett nytt sub-område
+      requestBody:
+        description: Legg til ett nytt sub-område. Her trenger IKKE services å være med ved innsending.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubArea'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
   /Area/{Area_id}/{Service_id}:
     put:
       tags:
@@ -850,10 +900,32 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/Service'
+        subareas:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/SubArea'
         status:
           readOnly: true
           allOf:
             - $ref: '#/components/schemas/Status'
+      required:
+        - name
+    SubArea:
+      title: SubArea
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        services:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Service'
       required:
         - name
     Service:

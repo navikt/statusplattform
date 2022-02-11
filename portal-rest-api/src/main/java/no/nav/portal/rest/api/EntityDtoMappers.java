@@ -34,6 +34,13 @@ public class EntityDtoMappers {
         return entity;
     }
 
+    public static SubAreaEntity toSubAreaEntity(SubAreaDto dto){
+        SubAreaEntity entity = new SubAreaEntity();
+        entity.setId(dto.getId());
+        entity.setName(dto.getName());
+        return entity;
+    }
+
 
     public static ServiceDto toServiceDtoShallow(ServiceEntity entity){
         ServiceDto dto = new ServiceDto();
@@ -96,6 +103,36 @@ public class EntityDtoMappers {
 
         return dto;
     }
+
+
+    public static List<SubAreaDto> toSubAreaDtoDeep(Map<SubAreaEntity, List<ServiceEntity>> subAreaWithServices){
+        List<SubAreaDto> dtos = new ArrayList<>();
+        subAreaWithServices.forEach((subArea, services) -> dtos.add(toSubAreaDtoDeep(subArea, services)));
+        return dtos.stream().sorted(Comparator.comparing(SubAreaDto::getName)).collect(Collectors.toList());
+    }
+
+    public static SubAreaDto toSubAreaDtoDeep(SubAreaEntity subArea, List<ServiceEntity> services){
+        SubAreaDto dto = new SubAreaDto();
+        dto.setId(subArea.getId());
+        dto.setName(subArea.getName());
+        dto.setServices(
+                services.stream()
+                        .map(EntityDtoMappers::toServiceDtoShallow)
+                        .collect(Collectors.toList())
+        );
+        return dto;
+    }
+    public static List<SubAreaDto> toSubAreaDtoShallow(List<SubAreaEntity> entities){
+        return entities.stream().map(EntityDtoMappers::toSubAreaDtoShallow).collect(Collectors.toList());
+    }
+    public static SubAreaDto toSubAreaDtoShallow(SubAreaEntity subArea){
+        SubAreaDto dto = new SubAreaDto();
+        dto.setId(subArea.getId());
+        dto.setName(subArea.getName());
+
+        return dto;
+    }
+
 
 
     public static DashboardDto toDashboardDtoDeep(Map.Entry<DashboardEntity,List<AreaWithServices>> dashboardEntry) {
