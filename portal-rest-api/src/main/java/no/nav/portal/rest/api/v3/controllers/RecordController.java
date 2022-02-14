@@ -48,8 +48,8 @@ public class RecordController {
 
     @POST("/Alert/test")
     public  void postAlert(@JsonBody AlertDto test){
-        logger.error("HER KOMMER ALERT: ");
-        logger.error(test.getStatus()+test.getAlerts());
+        System.out.println("HER KOMMER ALERT: ");
+        System.out.println(test.getStatus()+test.getAlerts());
 
     }
 
