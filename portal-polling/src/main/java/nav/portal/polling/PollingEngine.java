@@ -154,9 +154,7 @@ public class PollingEngine  extends Thread{
 
 
     public void run(){
-        System.out.println("Started polling ....... ");
         startPoll();
-        System.out.println("Polling completed");
     }
 
     public void setDataSource(DataSource dataSource) {
