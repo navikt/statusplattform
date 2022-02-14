@@ -4,6 +4,7 @@ import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.portal.web.generated.api.AlertDto;
 import no.portal.web.generated.api.ServiceStatusDto;
 import org.actioncontroller.GET;
 import org.actioncontroller.POST;
@@ -46,9 +47,9 @@ public class RecordController {
     }
 
     @POST("/Alert/test")
-    public  void postAlert(String test){
+    public  void postAlert(@JsonBody AlertDto test){
         logger.error("HER KOMMER ALERT: ");
-        logger.error(test);
+        logger.error(test.getStatus()+test.getAlerts());
 
     }
 

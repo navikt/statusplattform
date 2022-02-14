@@ -752,7 +752,30 @@ paths:
           description: Not Found
           content: { }
 
-
+  /Alert/test:
+    post:
+      tags:
+        - Record
+      summary: Legg til status på en tjeneste
+      description: Legg til status på en tjeneste. Mulige statuser OK / DOWN / ISSUE.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Alert'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
   /ServiceStatus:
     post:
       tags:
@@ -991,6 +1014,18 @@ components:
           type: string
           format: date-time
           example: "2017-07-21T19:32:28Z"
+    Alert:
+      title: Maintenance
+      type: object
+      properties:
+        receiver:
+          type: string
+        status:
+          type: string
+        alerts:
+          type: array
+          items:
+            type: string
     Status:
       type: string
       enum:
