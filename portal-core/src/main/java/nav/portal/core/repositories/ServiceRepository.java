@@ -212,7 +212,8 @@ public class ServiceRepository {
     public void delete(UUID id) {
         serviceTable.where("id", id)
                 .update()
-                .setField("deleted", Boolean.TRUE);
+                .setField("deleted", Boolean.TRUE)
+                .execute();
     }
 
 
