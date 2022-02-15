@@ -75,11 +75,9 @@ class DashboardRepositoryTest {
         areas.forEach(a ->{ a.setId(areaRepository.save(a));
             areas_ids.add(a.getId());});
 
-        String areas_id_sum = areas_ids.stream().map(a-> a.toString()).reduce("abc",(sum,part) -> sum + part.substring(0,3)+"hei");
-
         //Act
         //Knytter områdene til dashboard
-        //dashboardRepository.settAreasOnDashboard(dashboard_id,areas_ids);
+        dashboardRepository.settAreasOnDashboard(dashboard_id,areas_ids);
         Map.Entry<DashboardEntity,List<AreaWithServices>> dashboardWithAreas = dashboardRepository.retrieveOne(dashboard_id);
 
         //Assert
@@ -90,11 +88,11 @@ class DashboardRepositoryTest {
         Assertions.assertThat(dashboardWithAreas.getKey().getName()).isEqualTo(dashboardName);
 
         //Sjekke at områdene er blitt lagt til riktig
-        /*List<AreaEntity> retrievedAreas =  dashboardWithAreas.getValue()
+        List<AreaEntity> retrievedAreas =  dashboardWithAreas.getValue()
                 .stream()
                 .map(AreaWithServices::getArea)
                 .collect(Collectors.toList());
-        Assertions.assertThat(retrievedAreas).isEqualTo(areas);*/
+        Assertions.assertThat(retrievedAreas).isEqualTo(areas);
 
 
         //Sjekker at ingen av områdene har tjenester knyttet til seg
