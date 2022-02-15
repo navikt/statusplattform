@@ -76,6 +76,11 @@ public class ServiceRepositoryHelper {
         serviceRepository.delete(service_id);
     }
 
+    public void deleteComponent(UUID component_id){
+        //Skal ikke fjerne avhengigheter her.
+        serviceRepository.delete(component_id);
+    }
+
     public void updateService(ServiceDto serviceDto) {
         ServiceEntity serviceEntity = EntityDtoMappers.toServiceEntity(serviceDto);
         serviceRepository.update(serviceEntity);

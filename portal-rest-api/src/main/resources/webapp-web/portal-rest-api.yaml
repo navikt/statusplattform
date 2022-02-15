@@ -662,6 +662,28 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Component/{Component_id}:
+    delete:
+      tags:
+        - Service
+      summary: Slett en komponent
+      description: Slett komponent med id Component_id.
+      parameters:
+        - name: Component_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
   /Service/Areas/{Service_id}:
     get:
       tags:

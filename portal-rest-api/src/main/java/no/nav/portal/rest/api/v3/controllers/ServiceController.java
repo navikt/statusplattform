@@ -38,6 +38,12 @@ public class ServiceController {
     }
 
 
+    @DELETE("/Component/:Service_id")
+    @JsonBody
+    public void deleteComponent(@PathParam("Service_id") UUID componentId) {
+        serviceRepositoryHelper.deleteComponent(componentId);
+    }
+
     @GET("/Service/:Service_id")
     @JsonBody
     public ServiceDto getService(@PathParam("Service_id") UUID service_id) {
@@ -77,7 +83,6 @@ public class ServiceController {
     public void deleteService(@PathParam("Service_id") UUID service_id) {
         serviceRepositoryHelper.deleteService(service_id);
     }
-
 
 
     @PUT("/Service/Maintenance")
