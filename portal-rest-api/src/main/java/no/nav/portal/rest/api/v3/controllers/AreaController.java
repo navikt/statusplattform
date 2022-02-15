@@ -4,6 +4,7 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
+import no.nav.portal.rest.api.Helpers.SubAreaRepositoryHelper;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
@@ -17,11 +18,14 @@ public class AreaController {
 
    private final AreaRepository areaRepository;
    private final AreaRepositoryHelper areaRepositoryHelper;
-
+   private final SubAreaRepository subAreaRepository;
+   private final SubAreaRepositoryHelper subAreaRepositoryHelper;
 
    public AreaController(DbContext dbContext) {
       this.areaRepositoryHelper = new AreaRepositoryHelper(dbContext);
       this.areaRepository = new AreaRepository(dbContext);
+      this.subAreaRepository = new SubAreaRepository(dbContext);
+      this.subAreaRepositoryHelper = new SubAreaRepositoryHelper(dbContext);
    }
 
 
@@ -77,6 +81,27 @@ public class AreaController {
    //TODO OMRÅDER SKAL HA UNIKE NAVN
    //TODO TJENESTER SKAL HA UNIK NAVN-TYPE KOMBO
    //TODO SORTERE PÅ NAVN
+
+
+
+   /*Delen av AreaController for SubArea*/
+
+   @GET("/SubAreas")
+   @JsonBody
+   public List<SubAreaDto> getAllSubAreas() {
+      return EntityDtoMappers.toSubAreaDtoDeep(subAreaRepository.retrieveAll());
+   }
+
+   @POST("/SubArea")
+   @JsonBody
+   public UUID newSubArea(@JsonBody SubAreaDto subAreaDto) {
+      UUID uuid = subAreaRepositoryHelper.newSubArea(subAreaDto).getId();
+      subAreaRepository.setServicesOnSubArea(uuid,
+              subAreaDto.getServices().stream().map(
+                      ServiceDto::getId).collect(Collectors.toList()));
+      return uuid;
+   }
+
 
 
 
