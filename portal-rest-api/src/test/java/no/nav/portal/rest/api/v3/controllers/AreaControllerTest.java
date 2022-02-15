@@ -57,18 +57,21 @@ class AreaControllerTest {
         area.setId(areaId);
 
         List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-        for(ServiceEntity service : services){
+        /*for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
-        }
+        }*/
+        services.forEach(s ->
+        {
+            s.setId(serviceRepository.save(s));
+            areaRepository.addServiceToArea(areaId, s.getId());
+        });
 
         //Act
         List<AreaDto> retrievedArea = areaController.getAllAreas();
         //Assert
         Assertions.assertThat(retrievedArea.get(0).getId()).isEqualTo(areaId);
     }
-
-
 
     @Test
     void newArea() {
@@ -100,8 +103,6 @@ class AreaControllerTest {
         AreaEntity after = areaRepository.retrieveOne(areaId1).getKey();
         Assertions.assertThat(after.getId()).isEqualTo(before.getId());
         Assertions.assertThat(after).isNotEqualTo(before);
-
-
     }
 
     @Test

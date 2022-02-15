@@ -2,15 +2,12 @@ package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.enums.ServiceType;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
 
 import no.portal.web.generated.api.ServiceStatusDto;
 import no.portal.web.generated.api.StatusDto;
-import org.actioncontroller.PathParam;
-import org.actioncontroller.json.JsonBody;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -20,7 +17,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 class RecordControllerTest {
     private final SampleData sampleData = new SampleData();
@@ -62,9 +58,6 @@ class RecordControllerTest {
         //Assert
         ServiceDto serviceDto = serviceController.getService(serviceId);
         Assertions.assertThat(serviceDto.getStatus()).isEqualTo(StatusDto.fromValue(record.getStatus().getDbRepresentation()));
-
-
-
     }
 
     @Test
@@ -87,8 +80,7 @@ class RecordControllerTest {
         //serviceRepository.addDependencyToService();
         //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
         /*List<ServiceDto> expectedDtos = services.stream()
-                .map(s->
-                        EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
+                .map(s-> EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
                 .map(dto -> setStatus(servicesWithStatus, dto))
                 .collect(Collectors.toList());*/
 

@@ -2,7 +2,6 @@ package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.util.UuidListBody;
-import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
 import no.nav.portal.rest.api.Helpers.DashboardRepositoryHelper;
@@ -15,7 +14,6 @@ import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,9 +28,7 @@ public class DashboardController {
         this.dashboardRepository = new DashboardRepository(dbContext);
         this.dashboardRepositoryHelper = new DashboardRepositoryHelper(dbContext);
         this.areaRepositoryHelper = new AreaRepositoryHelper(dbContext);
-
     }
-
 
     @GET("/Dashboards")
     @JsonBody

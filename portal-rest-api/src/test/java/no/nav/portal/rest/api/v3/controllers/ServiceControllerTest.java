@@ -2,7 +2,6 @@ package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.enums.ServiceType;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
@@ -53,7 +52,6 @@ class ServiceControllerTest {
         //Lagrer tjenester
         services.forEach(s -> s.setId(serviceRepository.save(s)));
 
-
         //Lager tilfeldig status for hver tjeneste
         Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
         services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
@@ -84,7 +82,6 @@ class ServiceControllerTest {
         //Forventer at den har samme UUID som entiteten vi valgte skulle ha avhengigheter
         Assertions.assertThat(retrievedServicesWithDependencies.get(0).getId()).isEqualTo(expectedUUIDOfServiceWithDependecies);
 
-
     }
 
     private ServiceDto setStatus(Map<UUID, RecordEntity> servicesWithStatus, ServiceDto dto) {
@@ -99,7 +96,6 @@ class ServiceControllerTest {
         ServiceEntity service = sampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        RecordEntity serviceRecord = sampleData.getRandomizedRecordEntityForService(service);
         //Act
         ServiceDto serviceDto = serviceController.getService(serviceId);
         //Assert
@@ -116,7 +112,6 @@ class ServiceControllerTest {
         //Assert
         Assertions.assertThat(serviceDto).isNotNull();
         Assertions.assertThat(serviceDto.getId()).isNotNull();
-
     }
 
     @Test
@@ -148,7 +143,6 @@ class ServiceControllerTest {
 
         services.forEach(service1 -> service1.setId(serviceRepository.save(service1)));
 
-
         UUID dependency = services.get(0).getId();
         ServiceEntity removed = services.get(0);
         serviceRepository.addDependencyToService(service, services);
@@ -174,7 +168,6 @@ class ServiceControllerTest {
         //Lagrer tjenester
         services.forEach(s -> s.setId(serviceRepository.save(s)));
 
-
         //Lager tilfeldig status for hver tjeneste
         Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
         services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
@@ -197,8 +190,5 @@ class ServiceControllerTest {
         Assertions.assertThat(serviceRepository.doesEntryExist(UUIDServiceWithDependecies)).isFalse();
 
     }
-
-
-
 
 }

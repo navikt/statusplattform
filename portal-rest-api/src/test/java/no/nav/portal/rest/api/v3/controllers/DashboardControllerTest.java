@@ -64,6 +64,11 @@ class DashboardControllerTest {
         UUID dashboardId = dashboardRepository.save(dashboardName);
         List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
         List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
+        /*List<UUID> areaIds = new ArrayList<>();
+        areas.forEach(area -> {area.setId(areaRepository.save(area));
+            areaIds.add(area.getId());
+        });**/
+
         dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
         DashboardDto dashboardDto = dashboardController.getAreas(dashboardId);
         //Act
@@ -84,6 +89,10 @@ class DashboardControllerTest {
         List<UUID> areaIds = areas.stream()
                 .map(areaRepository::save)
                 .collect(Collectors.toList());
+        /*List<UUID> areaIds = new ArrayList<>();
+        areas.forEach(area -> {area.setId(areaRepository.save(area));
+            areaIds.add(area.getId());
+        });*/
         dashboardRepository.settAreasOnDashboard(dashboardId, areaIds);
         //Act
         dashboardController.deleteDashboard(dashboardId);
@@ -98,16 +107,21 @@ class DashboardControllerTest {
         String dashboardName = sampleData.getRandomizedDashboardName();
         UUID dashboard_id = dashboardRepository.save(dashboardName);
         List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
-        /*List<UUID> areas_ids = new ArrayList<>();
-        for(AreaEntity area: areas){
+        List<UUID> areas_ids = new ArrayList<>();
+        /*for(AreaEntity area: areas){
             UUID id = areaRepository.save(area);
             areas_ids.add(id);
             area.setId(id);
         }*/
 
-        List<UUID> areas_ids = areas.stream()
+        areas.forEach(area ->
+        {area.setId(areaRepository.save(area));
+            areas_ids.add(area.getId());
+        });
+
+        /*List<UUID> areas_ids = areas.stream()
                 .map(areaRepository::save)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
         //Act
         dashboardController.addAreaToDashboard(dashboard_id,areas_ids);
@@ -117,12 +131,12 @@ class DashboardControllerTest {
         Assertions.assertThat(dashboardWithAreas.getKey().getId()).isEqualTo(dashboard_id);
         //Sjekker at dashboard navnet er riktig
         Assertions.assertThat(dashboardWithAreas.getKey().getName()).isEqualTo(dashboardName);
-        /*Sjekke at områdene er blitt lagt til riktig
+        //Sjekke at områdene er blitt lagt til riktig
         List<AreaEntity> retrievedAreas =  dashboardWithAreas.getValue()
                 .stream()
                 .map(AreaWithServices::getArea)
                 .collect(Collectors.toList());
-        Assertions.assertThat(retrievedAreas).isEqualTo(areas);*/
+        Assertions.assertThat(retrievedAreas).isEqualTo(areas);
        //Sjekker at ingen av områdene har tjenester knyttet til seg
        List<List<ServiceEntity>> servicesOnAreas =  dashboardWithAreas.getValue()
                 .stream()
@@ -138,7 +152,13 @@ class DashboardControllerTest {
         String dashboardName = sampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
         List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
-        List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
+        /*List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());*/
+        List<UUID> areaIds = new ArrayList<>();
+        areas.forEach(area ->
+            {area.setId(areaRepository.save(area));
+            areaIds.add(area.getId());
+            });
+
         dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
         DashboardDto dashboardDto = dashboardController.getAreas(dashboardId);
         String oldName = dashboardDto.getName();
@@ -160,7 +180,11 @@ class DashboardControllerTest {
         String dashboardName = sampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
         List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
-        List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
+        /*List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());*/
+        List<UUID> areaIds = new ArrayList<>();
+        areas.forEach(area -> {area.setId(areaRepository.save(area));
+                     areaIds.add(area.getId());
+         });
         dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
         //Act
         DashboardDto dashboardDto = dashboardController.getAreas(dashboardId);

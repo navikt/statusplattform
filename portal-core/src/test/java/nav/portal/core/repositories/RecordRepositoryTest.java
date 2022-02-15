@@ -39,8 +39,6 @@ class RecordRepositoryTest {
     private final RecordRepository recordRepository = new RecordRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
-
-
     @Test
     void name() {
     }
@@ -75,8 +73,6 @@ class RecordRepositoryTest {
         record.setCreated_at(retrievedRecord.get().getCreated_at());
         //Assert
         Assertions.assertThat(retrievedRecord.get()).isEqualTo(record);
-
-
 
     }
 }

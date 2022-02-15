@@ -35,7 +35,6 @@ public class RecordController {
 
     }
 
-
     @GET("/ServiceStatus/:Service_id")
     @JsonBody
     public List<ServiceStatusDto> getRecordHistory(@PathParam("Service_id") UUID service_id) {

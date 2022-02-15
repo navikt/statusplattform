@@ -101,9 +101,6 @@ public class ServiceController {
     }
 
 
-
-
-
     @GET("/Services/Types")
     @JsonBody
     public List<String> getServicetypes() {

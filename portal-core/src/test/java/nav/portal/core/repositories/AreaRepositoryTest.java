@@ -2,7 +2,6 @@ package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
-import org.assertj.core.api.Assert;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -57,10 +56,17 @@ class AreaRepositoryTest {
         UUID areaId = areaRepository.save(area);
         area.setId(areaId);
         List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-        for(ServiceEntity service : services){
+        /*for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
-        }
+        }*/
+
+        services.forEach(s ->
+        {
+            s.setId(serviceRepository.save(s));
+            areaRepository.addServiceToArea(areaId, s.getId());
+        });
+
         //Act
         Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
         //Assert
@@ -171,11 +177,16 @@ class AreaRepositoryTest {
         area.setId(areaId);
 
         List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-        for(ServiceEntity service : services){
+        /*for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
-        }
+        }*/
 
+        services.forEach(s ->
+        {
+            s.setId(serviceRepository.save(s));
+            areaRepository.addServiceToArea(areaId, s.getId());
+        });
 
 
         //Act
