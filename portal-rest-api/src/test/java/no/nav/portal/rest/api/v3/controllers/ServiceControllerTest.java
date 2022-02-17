@@ -75,7 +75,7 @@ class ServiceControllerTest {
         //Finner alle tjenester med avhengigheter fra resultatet
         List<ServiceDto> retrievedServicesWithDependencies = resultingDtos
                 .stream()
-                .filter(dto -> dto.getDependencies().size() > 0)
+                .filter(dto -> dto.getComponentDependencies().size() +dto.getServiceDependencies().size() > 0)
                 .collect(Collectors.toList());
         //Forventer at det bare er en tjeneste med avhengighet
         Assertions.assertThat(retrievedServicesWithDependencies.size()).isEqualTo(1);
