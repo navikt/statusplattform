@@ -1064,7 +1064,7 @@ components:
       title: OPSmessage
       type: object
       properties:
-        affected_services:
+        affectedServices:
           type: array
           example: "[Liste av påvirkede service/komponent UUIDer]"
           items:
