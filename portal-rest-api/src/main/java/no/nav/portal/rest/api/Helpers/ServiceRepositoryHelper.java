@@ -48,7 +48,8 @@ public class ServiceRepositoryHelper {
     }
 
     private void settStatusOnService(ServiceDto service){
-        service.getDependencies().forEach(this::settStatusOnService);
+        service.getServiceDependencies().forEach(this::settStatusOnService);
+        service.getComponentDependencies().forEach(this::settStatusOnService);
         if(recordRepository.getLatestRecord(service.getId()).isPresent()){
             service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation().toUpperCase()));
             return;
@@ -58,14 +59,19 @@ public class ServiceRepositoryHelper {
 
     public ServiceDto saveNewService(ServiceDto serviceDto){
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);
-        List<ServiceEntity> dependencies = serviceDto.getDependencies()
+        //Komponenter og tjenester modeleres som forskjellige objektyper i frontend.
+        List<ServiceEntity> dependencies = serviceDto.getServiceDependencies()
                 .stream().map(EntityDtoMappers::toServiceEntity)
                 .collect(Collectors.toList());
+        List<ServiceEntity> componentDependencies = serviceDto.getServiceDependencies()
+                .stream().map(EntityDtoMappers::toServiceEntity)
+                .collect(Collectors.toList());
+        dependencies.addAll(componentDependencies);
         UUID uuid = serviceRepository.save(service);
         service.setId(uuid);
-        serviceRepository.addDependencyToService(service,dependencies);
+        serviceRepository.addDependencyToService(service, dependencies);
         areaRepository.addServiceToAreas(serviceDto.getAreasContainingThisService(),serviceDto.getId());
-        return EntityDtoMappers.toServiceDtoDeep(service,dependencies);
+        return EntityDtoMappers.toServiceDtoDeep(service, dependencies);
     }
 
     public void deleteService(UUID service_id){
@@ -83,8 +89,11 @@ public class ServiceRepositoryHelper {
         ServiceEntity serviceEntity = EntityDtoMappers.toServiceEntity(serviceDto);
         serviceRepository.update(serviceEntity);
         serviceRepository.removeAllDependenciesFromService(serviceDto.getId());
+
+        List<ServiceDto> dependencies = serviceDto.getComponentDependencies();
+        dependencies.addAll(serviceDto.getServiceDependencies());
         serviceRepository.addDependencyToService(serviceEntity,
-                serviceDto.getDependencies().stream().map(EntityDtoMappers::toServiceEntity)
+                dependencies.stream().map(EntityDtoMappers::toServiceEntity)
                         .collect(Collectors.toList()));
 
 

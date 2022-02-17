@@ -60,7 +60,8 @@ public class EntityDtoMappers {
 
     public static ServiceDto toServiceDtoDeep(Map.Entry<ServiceEntity,List<ServiceEntity>> entry){
         ServiceEntity service = entry.getKey();
-        List<ServiceEntity> dependencies = entry.getValue();
+        List<ServiceEntity> serviceDependencies = entry.getValue().stream().filter(s -> s.getType().equals(ServiceType.TJENESTE)).collect(Collectors.toList());
+        List<ServiceEntity> componentDependencies = entry.getValue().stream().filter(s -> s.getType().equals(ServiceType.KOMPONENT)).collect(Collectors.toList());
         ServiceDto dto = new ServiceDto();
         dto.setId(service.getId());
         dto.setName(service.getName());
@@ -68,7 +69,8 @@ public class EntityDtoMappers {
         dto.setTeam(service.getTeam());
         dto.setMonitorlink(service.getMonitorlink());
         dto.pollingUrl(service.getPolling_url());
-        dto.setDependencies(dependencies.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
+        dto.serviceDependencies(serviceDependencies.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
+        dto.setComponentDependencies(componentDependencies.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
         return dto;
     }
 
