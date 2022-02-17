@@ -895,6 +895,30 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /OpsMessage:
+    post:
+      tags:
+        - OPS
+      summary: Legg til Avviksmelding
+      description: Legg til Avviksmelding.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OPSmessage'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
 components:
   schemas:
     DashboardNameId:
@@ -1036,8 +1060,40 @@ components:
           type: string
           format: date-time
           example: "2017-07-21T19:32:28Z"
+    OPSmessage:
+      title: OPSmessage
+      type: object
+      properties:
+        affected_services:
+          type: array
+          example: "[Liste av påvirkede service/komponent UUIDer]"
+          items:
+            type: string
+            format: uuid
+        internal_header:
+          type: string
+        internal_text:
+          type: string
+        external_header:
+          type: string
+        external_text:
+          type: string
+        only_show_for_internal:
+          type: boolean
+        startTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        endTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T19:32:28Z"
+      required:
+        - internal_text
+        - internal_header
+        - only_show_for_internal
     Alert:
-      title: Maintenance
+      title: Alert
       type: object
       properties:
         receiver:

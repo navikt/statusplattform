@@ -5,9 +5,7 @@ import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.StatusDto;
+import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
 import java.util.*;
@@ -101,5 +99,13 @@ public class ServiceRepositoryHelper {
     public List<AreaDto> getAreasContainingService(UUID service_id) {
         return areaRepository.getAreasContainingService(service_id).stream().
                 map(EntityDtoMappers::toAreaDtoShallow).collect(Collectors.toList());
+    }
+
+    public MaintenanceDto setMaintenance(MaintenanceDto maintenanceDto) {
+        return maintenanceDto;
+    }
+
+    public OPSmessageDto addOPSmessega(OPSmessageDto opsMessageDto) {
+        return opsMessageDto;
     }
 }
