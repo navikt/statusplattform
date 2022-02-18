@@ -42,6 +42,7 @@ public class ServiceRepositoryHelper {
     public List<ServiceDto> getAllServices() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllServices();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        result.forEach(serviceDto -> serviceDto.setAreasContainingThisService(getAreasContainingService(serviceDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
         return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
@@ -70,9 +71,12 @@ public class ServiceRepositoryHelper {
         UUID uuid = serviceRepository.save(service);
         service.setId(uuid);
         serviceRepository.addDependencyToService(service, dependencies);
-        areaRepository.addServiceToAreas(serviceDto.getAreasContainingThisService(),serviceDto.getId());
+        List<UUID> areasCointainingService = serviceDto.getAreasContainingThisService().stream().map(AreaDto::getId).collect(Collectors.toList());
+        areaRepository.addServiceToAreas(areasCointainingService,serviceDto.getId());
         return EntityDtoMappers.toServiceDtoDeep(service, dependencies);
     }
+
+
 
     public void deleteService(UUID service_id){
         areaRepository.removeServiceFromAllAreas(service_id);

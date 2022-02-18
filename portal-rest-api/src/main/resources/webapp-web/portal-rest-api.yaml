@@ -1025,8 +1025,7 @@ components:
           type: array
           example: "[Liste av område UUIDer]"
           items:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/Area'
         monitorlink:
           type: string
         pollingUrl:
