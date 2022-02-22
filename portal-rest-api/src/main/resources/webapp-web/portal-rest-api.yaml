@@ -1128,7 +1128,19 @@ components:
         alerts:
           type: array
           items:
-            type: string
+            type: object
+        groupLabels:
+          type: object
+        commonLabels:
+          type: object
+        commonAnnotations:
+          type: object
+        externalURL:
+          type: string
+        version:
+          type: string
+        groupKey:
+          type: string
     Status:
       type: string
       enum:
