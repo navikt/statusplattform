@@ -21,6 +21,7 @@ import java.util.UUID;
 public class RecordController {
     private static final Logger logger = LoggerFactory.getLogger(RecordController.class);
     private RecordRepository recordRepository;
+    private AlertDto currentAlert;
 
     public RecordController(DbContext dbContext) {
         this.recordRepository = new RecordRepository(dbContext);
@@ -47,9 +48,14 @@ public class RecordController {
 
     @POST("/Alert/test")
     public  void postAlert(@JsonBody AlertDto test){
+        currentAlert = test;
         System.out.println("HER KOMMER ALERT: ");
         System.out.println(test.getStatus()+test.getAlerts());
+    }
 
+    @GET("/Alert/test")
+    public AlertDto getAlert(){
+        return currentAlert;
     }
 
 

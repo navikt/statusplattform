@@ -775,6 +775,27 @@ paths:
           content: { }
 
   /Alert/test:
+    get:
+      tags:
+        - Record
+      summary: Hent alle vedlikeholdsmeldinger på tjeneste
+      description: Hent alle vedlikeholdsmeldinger på tjeneste
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
     post:
       tags:
         - Record
