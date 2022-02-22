@@ -54,6 +54,7 @@ public class RecordController {
     }
 
     @GET("/Alert/test")
+    @JsonBody
     public AlertDto getAlert(){
         return currentAlert;
     }
