@@ -1,11 +1,11 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import com.unboundid.ldap.sdk.unboundidds.AlertSeverity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.portal.web.generated.api.AlertDto;
-import no.portal.web.generated.api.ServiceStatusDto;
+import no.portal.web.generated.api.*;
 import org.actioncontroller.GET;
 import org.actioncontroller.POST;
 import org.actioncontroller.PathParam;
@@ -35,7 +35,7 @@ public class RecordController {
                 .setServiceId(serviceStatusDto.getServiceId())
                 .setStatus(ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue().toUpperCase()).orElse(ServiceStatus.ISSUE))
                 .setCreated_at(ZonedDateTime.now())
-                .setResponsetime(42);
+                .setResponsetime(42);//TODO se her
         recordRepository.save(entity);
     }
 
@@ -48,15 +48,51 @@ public class RecordController {
 
     @POST("/Alert/test")
     public  void postAlert(@JsonBody AlertDto test){
+        ServiceStatusDto serviceStatusDto = generateServiceStatusFromAlert(test);
+        addServiceStatus(serviceStatusDto);
         currentAlert = test;
         System.out.println("HER KOMMER ALERT: ");
-        System.out.println(test.getStatus()+test.getAlerts());
+        System.out.println(test.getStatus());
+        System.out.println(test.getCommonLabels().getAlertname());
+        System.out.println(test.getCommonAnnotations().getSeverity());
     }
 
     @GET("/Alert/test")
     @JsonBody
     public AlertDto getAlert(){
         return currentAlert;
+    }
+
+    private ServiceStatusDto generateServiceStatusFromAlert(AlertDto alertDto){
+        if(AlertStatusDto.RESOLVED.equals(alertDto.getStatus())){
+            return new ServiceStatusDto()
+                    .serviceId(alertDto.getCommonLabels().getAlertname())
+                    .status(StatusDto.OK)
+                    .description("Resolved alert from prometheus");
+        }
+        if(SeverityDto.GOOD.equals(alertDto.getCommonAnnotations().getSeverity())){
+            return new ServiceStatusDto()
+                    .serviceId(alertDto.getCommonLabels().getAlertname())
+                    .status(StatusDto.OK)
+                    .description("Received alert from prometheus, with status ok");
+
+        }
+        if(SeverityDto.WARNING.equals(alertDto.getCommonAnnotations().getSeverity())){
+            return new ServiceStatusDto()
+                    .serviceId(alertDto.getCommonLabels().getAlertname())
+                    .status(StatusDto.ISSUE)
+                    .description("Received alert from prometheus, with status warning");
+
+        }
+        if(SeverityDto.DANGER.equals(alertDto.getCommonAnnotations().getSeverity())){
+            return new ServiceStatusDto()
+                    .serviceId(alertDto.getCommonLabels().getAlertname())
+                    .status(StatusDto.DOWN)
+                    .description("Received alert from prometheus, with status danger");
+
+        }
+        else throw new IllegalArgumentException("Malformed alert received");
+
     }
 
 
