@@ -64,7 +64,7 @@ public class ServiceRepositoryHelper {
         List<ServiceEntity> dependencies = serviceDto.getServiceDependencies()
                 .stream().map(EntityDtoMappers::toServiceEntity)
                 .collect(Collectors.toList());
-        List<ServiceEntity> componentDependencies = serviceDto.getServiceDependencies()
+        List<ServiceEntity> componentDependencies = serviceDto.getComponentDependencies()
                 .stream().map(EntityDtoMappers::toServiceEntity)
                 .collect(Collectors.toList());
         dependencies.addAll(componentDependencies);
