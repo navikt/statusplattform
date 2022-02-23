@@ -1122,25 +1122,48 @@ components:
       type: object
       properties:
         receiver:
+          readOnly: true
           type: string
         status:
-          type: string
+          $ref: '#/components/schemas/AlertStatus'
         alerts:
+          readOnly: true
           type: array
           items:
             type: object
         groupLabels:
+          readOnly: true
           type: object
         commonLabels:
-          type: object
+          $ref: '#/components/schemas/CommonLabels'
         commonAnnotations:
-          type: object
+          $ref: '#/components/schemas/CommonAnnotations'
         externalURL:
+          readOnly: true
           type: string
         version:
+          readOnly: true
           type: string
         groupKey:
+          readOnly: true
           type: string
+    CommonAnnotations:
+      title: CommonAnnotations
+      properties:
+        severity:
+          $ref: '#/components/schemas/Severity'
+    CommonLabels:
+      title: commonLabels
+      properties:
+        alertname:
+          type: string
+          format: uuid
+    AlertStatus:
+      type: string
+      enum:
+        - FIRING
+        - RESOLVED
+
     Status:
       type: string
       enum:
@@ -1152,3 +1175,10 @@ components:
       enum:
         - KOMPONENT
         - TJENESTE
+    Severity:
+      type: string
+      enum:
+        - GOOD
+        - WARNING
+        - DANGER
+        
