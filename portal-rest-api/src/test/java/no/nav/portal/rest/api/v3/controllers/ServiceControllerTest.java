@@ -121,12 +121,12 @@ class ServiceControllerTest {
         ServiceDto beforeDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(services.get(0)));
         UUID beforeId = beforeDto.getId();
         ServiceDto afterDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(services.get(1)));
-        UUID afterId = afterDto.getId();
         //Act
         serviceController.updateService(beforeId, afterDto);
         ServiceDto updated = serviceController.getService(beforeId);
         //Assert
-        Assertions.assertThat(updated).isEqualTo(beforeDto);
+        Assertions.assertThat(updated).isNotEqualTo(beforeDto);
+        Assertions.assertThat(updated).isEqualTo(afterDto);
     }
 
     @Test
@@ -187,7 +187,17 @@ class ServiceControllerTest {
         Optional<ServiceEntity> shouldBeEmpty = serviceRepository.retrieve(UUIDServiceWithDependecies);
         //Assert
         Assertions.assertThat(exists).isTrue();
-        Assertions.assertThat(serviceRepository.doesEntryExist(UUIDServiceWithDependecies)).isFalse();
+        Assertions.assertThat(serviceRepository.doesEntryExist(UUIDServiceWithDependecies)).isTrue();
+        Assertions.assertThat(serviceRepository.retrieve(UUIDServiceWithDependecies)).isNotEmpty();
+        Assertions.assertThat(serviceRepository.retrieve(UUIDServiceWithDependecies).get().getDeleted()).isTrue();
+        //TODO: ORLENE/BJØRG:
+        // Lag 4 forskjellige tester her:
+        //                                - En som har avhengighet til annen tjeneste/(er)
+        //                                - En som har avhengighet til komponent/(er)
+        //                                - En som som ligger i et område
+        //                                - En som ikke har noen avhengigheter eller områder
+        //  Videre: prøv å identifisere lignende tilfeller
+        //  Dersom vi har tester av disse typene blir det mye lettere å feilsøke når noe ikke virker
 
     }
 

@@ -225,7 +225,8 @@ public class ServiceRepository {
                     .setTeam(row.getString("team"))
                     .setType(ServiceType.fromDb(row.getString("type")))
                     .setMonitorlink(row.getString("monitorlink"))
-                    .setPolling_url(row.getString("polling_url"));
+                    .setPolling_url(row.getString("polling_url"))
+                    .setDeleted(row.getBoolean("deleted"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }

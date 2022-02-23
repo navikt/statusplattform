@@ -4,15 +4,14 @@ import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
-import org.junit.jupiter.api.AfterEach;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 class AreaRepositoryTest {
 

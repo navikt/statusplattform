@@ -12,6 +12,7 @@ public class ServiceEntity {
     private String team;
     private String monitorlink;
     private String polling_url;
+    private Boolean isDeleted;
 
     public ServiceEntity() {
     }
@@ -28,6 +29,14 @@ public class ServiceEntity {
 
     public UUID getId() {
         return id;
+    }
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public ServiceEntity setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+        return this;
     }
 
     public ServiceEntity setId(UUID id) {

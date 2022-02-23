@@ -93,7 +93,7 @@ public class SampleData {
         possibleNames.removeAll(usedNames);
         return new ServiceEntity()
                 .setName(getRandomFromArray(serviceNames))
-                .setType(getRandomServiceType())
+                .setType(ServiceType.TJENESTE)
                 .setTeam(getRandomFromArray(teamNames))
                 .setMonitorlink(getRandomFromArray(urlStrings));
     }

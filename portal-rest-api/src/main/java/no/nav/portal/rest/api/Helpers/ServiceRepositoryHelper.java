@@ -60,7 +60,10 @@ public class ServiceRepositoryHelper {
 
     public ServiceDto saveNewService(ServiceDto serviceDto){
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);
+        service.setId(serviceRepository.save(service));
+
         //Komponenter og tjenester modeleres som forskjellige objektyper i frontend.
+        //Adding dependencies to service:
         List<ServiceEntity> dependencies = serviceDto.getServiceDependencies()
                 .stream().map(EntityDtoMappers::toServiceEntity)
                 .collect(Collectors.toList());
@@ -68,11 +71,12 @@ public class ServiceRepositoryHelper {
                 .stream().map(EntityDtoMappers::toServiceEntity)
                 .collect(Collectors.toList());
         dependencies.addAll(componentDependencies);
-        UUID uuid = serviceRepository.save(service);
-        service.setId(uuid);
         serviceRepository.addDependencyToService(service, dependencies);
+
+        //Adding service to areas:
         List<UUID> areasCointainingService = serviceDto.getAreasContainingThisService().stream().map(AreaDto::getId).collect(Collectors.toList());
-        areaRepository.addServiceToAreas(areasCointainingService,serviceDto.getId());
+        areaRepository.addServiceToAreas(areasCointainingService,service.getId());
+
         return EntityDtoMappers.toServiceDtoDeep(service, dependencies);
     }
 

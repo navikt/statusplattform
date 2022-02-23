@@ -211,20 +211,20 @@ class ServiceRepositoryTest {
    @Test
    void doesEntryExist() {
       //Arrange
-      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
-      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
-      UUID uuid1 = serviceRepository.save(service1);
-      UUID uuid2 = serviceRepository.save(service2);
-      service1.setId(uuid1);
-      service2.setId(uuid2);
+      UUID uuid = UUID.randomUUID();
       //Act
-      Optional<ServiceEntity> exists = serviceRepository.retrieve(uuid1);
-      boolean shouldExist =  serviceRepository.doesEntryExist(uuid1);
-      serviceRepository.delete(uuid2);
-      boolean shouldNotExist =  serviceRepository.doesEntryExist(uuid2);
+      Optional<ServiceEntity> shouldBeEmpty = serviceRepository.retrieve(uuid);
       //Assert
-      Assertions.assertThat(shouldExist).isTrue();
-      Assertions.assertThat(shouldNotExist).isFalse();
+      Assertions.assertThat(shouldBeEmpty).isEmpty();
+
+
+      //Arrange
+      ServiceEntity serviceEntity = sampleData.getRandomizedServiceEntity();
+      UUID uuidShouldBePresent = serviceRepository.save(serviceEntity);
+      //Act
+      Optional<ServiceEntity> shouldBePresent = serviceRepository.retrieve(uuidShouldBePresent);
+      //Assert
+      Assertions.assertThat(shouldBePresent).isNotEmpty();
 
    }
 
@@ -232,12 +232,14 @@ class ServiceRepositoryTest {
    void delete() {
       //Arrange
       ServiceEntity service = sampleData.getRandomizedServiceEntity();
-      //Act
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
-      Optional<ServiceEntity> shouldBeEmpty = serviceRepository.retrieve(uuid);
+      //Act
+      serviceRepository.delete(uuid);
+      Optional<ServiceEntity> shouldBeDeleted = serviceRepository.retrieve(uuid);
       //Assert
-      Assertions.assertThat(shouldBeEmpty).isEmpty();
+      Assertions.assertThat(shouldBeDeleted.isPresent()).isTrue();
+      Assertions.assertThat(shouldBeDeleted.get().getDeleted()).isTrue();
    }
 
 
@@ -304,7 +306,6 @@ class ServiceRepositoryTest {
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
       Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
-
 
       // Assert
       Assertions.assertThat(retrievedService.orElseGet(() -> fail("klarte ikke legge til i db")))
