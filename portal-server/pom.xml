@@ -51,6 +51,13 @@
         </dependency>
 
         <dependency>
+            <groupId>no.nav</groupId>
+            <artifactId>portal-jobs</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.200</version>
@@ -59,6 +66,12 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.2.23</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav</groupId>
+            <artifactId>portal-jobs</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

@@ -1,5 +1,6 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
@@ -12,11 +13,14 @@ import java.util.stream.Stream;
 
 public class RecordRepository {
     private final DbContextTable recordTable;
+    private final DbContextTable aggregatedStatusTable;
 
 
     public RecordRepository(DbContext dbContext) {
         //TODO:Vurder skal Record bytte navn til service_status
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
+        aggregatedStatusTable = dbContext.table(new DatabaseTableWithTimestamps("daily_status_aggregation_service"));
+
     }
 
     public UUID save(RecordEntity entity) {
@@ -27,6 +31,19 @@ public class RecordRepository {
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
                 .execute();
+
+        return result.getId();
+    }
+
+    public UUID saveAggregatedRecords(DailyStatusAggregationForServiceEntity entity) {
+        DatabaseSaveResult<UUID> result = aggregatedStatusTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("service_id", entity.getService_id())
+                .setField("number_of_status_ok", entity.getNumber_of_status_ok())
+                .setField("number_of_status_issue", entity.getNumber_of_status_issue())
+                .setField("number_of_status_down", entity.getNumber_of_status_down())
+                .setField("aggregation_date", entity.getAggregation_date())
+                .execute();
+
         return result.getId();
     }
 
@@ -45,6 +62,17 @@ public class RecordRepository {
                 .list(RecordRepository::toRecord);
     }
 
+    public List<RecordEntity> getRecordsOlderThen(int daysOld){
+        return recordTable.whereExpression("created_at <= current_date  - interval '"+ daysOld+ " day'")
+                .list(RecordRepository::toRecord);
+
+    }
+    public void deleteRecordsOlderThen(int daysOld) {
+         recordTable.whereExpression("created_at <= current_date  - interval '"+ daysOld+ " day'")
+                .executeDelete();
+    }
+
+
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
         return new RecordEntity()
                 .setId(row.getUUID("id"))
@@ -53,6 +81,8 @@ public class RecordRepository {
                 .setCreated_at(row.getZonedDateTime("created_at"))
                 .setResponsetime(row.getInt("response_time"));
     }
+
+
 
     public static class Query {
 

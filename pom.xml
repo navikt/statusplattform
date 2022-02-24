@@ -15,6 +15,7 @@
         <module>portal-server</module>
         <module>portal-oauth2</module>
         <module>portal-polling</module>
+        <module>portal-jobs</module>
     </modules>
 
 
