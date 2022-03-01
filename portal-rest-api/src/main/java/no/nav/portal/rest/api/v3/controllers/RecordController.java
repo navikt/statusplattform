@@ -49,12 +49,13 @@ public class RecordController {
     @POST("/Alert/test")
     public  void postAlert(@JsonBody AlertDto test){
         currentAlert = test;
-        ServiceStatusDto serviceStatusDto = generateServiceStatusFromAlert(test);
-        addServiceStatus(serviceStatusDto);
         System.out.println("HER KOMMER ALERT: ");
         System.out.println(test.getStatus());
         System.out.println(test.getCommonLabels().getAlertname());
         System.out.println(test.getCommonAnnotations().getSeverity());
+        ServiceStatusDto serviceStatusDto = generateServiceStatusFromAlert(test);
+        addServiceStatus(serviceStatusDto);
+
     }
 
     @GET("/Alert/test")
