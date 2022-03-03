@@ -11,7 +11,7 @@ public class CompressionScheduler {
 
     private final DbContext dbContext = new DbContext();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final int COMPRESSION_INTERVALL = 24;
+    private final int COMPRESSION_INTERVALL_IN_HOURS = 24;
     private  RecordCompressor recordCompressor;
 
     public CompressionScheduler() {
@@ -25,8 +25,7 @@ public class CompressionScheduler {
 
     }
     public void start(){
-        scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL,TimeUnit.HOURS);
-
+        scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
     }
 
 

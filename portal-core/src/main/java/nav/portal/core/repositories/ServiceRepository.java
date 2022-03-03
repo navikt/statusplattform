@@ -1,5 +1,7 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
+import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.entities.MaintenanceEntity;
 import nav.portal.core.enums.ServiceType;
@@ -17,13 +19,22 @@ public class ServiceRepository {
     private final DbContextTable serviceTable;
     private final DbContextTable service_serviceTable;
     private final DbContextTable service_maintenanceTable;
+    private final DbContextTable serviceHistoryTable;
 
 
     public ServiceRepository(DbContext dbContext) {
+        serviceHistoryTable = dbContext.table("daily_status_aggregation_service");
         serviceTable = dbContext.table("service");
         service_serviceTable = dbContext.table("service_service");
         service_maintenanceTable = dbContext.table("service_maintenance");
     }
+
+    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDays(int number_of_days) {
+        return serviceHistoryTable.whereExpression("created_at <= current_date  - interval '"+ number_of_days+ " day'")
+                    .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
+        }
+
+
 
     public UUID saveMaintenance(MaintenanceEntity maintenanceEntity) {
         return service_maintenanceTable.newSaveBuilderWithUUID("id", maintenanceEntity.getId())
@@ -216,6 +227,20 @@ public class ServiceRepository {
                 .execute();
     }
 
+    static DailyStatusAggregationForServiceEntity toDailyStatusAggregationForServiceEntity(DatabaseRow row) {
+        try {
+            return new DailyStatusAggregationForServiceEntity()
+                    .setId(row.getUUID("id"))
+                    .setService_id(row.getUUID("service_id"))
+                    .setAggregation_date(row.getLocalDate("aggregation_date"))
+                    .setNumber_of_status_ok(row.getInt("number_of_status_ok"))
+                    .setNumber_of_status_issue(row.getInt("number_of_status_issue"))
+                    .setNumber_of_status_down(row.getInt("number_of_status_down"));
+        } catch (SQLException e) {
+            throw ExceptionUtil.soften(e);
+        }
+
+    }
 
     static ServiceEntity toService(DatabaseRow row) {
         try {

@@ -1,5 +1,6 @@
 package no.nav.portal.rest.api.Helpers;
 
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.RecordRepository;
@@ -131,4 +132,26 @@ public class ServiceRepositoryHelper {
     public OPSmessageDto addOPSmessega(OPSmessageDto opsMessageDto) {
         return opsMessageDto;
     }
+
+    public List<ServiceHistoryDto> getServiceHistoryForNumberOfDays(int number_of_days) {
+        return serviceRepository.getServiceHistoryForNumberOfDays(number_of_days)
+                .stream().map(this::toServiceHistoryDto)
+                .collect(Collectors.toList());
+    }
+
+    private ServiceHistoryDto toServiceHistoryDto(DailyStatusAggregationForServiceEntity aggregation) {
+        ServiceHistoryDto dto =  new ServiceHistoryDto()
+                .serviceId(aggregation.getService_id());
+        dto.setDate(aggregation.getAggregation_date());
+        dto.setStatus(getAggregationStatus(aggregation));
+        return dto;
+    }
+
+    static StatusDto getAggregationStatus(DailyStatusAggregationForServiceEntity aggregation){
+        return aggregation.getNumber_of_status_down()>0 ? StatusDto.DOWN:
+                (aggregation.getNumber_of_status_issue()>0 ? StatusDto.ISSUE : StatusDto.OK);
+
+
+        }
 }
+

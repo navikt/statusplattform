@@ -62,10 +62,9 @@ public class RecordRepository {
                 .list(RecordRepository::toRecord);
     }
 
-    public List<RecordEntity> getRecordsOlderThen(int daysOld){
+    public List<RecordEntity> getRecordsOlderThan(int daysOld){
         return recordTable.whereExpression("created_at <= current_date  - interval '"+ daysOld+ " day'")
                 .list(RecordRepository::toRecord);
-
     }
     public void deleteRecordsOlderThen(int daysOld) {
          recordTable.whereExpression("created_at <= current_date  - interval '"+ daysOld+ " day'")

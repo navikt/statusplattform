@@ -13,6 +13,7 @@ import org.fluentjdbc.DbTransaction;
 
 import javax.sql.DataSource;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,12 +24,20 @@ public class RecordCompressor extends Thread{
     private final DbContext dbContext;
     private DataSource dataSource;
     private final int KEEP_RECORDS_FOR_THIS_NUMBER_OF_DAYS = 7;
+    private final int AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS = 1; //This does NOT delete records older than
 
 
     public RecordCompressor(DbContext dbContext) {
         this.recordRepository = new RecordRepository(dbContext);
         this.serviceRepository = new ServiceRepository(dbContext);
         this.dbContext = dbContext;
+    }
+    public void run(){
+        startCompression();
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     private void startCompression() {
@@ -48,7 +57,7 @@ public class RecordCompressor extends Thread{
 
     private void getOldRecords_AggregateAndSave(){
 
-        List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThen(KEEP_RECORDS_FOR_THIS_NUMBER_OF_DAYS);
+        List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS);
         Map<UUID,List<RecordEntity>> serviceUUIDRecordsMap =new HashMap<>();
         while (outdatedRecords.size()>0){
             RecordEntity record = outdatedRecords.get(0);
@@ -73,7 +82,7 @@ public class RecordCompressor extends Thread{
     private void compressAndSave(Map.Entry<UUID, List<RecordEntity>> serviceEntry) {
         DailyStatusAggregationForServiceEntity aggregatedRecords = new DailyStatusAggregationForServiceEntity();
         aggregatedRecords.setId(serviceEntry.getKey());
-        aggregatedRecords.setAggregation_date(Date.from(Instant.now()));
+        aggregatedRecords.setAggregation_date(LocalDate.from(Instant.now()));
         aggregatedRecords.setNumber_of_status_down((int) getCount(serviceEntry.getValue(), ServiceStatus.DOWN));
         aggregatedRecords.setNumber_of_status_issue((int) getCount(serviceEntry.getValue(), ServiceStatus.ISSUE));
         aggregatedRecords.setNumber_of_status_ok((int) getCount(serviceEntry.getValue(), ServiceStatus.OK));
@@ -84,12 +93,5 @@ public class RecordCompressor extends Thread{
         return recordEntities.stream().filter(r -> r.getStatus().equals(status)).count();
     }
 
-    public void run(){
-        startCompression();
 
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 }

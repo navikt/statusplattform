@@ -1,12 +1,12 @@
 package nav.portal.core.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class DailyStatusAggregationForServiceEntity {
     private UUID id;
     private UUID service_id;
-    private Date aggregation_date;
+    private LocalDate aggregation_date;
     private int number_of_status_ok;
     private int number_of_status_issue;
     private int number_of_status_down;
@@ -32,11 +32,11 @@ public class DailyStatusAggregationForServiceEntity {
         return this;
     }
 
-    public Date getAggregation_date() {
+    public LocalDate getAggregation_date() {
         return aggregation_date;
     }
 
-    public DailyStatusAggregationForServiceEntity setAggregation_date(Date aggregation_date) {
+    public DailyStatusAggregationForServiceEntity setAggregation_date(LocalDate aggregation_date) {
         this.aggregation_date = aggregation_date;
         return this;
     }

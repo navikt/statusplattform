@@ -865,6 +865,39 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Service/HistoryAggregated/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent tjenestehistorikk pr dag
+      operationId: GetServiceHistoryAggregated
+      description: Henter tjenestehistorikk per dag
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceHistory'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /Service/{Service_id}/{DependentOnService_id}:
     put:
       tags:
@@ -1117,6 +1150,18 @@ components:
         - internal_text
         - internal_header
         - only_show_for_internal
+    ServiceHistory:
+      title: ServiceHistory
+      type: object
+      properties:
+        serviceId:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/Status'
     Alert:
       title: Alert
       type: object
