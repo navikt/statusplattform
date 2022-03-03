@@ -133,8 +133,8 @@ public class ServiceRepositoryHelper {
         return opsMessageDto;
     }
 
-    public List<ServiceHistoryDto> getServiceHistoryForNumberOfDays(int number_of_days) {
-        return serviceRepository.getServiceHistoryForNumberOfDays(number_of_days)
+    public List<ServiceHistoryDto> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceID) {
+        return serviceRepository.getServiceHistoryForNumberOfDays(number_of_days, serviceID)
                 .stream().map(this::toServiceHistoryDto)
                 .collect(Collectors.toList());
     }

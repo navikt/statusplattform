@@ -53,7 +53,7 @@ public class ServiceController {
     @JsonBody
     public  List<ServiceHistoryDto> getServiceHistory(@PathParam("Service_id") UUID service_id) {
         int NUMBER_OF_DAYS = 90;
-        return serviceRepositoryHelper.getServiceHistoryForNumberOfDays(NUMBER_OF_DAYS);
+        return serviceRepositoryHelper.getServiceHistoryForNumberOfDays(NUMBER_OF_DAYS, service_id);
     }
 
     @POST("/Service")

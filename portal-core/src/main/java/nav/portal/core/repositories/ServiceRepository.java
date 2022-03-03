@@ -29,8 +29,8 @@ public class ServiceRepository {
         service_maintenanceTable = dbContext.table("service_maintenance");
     }
 
-    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDays(int number_of_days) {
-        return serviceHistoryTable.whereExpression("created_at <= current_date  - interval '"+ number_of_days+ " day'")
+    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceId) {
+        return serviceHistoryTable.where("service_id", serviceId).whereExpression("created_at <= current_date  - interval '"+ number_of_days+ " day'")
                     .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
         }
 
