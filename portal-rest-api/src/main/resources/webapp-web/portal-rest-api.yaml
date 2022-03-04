@@ -1023,9 +1023,8 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/Service'
-        subareas:
+        subAreas:
           type: array
-          readOnly: true
           items:
             $ref: '#/components/schemas/SubArea'
         status:
