@@ -11,6 +11,7 @@ import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.SubAreaDto;
 import org.fluentjdbc.DbContext;
 
 import java.util.ArrayList;
@@ -60,8 +61,8 @@ public class AreaRepositoryHelper {
         //update services
         areaRepository.setServicesOnArea(areaId,areaDto.getServices().stream()
                 .map(ServiceDto::getId).collect(Collectors.toList()));
-        areaRepository.addSubAreaToArea(areaId,areaDto.getServices().stream()
-                .map(ServiceDto::getId).collect(Collectors.toList()));
+        areaRepository.addSubAreaToArea(areaId,areaDto.getSubAreas().stream()
+                .map(SubAreaDto::getId).collect(Collectors.toList()));
 
         //update sub areas
         areaDto.setId((areaId));
