@@ -66,12 +66,15 @@ public class SubAreaRepository {
 
         List<ServiceEntity> result = new ArrayList<>();
 
-        subAreaAlias.where("id",subAreaID)
-                .leftJoin(subAreaAlias.column("id"),subAreaServiceAlias.column("sub_area_id"))
-                .leftJoin(subAreaServiceAlias.column("service_id"),serviceAlias.column("id"))
-                .list( row ->
-                        result.add(ServiceRepository.toService(row))
-                                            );
+        serviceAlias
+                .leftJoin(serviceAlias.column("id"),subAreaServiceAlias.column("service_id"))
+                .leftJoin(subAreaServiceAlias.column("sub_area_id"),subAreaAlias.column("id"))
+                .where("subAreaAlias.id", subAreaID)
+                .list( row -> {
+                    Optional<ServiceEntity> op = Optional.ofNullable(ServiceRepository.toService(row));
+                    op.ifPresent(result::add);
+                    return null;
+                });
         return result;
     }
 
