@@ -92,9 +92,8 @@ public class PortalServer {
 
     public void start() throws Exception {
         server.start();
-        if(!isLocal){
-            portalPoller.start();
-        }
+        portalPoller.start();
+        compressionScheduler.start();
         connector.start();
         logger.warn("Started on {}", getURI());
     }
