@@ -12,7 +12,9 @@ public class CompressionScheduler {
     private final DbContext dbContext = new DbContext();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final int COMPRESSION_INTERVALL_IN_HOURS = 24;
-    private  RecordCompressor recordCompressor;
+    private final RecordCompressor recordCompressor;
+    private DataSource dataSource;
+
 
     public CompressionScheduler() {
         recordCompressor = new RecordCompressor(dbContext);
@@ -21,10 +23,12 @@ public class CompressionScheduler {
     }
 
     public void setDataSource(DataSource dataSource){
+        this.dataSource = dataSource;
         recordCompressor.setDataSource(dataSource);
 
     }
     public void start(){
+        MockDataGenerator.generateRandomStatusesForAllServices(dbContext, dataSource);
         scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
     }
 

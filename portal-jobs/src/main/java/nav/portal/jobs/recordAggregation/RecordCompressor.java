@@ -27,6 +27,7 @@ public class RecordCompressor extends Thread{
     private final int AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS = 1; //This does NOT delete records older than
 
 
+
     public RecordCompressor(DbContext dbContext) {
         this.recordRepository = new RecordRepository(dbContext);
         this.serviceRepository = new ServiceRepository(dbContext);
@@ -55,34 +56,57 @@ public class RecordCompressor extends Thread{
         recordRepository.deleteRecordsOlderThen(KEEP_RECORDS_FOR_THIS_NUMBER_OF_DAYS);
     }
 
-    private void getOldRecords_AggregateAndSave(){
 
+    private List<RecordEntity> filterByDayOfyear(List<RecordEntity> records, Integer dayOfYear){
+        return records.stream().filter(r2 -> dayOfYear.equals(r2.getCreated_at().getDayOfYear()))
+                .collect(Collectors.toList());
+    }
+
+
+    private void getOldRecords_AggregateAndSave(){
         List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS);
-        Map<UUID,List<RecordEntity>> serviceUUIDRecordsMap =new HashMap<>();
-        while (outdatedRecords.size()>0){
-            RecordEntity record = outdatedRecords.get(0);
+
+
+        Map<Integer,List<RecordEntity>> dayOfYearWithUUIDandRecords = new HashMap<>();
+
+        while (outdatedRecords.size() > 0){
+            Integer dayOfYear = outdatedRecords.get(0).getCreated_at().getDayOfYear();
+            dayOfYearWithUUIDandRecords.put(dayOfYear
+                    ,filterByDayOfyear(outdatedRecords,dayOfYear));
+            outdatedRecords = filterOutProssesedReckords(outdatedRecords, dayOfYear);
+        }
+
+        dayOfYearWithUUIDandRecords.values().forEach(this::compressOneDay);
+
+    }
+
+    private List<RecordEntity> filterOutProssesedReckords(List<RecordEntity> outdatedRecords, Integer dayOfYear) {
+        return outdatedRecords.stream().filter(r -> !dayOfYear.equals(r.getCreated_at().getDayOfYear())).collect(Collectors.toList());
+    }
+
+    private void compressOneDay(List<RecordEntity> recordsForOneDay){
+        Map<UUID,List<RecordEntity>> serviceUUIDRecordsMap = new HashMap<>();
+        while (recordsForOneDay.size() > 0 ){
+            RecordEntity record = recordsForOneDay.get(0);
 
             serviceUUIDRecordsMap.put(record.getServiceId(),
-                    outdatedRecords.stream()
+                    recordsForOneDay.stream()
                             .filter(r -> r.getServiceId().equals(record.getServiceId()))
                             .collect(Collectors.toList()));
-            outdatedRecords = outdatedRecords
+            recordsForOneDay = recordsForOneDay
                     .stream().filter(r -> !r.getServiceId().equals(record.getServiceId())).collect(Collectors.toList());
         }
-        
-        serviceUUIDRecordsMap.entrySet().forEach(this::handleCompressAndDeleteOfOldData);
+
+        serviceUUIDRecordsMap.entrySet().forEach(this::compressAndSave);
+
 
     }
 
-    private void handleCompressAndDeleteOfOldData(Map.Entry<UUID, List<RecordEntity>> serviceEntry){
-        compressAndSave(serviceEntry);
-
-    }
 
     private void compressAndSave(Map.Entry<UUID, List<RecordEntity>> serviceEntry) {
         DailyStatusAggregationForServiceEntity aggregatedRecords = new DailyStatusAggregationForServiceEntity();
-        aggregatedRecords.setId(serviceEntry.getKey());
-        aggregatedRecords.setAggregation_date(LocalDate.from(Instant.now()));
+        aggregatedRecords.setService_id(serviceEntry.getKey());
+        aggregatedRecords.setAggregation_date(LocalDate.now());
         aggregatedRecords.setNumber_of_status_down((int) getCount(serviceEntry.getValue(), ServiceStatus.DOWN));
         aggregatedRecords.setNumber_of_status_issue((int) getCount(serviceEntry.getValue(), ServiceStatus.ISSUE));
         aggregatedRecords.setNumber_of_status_ok((int) getCount(serviceEntry.getValue(), ServiceStatus.OK));
