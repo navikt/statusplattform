@@ -1,7 +1,9 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
+import nav.portal.core.entities.AreaWithServices;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.SubAreaEntity;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.actioncontroller.HttpRequestException;
 import org.fluentjdbc.*;
@@ -22,12 +24,17 @@ public class AreaRepository {
     private final DbContextTable areaServiceTable;
     private final DbContextTable serviceTable;
     private final DbContextTable dashboardAreaTable;
+    private final DbContextTable subAreaTable;
+    private final DbContextTable areaSubAreaTable;
+
 
     public AreaRepository(DbContext dbContext) {
         areaTable = dbContext.table("area");
         areaServiceTable = dbContext.table("area_service");
         serviceTable = dbContext.table("service");
         dashboardAreaTable = dbContext.table("dashboard_area");
+        subAreaTable = dbContext.table("sub_area");
+        areaSubAreaTable = dbContext.table("area_sub_area");
     }
 
     public UUID save(AreaEntity entity) {
@@ -53,8 +60,7 @@ public class AreaRepository {
 
     public void updateArea(AreaEntity areaEntity) {
         areaTable.where("id", areaEntity.getId()).update()
-                .setField("id", areaEntity.getId())
-                .setField("name", areaEntity.getName())
+                .setFieldIfPresent("name", areaEntity.getName())
                 .setField("description", areaEntity.getDescription())
                 .setField("icon", areaEntity.getIcon())
                 .execute();
@@ -78,6 +84,23 @@ public class AreaRepository {
                 .setField("area_id", areaId)
                 .setField("service_id", serviceId)
                 .execute();
+    }
+
+    public void addSubAreaToArea(UUID areaId, UUID subAreaId) {
+        areaSubAreaTable.insert()
+                .setField("area_id", areaId)
+                .setField("sub_area_id", subAreaId)
+                .execute();
+    }
+
+    public void addSubAreaToArea(UUID areaId, List<UUID> subAreaId) {
+        areaSubAreaTable.where("area_id", areaId).executeDelete();
+        for(UUID subareaId: subAreaId) {
+            areaSubAreaTable.insert()
+                    .setField("area_id", areaId)
+                    .setField("sub_area_id", subareaId)
+                    .execute();
+        }
     }
 
     public void addServiceToAreas(List<UUID> areaIds, UUID serviceId) {
@@ -113,7 +136,7 @@ public class AreaRepository {
                 .executeDelete();
 
     }
-    //TODO bør denne være optional?
+
     public Map.Entry<AreaEntity, List<ServiceEntity>> retrieveOne(UUID area_id) {
         DbContextTableAlias areaAlias = areaTable.alias("area");
         DbContextTableAlias a2s = areaServiceTable.alias("a2s");
@@ -142,7 +165,6 @@ public class AreaRepository {
     public List<AreaEntity> retriveAllShallow(){
         return areaTable.orderedBy("name").stream(AreaRepository::toArea).collect(Collectors.toList());
     }
-    //TODO bør denne være optional?
     public Map<AreaEntity, List<ServiceEntity>> retrieveAll() {
         DbContextTableAlias areaAlias = areaTable.alias("area");
         DbContextTableAlias a2s = areaServiceTable.alias("a2s");
@@ -165,6 +187,26 @@ public class AreaRepository {
 
         return result;
     }
+
+    public List<SubAreaEntity> getSubAreasOnArea(UUID areaID) {
+        List<SubAreaEntity> subareasOnArea = new ArrayList<>();
+
+        DbContextTableAlias sa = subAreaTable.alias("sa");
+        DbContextTableAlias a2sa = areaSubAreaTable.alias("a2sa");
+        /*
+        sa.where("area_id", areaID)
+                .leftJoin(sa.column("id"),a2sa.column("sub_area_id"))
+                .list(row -> subareasOnArea.add(SubAreaRepository.toSubArea(row.table(sa))));
+        */
+
+        a2sa.where("area_id", areaID)
+                .leftJoin(a2sa.column("sub_area_id"),sa.column("id"))
+                .list(row -> subareasOnArea.add(SubAreaRepository.toSubArea(row.table(sa))));
+        return subareasOnArea;
+
+    }
+
+
 
     static AreaEntity toArea(DatabaseRow row){
         try {
@@ -192,6 +234,8 @@ public class AreaRepository {
 
 
     }
+
+
 
     public static class Query {
 

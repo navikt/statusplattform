@@ -1,9 +1,6 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.AreaWithServices;
-import nav.portal.core.entities.DashboardEntity;
-import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.*;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.fluentjdbc.*;
 
@@ -79,12 +76,35 @@ public class DashboardRepository {
                     List<AreaWithServices> areasInDashboard = result.computeIfAbsent(toDashboard(row.table(d)), ignored -> new ArrayList<>());
                     Optional.ofNullable(row.getUUID("area_id"))
                             .map(areaById::get)
-                            .ifPresent(area -> areasInDashboard.add(new AreaWithServices(area, areaEntityListMap.get(area))));
+                            .ifPresent(area -> areasInDashboard.add(new AreaWithServices(area, areaEntityListMap.get(area),Collections.emptyList())));
                     return null;
                 });
+        result.entrySet().stream().findFirst().get().getValue().forEach(this::settSubAreasOnArea);
         return result.entrySet().stream().findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Dashboard with UUID " + id));
     }
+
+    private void settSubAreasOnArea(AreaWithServices areaWithServices) {
+        UUID areaID = areaWithServices.getArea().getId();
+        List<SubAreaEntity> subareasOnArea = new ArrayList<>();
+
+        DbContextTableAlias sa = dbContext.table("sub_area").alias("sa");
+        DbContextTableAlias a2sa = dbContext.table("area_sub_area").alias("a2sa");
+        /*
+        sa.where("area_id", areaID)
+                .leftJoin(sa.column("id"),a2sa.column("sub_area_id"))
+                .list(row -> subareasOnArea.add(SubAreaRepository.toSubArea(row.table(sa))));
+        */
+
+        a2sa.where("area_id", areaID)
+                .leftJoin(a2sa.column("sub_area_id"),sa.column("id"))
+                .list(row -> subareasOnArea.add(SubAreaRepository.toSubArea(row.table(sa))));
+
+
+
+        areaWithServices.setSubAreas(subareasOnArea);
+    }
+
 
     public Map.Entry<DashboardEntity, List<AreaWithServices>> retrieveOneFromName(String name) {
         DbContextTableAlias d = dashboardTable.alias("d");
@@ -103,7 +123,7 @@ public class DashboardRepository {
                     List<AreaWithServices> areasInDashboard = result.computeIfAbsent(toDashboard(row.table(d)), ignored -> new ArrayList<>());
                     Optional.ofNullable(row.getUUID("area_id"))
                             .map(areaById::get)
-                            .ifPresent(area -> areasInDashboard.add(new AreaWithServices(area, areaEntityListMap.get(area))));
+                            .ifPresent(area -> areasInDashboard.add(new AreaWithServices(area, areaEntityListMap.get(area),Collections.EMPTY_LIST)));
                     return null;
                 });
         return result.entrySet().stream().findFirst()
@@ -127,7 +147,7 @@ public class DashboardRepository {
                     List<AreaWithServices> areasInDashboard = result.computeIfAbsent(toDashboard(row.table(d)), ignored -> new ArrayList<>());
                     Optional.ofNullable(row.getUUID("area_id"))
                             .map(areaById::get)
-                            .ifPresent(area -> areasInDashboard.add(new AreaWithServices(area, areaEntityListMap.get(area))));
+                            .ifPresent(area -> areasInDashboard.add(new AreaWithServices(area, areaEntityListMap.get(area),Collections.EMPTY_LIST)));
                     return null;
                 });
         return result;

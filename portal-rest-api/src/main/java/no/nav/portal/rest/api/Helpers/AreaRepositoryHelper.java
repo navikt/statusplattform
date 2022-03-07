@@ -1,15 +1,19 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.AreaEntity;
+import nav.portal.core.entities.AreaWithServices;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.SubAreaEntity;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.AreaDto;
+import no.portal.web.generated.api.ServiceDto;
 import org.fluentjdbc.DbContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +34,20 @@ public class AreaRepositoryHelper {
     }
 
 
+    public List<AreaDto> getAllAreas(){
+        List<AreaDto> result = new ArrayList<>();
+        Map<AreaEntity,List<ServiceEntity>> areaAndServises  = areaRepository.retrieveAll();
+        areaAndServises.entrySet().forEach(entry -> {
+            AreaDto areaDto =  EntityDtoMappers.toAreaDtoDeep(entry.getKey(),entry.getValue());
+            areaDto.setSubAreas(areaRepository.getSubAreasOnArea(entry.getKey().getId())
+                    .stream()
+                    .map(EntityDtoMappers::toSubAreaDtoShallow)
+                    .collect(Collectors.toList()));
+            result.add(areaDto);
+                }
+        );
+        return result;
+    }
 
 
     public AreaDto newArea(AreaDto areaDto){
@@ -39,9 +57,17 @@ public class AreaRepositoryHelper {
     }
 
     public AreaDto updateArea(UUID areaId, AreaDto areaDto){
+        //update services
+        areaRepository.setServicesOnArea(areaId,areaDto.getServices().stream()
+                .map(ServiceDto::getId).collect(Collectors.toList()));
+        areaRepository.addSubAreaToArea(areaId,areaDto.getServices().stream()
+                .map(ServiceDto::getId).collect(Collectors.toList()));
+
+        //update sub areas
         areaDto.setId((areaId));
         areaRepository.updateArea(EntityDtoMappers.toAreaEntity(areaDto));
         Map.Entry<AreaEntity,List<ServiceEntity>> area = areaRepository.retrieveOne(areaId);
+
         return EntityDtoMappers.toAreaDtoDeep(area.getKey(),area.getValue());
     }
 

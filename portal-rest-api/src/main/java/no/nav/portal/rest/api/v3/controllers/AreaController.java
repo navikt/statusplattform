@@ -32,7 +32,8 @@ public class AreaController {
    @GET("/Areas")
    @JsonBody
    public List<AreaDto> getAllAreas() {
-      return EntityDtoMappers.toAreaDtoDeep(areaRepository.retrieveAll());
+      return areaRepositoryHelper.getAllAreas();
+
    }
 
    @POST("/Areas")
@@ -77,12 +78,6 @@ public class AreaController {
    public void removeServiceFromArea(@PathParam("Area_id") UUID area_id, @PathParam("Service_id") UUID service_id ) {
       areaRepository.removeServiceFromArea(area_id,service_id);
    }
-
-   //TODO OMRÅDER SKAL HA UNIKE NAVN
-   //TODO TJENESTER SKAL HA UNIK NAVN-TYPE KOMBO
-   //TODO SORTERE PÅ NAVN
-
-
 
    /*Delen av AreaController for SubArea*/
 

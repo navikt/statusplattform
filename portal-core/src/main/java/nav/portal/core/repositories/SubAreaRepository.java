@@ -59,6 +59,22 @@ public class SubAreaRepository {
 
     }
 
+    public List<ServiceEntity> getServisesOnSubArea(UUID subAreaID) {
+        DbContextTableAlias subAreaAlias = subAreaTable.alias("subAreaAlias");
+        DbContextTableAlias subAreaServiceAlias = subAreaServiceTable.alias("subAreaServiceAlias");
+        DbContextTableAlias serviceAlias = serviceTable.alias("serviceAlias");
+
+        List<ServiceEntity> result = new ArrayList<>();
+
+        subAreaAlias.where("id",subAreaID)
+                .leftJoin(subAreaAlias.column("id"),subAreaServiceAlias.column("sub_area_id"))
+                .leftJoin(subAreaServiceAlias.column("service_id"),serviceAlias.column("id"))
+                .list( row ->
+                        result.add(ServiceRepository.toService(row))
+                                            );
+        return result;
+    }
+
 
     public void addServiceToSubArea(UUID subAreaId, UUID serviceId) {
         subAreaServiceTable.insert()
