@@ -1043,6 +1043,10 @@ components:
           type: string
           format: uuid
           readOnly: true
+        status:
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/Status'
         services:
           type: array
           readOnly: true
