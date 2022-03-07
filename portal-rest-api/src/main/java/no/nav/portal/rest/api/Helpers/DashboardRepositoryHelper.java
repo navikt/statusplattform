@@ -1,7 +1,5 @@
 package no.nav.portal.rest.api.Helpers;
 
-import nav.portal.core.entities.RecordEntity;
-import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.repositories.RecordRepository;
@@ -11,6 +9,7 @@ import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,20 +30,53 @@ public class DashboardRepositoryHelper {
 
     public DashboardDto getDashboard(UUID dashboard_id){
         DashboardDto dashboardDto = EntityDtoMappers.toDashboardDtoDeep(dashboardRepository.retrieveOne(dashboard_id));
+
+        setSubAreas(dashboardDto);
+
+        setStatusOnAllServisesDirectlyUnderArea(dashboardDto);
+
+        setStatusOnAlServisesInSubAreas(dashboardDto);
+
+        setStatusOnAreas(dashboardDto);
+
+        setStatusOnSubAreas(dashboardDto);
+
+        return dashboardDto;
+    }
+
+    private void setSubAreas(DashboardDto dashboardDto) {
         dashboardDto.getAreas().forEach(areaDto -> {
             areaDto.setSubAreas(areaRepository.getSubAreasOnArea(areaDto.getId())
                             .stream()
                             .map(subAreaEntity -> EntityDtoMappers.toSubAreaDtoDeep(subAreaEntity, subAreaRepository.getServisesOnSubArea(subAreaEntity.getId())))
                             .collect(Collectors.toList()));
                 });
+    }
+
+    private void setStatusOnSubAreas(DashboardDto dashboardDto) {
+        dashboardDto.getAreas().forEach(areaDto ->
+                areaDto.getSubAreas().forEach(
+                        subArea -> subArea.setStatus(getAreaStatus(subArea.getServices()))
+
+                        )
+                );
+    }
+
+    private void setStatusOnAreas(DashboardDto dashboardDto) {
         dashboardDto.getAreas()
-                .forEach(area -> area.getServices()
-                        .forEach(this::settStatusOnService));
+                .forEach(areaDto -> areaDto.setStatus(getAreaStatus(areaDto.getServices())));
+    }
+
+    private void setStatusOnAlServisesInSubAreas(DashboardDto dashboardDto) {
         dashboardDto.getAreas()
                 .forEach(area -> area.getSubAreas().forEach(subArea -> subArea.getServices()
                         .forEach(this::settStatusOnService)));
-        dashboardDto.getAreas().forEach(areaDto -> areaDto.setStatus(getAreaStatus(areaDto)));
-        return dashboardDto;
+    }
+
+    private void setStatusOnAllServisesDirectlyUnderArea(DashboardDto dashboardDto) {
+        dashboardDto.getAreas()
+                .forEach(area -> area.getServices()
+                        .forEach(this::settStatusOnService));
     }
 
     private void settStatusOnService(ServiceDto service){
@@ -55,15 +87,13 @@ public class DashboardRepositoryHelper {
         service.setStatus(StatusDto.ISSUE);
     }
 
-    private StatusDto getAreaStatus(AreaDto dto){
-        if(dto.getServices()
-                .stream()
-                .map(s -> s.getStatus())
+    private StatusDto getAreaStatus(List<ServiceDto> services){
+        if(services.stream()
+                .map(ServiceDto::getStatus)
                 .collect(Collectors.toList())
                 .contains(StatusDto.DOWN)) return StatusDto.DOWN;
-        if(dto.getServices()
-                .stream()
-                .map(s -> s.getStatus())
+        if(services.stream()
+                .map(ServiceDto::getStatus)
                 .collect(Collectors.toList())
                 .contains(StatusDto.ISSUE)) return StatusDto.ISSUE;
         return StatusDto.OK;
