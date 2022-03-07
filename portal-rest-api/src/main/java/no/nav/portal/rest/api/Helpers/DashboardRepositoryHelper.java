@@ -35,7 +35,7 @@ public class DashboardRepositoryHelper {
 
         setStatusOnAllServisesDirectlyUnderArea(dashboardDto);
 
-        setStatusOnAlServisesInSubAreas(dashboardDto);
+        setStatusOnAllServisesInSubAreas(dashboardDto);
 
         setStatusOnSubAreas(dashboardDto);
 
@@ -74,7 +74,7 @@ public class DashboardRepositoryHelper {
                 });
     }
 
-    private void setStatusOnAlServisesInSubAreas(DashboardDto dashboardDto) {
+    private void setStatusOnAllServisesInSubAreas(DashboardDto dashboardDto) {
         dashboardDto.getAreas()
                 .forEach(area -> area.getSubAreas().forEach(subArea -> subArea.getServices()
                         .forEach(this::settStatusOnService)));
