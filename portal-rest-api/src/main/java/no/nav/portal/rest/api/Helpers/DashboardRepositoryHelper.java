@@ -37,9 +37,10 @@ public class DashboardRepositoryHelper {
 
         setStatusOnAlServisesInSubAreas(dashboardDto);
 
+        setStatusOnSubAreas(dashboardDto);
+
         setStatusOnAreas(dashboardDto);
 
-        setStatusOnSubAreas(dashboardDto);
 
         return dashboardDto;
     }
@@ -56,7 +57,7 @@ public class DashboardRepositoryHelper {
     private void setStatusOnSubAreas(DashboardDto dashboardDto) {
         dashboardDto.getAreas().forEach(areaDto ->
                 areaDto.getSubAreas().forEach(
-                        subArea -> subArea.setStatus(getAreaStatus(subArea.getServices()))
+                        subArea -> subArea.setStatus(getWorstStatusAmongst(subArea.getServices()))
 
                         )
                 );
@@ -64,7 +65,13 @@ public class DashboardRepositoryHelper {
 
     private void setStatusOnAreas(DashboardDto dashboardDto) {
         dashboardDto.getAreas()
-                .forEach(areaDto -> areaDto.setStatus(getAreaStatus(areaDto.getServices())));
+                .forEach(areaDto -> {
+                    List<ServiceDto> allServicesInAreaAndSubAreas = areaDto.getServices();
+                    areaDto.getSubAreas().forEach(subArea->
+                            allServicesInAreaAndSubAreas.addAll(subArea.getServices())
+                    );
+                    areaDto.setStatus(getWorstStatusAmongst(allServicesInAreaAndSubAreas));
+                });
     }
 
     private void setStatusOnAlServisesInSubAreas(DashboardDto dashboardDto) {
@@ -87,7 +94,7 @@ public class DashboardRepositoryHelper {
         service.setStatus(StatusDto.ISSUE);
     }
 
-    private StatusDto getAreaStatus(List<ServiceDto> services){
+    private StatusDto getWorstStatusAmongst(List<ServiceDto> services){
         if(services.stream()
                 .map(ServiceDto::getStatus)
                 .collect(Collectors.toList())
