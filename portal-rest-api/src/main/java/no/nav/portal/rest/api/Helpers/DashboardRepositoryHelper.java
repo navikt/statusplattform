@@ -40,6 +40,9 @@ public class DashboardRepositoryHelper {
         dashboardDto.getAreas()
                 .forEach(area -> area.getServices()
                         .forEach(this::settStatusOnService));
+        dashboardDto.getAreas()
+                .forEach(area -> area.getSubAreas().forEach(subArea -> subArea.getServices()
+                        .forEach(this::settStatusOnService)));
         dashboardDto.getAreas().forEach(areaDto -> areaDto.setStatus(getAreaStatus(areaDto)));
         return dashboardDto;
     }
