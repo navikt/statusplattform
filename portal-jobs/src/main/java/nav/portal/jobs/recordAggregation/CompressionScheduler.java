@@ -29,7 +29,7 @@ public class CompressionScheduler {
     }
     public void start(){
        // MockDataGenerator.generateRandomStatusesForAllServices(dbContext, dataSource);
-        scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
+      //  scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
     }
 
 

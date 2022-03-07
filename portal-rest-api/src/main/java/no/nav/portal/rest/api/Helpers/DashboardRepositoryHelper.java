@@ -9,6 +9,7 @@ import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -66,7 +67,7 @@ public class DashboardRepositoryHelper {
     private void setStatusOnAreas(DashboardDto dashboardDto) {
         dashboardDto.getAreas()
                 .forEach(areaDto -> {
-                    List<ServiceDto> allServicesInAreaAndSubAreas = areaDto.getServices();
+                    List<ServiceDto> allServicesInAreaAndSubAreas = new ArrayList<>(areaDto.getServices());
                     areaDto.getSubAreas().forEach(subArea->
                             allServicesInAreaAndSubAreas.addAll(subArea.getServices())
                     );
