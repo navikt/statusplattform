@@ -1083,6 +1083,11 @@ components:
           example: "[Liste av område UUIDer]"
           items:
             $ref: '#/components/schemas/Area'
+        ServicesDependantOnThisComponant:
+          type: array
+          example: "[Liste av område UUIDer]"
+          items:
+            $ref: '#/components/schemas/Service'
         monitorlink:
           type: string
         pollingUrl:
