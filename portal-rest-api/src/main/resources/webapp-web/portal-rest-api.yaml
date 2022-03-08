@@ -1083,9 +1083,9 @@ components:
           example: "[Liste av område UUIDer]"
           items:
             $ref: '#/components/schemas/Area'
-        ServicesDependantOnThisComponant:
+        servicesDependantOnThisComponant:
           type: array
-          example: "[Liste av område UUIDer]"
+          example: "[Liste av servicer som er avhengig av denne komponenten]"
           items:
             $ref: '#/components/schemas/Service'
         monitorlink:
