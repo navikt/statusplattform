@@ -1,7 +1,7 @@
 package no.nav.server;
 
 
-import nav.portal.jobs.recordAggregation.CompressionScheduler;
+import nav.portal.jobs.recordAggregation.JobScheduler;
 import no.nav.portal.infrastructure.RedirectHandler;
 import nav.portal.polling.PortalPoller;
 import no.nav.portal.oauth2.LogInnApi;
@@ -27,7 +27,7 @@ public class PortalServer {
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
     private final LogInnApi logInnApi = new LogInnApi("/oauth2");
     private final PortalPoller portalPoller = new PortalPoller();
-    private final CompressionScheduler compressionScheduler = new CompressionScheduler();
+    private final JobScheduler jobScheduler = new JobScheduler();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
     private Boolean isLocal = false;
 
@@ -73,7 +73,7 @@ public class PortalServer {
 
     private void setDataSource(DataSource dataSource) {
         portalPoller.setDataSource(dataSource);
-        compressionScheduler.setDataSource(dataSource);
+        jobScheduler.setDataSource(dataSource);
         portalRestApi.setDataSource(dataSource);
     }
 
@@ -93,7 +93,7 @@ public class PortalServer {
     public void start() throws Exception {
         server.start();
         portalPoller.start();
-        compressionScheduler.start();
+        jobScheduler.start();
         connector.start();
         logger.warn("Started on {}", getURI());
     }

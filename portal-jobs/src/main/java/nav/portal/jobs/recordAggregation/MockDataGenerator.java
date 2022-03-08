@@ -1,11 +1,10 @@
 package nav.portal.jobs.recordAggregation;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 import javax.sql.DataSource;
-import nav.portal.core.enums.ServiceType;
+
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import org.fluentjdbc.*;
@@ -13,10 +12,11 @@ import org.fluentjdbc.*;
 
 import java.time.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class MockDataGenerator {
+    private final static Integer INTERVALL_BETWEEN_STATUS_UPDATES_MINUTES = 60;
+    private final static int NUMBER_OF_DAYS = 100;
 
 
 
@@ -37,6 +37,7 @@ public class MockDataGenerator {
 
     public static void generateRandomStatusesForAllServices(DbContext dbContext, DataSource dataSource){
         try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
+
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
                 generateRandomStatusesForAllServicesInternal(dbContext);
                 transaction.setComplete();
@@ -48,38 +49,46 @@ public class MockDataGenerator {
     private static void generateRandomStatusesForAllServicesInternal(DbContext dbContext){
         ServiceRepository serviceRepository = new ServiceRepository(dbContext);
         RecordRepository recordRepository = new RecordRepository(dbContext);
-        int numberOfDays = 100;
-        List<ServiceEntity> allServices = new ArrayList<>(serviceRepository.retrieveAllServices().keySet());
 
-        List<RecordEntity> recordsToInsert = new ArrayList<>();
+        List<ServiceEntity> allServices = new ArrayList<>();
+        allServices.addAll(new ArrayList<>(serviceRepository.retrieveAllServices().keySet()));
+        Map<UUID,Map<Integer,List<RecordEntity>>> recordsToInsert = new HashMap<>();
 
-        allServices.forEach(s -> recordsToInsert.addAll(generateRandomStatusesForServiceXNumberOfDaysBackInTime(numberOfDays,s)));
+        allServices.forEach(service -> recordsToInsert.put(service.getId()
+                ,generateRandomStatusesForOneServiceXNumberOfDaysBackInTime(NUMBER_OF_DAYS,service)));
+
 
         DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
 
-       for(RecordEntity recordEntity: recordsToInsert){
-           MockDataGenerator.save(recordEntity,recordTable);
-       }
+
+        recordsToInsert.values().forEach(
+                allRecordsForOneService -> allRecordsForOneService.values().forEach(
+                        allRecordsForOneServiceOneDay ->
+                                allRecordsForOneServiceOneDay.forEach(
+                                        recordEntity -> MockDataGenerator.save(recordEntity,recordTable)
+                                )
+                )
+        );
 
     }
 
 
-    private static  List<RecordEntity> generateRandomStatusesForServiceXNumberOfDaysBackInTime(int numberOfDays,ServiceEntity serviceEntity) {
-        List<RecordEntity> result = new ArrayList<>();
+    private static  Map<Integer,List<RecordEntity>> generateRandomStatusesForOneServiceXNumberOfDaysBackInTime(int numberOfDays, ServiceEntity serviceEntity) {
+        Map<Integer,List<RecordEntity>> result = new HashMap<>();
         while(numberOfDays>0){
-            result.addAll(generateRandomStatusesForServiceForOneDayXNumberOfDaysBackInTime(serviceEntity, numberOfDays));
+            result.put(numberOfDays,generateRandomStatusesForServiceForOneDayXNumberOfDaysBackInTime(serviceEntity, numberOfDays));
             numberOfDays--;
         }
         return result;
     }
     private static List<RecordEntity> generateRandomStatusesForServiceForOneDayXNumberOfDaysBackInTime(ServiceEntity serviceEntity,int numberOfDays){
-        int INTERVALL_BETWEEN_STATUS_UPDATES_MINUTES = 60;
+
         int NUMBER_OF_STATUS = 24*60/INTERVALL_BETWEEN_STATUS_UPDATES_MINUTES;
         LocalDateTime startTime = LocalDateTime.of(LocalDate.now().minusDays(numberOfDays),  LocalTime.of(0,0,0,0));
         ZonedDateTime creation_time = ZonedDateTime.of(startTime, ZoneId.of("Europe/Paris"));
         int numberOfStatusesGanerated = 0;
         List<RecordEntity> result = new ArrayList<>();
-        while (NUMBER_OF_STATUS >= numberOfStatusesGanerated){
+        while (NUMBER_OF_STATUS > numberOfStatusesGanerated){
             result.add(generateRandomStatus(serviceEntity, creation_time));
             creation_time = creation_time.plusMinutes(INTERVALL_BETWEEN_STATUS_UPDATES_MINUTES);
             numberOfStatusesGanerated++;

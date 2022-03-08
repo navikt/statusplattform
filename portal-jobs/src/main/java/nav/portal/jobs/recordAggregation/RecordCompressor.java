@@ -106,7 +106,7 @@ public class RecordCompressor extends Thread{
     private void compressAndSave(Map.Entry<UUID, List<RecordEntity>> serviceEntry) {
         DailyStatusAggregationForServiceEntity aggregatedRecords = new DailyStatusAggregationForServiceEntity();
         aggregatedRecords.setService_id(serviceEntry.getKey());
-        aggregatedRecords.setAggregation_date(LocalDate.now());
+        aggregatedRecords.setAggregation_date(serviceEntry.getValue().get(0).getCreated_at().toLocalDate());
         aggregatedRecords.setNumber_of_status_down((int) getCount(serviceEntry.getValue(), ServiceStatus.DOWN));
         aggregatedRecords.setNumber_of_status_issue((int) getCount(serviceEntry.getValue(), ServiceStatus.ISSUE));
         aggregatedRecords.setNumber_of_status_ok((int) getCount(serviceEntry.getValue(), ServiceStatus.OK));

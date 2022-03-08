@@ -30,7 +30,8 @@ public class ServiceRepository {
     }
 
     public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceId) {
-        return serviceHistoryTable.where("service_id", serviceId).whereExpression("created_at <= current_date  - interval '"+ number_of_days+ " day'")
+        return serviceHistoryTable.where("service_id", serviceId)
+                .whereExpression("created_at >= current_date  - interval '"+ number_of_days+ " day'")
                     .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
         }
 

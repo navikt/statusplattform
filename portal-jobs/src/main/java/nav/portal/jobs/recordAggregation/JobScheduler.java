@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class CompressionScheduler {
+public class JobScheduler {
 
     private final DbContext dbContext = new DbContext();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -16,7 +16,7 @@ public class CompressionScheduler {
     private DataSource dataSource;
 
 
-    public CompressionScheduler() {
+    public JobScheduler() {
         recordCompressor = new RecordCompressor(dbContext);
         recordCompressor.setDaemon(true);
         recordCompressor.setName("Compression thread");
@@ -28,8 +28,8 @@ public class CompressionScheduler {
 
     }
     public void start(){
-       // MockDataGenerator.generateRandomStatusesForAllServices(dbContext, dataSource);
-      //  scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
+        MockDataGenerator.generateRandomStatusesForAllServices(dbContext, dataSource);
+        scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
     }
 
 
