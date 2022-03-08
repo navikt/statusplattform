@@ -1,9 +1,6 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
-import nav.portal.core.entities.RecordEntity;
-import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.entities.MaintenanceEntity;
+import nav.portal.core.entities.*;
 import nav.portal.core.enums.ServiceType;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.actioncontroller.HttpRequestException;
@@ -205,6 +202,17 @@ public class ServiceRepository {
                     return null;
                 });
         return result;
+    }
+
+
+    public List<ServiceEntity> getServicesDependantOnComponent(UUID component_id) {
+        DbContextTableAlias serviceAlias = serviceTable.alias("service");
+        DbContextTableAlias s2k = service_serviceTable.alias("a2k");
+        return  serviceAlias
+                .leftJoin(serviceAlias.column("id"), s2k.column("service_id"))
+                .orderBy(serviceAlias.column("name"))
+                .where("a2s.service_id",component_id)
+                .stream(ServiceRepository::toService).collect(Collectors.toList());
     }
 
     public List<ServiceEntity> retrieveServicesWithPolling() {

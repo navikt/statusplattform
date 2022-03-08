@@ -35,6 +35,7 @@ public class ServiceRepositoryHelper {
     public List<ServiceDto> getAllComponents() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllComponents();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        result.forEach(componentDto -> componentDto.setServicesDependantOnThisComponant(getServicesDependantOnComponent(componentDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
         return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
@@ -118,6 +119,11 @@ public class ServiceRepositoryHelper {
         ServiceDto serviceDto =  EntityDtoMappers.toServiceDtoDeep(serviceRepository.retrieveOneWithDependencies(service_id));
         settStatusOnService(serviceDto);
         return serviceDto;
+    }
+
+    public List<ServiceDto> getServicesDependantOnComponent(UUID component_id) {
+        return serviceRepository.getServicesDependantOnComponent(component_id).stream().
+                map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList());
     }
 
     public List<AreaDto> getAreasContainingService(UUID service_id) {
