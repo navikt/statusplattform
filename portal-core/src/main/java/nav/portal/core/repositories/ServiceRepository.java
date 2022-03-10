@@ -207,11 +207,11 @@ public class ServiceRepository {
 
     public List<ServiceEntity> getServicesDependantOnComponent(UUID component_id) {
         DbContextTableAlias serviceAlias = serviceTable.alias("service");
-        DbContextTableAlias s2k = service_serviceTable.alias("a2k");
+        DbContextTableAlias s2k = service_serviceTable.alias("s2k");
         return  serviceAlias
                 .leftJoin(serviceAlias.column("id"), s2k.column("service1_id"))
                 .orderBy(serviceAlias.column("name"))
-                .where("a2s.service2_id",component_id)
+                .where("s2k.service2_id",component_id)
                 .stream(ServiceRepository::toService).collect(Collectors.toList());
     }
 
