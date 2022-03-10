@@ -209,9 +209,9 @@ public class ServiceRepository {
         DbContextTableAlias serviceAlias = serviceTable.alias("service");
         DbContextTableAlias s2k = service_serviceTable.alias("a2k");
         return  serviceAlias
-                .leftJoin(serviceAlias.column("id"), s2k.column("service_id"))
+                .leftJoin(serviceAlias.column("id"), s2k.column("service1_id"))
                 .orderBy(serviceAlias.column("name"))
-                .where("a2s.service_id",component_id)
+                .where("a2s.service2_id",component_id)
                 .stream(ServiceRepository::toService).collect(Collectors.toList());
     }
 
