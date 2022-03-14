@@ -20,6 +20,7 @@ class RecordCompressorTest {
     private final DataSource dataSource = TestDataSource.create();
     private final DbContext dbContext = new DbContext();
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
+    private final  RecordCompressor recordCompressor = new RecordCompressor(dbContext);
 
     private DbContextConnection connection;
 
@@ -28,6 +29,7 @@ class RecordCompressorTest {
     @BeforeEach
     void startConnection() {
         connection = dbContext.startConnection(dataSource);
+        recordCompressor.setDataSource(dataSource);
     }
 
     @AfterEach
@@ -49,6 +51,7 @@ class RecordCompressorTest {
         //Vi bruker egen save metode i mockdatagenerater som setter created at explisit.
         //Dersom vi hadde brukt repository her ville alle statuser kommet inn med created_at nå.
         MockDataGenerator.saveRecordsToTableForAllServices(resultForALl,dbContext);
+        recordCompressor.run();
 
     }
     @Test
