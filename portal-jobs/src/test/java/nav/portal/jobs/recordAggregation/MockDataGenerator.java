@@ -50,7 +50,7 @@ public class MockDataGenerator {
 
      }
 
-    static void saveRecordsToTable(Map<UUID, Map<Integer, List<RecordEntity>>> recordsToInsert, DbContext dbContext) {
+    static void saveRecordsToTableForAllServices(Map<UUID, Map<Integer, List<RecordEntity>>> recordsToInsert, DbContext dbContext) {
         DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
         recordsToInsert.values().forEach(
                 allRecordsForOneService -> allRecordsForOneService.values().forEach(
@@ -59,6 +59,17 @@ public class MockDataGenerator {
                                         recordEntity -> MockDataGenerator.save(recordEntity, recordTable)
                                 )
                 )
+        );
+    }
+
+    static void saveRecordsToTableForOneService(Map<Integer, List<RecordEntity>> recordsToInsert, DbContext dbContext) {
+        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
+        recordsToInsert.values().forEach(
+                        allRecordsForOneServiceOneDay ->
+                                allRecordsForOneServiceOneDay.forEach(
+                                        recordEntity -> MockDataGenerator.save(recordEntity, recordTable)
+                                )
+
         );
     }
 
