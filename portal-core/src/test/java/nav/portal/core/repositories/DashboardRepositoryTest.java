@@ -51,6 +51,8 @@ class DashboardRepositoryTest {
         Assertions.assertThat(uuid).isNotNull();
     }
 
+
+    /*
     @Test
     void settAreasOnDashboard() {
         //Arrange
@@ -62,15 +64,6 @@ class DashboardRepositoryTest {
         List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
         //Lagrer alle ned i db
 
-
-//      Alternativ 1 med bruk av for loop
-        /*List<UUID> areas_ids = new ArrayList<>();*/
-        /*for(AreaEntity area: areas){
-            UUID id = areaRepository.save(area);
-            areas_ids.add(id);
-            area.setId(id);
-        }*/
-//      * Alternativ 2 med bruk av for-each loop og lambda
         List<UUID> areas_ids = new ArrayList<>();
         areas.forEach(a ->{ a.setId(areaRepository.save(a));
             areas_ids.add(a.getId());});
@@ -103,7 +96,7 @@ class DashboardRepositoryTest {
 
        servicesOnAreas.forEach(list -> Assertions.assertThat(list).isEmpty());
 
-    }
+    }*/
 
     @Test
     void getAllDashboardUUIDsAndNames() {
@@ -148,6 +141,7 @@ class DashboardRepositoryTest {
     Assertions.assertThat(uuid).isExactlyInstanceOf(UUID.class);
     }
 
+    /*
     @Test
     void retrieveOne() {
         //TODO denne
@@ -155,8 +149,8 @@ class DashboardRepositoryTest {
         String dashboardname = "Dashboard";
         UUID dashboardId = dashboardRepository.save(dashboardname);
 
-        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
-        /*'List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());*/
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
+
         List<UUID> areaIds =  new ArrayList<>();
         areas.forEach(area -> {area.setId(areaRepository.save(area));
                                areaIds.add(area.getId());}
@@ -169,7 +163,7 @@ class DashboardRepositoryTest {
         Assertions.assertThat(exists.getKey().getName()).isEqualTo(dashboardname);
         Assertions.assertThat(exists.getValue().size()).isEqualTo(areaIds.size());
     }
-
+*/
 
     @Test
     void retrieveOneFromName() {
