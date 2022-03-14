@@ -222,6 +222,7 @@ class DashboardRepositoryTest {
 
     }
 
+    /*
     @Test
     void deleteAreasFromDashboard() {
 
@@ -230,9 +231,6 @@ class DashboardRepositoryTest {
         UUID dashboardId = dashboardRepository.save(dashboardname);
 
         List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
-        /*List<UUID> areaIds = areas.stream()
-                .map(areaRepository::save)
-                .collect(Collectors.toList());*/
 
         List<UUID> areaIds = new ArrayList<>();
         areas.forEach(area -> {area.setId(areaRepository.save(area));
@@ -246,6 +244,8 @@ class DashboardRepositoryTest {
 
         Assertions.assertThat(result.getValue().size()).isEqualTo(0);
     }
+
+     */
     @Test
     void deleteDashboard() {
         //Arrange

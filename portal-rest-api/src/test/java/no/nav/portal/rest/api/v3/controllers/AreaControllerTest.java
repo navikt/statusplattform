@@ -134,6 +134,7 @@ class AreaControllerTest {
         Assertions.assertThat(retrievedBeforeDelete.get(0)).isEqualTo(areaToBeDeleted);*/
     }
 
+    /*
     @Test
     void getAreas() {
         //Arrange
@@ -150,6 +151,7 @@ class AreaControllerTest {
         Assertions.assertThat(afterDto.size()).isEqualTo(beforeDto.size());
         Assertions.assertThat(afterDto.containsAll(beforeDto));
     }
+    */
 
     @Test
     void addServiceToArea() {
