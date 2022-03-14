@@ -4,7 +4,6 @@ package nav.portal.polling;
 import org.fluentjdbc.DbContext;
 
 import javax.sql.DataSource;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

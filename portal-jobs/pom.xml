@@ -12,16 +12,29 @@
     <artifactId>portal-jobs</artifactId>
     <dependencies>
         <dependency>
-            <groupId>io.github.jhannes</groupId>
-            <artifactId>fluent-jdbc</artifactId>
-            <version>0.1.0</version>
+            <groupId>no.nav</groupId>
+            <artifactId>portal-core</artifactId>
+            <version>0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>no.nav</groupId>
             <artifactId>portal-core</artifactId>
             <version>0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.200</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.6.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

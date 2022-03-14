@@ -32,9 +32,7 @@ class AreaControllerTest {
 
     private final AreaController areaController = new AreaController(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
-    private final ServiceController serviceController = new ServiceController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
-    private final RecordRepository recordRepository = new RecordRepository(dbContext);
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
 
 

@@ -55,7 +55,7 @@ class ServiceRepositoryTest {
    @Test
    void update() {
       //Arrange
-      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(2);
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(2);
 
       UUID uuid = serviceRepository.save(services.get(0));
       services.forEach(service -> service.setId(uuid));

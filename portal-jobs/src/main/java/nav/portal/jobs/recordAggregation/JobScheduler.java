@@ -28,8 +28,8 @@ public class JobScheduler {
 
     }
     public void start(){
-        MockDataGenerator.generateRandomStatusesForAllServices(dbContext, dataSource);
-        scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
+        //MockDataGenerator.generateRandomStatusesForAllServices(dbContext, dataSource);
+        //scheduler.scheduleWithFixedDelay(recordCompressor,0, COMPRESSION_INTERVALL_IN_HOURS,TimeUnit.HOURS);
     }
 
 

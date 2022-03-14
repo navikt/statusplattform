@@ -232,8 +232,6 @@ public class AreaRepository {
                 .orderBy(areaAlias.column("name"))
                 .where("a2s.service_id",service_id)
                 .stream(AreaRepository::toArea).collect(Collectors.toList());
-
-
     }
 
 
