@@ -48,6 +48,10 @@ class RecordCompressorTest {
         //Under får vi generert satuser for en tjenester hvert 100ede minutt 10 dager tilbake i tid:
         Map<Integer,List<RecordEntity>> resultForOne =
                 MockDataGenerator.generateRandomStatusesForOneServiceXNumberOfDaysBackInTime(myService, numberOfDays, minutesBetweenStatusUpdates);
+
+        //Vi bruker egen save metode i mockdatagenerater som setter created at explisit.
+        //Dersom vi hadde brukt repository her ville alle statuser kommet inn med created_at nå.
+        MockDataGenerator.saveRecordsToTable(resultForALl,dbContext);
         int i = 0;
     }
 }
