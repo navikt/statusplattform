@@ -19,12 +19,15 @@ import java.util.stream.Collectors;
 class DashboardRepositoryTest {
 
     private DataSource dataSource = TestDataSource.create();
-
-    private SampleData sampleData = new SampleData();
-
-
     private DbContext dbContext = new DbContext();
+    private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
+    private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
+    private SampleData sampleData = new SampleData();
     private DbContextConnection connection;
+
+
+
 
     @BeforeEach
     void startConnection() {
@@ -37,9 +40,6 @@ class DashboardRepositoryTest {
         connection.close();
     }
 
-    private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
-    private final AreaRepository areaRepository = new AreaRepository(dbContext);
-    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @Test
     void save() {
@@ -52,16 +52,16 @@ class DashboardRepositoryTest {
     }
 
 
-    /*
+
     @Test
     void settAreasOnDashboard() {
         //Arrange
         //Sett opp et dashboard java-obj
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName =SampleData.getRandomizedDashboardName();
         //Lagra java-obj ned i db
         UUID dashboard_id = dashboardRepository.save(dashboardName);
         //Sett opp en liste av områder(area)
-        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
         //Lagrer alle ned i db
 
         List<UUID> areas_ids = new ArrayList<>();
@@ -96,7 +96,7 @@ class DashboardRepositoryTest {
 
        servicesOnAreas.forEach(list -> Assertions.assertThat(list).isEmpty());
 
-    }*/
+    }
 
     @Test
     void getAllDashboardUUIDsAndNames() {

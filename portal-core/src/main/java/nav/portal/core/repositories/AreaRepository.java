@@ -174,7 +174,6 @@ public class AreaRepository {
         areaAlias
                 .leftJoin(areaAlias.column("id"), a2s.column("area_id"))
                 .leftJoin(a2s.column("service_id"), service.column("id"))
-                .where("service.deleted", Boolean.FALSE)
                 .orderBy(areaAlias.column("name"))
                 .list(row -> {
                     List<ServiceEntity> serviceList = result
@@ -186,6 +185,7 @@ public class AreaRepository {
                     return null;
                 });
 
+        result.entrySet().forEach(entry -> entry.setValue(entry.getValue().stream().filter(s -> s.getDeleted().equals(false)).collect(Collectors.toList())));
         return result;
     }
 
