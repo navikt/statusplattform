@@ -34,6 +34,7 @@ public class RecordController {
         RecordEntity entity = new RecordEntity()
                 .setServiceId(serviceStatusDto.getServiceId())
                 .setStatus(ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue().toUpperCase()).orElse(ServiceStatus.ISSUE))
+                .setDescription(serviceStatusDto.getDescription())
                 .setCreated_at(ZonedDateTime.now())
                 .setResponsetime(42);//TODO se her
         recordRepository.save(entity);
@@ -63,6 +64,8 @@ public class RecordController {
     public AlertDto getAlert(){
         return currentAlert;
     }
+
+
 
     private ServiceStatusDto generateServiceStatusFromAlert(AlertDto alertDto){
         if(AlertStatusDto.RESOLVED.equals(alertDto.getStatus())){
