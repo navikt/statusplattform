@@ -1214,9 +1214,14 @@ components:
     AlertStatus:
       type: string
       enum:
-        - FIRING
-        - RESOLVED
-
+        - firing
+        - resolved
+    Severity:
+      type: string
+      enum:
+        - good
+        - warning
+        - danger
     Status:
       type: string
       enum:
@@ -1228,10 +1233,4 @@ components:
       enum:
         - KOMPONENT
         - TJENESTE
-    Severity:
-      type: string
-      enum:
-        - GOOD
-        - WARNING
-        - DANGER
-        
+
