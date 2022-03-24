@@ -13,7 +13,8 @@ import java.util.*;
 
 public class MockDataGenerator {
 
-    static UUID save(RecordEntity entity, DbContextTable recordTable) {
+    static UUID save(RecordEntity entity, DbContext dbContext) {
+        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
 
         DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
@@ -27,17 +28,6 @@ public class MockDataGenerator {
         return result.getId();
     }
 
-/**
-    public static void generateRandomStatusesForAllServices(DbContext dbContext, DataSource dataSource){
-        try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
-
-            try (DbTransaction transaction = dbContext.ensureTransaction()) {
-                generateRandomStatusesForAllServicesInternal(dbContext);
-                transaction.setComplete();
-            }
-        }
-
-    }**/
 
     public static Map<UUID,Map<Integer,List<RecordEntity>>>  generateRandomStatusesForAllServices(List<ServiceEntity> allServices, int number_of_days, int interval_between_status_update_minutes){
 
@@ -51,23 +41,21 @@ public class MockDataGenerator {
      }
 
     static void saveRecordsToTableForAllServices(Map<UUID, Map<Integer, List<RecordEntity>>> recordsToInsert, DbContext dbContext) {
-        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
         recordsToInsert.values().forEach(
                 allRecordsForOneService -> allRecordsForOneService.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> MockDataGenerator.save(recordEntity, recordTable)
+                                        recordEntity -> MockDataGenerator.save(recordEntity, dbContext)
                                 )
                 )
         );
     }
 
     static void saveRecordsToTableForOneService(Map<Integer, List<RecordEntity>> recordsToInsert, DbContext dbContext) {
-        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
         recordsToInsert.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> MockDataGenerator.save(recordEntity, recordTable)
+                                        recordEntity -> MockDataGenerator.save(recordEntity, dbContext)
                                 )
 
         );

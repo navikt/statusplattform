@@ -185,7 +185,9 @@ public class AreaRepository {
                     return null;
                 });
 
-        result.entrySet().forEach(entry -> entry.setValue(entry.getValue().stream().filter(s -> s.getDeleted().equals(false)).collect(Collectors.toList())));
+        result.entrySet()
+                .forEach(entry -> entry.setValue(entry.getValue().stream().filter(s -> s.getDeleted().equals(false))
+                        .collect(Collectors.toList())));
         return result;
     }
 

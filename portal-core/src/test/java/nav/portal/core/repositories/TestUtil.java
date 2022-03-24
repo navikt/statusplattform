@@ -1,7 +1,12 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.RecordEntity;
+import org.fluentjdbc.DatabaseSaveResult;
+import org.fluentjdbc.DatabaseTableImpl;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextTable;
+
+import java.util.UUID;
 
 public class TestUtil {
 
@@ -26,7 +31,20 @@ public class TestUtil {
 
         DbContextTable dashboardTable = dbContext.table("dashboard");
         dashboardTable.whereExpression("id is NOT null").executeDelete();
+    }
 
 
+    static UUID saveRecordBackInTime(RecordEntity entity, DbContext dbContext) {
+        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
+        DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("service_id", entity.getServiceId())
+                .setField("created_at", entity.getCreated_at())
+                .setField("status", entity.getStatus())
+                .setField("description", "GENERATED MOCK")
+                .setField("logglink", entity.getLogglink())
+                .setField("response_time", entity.getResponsetime())
+                .execute();
+
+        return result.getId();
     }
 }

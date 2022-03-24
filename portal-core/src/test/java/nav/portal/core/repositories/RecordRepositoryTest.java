@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
+import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import java.util.UUID;
 
@@ -75,4 +75,25 @@ class RecordRepositoryTest {
         Assertions.assertThat(retrievedRecord.get()).isEqualTo(record);
 
     }
+
+
+    @Test
+    void getLatestRecord2() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity record = SampleData.getRandomizedRecordEntity();
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(5);
+        record.setCreated_at(fiveDaysBack);
+        record.setServiceId(service.getId());
+        record.setId(TestUtil.saveRecordBackInTime(record,dbContext));//Her må testutil.save meto
+        //Act
+        List<RecordEntity> retrievedRecord = recordRepository.getRecordsOlderThan(2);
+        record.setCreated_at(retrievedRecord.get(0).getCreated_at());
+        //Assert
+
+    }
+
 }

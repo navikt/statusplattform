@@ -6,6 +6,7 @@ import nav.portal.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,11 +64,12 @@ public class RecordRepository {
     }
 
     public List<RecordEntity> getRecordsOlderThan(int daysOld){
-        return recordTable.whereExpression("created_at <= current_date  - interval '"+ daysOld+ " day'")
+        return recordTable
+                .whereExpression("created_at <= ?", ZonedDateTime.now().minusDays(daysOld))
                 .list(RecordRepository::toRecord);
     }
     public void deleteRecordsOlderThen(int daysOld) {
-         recordTable.whereExpression("created_at <= current_date  - interval '"+ daysOld+ " day'")
+        recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusDays(daysOld))
                 .executeDelete();
     }
 

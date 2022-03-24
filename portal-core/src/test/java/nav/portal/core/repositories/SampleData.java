@@ -157,7 +157,7 @@ public class SampleData {
         return responseTime.get(random.nextInt(responseTime.size()));
     }
 
-    public RecordEntity getRandomizedRecordEntity() {
+    public static RecordEntity getRandomizedRecordEntity() {
            return new RecordEntity()
                 .setStatus(getRandomServiceStatus())
                 .setResponsetime(getRandomResponseTime());
