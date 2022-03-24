@@ -15,11 +15,9 @@ import java.util.*;
 
 class AreaRepositoryTest {
 
-    private SampleData sampleData = new SampleData();
+    private final DataSource dataSource = TestDataSource.create();
 
-    private DataSource dataSource = TestDataSource.create();
-
-    private DbContext dbContext = new DbContext();
+    private final DbContext dbContext = new DbContext();
     private DbContextConnection connection;
 
     @BeforeEach
@@ -39,7 +37,7 @@ class AreaRepositoryTest {
     @Test
     void save() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         //Act
         UUID uuid = areaRepository.save(area);
         area.setId(uuid);
@@ -51,10 +49,10 @@ class AreaRepositoryTest {
     @Test
     void retrieveOne() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
         area.setId(areaId);
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
         /*for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
@@ -69,7 +67,9 @@ class AreaRepositoryTest {
         //Act
         Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
         //Assert
-        Assertions.assertThat(retrievedArea.getValue().containsAll(services));
+        List<ServiceEntity>retrievedServices = retrievedArea.getValue();
+        Assertions.assertThat(retrievedServices.size()).isEqualTo(retrievedServices.size());
+        Assertions.assertThat(retrievedServices).containsAll(services);
         Assertions.assertThat(retrievedArea.getKey()).isEqualTo(area);
     }
 
@@ -78,7 +78,7 @@ class AreaRepositoryTest {
     void update() {
         //TODO denne
         //Arrange
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(2);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(2);
 
         UUID uuid = areaRepository.save(areas.get(0));
         areas.forEach(area -> area.setId(uuid));
@@ -96,7 +96,7 @@ class AreaRepositoryTest {
     void deleteArea() {
         //TODO denne
         //Arrange - Lag area
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
 
         /*for(AreaEntity area :areas){
              area.setId(areaRepository.save(area));
@@ -121,10 +121,10 @@ class AreaRepositoryTest {
     @Test
     void addServiceToArea() {
        //Arrange
-       AreaEntity area = sampleData.getRandomizedAreaEntity();
+       AreaEntity area = SampleData.getRandomizedAreaEntity();
        UUID areaId = areaRepository.save(area);
 
-       ServiceEntity service = sampleData.getRandomizedServiceEntity();
+       ServiceEntity service = SampleData.getRandomizedServiceEntity();
        UUID serviceId = serviceRepository.save(service);
        service.setId(serviceId);
        //Act
@@ -137,10 +137,10 @@ class AreaRepositoryTest {
     @Test
     void removeServiceFromArea() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
 
-        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
         areaRepository.addServiceToArea(areaId, serviceId);
@@ -158,24 +158,24 @@ class AreaRepositoryTest {
     void retriveAllShallow() {
         //TODO denne
         //Arrange
-        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
         areas.forEach(area -> area.setId(areaRepository.save(area)));
 
         //Act
         List<AreaEntity>allAreas = areaRepository.retriveAllShallow();
         //Assert
         Assertions.assertThat(allAreas.size()).isEqualTo(areas.size());
-        Assertions.assertThat(allAreas.containsAll(areas));
+        Assertions.assertThat(allAreas).containsAll(areas);
     }
 
     @Test
     void retrieveAll() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
         area.setId(areaId);
 
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
         /*for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
@@ -193,7 +193,7 @@ class AreaRepositoryTest {
         Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
         List<ServiceEntity>retrievedServices = retrievedArea.setValue(retrievedArea.getValue());
         //Assert
-        Assertions.assertThat(retrievedAll.containsKey(area));
-        Assertions.assertThat(retrievedAll.containsValue(retrievedServices));
+        Assertions.assertThat(retrievedAll).containsKey(area);
+        Assertions.assertThat(retrievedAll).containsValue(retrievedServices);
     }
 }
