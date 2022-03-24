@@ -18,11 +18,10 @@ import java.util.*;
 import java.util.UUID;
 
 class RecordRepositoryTest {
-    private SampleData sampleData = new SampleData();
 
-    private DataSource dataSource = TestDataSource.create();
+    private final DataSource dataSource = TestDataSource.create();
 
-    private DbContext dbContext = new DbContext();
+    private final DbContext dbContext = new DbContext();
     private DbContextConnection connection;
 
     @BeforeEach
@@ -46,15 +45,15 @@ class RecordRepositoryTest {
    @Test
     void save() {
         //Arrange
-        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        RecordEntity record = sampleData.getRandomizedRecordEntity();
+        RecordEntity record = SampleData.getRandomizedRecordEntity();
         record.setServiceId(service.getId());
         //Act
         record.setId(recordRepository.save(record));
         Optional<RecordEntity>retrievedEntity = recordRepository.getLatestRecord(serviceId);
-        record.setCreated_at(retrievedEntity.get().getCreated_at());
+        record.setCreated_at(retrievedEntity.orElseThrow().getCreated_at());
         //Assert
         Assertions.assertThat(retrievedEntity.get()).isEqualTo(record);
      }
@@ -62,15 +61,15 @@ class RecordRepositoryTest {
     @Test
     void getLatestRecord() {
         //Arrange
-        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        RecordEntity record = sampleData.getRandomizedRecordEntity();
+        RecordEntity record = SampleData.getRandomizedRecordEntity();
         record.setServiceId(service.getId());
         record.setId(recordRepository.save(record));
         //Act
         Optional<RecordEntity> retrievedRecord = recordRepository.getLatestRecord(service.getId());
-        record.setCreated_at(retrievedRecord.get().getCreated_at());
+        record.setCreated_at(retrievedRecord.orElseThrow().getCreated_at());
         //Assert
         Assertions.assertThat(retrievedRecord.get()).isEqualTo(record);
 
@@ -88,7 +87,7 @@ class RecordRepositoryTest {
         ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(5);
         record.setCreated_at(fiveDaysBack);
         record.setServiceId(service.getId());
-        record.setId(TestUtil.saveRecordBackInTime(record,dbContext));//Her må testutil.save meto
+        record.setId(TestUtil.saveRecordBackInTime(record,dbContext));
         //Act
         List<RecordEntity> retrievedRecord = recordRepository.getRecordsOlderThan(2);
         record.setCreated_at(retrievedRecord.get(0).getCreated_at());

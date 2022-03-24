@@ -34,7 +34,7 @@ public class TestUtil {
     }
 
 
-    static UUID saveRecordBackInTime(RecordEntity entity, DbContext dbContext) {
+    public static UUID saveRecordBackInTime(RecordEntity entity, DbContext dbContext) {
         DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
         DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
@@ -44,7 +44,6 @@ public class TestUtil {
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
                 .execute();
-
         return result.getId();
     }
 }

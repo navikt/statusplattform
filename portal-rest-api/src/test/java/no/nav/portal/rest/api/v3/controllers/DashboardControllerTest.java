@@ -16,12 +16,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class DashboardControllerTest {
-    private final SampleData sampleData = new SampleData();
     private final DataSource dataSource = TestDataSource.create();
     private final DbContext dbContext = new DbContext();
 
     private DbContextConnection connection;
-
 
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
     private final DashboardController dashboardController = new DashboardController(dbContext);
@@ -41,12 +39,11 @@ class DashboardControllerTest {
     @Test
     void getDashboards() {
         //Arrange
-        List<String> dashboardNames = sampleData.getDashboardNames();
+        List<String> dashboardNames = SampleData.getDashboardNames();
         dashboardNames.forEach(dashboardRepository::save);
         //Act
         List<DashboardNameIdDto> dashboardNameIdDto = dashboardController.getDashboards();
         //Assert
-        List<String> retrievedNames = new ArrayList<>();
         List<String> retrievedNamesFromStream = dashboardNameIdDto.stream()
                 .map(DashboardNameIdDto::getName)
                 .collect(Collectors.toList());
@@ -61,9 +58,9 @@ class DashboardControllerTest {
     /*
     @Test
     void postDashboard() {
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
         List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
 
 
@@ -80,10 +77,10 @@ class DashboardControllerTest {
     @Test
     void deleteDashboard() {
         //Arrange
-        String dashboardname = sampleData.getRandomizedDashboardName();
+        String dashboardname = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardname);
         UUID shouldExist = dashboardRepository.uidFromName(dashboardname);
-        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
         List<UUID> areaIds = areas.stream()
                 .map(areaRepository::save)
                 .collect(Collectors.toList());
@@ -102,9 +99,9 @@ class DashboardControllerTest {
     @Test
     void addAreaToDashboard() {
         //Arrange
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboard_id = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
         List<UUID> areas_ids = new ArrayList<>();
 
 
@@ -142,9 +139,9 @@ class DashboardControllerTest {
     @Test
     void updateNameOfDashboard() {
         //Arrange
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
         /*List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());*/
         List<UUID> areaIds = new ArrayList<>();
         areas.forEach(area ->
@@ -163,16 +160,16 @@ class DashboardControllerTest {
         String retrievedName = aName.getKey().getName();
         //Assert
         Assertions.assertThat(retrievedName).isEqualTo(newName);
-        //Assertions.assertThat(retrievedName).isNotEqualTo(oldName);
+        Assertions.assertThat(retrievedName).isNotEqualTo(oldName);
 
     }
 
     @Test
     void getAreas() {
         //Arrange
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
         /*List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());*/
         List<UUID> areaIds = new ArrayList<>();
         areas.forEach(area -> {area.setId(areaRepository.save(area));

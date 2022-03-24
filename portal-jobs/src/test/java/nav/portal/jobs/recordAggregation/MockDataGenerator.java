@@ -4,6 +4,7 @@ import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 
+import nav.portal.core.repositories.TestUtil;
 import org.fluentjdbc.*;
 
 
@@ -12,21 +13,6 @@ import java.util.*;
 
 
 public class MockDataGenerator {
-
-    static UUID save(RecordEntity entity, DbContext dbContext) {
-        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
-
-        DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
-                .setField("service_id", entity.getServiceId())
-                .setField("created_at", entity.getCreated_at())
-                .setField("status", entity.getStatus())
-                .setField("description", "GENERATED MOCK")
-                .setField("logglink", entity.getLogglink())
-                .setField("response_time", entity.getResponsetime())
-                .execute();
-
-        return result.getId();
-    }
 
 
     public static Map<UUID,Map<Integer,List<RecordEntity>>>  generateRandomStatusesForAllServices(List<ServiceEntity> allServices, int number_of_days, int interval_between_status_update_minutes){
@@ -45,7 +31,7 @@ public class MockDataGenerator {
                 allRecordsForOneService -> allRecordsForOneService.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> MockDataGenerator.save(recordEntity, dbContext)
+                                        recordEntity -> TestUtil.saveRecordBackInTime(recordEntity, dbContext)
                                 )
                 )
         );
@@ -55,7 +41,7 @@ public class MockDataGenerator {
         recordsToInsert.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> MockDataGenerator.save(recordEntity, dbContext)
+                                        recordEntity -> TestUtil.saveRecordBackInTime(recordEntity, dbContext)
                                 )
 
         );

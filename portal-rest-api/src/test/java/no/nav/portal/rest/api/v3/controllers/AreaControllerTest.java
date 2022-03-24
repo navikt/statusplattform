@@ -14,17 +14,11 @@ import org.junit.jupiter.api.Test;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 
-
-
 import javax.sql.DataSource;
 import java.util.*;
-import java.util.stream.Collectors;
-
-
 
 class AreaControllerTest {
 
-    private final SampleData sampleData = new SampleData();
     private final DataSource dataSource = TestDataSource.create();
     private final DbContext dbContext = new DbContext();
 
@@ -33,8 +27,6 @@ class AreaControllerTest {
     private final AreaController areaController = new AreaController(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
-    private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
-
 
     @BeforeEach
     void startConnection() {
@@ -50,11 +42,11 @@ class AreaControllerTest {
     @Test
     void getAllAreas() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
         area.setId(areaId);
 
-        List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
         /*for(ServiceEntity service : services){
             service.setId(serviceRepository.save(service));
             areaRepository.addServiceToArea(areaId, service.getId());
@@ -74,7 +66,7 @@ class AreaControllerTest {
     @Test
     void newArea() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         AreaDto areaDto = EntityDtoMappers.toAreaDtoShallow(area);
         //Act
         UUID areaId = areaController.newArea(areaDto);
@@ -87,7 +79,7 @@ class AreaControllerTest {
     @Test
     void updateArea() {
         //Arrange
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(2);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(2);
         List<AreaDto> areaDtos = EntityDtoMappers.toAreaDtoShallow(areas);
 
         UUID areaId1 = areaRepository.save(areas.get(0));
@@ -107,7 +99,7 @@ class AreaControllerTest {
     void deleteArea() {
         //Arrange
         int NumberOfAreas = 1;
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(NumberOfAreas);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(NumberOfAreas);
         /*for(AreaEntity area :areas){
             area.setId(areaRepository.save(area));
         }*/
@@ -121,7 +113,6 @@ class AreaControllerTest {
 //               .collect(Collectors.toList());
 
         AreaEntity areaToBeDeleted = areas.get(0);
-        AreaDto areaDto = EntityDtoMappers.toAreaDtoShallow(areas.get(0));
         //Act
         List<AreaEntity> retrievedBeforeDelete = areaRepository.retriveAllShallow();
         areaController.deleteArea(areaToBeDeleted.getId());
@@ -138,9 +129,9 @@ class AreaControllerTest {
     @Test
     void getAreas() {
         //Arrange
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = sampleData.getNonEmptyListOfAreaEntity(3);
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
         List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
         List<AreaDto> beforeDto = EntityDtoMappers.toAreaDtoDeep(areaRepository.retrieveAll());
         dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
@@ -156,10 +147,10 @@ class AreaControllerTest {
     @Test
     void addServiceToArea() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
 
-        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
         //Act
@@ -172,10 +163,10 @@ class AreaControllerTest {
     @Test
     void removeServiceFromArea() {
         //Arrange
-        AreaEntity area = sampleData.getRandomizedAreaEntity();
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
 
-        ServiceEntity service = sampleData.getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
         areaController.addServiceToArea(areaId, serviceId);

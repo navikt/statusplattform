@@ -16,15 +16,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+
 import static org.assertj.core.api.Assertions.fail;
 
 class ServiceRepositoryTest {
 
-   private SampleData sampleData = new SampleData();
+   private final DataSource dataSource = TestDataSource.create();
 
-   private DataSource dataSource = TestDataSource.create();
-
-   private DbContext dbContext = new DbContext();
+   private final DbContext dbContext = new DbContext();
    private DbContextConnection connection;
 
    @BeforeEach
@@ -43,13 +42,13 @@ class ServiceRepositoryTest {
    @Test
    void save() {
       //Arrange
-      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service = SampleData.getRandomizedServiceEntity();
       //Act
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
       Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
       //Assert
-      Assertions.assertThat(retrievedService.get()).isEqualTo(service);
+      retrievedService.ifPresent(serviceEntity -> Assertions.assertThat(serviceEntity).isEqualTo(service));
    }
 
    @Test
@@ -59,11 +58,10 @@ class ServiceRepositoryTest {
 
       UUID uuid = serviceRepository.save(services.get(0));
       services.forEach(service -> service.setId(uuid));
-
-      ServiceEntity before = serviceRepository.retrieve(uuid).get();
+      ServiceEntity before = serviceRepository.retrieve(uuid).orElse(null);
       //Act
       serviceRepository.update(services.get(1));
-      ServiceEntity after = serviceRepository.retrieve(uuid).get();
+      ServiceEntity after = serviceRepository.retrieve(uuid).orElse(null);
       //Assert
       Assertions.assertThat(before).isEqualTo(services.get(0));
       Assertions.assertThat(after).isEqualTo(services.get(1));
@@ -72,20 +70,20 @@ class ServiceRepositoryTest {
    @Test
    void retrieve() {
       //Arrange
-      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service = SampleData.getRandomizedServiceEntity();
       //Act
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
       Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(uuid);
       //Assert
-      Assertions.assertThat(retrievedService.get()).isEqualTo(service);
+      retrievedService.ifPresent(serviceEntity -> Assertions.assertThat(serviceEntity).isEqualTo(service));
    }
 
    @Test
    void addDependencyToService() {
       //Arrange
-      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
-      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
+      ServiceEntity service1 = SampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = SampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
       UUID uuid1 = serviceRepository.save(service1);
       UUID uuid2 = serviceRepository.save(service2);
       service1.setId(uuid1);
@@ -101,8 +99,8 @@ class ServiceRepositoryTest {
    @Test
    void removeDependencyFromService() {
       //Arrange
-      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
-      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
+      ServiceEntity service1 = SampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = SampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
       UUID uuid1 = serviceRepository.save(service1);
       UUID uuid2 = serviceRepository.save(service2);
       service1.setId(uuid1);
@@ -122,8 +120,8 @@ class ServiceRepositoryTest {
    @Test
    void removeAllDependenciesFromService() {
       //Arrange
-      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-      ServiceEntity service1 = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
+      ServiceEntity service1 = SampleData.getRandomizedServiceEntityWithNameNotInList(services);
       UUID service1Id = serviceRepository.save(service1);
       service1.setId(service1Id);
 
@@ -149,9 +147,9 @@ class ServiceRepositoryTest {
    @Test
    void isOtherServicesDependentOn() {
       //Arrange
-      ServiceEntity service1 = sampleData.getRandomizedServiceEntity();
-      ServiceEntity service2 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
-      ServiceEntity service3 = sampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1,service2));
+      ServiceEntity service1 = SampleData.getRandomizedServiceEntity();
+      ServiceEntity service2 = SampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
+      ServiceEntity service3 = SampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1,service2));
       UUID uuid1 = serviceRepository.save(service1);
       UUID uuid2 = serviceRepository.save(service2);
       UUID uuid3 = serviceRepository.save(service3);
@@ -170,8 +168,8 @@ class ServiceRepositoryTest {
    @Test
    void retrieveOneWithDependencies() {
       //Arrange
-      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
-      ServiceEntity service1 = sampleData.getRandomizedServiceEntityWithNameNotInList(services);
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
+      ServiceEntity service1 = SampleData.getRandomizedServiceEntityWithNameNotInList(services);
       UUID service1Id = serviceRepository.save(service1);
       service1.setId(service1Id);
 
@@ -193,7 +191,7 @@ class ServiceRepositoryTest {
    @Test
    void retriveAll() {
       //Arrange
-      List<ServiceEntity> services = sampleData.getNonEmptyListOfServiceEntity(3);
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
       /*for(ServiceEntity service : services){
          service.setId(serviceRepository.save(service));
       }*/
@@ -219,7 +217,7 @@ class ServiceRepositoryTest {
 
 
       //Arrange
-      ServiceEntity serviceEntity = sampleData.getRandomizedServiceEntity();
+      ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
       UUID uuidShouldBePresent = serviceRepository.save(serviceEntity);
       //Act
       Optional<ServiceEntity> shouldBePresent = serviceRepository.retrieve(uuidShouldBePresent);
@@ -231,7 +229,7 @@ class ServiceRepositoryTest {
    @Test
    void delete() {
       //Arrange
-      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service = SampleData.getRandomizedServiceEntity();
       UUID uuid = serviceRepository.save(service);
       service.setId(uuid);
       //Act
@@ -247,7 +245,7 @@ class ServiceRepositoryTest {
    @Test
    void save_and_retrieve_service() {
       // Arrange
-      ServiceEntity service = sampleData.getRandomizedServiceEntity();
+      ServiceEntity service = SampleData.getRandomizedServiceEntity();
 
       // Act
       UUID uuid = serviceRepository.save(service);

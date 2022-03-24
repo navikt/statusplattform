@@ -18,12 +18,10 @@ import java.util.stream.Collectors;
 
 class DashboardRepositoryTest {
 
-    private DataSource dataSource = TestDataSource.create();
-    private DbContext dbContext = new DbContext();
+    private final DataSource dataSource = TestDataSource.create();
+    private final DbContext dbContext = new DbContext();
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
-    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
-    private SampleData sampleData = new SampleData();
     private DbContextConnection connection;
 
 
@@ -44,7 +42,7 @@ class DashboardRepositoryTest {
     @Test
     void save() {
         //Arrange
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomizedDashboardName();
         //Act
         UUID uuid = dashboardRepository.save(dashboardName);
         //Assert
@@ -101,7 +99,7 @@ class DashboardRepositoryTest {
     @Test
     void getAllDashboardUUIDsAndNames() {
         //Arrange
-        List<String> dashboardNames = sampleData.getDashboardNames();
+        List<String> dashboardNames = SampleData.getDashboardNames();
         dashboardNames.forEach(dashboardRepository::save);
 
         //Act
@@ -116,8 +114,7 @@ class DashboardRepositoryTest {
                      retrievedDashboard));
         */
         // Under skrevet med vanlig for loop
-        for(int i = 0; i < retrievedDashboards.size(); i++){
-            DashboardEntity dashboardEntity = retrievedDashboards.get(i);
+        for (DashboardEntity dashboardEntity : retrievedDashboards) {
             String dashboardName = dashboardNames.stream().filter(name -> dashboardEntity.getName().equals(name)).findFirst().orElseThrow();
             comparisons.put(dashboardName, dashboardEntity);
         }
@@ -133,7 +130,7 @@ class DashboardRepositoryTest {
     @Test
     void uidFromName(){
     //Arrange
-    String name = sampleData.getRandomizedDashboardName();
+    String name = SampleData.getRandomizedDashboardName();
     dashboardRepository.save(name);
     //Act
     UUID uuid = dashboardRepository.uidFromName(name);
@@ -169,8 +166,7 @@ class DashboardRepositoryTest {
     void retrieveOneFromName() {
         //TODO denne
         //Arrange -
-        String dashboardname = sampleData.getRandomizedDashboardName();
-        UUID uuid = dashboardRepository.save(dashboardname);
+        String dashboardname = SampleData.getRandomizedDashboardName();
         //Act
         Map.Entry<DashboardEntity, List<AreaWithServices>>aName = dashboardRepository.retrieveOneFromName(dashboardname);
         //Assert
@@ -181,9 +177,9 @@ class DashboardRepositoryTest {
     @Test
     void retrieveAll() {
         //Arrange
-        String dashboardName = sampleData.getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboard_id = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
         List<UUID> areas_ids =  areas.stream()
                 .map(areaRepository::save)
                 .collect(Collectors.toList());
@@ -194,7 +190,7 @@ class DashboardRepositoryTest {
         Map.Entry<DashboardEntity, List<AreaWithServices>> dashboardWithAreas = retrievedAll.entrySet()
                 .stream()
                 .findFirst()
-                .get();
+                .orElseThrow();
 
         //Assert
         //Sjekker at id på dashboard er riktig
@@ -227,10 +223,10 @@ class DashboardRepositoryTest {
     void deleteAreasFromDashboard() {
 
         //Arrange
-        String dashboardname = sampleData.getRandomizedDashboardName();
+        String dashboardname = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardname);
 
-        List<AreaEntity> areas = sampleData.getRandomLengthListOfAreaEntity();
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
 
         List<UUID> areaIds = new ArrayList<>();
         areas.forEach(area -> {area.setId(areaRepository.save(area));
@@ -249,7 +245,7 @@ class DashboardRepositoryTest {
     @Test
     void deleteDashboard() {
         //Arrange
-        String dashboardname = sampleData.getRandomizedDashboardName();
+        String dashboardname = SampleData.getRandomizedDashboardName();
         UUID uuid = dashboardRepository.save(dashboardname);
         //Act
         UUID shouldExist = dashboardRepository.uidFromName(dashboardname);

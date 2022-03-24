@@ -21,10 +21,9 @@ class RecordCompressorTest {
     private final DbContext dbContext = new DbContext();
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private final  RecordCompressor recordCompressor = new RecordCompressor(dbContext);
+    private final RecordRepository recordRepository = new RecordRepository(dbContext);
 
     private DbContextConnection connection;
-
-
 
     @BeforeEach
     void startConnection() {
@@ -40,27 +39,41 @@ class RecordCompressorTest {
 
     @Test
     void basic_SetUpTest_forAll() {
+        //ARRRANGE
         List<ServiceEntity> myServices = SampleData.getNonEmptyListOfServiceEntity(10);
         myServices.forEach(s -> s.setId(serviceRepository.save(s)));
         int numberOfDays = 10;
         int minutesBetweenStatusUpdates = 100;
-        //Under får vi generert satuser for alle tjenester hvert 100ede minutt 10 dager tilbake i tid:
+        //Under får vi generert statuser for alle tjenester hvert 100ede minutt 10 dager tilbake i tid:
         Map<UUID,Map<Integer,List<RecordEntity>>> resultForALl =
                 MockDataGenerator.generateRandomStatusesForAllServices(myServices,numberOfDays,minutesBetweenStatusUpdates);
 
         //Vi bruker egen save metode i mockdatagenerater som setter created at explisit.
         //Dersom vi hadde brukt repository her ville alle statuser kommet inn med created_at nå.
         MockDataGenerator.saveRecordsToTableForAllServices(resultForALl,dbContext);
+        //TODO METODEN UNDER FEILER AV UKJENT ÅRSAK,
+
+        //TODO det er denne vi skal teste.
+
+
+
+
+        //ACT
         recordCompressor.run();
+
+
+        //ASSERT
+
 
     }
     @Test
     void test_one_service(){
-        List<ServiceEntity> myServices = SampleData.getNonEmptyListOfServiceEntity(10);
-        myServices.forEach(s -> s.setId(serviceRepository.save(s)));
-        ServiceEntity myService = myServices.get(0);
+        //ARRANGE
+        ServiceEntity myService = SampleData.getRandomizedServiceEntity();
+        myService.setId(serviceRepository.save(myService));
+
         int numberOfDays = 10;
-        int minutesBetweenStatusUpdates = 100;
+        int minutesBetweenStatusUpdates = 60;
         //Under får vi generert satuser for en tjenester hvert 100ede minutt 10 dager tilbake i tid:
         Map<Integer,List<RecordEntity>> resultForOne =
                 MockDataGenerator.generateRandomStatusesForOneServiceXNumberOfDaysBackInTime(myService, numberOfDays, minutesBetweenStatusUpdates);
@@ -68,6 +81,14 @@ class RecordCompressorTest {
         //Vi bruker egen save metode i mockdatagenerater som setter created at explisit.
         //Dersom vi hadde brukt repository her ville alle statuser kommet inn med created_at nå.
         MockDataGenerator.saveRecordsToTableForOneService(resultForOne,dbContext);
+
+        //ACT
+        recordRepository.getLatestRecord(myService.getId());
+        recordCompressor.run();
+
+
+        //ASSERT
+
 
     }
 }
