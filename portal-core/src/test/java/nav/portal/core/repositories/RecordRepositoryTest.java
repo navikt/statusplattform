@@ -72,7 +72,6 @@ class RecordRepositoryTest {
         record.setCreated_at(retrievedRecord.orElseThrow().getCreated_at());
         //Assert
         Assertions.assertThat(retrievedRecord.get()).isEqualTo(record);
-
     }
 
 
@@ -92,7 +91,11 @@ class RecordRepositoryTest {
         List<RecordEntity> retrievedRecord = recordRepository.getRecordsOlderThan(2);
         record.setCreated_at(retrievedRecord.get(0).getCreated_at());
         //Assert
-
+        List<RecordEntity> allRetrievedRecord = recordRepository.getRecordsOlderThan(5);
+        Assertions.assertThat(allRetrievedRecord).containsAll(retrievedRecord);
+        Assertions.assertThat(retrievedRecord.get(0).getCreated_at()).isEqualTo(record.getCreated_at());
+        Assertions.assertThat(retrievedRecord.get(0).getServiceId()).isEqualTo(service.getId());
+        Assertions.assertThat(retrievedRecord.get(0).getId()).isEqualTo(record.getId());
     }
 
 }
