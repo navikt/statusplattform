@@ -1107,6 +1107,8 @@ components:
           $ref: '#/components/schemas/Status'
         description:
           type: string
+        log-link:
+          type: string
     Maintenance:
       title: Maintenance
       type: object
@@ -1159,7 +1161,25 @@ components:
         - internal_header
         - only_show_for_internal
     ServiceHistory:
-      title: ServiceHistory
+          title: ServiceHistory
+          type: object
+          properties:
+            history:
+              type: array
+              items:
+                $ref: '#/components/schemas/ServiceHistoryMonthEntry'
+    ServiceHistoryMonthEntry:
+          title: ServiceHistoryMonthEntry
+          type: object
+          properties:
+            month:
+              type: string
+            entries:
+              type: array
+              items:
+                $ref: '#/components/schemas/ServiceHistoryDayEntry'
+    ServiceHistoryDayEntry:
+      title: ServiceHistoryDayEntry
       type: object
       properties:
         serviceId:
