@@ -138,7 +138,7 @@ public class ServiceRepositoryHelper {
     public OPSmessageDto addOPSmessega(OPSmessageDto opsMessageDto) {
         return opsMessageDto;
     }
-
+/*TODO fiks her CHRISTIAN!!!
     public List<ServiceHistoryDto> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceID) {
         return serviceRepository.getServiceHistoryForNumberOfDays(number_of_days, serviceID)
                 .stream().map(this::toServiceHistoryDto)
@@ -152,7 +152,7 @@ public class ServiceRepositoryHelper {
         dto.setStatus(getAggregationStatus(aggregation));
         return dto;
     }
-
+*/
     static StatusDto getAggregationStatus(DailyStatusAggregationForServiceEntity aggregation){
         return aggregation.getNumber_of_status_down()>0 ? StatusDto.DOWN:
                 (aggregation.getNumber_of_status_issue()>0 ? StatusDto.ISSUE : StatusDto.OK);

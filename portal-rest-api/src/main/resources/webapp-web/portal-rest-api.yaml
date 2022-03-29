@@ -1107,7 +1107,7 @@ components:
           $ref: '#/components/schemas/Status'
         description:
           type: string
-        log-link:
+        logLink:
           type: string
     Maintenance:
       title: Maintenance

@@ -3,9 +3,11 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
+import nav.portal.jobs.recordAggregation.RecordCompressor;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;
 
+import no.portal.web.generated.api.ServiceHistoryDto;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,7 @@ class ServiceControllerTest {
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private final RecordRepository recordRepository = new RecordRepository(dbContext);
+    private final RecordCompressor recordCompressor = new RecordCompressor(dbContext);
 
     @BeforeEach
     void startConnection() {
@@ -198,4 +202,21 @@ class ServiceControllerTest {
 
     }
 
+    @Test
+    void getServiceHistoryThreeMonthsBack() {
+        //Arrange
+        List<ServiceEntity> serviceEntities = SampleData.getNonEmptyListOfServiceEntity(1);
+        serviceEntities.forEach(s -> s.setId(serviceRepository.save(s)));
+        int numberOfDays = 2;
+        int minBetweenUpdtades = 60;
+        UUID serviceID = serviceEntities.get(0).getId();
+        Map<UUID,Map<Integer,List<RecordEntity>>> generatedData = MockDataGenerator.generateRandomStatusesForAllServices(serviceEntities,numberOfDays,minBetweenUpdtades);
+        MockDataGenerator.saveRecordsToTableForAllServices(generatedData, dbContext);
+        recordCompressor.run();
+        //Act
+        ServiceHistoryDto result = serviceController.getServiceHistoryThreeMonthsBack(serviceID);
+        //Assert
+        Assertions.assertThat(result.getHistory().get(0).getMonth())
+                .isEqualTo(LocalDate.now().getMonth().toString());
+    }
 }

@@ -49,11 +49,13 @@ public class ServiceController {
     public ServiceDto getService(@PathParam("Service_id") UUID service_id) {
         return serviceRepositoryHelper.retrieveOneService(service_id);
     }
+
     @GET("/Service/HistoryAggregated/:Service_id")
     @JsonBody
-    public  List<ServiceHistoryDto> getServiceHistory(@PathParam("Service_id") UUID service_id) {
+    public  ServiceHistoryDto getServiceHistoryThreeMonthsBack(@PathParam("Service_id") UUID service_id) {
+
         int NUMBER_OF_DAYS = 90;
-        return serviceRepositoryHelper.getServiceHistoryForNumberOfDays(NUMBER_OF_DAYS, service_id);
+        return new ServiceHistoryDto();
     }
 
     @POST("/Service")
