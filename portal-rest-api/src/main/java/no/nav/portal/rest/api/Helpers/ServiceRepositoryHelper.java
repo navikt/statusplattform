@@ -9,6 +9,7 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -138,21 +139,48 @@ public class ServiceRepositoryHelper {
     public OPSmessageDto addOPSmessega(OPSmessageDto opsMessageDto) {
         return opsMessageDto;
     }
-/*TODO fiks her CHRISTIAN!!!
-    public List<ServiceHistoryDto> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceID) {
-        return serviceRepository.getServiceHistoryForNumberOfDays(number_of_days, serviceID)
-                .stream().map(this::toServiceHistoryDto)
-                .collect(Collectors.toList());
+
+
+
+    public ServiceHistoryDto getServiceHistoryForNumberOfMonths(int number_of_months, UUID serviceID) {
+        return mapToHistoryDto(recordRepository.getServiceHistoryForNumberOfMonths(number_of_months, serviceID));
     }
 
-    private ServiceHistoryDto toServiceHistoryDto(DailyStatusAggregationForServiceEntity aggregation) {
-        ServiceHistoryDto dto =  new ServiceHistoryDto()
-                .serviceId(aggregation.getService_id());
-        dto.setDate(aggregation.getAggregation_date());
-        dto.setStatus(getAggregationStatus(aggregation));
+    private ServiceHistoryDto mapToHistoryDto(List<DailyStatusAggregationForServiceEntity> aggregationList) {
+
+        ServiceHistoryDto dto = new ServiceHistoryDto();
+        Arrays.stream(Month.values()).sorted().forEach(month ->
+                {
+                    List<DailyStatusAggregationForServiceEntity> entriesForTheMonth = aggregationList.stream().filter(listElement ->
+                            listElement.getAggregation_date().getMonth().equals(month))
+                            .collect(Collectors.toList());
+
+                    dto.addHistoryItem(mapToHistoryMonthDto(entriesForTheMonth,month));
+                }
+        );
+
         return dto;
     }
-*/
+
+
+    static ServiceHistoryMonthEntryDto mapToHistoryMonthDto(List<DailyStatusAggregationForServiceEntity> listOfDailyStatusOneServiceOneMonth,Month month) {
+        ServiceHistoryMonthEntryDto result = new ServiceHistoryMonthEntryDto();
+        result.setMonth(month.name());
+        result.setEntries(listOfDailyStatusOneServiceOneMonth.stream()
+                .map(ServiceRepositoryHelper::mapToHistoryDayDto)
+                .collect(Collectors.toList()));
+        return result;
+    }
+
+    static ServiceHistoryDayEntryDto mapToHistoryDayDto(DailyStatusAggregationForServiceEntity entity){
+        ServiceHistoryDayEntryDto result = new ServiceHistoryDayEntryDto();
+        result.serviceId(entity.getService_id());
+        result.setStatus(getAggregationStatus(entity));
+        result.setDate(entity.getAggregation_date());
+        return result;
+    }
+
+
     static StatusDto getAggregationStatus(DailyStatusAggregationForServiceEntity aggregation){
         return aggregation.getNumber_of_status_down()>0 ? StatusDto.DOWN:
                 (aggregation.getNumber_of_status_issue()>0 ? StatusDto.ISSUE : StatusDto.OK);
