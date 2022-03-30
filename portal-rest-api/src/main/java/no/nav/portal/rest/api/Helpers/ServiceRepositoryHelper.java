@@ -147,7 +147,6 @@ public class ServiceRepositoryHelper {
     }
 
     private ServiceHistoryDto mapToHistoryDto(List<DailyStatusAggregationForServiceEntity> aggregationList) {
-
         ServiceHistoryDto dto = new ServiceHistoryDto();
         Arrays.stream(Month.values()).sorted().forEach(month ->
                 {
@@ -158,7 +157,6 @@ public class ServiceRepositoryHelper {
                     dto.addHistoryItem(mapToHistoryMonthDto(entriesForTheMonth,month));
                 }
         );
-
         return dto;
     }
 

@@ -42,6 +42,12 @@ public class RecordRepository {
                 .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
     }
 
+    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfMonths(int number_of_months, UUID serviceId) {
+        return aggregatedStatusTable.where("service_id", serviceId)
+                .whereExpression("aggregation_date >= ?", ZonedDateTime.now().minusMonths(number_of_months))
+                .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
+    }
+
 
 
     public UUID saveAggregatedRecords(DailyStatusAggregationForServiceEntity entity) {
