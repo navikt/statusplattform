@@ -4,6 +4,7 @@ import nav.portal.core.entities.*;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -168,5 +169,14 @@ public class SampleData {
                .setServiceId(serviceEntity.getId())
                .setStatus(getRandomServiceStatus())
                .setResponsetime(getRandomResponseTime());
+    }
+
+    public static DailyStatusAggregationForServiceEntity getRandomizedDailyStatusAggregationForService(ServiceEntity serviceEntity){
+        return new DailyStatusAggregationForServiceEntity()
+                .setService_id(serviceEntity.getId())
+                .setNumber_of_status_down(new Random().nextInt(3))
+                .setNumber_of_status_issue(new Random().nextInt(2))
+                .setNumber_of_status_ok(new Random().nextInt(100))
+                .setAggregation_date(LocalDate.now());
     }
 }

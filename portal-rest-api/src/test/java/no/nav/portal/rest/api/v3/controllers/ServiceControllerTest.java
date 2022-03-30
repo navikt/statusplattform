@@ -3,6 +3,7 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
+import nav.portal.core.util.MockDataGenerator;
 import nav.portal.jobs.recordAggregation.RecordCompressor;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.ServiceDto;

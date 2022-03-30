@@ -1,5 +1,6 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -143,6 +145,7 @@ class ServiceRepositoryTest {
       Assertions.assertThat(before.getValue()).containsAll(services);
       Assertions.assertThat(after.getValue()).isEmpty();
    }
+
 
    @Test
    void isOtherServicesDependentOn() {

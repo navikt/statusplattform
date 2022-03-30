@@ -36,6 +36,14 @@ public class RecordRepository {
         return result.getId();
     }
 
+    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceId) {
+        return aggregatedStatusTable.where("service_id", serviceId)
+                .whereExpression("aggregation_date >= ?", ZonedDateTime.now().minusDays(number_of_days))
+                .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
+    }
+
+
+
     public UUID saveAggregatedRecords(DailyStatusAggregationForServiceEntity entity) {
         DatabaseSaveResult<UUID> result = aggregatedStatusTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getService_id())

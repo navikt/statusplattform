@@ -1,6 +1,7 @@
 package nav.portal.core.repositories;
 
 
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.entities.RecordEntity;
 import org.fluentjdbc.DbContext;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -72,6 +74,27 @@ class RecordRepositoryTest {
         record.setCreated_at(retrievedRecord.orElseThrow().getCreated_at());
         //Assert
         Assertions.assertThat(retrievedRecord.get()).isEqualTo(record);
+    }
+
+
+    @Test
+    void getServiceHistoryForNumberOfDays() {
+        //Arrange
+        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
+        serviceEntity.setId(serviceRepository.save(serviceEntity));
+        DailyStatusAggregationForServiceEntity aggregation = SampleData.getRandomizedDailyStatusAggregationForService(serviceEntity);
+        aggregation.setAggregation_date(LocalDate.now().minusDays(5));
+
+        recordRepository.saveAggregatedRecords(aggregation);
+
+        UUID serviceID = serviceEntity.getId();
+        //Act
+        List<DailyStatusAggregationForServiceEntity> shouldBeEmpty = recordRepository.getServiceHistoryForNumberOfDays(4,serviceID);
+        List<DailyStatusAggregationForServiceEntity> shouldContainOne = recordRepository.getServiceHistoryForNumberOfDays(10,serviceID);
+
+
+        //Assert
+
     }
 
 

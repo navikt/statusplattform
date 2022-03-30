@@ -4,6 +4,7 @@ package nav.portal.jobs.recordAggregation;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
+import nav.portal.core.util.MockDataGenerator;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
