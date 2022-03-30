@@ -1,10 +1,9 @@
-package nav.portal.jobs.recordAggregation;
+package nav.portal.core.util;
 
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 
-import nav.portal.core.repositories.TestUtil;
 import org.fluentjdbc.*;
 
 
@@ -26,22 +25,22 @@ public class MockDataGenerator {
 
      }
 
-    static void saveRecordsToTableForAllServices(Map<UUID, Map<Integer, List<RecordEntity>>> recordsToInsert, DbContext dbContext) {
+    public static void saveRecordsToTableForAllServices(Map<UUID, Map<Integer, List<RecordEntity>>> recordsToInsert, DbContext dbContext) {
         recordsToInsert.values().forEach(
                 allRecordsForOneService -> allRecordsForOneService.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> TestUtil.saveRecordBackInTime(recordEntity, dbContext)
+                                        recordEntity -> MockDataGenerator.saveRecordBackInTime(recordEntity, dbContext)
                                 )
                 )
         );
     }
 
-    static void saveRecordsToTableForOneService(Map<Integer, List<RecordEntity>> recordsToInsert, DbContext dbContext) {
+    public static void saveRecordsToTableForOneService(Map<Integer, List<RecordEntity>> recordsToInsert, DbContext dbContext) {
         recordsToInsert.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> TestUtil.saveRecordBackInTime(recordEntity, dbContext)
+                                        recordEntity -> MockDataGenerator.saveRecordBackInTime(recordEntity, dbContext)
                                 )
 
         );
@@ -82,16 +81,31 @@ public class MockDataGenerator {
     }
 
     private static ServiceStatus getRandomServiceStatus() {
-        int random = (new Random()).nextInt(100);
-        if(random> 98){
-            return ServiceStatus.DOWN;
-        }
-        if(random> 96){
-            return ServiceStatus.ISSUE;
+        int random1 = (new Random()).nextInt(100);
+        int random2 = (new Random()).nextInt(100);
+        if(random1> 96){
+            if(random2>80){
+                return ServiceStatus.DOWN;
+            }
+            else return ServiceStatus.ISSUE;
         }
         return ServiceStatus.OK;
     }
 
 
+
+
+    public static UUID saveRecordBackInTime(RecordEntity entity, DbContext dbContext) {
+        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
+        DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("service_id", entity.getServiceId())
+                .setField("created_at", entity.getCreated_at())
+                .setField("status", entity.getStatus())
+                .setField("description", "GENERATED MOCK")
+                .setField("logglink", entity.getLogglink())
+                .setField("response_time", entity.getResponsetime())
+                .execute();
+        return result.getId();
+    }
 
 }
