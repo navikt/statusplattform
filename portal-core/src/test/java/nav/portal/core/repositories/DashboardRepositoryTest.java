@@ -167,10 +167,12 @@ class DashboardRepositoryTest {
         //TODO denne
         //Arrange -
         String dashboardname = SampleData.getRandomizedDashboardName();
+        UUID uuid = dashboardRepository.save(dashboardname);
         //Act
-        Map.Entry<DashboardEntity, List<AreaWithServices>>aName = dashboardRepository.retrieveOneFromName(dashboardname);
+        Map.Entry<DashboardEntity, List<AreaWithServices>> retrievedDashboard = dashboardRepository.retrieveOneFromName(dashboardname);
         //Assert
-        Assertions.assertThat(aName.getKey().getName()).isEqualTo(dashboardname);
+        Assertions.assertThat(retrievedDashboard.getKey().getName()).isEqualTo(dashboardname);
+        Assertions.assertThat(uuid).isEqualTo(retrievedDashboard.getKey().getId());
 
     }
 
