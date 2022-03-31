@@ -1161,23 +1161,23 @@ components:
         - internal_header
         - only_show_for_internal
     ServiceHistory:
-          title: ServiceHistory
-          type: object
-          properties:
-            history:
-              type: array
-              items:
-                $ref: '#/components/schemas/ServiceHistoryMonthEntry'
+      title: ServiceHistory
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceHistoryMonthEntry'
     ServiceHistoryMonthEntry:
-          title: ServiceHistoryMonthEntry
-          type: object
-          properties:
-            month:
-              type: string
-            entries:
-              type: array
-              items:
-                $ref: '#/components/schemas/ServiceHistoryDayEntry'
+      title: ServiceHistoryMonthEntry
+      type: object
+      properties:
+        month:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceHistoryDayEntry'
     ServiceHistoryDayEntry:
       title: ServiceHistoryDayEntry
       type: object
@@ -1253,4 +1253,34 @@ components:
       enum:
         - KOMPONENT
         - TJENESTE
+    ServiceOpeningHours:
+      properties:
+        dailyOpeningHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceOpeningHoursDayEntry'
+    Time:
+      properties:
+        hour:
+          type: integer
+          minimum: 0
+          maximum: 23
+        minutes:
+          type: integer
+          minimum: 0
+          maximum: 59
+    ServiceOpeningHoursDayEntry:
+      properties:
+        serviceId:
+          type: string
+          format: uuid
+        dayOfWeek:
+          type: integer
+          minimum: 0
+          maximum: 6
+        openingTime:
+          $ref: '#/components/schemas/Time'
+        closingTime:
+          $ref: '#/components/schemas/Time'
+
 
