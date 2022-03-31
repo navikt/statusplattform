@@ -52,10 +52,8 @@ public class ServiceController {
 
     @GET("/Service/HistoryAggregated/:Service_id")
     @JsonBody
-    public  ServiceHistoryDto getServiceHistoryThreeMonthsBack(@PathParam("Service_id") UUID service_id) {
-
-        int NUMBER_OF_DAYS = 90;
-        return new ServiceHistoryDto();
+    public ServiceHistoryDto getServiceHistoryThreeMonthsBack(@PathParam("Service_id") UUID service_id) {
+        return serviceRepositoryHelper.getServiceHistoryForNumberOfMonths(service_id, 3);
     }
 
     @POST("/Service")

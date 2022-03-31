@@ -142,8 +142,8 @@ public class ServiceRepositoryHelper {
 
 
 
-    public ServiceHistoryDto getServiceHistoryForNumberOfMonths(int number_of_months, UUID serviceID) {
-        return mapToHistoryDto(recordRepository.getServiceHistoryForNumberOfMonths(number_of_months, serviceID));
+    public ServiceHistoryDto getServiceHistoryForNumberOfMonths(UUID serviceID, int number_of_months) {
+        return mapToHistoryDto(recordRepository.getServiceHistoryForNumberOfMonths(serviceID, number_of_months));
     }
 
     private ServiceHistoryDto mapToHistoryDto(List<DailyStatusAggregationForServiceEntity> aggregationList) {
