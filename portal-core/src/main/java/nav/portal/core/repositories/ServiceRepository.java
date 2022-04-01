@@ -17,6 +17,7 @@ public class ServiceRepository {
     private final DbContextTable service_serviceTable;
     private final DbContextTable service_maintenanceTable;
     private final DbContextTable serviceHistoryTable;
+    private final DbContextTable service_openingHoursTable;
 
 
     public ServiceRepository(DbContext dbContext) {
@@ -24,23 +25,23 @@ public class ServiceRepository {
         serviceTable = dbContext.table("service");
         service_serviceTable = dbContext.table("service_service");
         service_maintenanceTable = dbContext.table("service_maintenance");
+        service_openingHoursTable = dbContext.table("service_opening_hours");
     }
 
 
+    public void saveOpeningHours(List<OpeningHoursEntity> openingHoursEntities){
+            openingHoursEntities.forEach(this::saveOpeningHours);
+    }
 
-    public UUID saveMaintenance(MaintenanceEntity maintenanceEntity) {
-        return service_maintenanceTable.newSaveBuilderWithUUID("id", maintenanceEntity.getId())
-                .setField("service_id", maintenanceEntity.getServiceId())
-                .setField("description", maintenanceEntity.getDescription())
-                .setField("start_time", maintenanceEntity.getStart_time())
-                .setField("end_time", maintenanceEntity.getEnd_time())
+    public void saveOpeningHours(OpeningHoursEntity openingHoursEntity){
+        service_openingHoursTable.newSaveBuilderWithUUID("id", openingHoursEntity.getId())
+                .setField("service_id", openingHoursEntity.getService_id())
+                .setField("day_of_the_week", openingHoursEntity.getDay_of_the_week())
+                .setField("opening_time", openingHoursEntity.getOpening_time())
+                .setField("closing_time", openingHoursEntity.getClosing_time())
                 .execute()
                 .getId();
-    }
 
-    public List<MaintenanceEntity> getMaintenanceForService(UUID serviceId){
-        return service_maintenanceTable.where("service_id", serviceId)
-                .list(ServiceRepository::toMaintenanceEntity);
     }
 
 
@@ -60,6 +61,22 @@ public class ServiceRepository {
                 .execute()
                 .getId();
     }
+    public UUID saveMaintenance(MaintenanceEntity maintenanceEntity) {
+        return service_maintenanceTable.newSaveBuilderWithUUID("id", maintenanceEntity.getId())
+                .setField("service_id", maintenanceEntity.getServiceId())
+                .setField("description", maintenanceEntity.getDescription())
+                .setField("start_time", maintenanceEntity.getStart_time())
+                .setField("end_time", maintenanceEntity.getEnd_time())
+                .execute()
+                .getId();
+    }
+
+    public List<MaintenanceEntity> getMaintenanceForService(UUID serviceId){
+        return service_maintenanceTable.where("service_id", serviceId)
+                .list(ServiceRepository::toMaintenanceEntity);
+    }
+
+
 
     public void update(ServiceEntity service){
         serviceTable.where("id",service.getId())
