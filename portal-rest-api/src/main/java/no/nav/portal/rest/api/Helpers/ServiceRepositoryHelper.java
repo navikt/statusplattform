@@ -1,6 +1,7 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
+import nav.portal.core.entities.OpeningHoursEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.RecordRepository;
@@ -76,6 +77,8 @@ public class ServiceRepositoryHelper {
         dependencies.addAll(componentDependencies);
         serviceRepository.addDependencyToService(service, dependencies);
 
+        serviceRepository.saveOpeningHours(mapToOpeningHoursEntity(serviceDto.getServiceOpeningHours()));
+
         //Adding service to areas:
         List<UUID> areasCointainingService = serviceDto.getAreasContainingThisService().stream().map(AreaDto::getId).collect(Collectors.toList());
         areaRepository.addServiceToAreas(areasCointainingService,service.getId());
@@ -84,6 +87,16 @@ public class ServiceRepositoryHelper {
     }
 
 
+    private static List<OpeningHoursEntity> mapToOpeningHoursEntity(ServiceOpeningHoursDto serviceOpeningHoursDto){
+        return serviceOpeningHoursDto.getDailyOpeningHours()
+                .stream()
+                .map(ServiceRepositoryHelper::mapOneDayToOpeningHoursEntity)
+                .collect(Collectors.toList());
+    }
+
+    private static OpeningHoursEntity mapOneDayToOpeningHoursEntity(ServiceOpeningHoursDayEntryDto serviceOpeningHoursDayEntryDto){
+        return new OpeningHoursEntity();
+    }
 
     public void deleteService(UUID service_id){
         areaRepository.removeServiceFromAllAreas(service_id);
