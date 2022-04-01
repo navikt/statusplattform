@@ -1088,9 +1088,8 @@ components:
           example: "[Liste av servicer som er avhengig av denne komponenten]"
           items:
             $ref: '#/components/schemas/Service'
-        ServiceOpeningHoursDayEntry:
-          type:
-            $ref: '#/components/schemas/ServiceOpeningHoursDayEntry'
+        ServiceOpeningHours:
+          $ref: '#/components/schemas/ServiceOpeningHours'
         monitorlink:
           type: string
         pollingUrl:
