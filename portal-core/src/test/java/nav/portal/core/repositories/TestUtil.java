@@ -15,6 +15,9 @@ public class TestUtil {
        // serviceServiceTable.unordered().executeDelete();
         serviceServiceTable.whereExpression("service1_id is NOT null").executeDelete();
 
+        DbContextTable daily_status_aggregation_service = dbContext.table("daily_status_aggregation_service");
+        daily_status_aggregation_service.whereExpression("id is NOT null").executeDelete();
+
         DbContextTable serviceStatusTable = dbContext.table("service_status");
         serviceStatusTable.whereExpression("id is NOT null").executeDelete();
 
@@ -23,10 +26,6 @@ public class TestUtil {
 
         DbContextTable dashboardAreaTable = dbContext.table("dashboard_area");
         dashboardAreaTable.whereExpression("dashboard_id is NOT null").executeDelete();
-
-        DbContextTable daily_status_aggregation_service = dbContext.table("daily_status_aggregation_service");
-        daily_status_aggregation_service.whereExpression("id is NOT null").executeDelete();
-
 
         DbContextTable serviceTable = dbContext.table("service");
         serviceTable.whereExpression("id is NOT null").executeDelete();

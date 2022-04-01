@@ -98,8 +98,6 @@ public class RecordCompressor extends Thread{
         }
 
         serviceUUIDRecordsMap.entrySet().forEach(this::compressAndSave);
-
-
     }
 
 

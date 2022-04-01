@@ -1,6 +1,8 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
+import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.*;
 
 
 import static org.assertj.core.api.Assertions.fail;
@@ -52,6 +55,7 @@ class ServiceRepositoryTest {
       //Assert
       retrievedService.ifPresent(serviceEntity -> Assertions.assertThat(serviceEntity).isEqualTo(service));
    }
+
 
    @Test
    void update() {

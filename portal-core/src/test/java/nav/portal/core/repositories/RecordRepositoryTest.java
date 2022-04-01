@@ -40,10 +40,6 @@ class RecordRepositoryTest {
     private final RecordRepository recordRepository = new RecordRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
-    @Test
-    void name() {
-    }
-
    @Test
     void save() {
         //Arrange
@@ -92,8 +88,9 @@ class RecordRepositoryTest {
         List<DailyStatusAggregationForServiceEntity> shouldBeEmpty = recordRepository.getServiceHistoryForNumberOfDays(4,serviceID);
         List<DailyStatusAggregationForServiceEntity> shouldContainOne = recordRepository.getServiceHistoryForNumberOfDays(10,serviceID);
 
-
         //Assert
+        Assertions.assertThat(shouldBeEmpty).isEmpty();
+        Assertions.assertThat(shouldContainOne.size()).isEqualTo(1);
 
     }
 
@@ -120,5 +117,27 @@ class RecordRepositoryTest {
         Assertions.assertThat(retrievedRecord.get(0).getServiceId()).isEqualTo(service.getId());
         Assertions.assertThat(retrievedRecord.get(0).getId()).isEqualTo(record.getId());
     }
+
+    @Test
+    void deleteRecordsOlderThen() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity record = SampleData.getRandomizedRecordEntity();
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(5);
+        record.setCreated_at(fiveDaysBack);
+        record.setServiceId(service.getId());
+        record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        //Act
+        List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(5);
+        recordRepository.deleteRecordsOlderThen(5);
+        //Assert
+        List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(5);
+        Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
+        Assertions.assertThat(retrievedRecordsAfter).isEmpty();
+    }
+
 
 }

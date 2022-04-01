@@ -1,10 +1,12 @@
 package nav.portal.jobs.recordAggregation;
 
 
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import nav.portal.core.util.MockDataGenerator;
+import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -12,9 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 class RecordCompressorTest {
 
@@ -40,7 +40,7 @@ class RecordCompressorTest {
 
     @Test
     void basic_SetUpTest_forAll() {
-        //ARRRANGE
+        //ARRANGE
         List<ServiceEntity> myServices = SampleData.getNonEmptyListOfServiceEntity(10);
         myServices.forEach(s -> s.setId(serviceRepository.save(s)));
         int numberOfDays = 10;
@@ -52,18 +52,26 @@ class RecordCompressorTest {
         //Vi bruker egen save metode i mockdatagenerater som setter created at explisit.
         //Dersom vi hadde brukt repository her ville alle statuser kommet inn med created_at nå.
         MockDataGenerator.saveRecordsToTableForAllServices(resultForALl,dbContext);
-        //TODO METODEN UNDER FEILER AV UKJENT ÅRSAK,
-
-        //TODO det er denne vi skal teste.
-
-
-
-
         //ACT
         recordCompressor.run();
-
-
         //ASSERT
+        Map<UUID,List<DailyStatusAggregationForServiceEntity>> compressedRecordsMap = new HashMap<>();
+        myServices
+                .forEach(s ->
+                        compressedRecordsMap
+                                //NB! dag 1 rekorder ikke er en del av kompression
+                                .put(s.getId(), recordRepository.getServiceHistoryForNumberOfDays(5,s.getId())));
+
+
+        List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(7);
+
+        compressedRecordsMap.values().forEach(historyEntry -> {
+                    Assertions.assertThat(historyEntry).isNotEmpty();
+
+                    Assertions.assertThat(historyEntry.size()).isEqualTo(4); //NB! dag 1 er eskludert fra kompression
+                }
+        );
+        Assertions.assertThat(outdatedRecords).isEmpty();
 
 
     }
@@ -87,9 +95,12 @@ class RecordCompressorTest {
         recordRepository.getLatestRecord(myService.getId());
         recordCompressor.run();
 
-
         //ASSERT
-
-
+        List<DailyStatusAggregationForServiceEntity>compressedRecords =
+                recordRepository.getServiceHistoryForNumberOfDays(5, myService.getId());
+        List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(7);
+        Assertions.assertThat(compressedRecords).isNotEmpty();
+        Assertions.assertThat(compressedRecords.size()).isEqualTo(4);//NB! dag 1 er ikke en del av kompression
+        Assertions.assertThat(outdatedRecords).isEmpty();
     }
 }

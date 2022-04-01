@@ -203,21 +203,21 @@ class ServiceControllerTest {
 
     }
 
-//    @Test
-//    void getServiceHistoryThreeMonthsBack() {
-//        //Arrange
-//        List<ServiceEntity> serviceEntities = SampleData.getNonEmptyListOfServiceEntity(1);
-//        serviceEntities.forEach(s -> s.setId(serviceRepository.save(s)));
-//        int numberOfDays = 2;
-//        int minBetweenUpdtades = 60;
-//        UUID serviceID = serviceEntities.get(0).getId();
-//        Map<UUID,Map<Integer,List<RecordEntity>>> generatedData = MockDataGenerator.generateRandomStatusesForAllServices(serviceEntities,numberOfDays,minBetweenUpdtades);
-//        MockDataGenerator.saveRecordsToTableForAllServices(generatedData, dbContext);
-//        recordCompressor.run();
-//        //Act
-//        ServiceHistoryDto result = serviceController.getServiceHistoryThreeMonthsBack(serviceID);
-//        //Assert
-//        Assertions.assertThat(result.getHistory().get(0).getMonth())
-//                .isEqualTo(LocalDate.now().getMonth().toString());
-//    }
+
+    void getServiceHistoryThreeMonthsBack() {
+        //Arrange
+        List<ServiceEntity> serviceEntities = SampleData.getNonEmptyListOfServiceEntity(1);
+        serviceEntities.forEach(s -> s.setId(serviceRepository.save(s)));
+        int numberOfDays = 2;
+        int minBetweenUpdtades = 60;
+        UUID serviceID = serviceEntities.get(0).getId();
+        Map<UUID,Map<Integer,List<RecordEntity>>> generatedData = MockDataGenerator.generateRandomStatusesForAllServices(serviceEntities,numberOfDays,minBetweenUpdtades);
+        MockDataGenerator.saveRecordsToTableForAllServices(generatedData, dbContext);
+        recordCompressor.run();
+        //Act
+        ServiceHistoryDto result = serviceController.getServiceHistoryThreeMonthsBack(serviceID);
+        //Assert
+        /*Assertions.assertThat(result.getHistory().get(0).getMonth())
+                .isEqualTo(LocalDate.now().getMonth().toString());*/
+    }
 }
