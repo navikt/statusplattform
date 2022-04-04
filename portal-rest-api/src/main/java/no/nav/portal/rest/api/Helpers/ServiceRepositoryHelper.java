@@ -188,6 +188,7 @@ public class ServiceRepositoryHelper {
 
     static ServiceHistoryDayEntryDto mapToHistoryDayDto(DailyStatusAggregationForServiceEntity entity){
         ServiceHistoryDayEntryDto result = new ServiceHistoryDayEntryDto();
+        result.information(entity.getInformation());
         result.serviceId(entity.getService_id());
         result.setStatus(getAggregationStatus(entity));
         result.setDate(entity.getAggregation_date());

@@ -1190,6 +1190,8 @@ components:
         date:
           type: string
           format: date
+        information:
+          type: string
         status:
           $ref: '#/components/schemas/Status'
     Alert:
