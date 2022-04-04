@@ -40,12 +40,14 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     public static final String ID_TOKEN_COOKIE = "tmp_token";
     public static final String AUTHORIZATION_STATE_COOKIE = "authorization_state";
 
-    private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(5));
+    private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(1));
 
     private static URL openIdConfiguration;
     private static String clientId = System.getenv("AZURE_APP_CLIENT_ID");
     private static String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
     private static String frontEndUrl = System.getenv("FRONTEND_LOCATION");
+
+    private int COOKIE_SESSION_TIMEOUT_DURATION_IN_DAYS = 60*60*24*7;
 
     static {
         try{
@@ -232,7 +234,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Cookie createCookie(HttpServletRequest request, String name, String value) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(60 * 30); //IE11 trenger visst verdi her
+        cookie.setMaxAge(COOKIE_SESSION_TIMEOUT_DURATION_IN_DAYS); //IE11 trenger visst verdi her
         cookie.setPath(request.getContextPath());
         cookie.setHttpOnly(true);
         cookie.setSecure(request.isSecure());
