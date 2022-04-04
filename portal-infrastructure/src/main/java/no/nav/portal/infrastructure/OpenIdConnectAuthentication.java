@@ -47,7 +47,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
     private static String frontEndUrl = System.getenv("FRONTEND_LOCATION");
 
-    private int COOKIE_SESSION_TIMEOUT_DURATION_IN_DAYS = 60*60*24*7;
+    private int COOKIE_SESSION_TIMEOUT_DURATION_IN_WEEKS = 60*60*24*7;
 
     static {
         try{
