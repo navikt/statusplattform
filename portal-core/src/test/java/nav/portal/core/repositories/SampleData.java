@@ -93,7 +93,7 @@ public class SampleData {
         ArrayList<String> possibleNames = serviceNames;
         possibleNames.removeAll(usedNames);
         return new ServiceEntity()
-                .setName(getRandomFromArray(serviceNames))
+                .setName(getRandomFromArray(possibleNames))
                 .setType(ServiceType.TJENESTE)
                 .setTeam(getRandomFromArray(teamNames))
                 .setMonitorlink(getRandomFromArray(urlStrings));
@@ -106,8 +106,7 @@ public class SampleData {
         for (int i = 0; i < numberOfAreas; i++) {
             services.add(getRandomizedServiceEntityWithNameNotInList(services));
         }
-        return services;
-    }
+        return services;    }
 
     public static List<ServiceEntity> getRandomLengthNonEmptyListOfServiceEntity() {
         Random random = new Random();
@@ -126,6 +125,7 @@ public class SampleData {
         }
         return services;
     }
+
     public static List<ServiceEntity> getNonEmptyListOfServiceEntityWithUid(int numberOfServices) {
         List<ServiceEntity> result = getNonEmptyListOfServiceEntity( numberOfServices);
         result.forEach(service -> service.setId(UUID.randomUUID()));

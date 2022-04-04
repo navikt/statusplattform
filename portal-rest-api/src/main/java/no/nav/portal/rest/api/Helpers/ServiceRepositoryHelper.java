@@ -88,6 +88,9 @@ public class ServiceRepositoryHelper {
 
 
     private static List<OpeningHoursEntity> mapToOpeningHoursEntity(ServiceOpeningHoursDto serviceOpeningHoursDto){
+        if (serviceOpeningHoursDto == null){
+            return new ArrayList<>();
+        }
         return serviceOpeningHoursDto.getDailyOpeningHours()
                 .stream()
                 .map(ServiceRepositoryHelper::mapOneDayToOpeningHoursEntity)
