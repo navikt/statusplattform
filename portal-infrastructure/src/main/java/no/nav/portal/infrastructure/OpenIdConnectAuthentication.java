@@ -234,7 +234,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Cookie createCookie(HttpServletRequest request, String name, String value) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(COOKIE_SESSION_TIMEOUT_DURATION_IN_DAYS); //IE11 trenger visst verdi her
+        cookie.setMaxAge(COOKIE_SESSION_TIMEOUT_DURATION_IN_WEEKS); //IE11 trenger visst verdi her
         cookie.setPath(request.getContextPath());
         cookie.setHttpOnly(true);
         cookie.setSecure(request.isSecure());
