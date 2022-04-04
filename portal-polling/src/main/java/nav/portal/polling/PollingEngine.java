@@ -86,8 +86,8 @@ public class PollingEngine  extends Thread{
 
     private PolledServiceStatus mapToPolledServiceStatus(JsonObject jsonObject){
         PolledServiceStatus polledServiceStatus = new PolledServiceStatus();
-        polledServiceStatus.setName(jsonObject.getString("name",null));
-        polledServiceStatus.setTeam(jsonObject.getString("team",null));
+        polledServiceStatus.setName(jsonObject.getString("name",null));//Trengs denne?
+        polledServiceStatus.setTeam(jsonObject.getString("team",null));//Trengs denne?
         polledServiceStatus.setDescrption(jsonObject.getString("description",null));
         polledServiceStatus.setLogglink(jsonObject.getString("logglink",null));
         polledServiceStatus.setStatus(ServiceStatus.valueOf(jsonObject.getString("status")));
