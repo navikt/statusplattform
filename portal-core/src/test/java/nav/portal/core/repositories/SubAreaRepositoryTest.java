@@ -27,6 +27,10 @@ class SubAreaRepositoryTest {
     private final DbContext dbContext = new DbContext();
     private DbContextConnection connection;
 
+    private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
+
     @BeforeEach
     void startConnection() {
         connection = dbContext.startConnection(dataSource);
@@ -38,9 +42,6 @@ class SubAreaRepositoryTest {
         connection.close();
     }
 
-    private final AreaRepository areaRepository = new AreaRepository(dbContext);
-    private final SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
-    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @Test
     void save() {

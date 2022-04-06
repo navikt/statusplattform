@@ -27,6 +27,15 @@ public class TestUtil {
         DbContextTable dashboardAreaTable = dbContext.table("dashboard_area");
         dashboardAreaTable.whereExpression("dashboard_id is NOT null").executeDelete();
 
+        DbContextTable areaSubAreaTable = dbContext.table("area_sub_area");
+        areaSubAreaTable.whereExpression("area_id is NOT null").executeDelete();
+
+        DbContextTable subAreaServiceTable = dbContext.table("sub_area_service");
+        subAreaServiceTable.whereExpression("service_id is NOT null").executeDelete();
+
+        DbContextTable subAreaTable = dbContext.table("sub_area");
+        subAreaTable.whereExpression("id is NOT null").executeDelete();
+
         DbContextTable serviceTable = dbContext.table("service");
         serviceTable.whereExpression("id is NOT null").executeDelete();
 
