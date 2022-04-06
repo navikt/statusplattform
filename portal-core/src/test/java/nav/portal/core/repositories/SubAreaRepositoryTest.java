@@ -12,12 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
-import java.util.*;
-import javax.sql.DataSource;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.fail;
