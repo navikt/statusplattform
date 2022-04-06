@@ -50,7 +50,7 @@ public class DashboardRepositoryHelper {
         dashboardDto.getAreas().forEach(areaDto -> {
             areaDto.setSubAreas(areaRepository.getSubAreasOnArea(areaDto.getId())
                             .stream()
-                            .map(subAreaEntity -> EntityDtoMappers.toSubAreaDtoDeep(subAreaEntity, subAreaRepository.getServisesOnSubArea(subAreaEntity.getId())))
+                            .map(subAreaEntity -> EntityDtoMappers.toSubAreaDtoDeep(subAreaEntity, subAreaRepository.getServicesOnSubArea(subAreaEntity.getId())))
                             .collect(Collectors.toList()));
                 });
     }

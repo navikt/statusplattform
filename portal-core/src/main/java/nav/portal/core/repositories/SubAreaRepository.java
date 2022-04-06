@@ -1,6 +1,5 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.entities.SubAreaEntity;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
@@ -59,7 +58,7 @@ public class SubAreaRepository {
 
     }
 
-    public List<ServiceEntity> getServisesOnSubArea(UUID subAreaID) {
+    public List<ServiceEntity> getServicesOnSubArea(UUID subAreaID) {
         DbContextTableAlias subAreaAlias = subAreaTable.alias("subAreaAlias");
         DbContextTableAlias subAreaServiceAlias = subAreaServiceTable.alias("subAreaServiceAlias");
         DbContextTableAlias serviceAlias = serviceTable.alias("serviceAlias");
