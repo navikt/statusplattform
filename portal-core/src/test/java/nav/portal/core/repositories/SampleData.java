@@ -40,6 +40,7 @@ public class SampleData {
                 .setIcon(getRandomFromArray(icons));
     }
 
+
     public static AreaEntity getRandomizedAreaEntityWithNameNotInList(List<AreaEntity> areas) {
         List<String> usedNames = areas.stream().map(AreaEntity::getName).collect(Collectors.toList());
         ArrayList<String> possibleNames = areaNames;
@@ -79,6 +80,48 @@ public class SampleData {
         }
         return areas;
     }
+    public static SubAreaEntity getRandomizedSubAreaEntity() {
+        return new SubAreaEntity()
+                .setName(getRandomFromArray(areaNames));
+    }
+    public static SubAreaEntity getRandomizedSubAreaEntityWithNameNotInList(List<SubAreaEntity> subAreas) {
+        List<String> usedNames = subAreas.stream().map(SubAreaEntity::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = areaNames;
+        possibleNames.removeAll(usedNames);
+        return new SubAreaEntity()
+                .setName(getRandomFromArray(possibleNames));
+    }
+
+    public static List<SubAreaEntity> getRandomLengthListOfSubAreaEntity() {
+        Random random = new Random();
+        int numberOfSubAreas = random.nextInt(12);
+        List<SubAreaEntity> subAreas = new ArrayList<>();
+        for (int i = 0; i <= numberOfSubAreas; i++) {
+            subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
+        }
+        return subAreas;
+    }
+
+    public static List<SubAreaEntity> getRandomLengthNonEmptyListOfSubAreaEntity() {
+        Random random = new Random();
+        int numberOfSubAreas = 1 + random.nextInt(12);
+        List<SubAreaEntity> subAreas = new ArrayList<>();
+        for (int i = 0; i <= numberOfSubAreas; i++) {
+            subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
+        }
+        return subAreas;
+    }
+
+    public static List<SubAreaEntity> getNonEmptyListOfSubAreaEntity(int length) {
+        Random random = new Random();
+        int numberOfSubAreas = length;
+        List<SubAreaEntity> subAreas = new ArrayList<>();
+        for (int i = 0; i < numberOfSubAreas; i++) {
+             subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
+        }
+        return subAreas;
+    }
+
 
     public static ServiceEntity getRandomizedServiceEntity() {
         return new ServiceEntity()
