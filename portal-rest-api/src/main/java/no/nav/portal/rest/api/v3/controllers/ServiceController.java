@@ -52,8 +52,8 @@ public class ServiceController {
 
     @GET("/Service/HistoryAggregated/:Service_id")
     @JsonBody
-    public ServiceHistoryDto getServiceHistoryThreeMonthsBack(@PathParam("Service_id") UUID service_id) {
-        return serviceRepositoryHelper.getServiceHistoryForNumberOfMonths(service_id, 3);
+    public ServiceHistoryDto getServiceHistoryTwelveMonthsBack(@PathParam("Service_id") UUID service_id) {
+        return serviceRepositoryHelper.getServiceHistoryForTwelveMonths(service_id, 12);
     }
 
     @POST("/Service")

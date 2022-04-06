@@ -37,6 +37,7 @@ class ServiceControllerTest {
     @BeforeEach
     void startConnection() {
         connection = dbContext.startConnection(dataSource);
+        recordCompressor.setDataSource(dataSource);
     }
 
     @AfterEach
@@ -203,21 +204,26 @@ class ServiceControllerTest {
 
     }
 
-
-    void getServiceHistoryThreeMonthsBack() {
+    @Test
+    void getServiceHistoryTwelveMonthsBack() {
         //Arrange
         List<ServiceEntity> serviceEntities = SampleData.getNonEmptyListOfServiceEntity(1);
         serviceEntities.forEach(s -> s.setId(serviceRepository.save(s)));
-        int numberOfDays = 2;
-        int minBetweenUpdtades = 60;
+
+        int numberOfDays = 365;
+        int minBetweenUpdates = 60;
+
         UUID serviceID = serviceEntities.get(0).getId();
-        Map<UUID,Map<Integer,List<RecordEntity>>> generatedData = MockDataGenerator.generateRandomStatusesForAllServices(serviceEntities,numberOfDays,minBetweenUpdtades);
+        Map<UUID, Map<Integer, List<RecordEntity>>> generatedData = MockDataGenerator.generateRandomStatusesForAllServices(serviceEntities, numberOfDays, minBetweenUpdates);
         MockDataGenerator.saveRecordsToTableForAllServices(generatedData, dbContext);
         recordCompressor.run();
+
         //Act
-        ServiceHistoryDto result = serviceController.getServiceHistoryThreeMonthsBack(serviceID);
+        ServiceHistoryDto result = serviceController.getServiceHistoryTwelveMonthsBack(serviceID);
+
         //Assert
-        /*Assertions.assertThat(result.getHistory().get(0).getMonth())
-                .isEqualTo(LocalDate.now().getMonth().toString());*/
+        Assertions.assertThat(result.getHistory().get(0).getMonth())
+                .isEqualTo(LocalDate.now().getMonth().toString());
+        Assertions.assertThat(result.getHistory().size()).isEqualTo(12);
     }
 }
