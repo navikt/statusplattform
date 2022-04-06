@@ -1176,6 +1176,8 @@ components:
       properties:
         month:
           type: string
+        year:
+          type: integer
         entries:
           type: array
           items:

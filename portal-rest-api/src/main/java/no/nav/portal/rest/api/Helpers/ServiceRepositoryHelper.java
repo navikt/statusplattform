@@ -158,31 +158,39 @@ public class ServiceRepositoryHelper {
 
 
 
-    public ServiceHistoryDto getServiceHistoryForNumberOfMonths(UUID serviceID, int number_of_months) {
+    public ServiceHistoryDto getServiceHistoryForTwelveMonths(UUID serviceID, int number_of_months) {
         return mapToHistoryDto(recordRepository.getServiceHistoryForNumberOfMonths(serviceID, number_of_months));
     }
 
     private ServiceHistoryDto mapToHistoryDto(List<DailyStatusAggregationForServiceEntity> aggregationList) {
-        ServiceHistoryDto dto = new ServiceHistoryDto();
+        ServiceHistoryDto result = new ServiceHistoryDto();
         Arrays.stream(Month.values()).sorted().forEach(month ->
                 {
                     List<DailyStatusAggregationForServiceEntity> entriesForTheMonth = aggregationList.stream().filter(listElement ->
                             listElement.getAggregation_date().getMonth().equals(month))
                             .collect(Collectors.toList());
 
-                    dto.addHistoryItem(mapToHistoryMonthDto(entriesForTheMonth,month));
+                    if(entriesForTheMonth.size() > 0){
+                        ArrayList<ServiceHistoryMonthEntryDto> newEntry = new ArrayList<>();
+                        newEntry.add(mapToHistoryMonthDto(entriesForTheMonth, month));
+                        newEntry.addAll(result.getHistory());
+                        
+                        result.setHistory(newEntry);
+                    }
                 }
         );
-        return dto;
+
+        result.getHistory().sort(Comparator.comparing(ServiceHistoryMonthEntryDto::getYear).reversed());
+        return result;
     }
 
-
-    static ServiceHistoryMonthEntryDto mapToHistoryMonthDto(List<DailyStatusAggregationForServiceEntity> listOfDailyStatusOneServiceOneMonth,Month month) {
+    static ServiceHistoryMonthEntryDto mapToHistoryMonthDto(List<DailyStatusAggregationForServiceEntity> listOfDailyStatusOneServiceOneMonth, Month month) {
         ServiceHistoryMonthEntryDto result = new ServiceHistoryMonthEntryDto();
         result.setMonth(month.name());
         result.setEntries(listOfDailyStatusOneServiceOneMonth.stream()
                 .map(ServiceRepositoryHelper::mapToHistoryDayDto)
                 .collect(Collectors.toList()));
+        result.setYear(result.getEntries().get(0).getDate().getYear());
         return result;
     }
 
