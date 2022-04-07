@@ -53,16 +53,6 @@ public class SampleData {
 
     public static List<AreaEntity> getRandomLengthListOfAreaEntity() {
         Random random = new Random();
-        int numberOfAreas = random.nextInt(12);
-        List<AreaEntity> areas = new ArrayList<>();
-        for (int i = 0; i <= numberOfAreas; i++) {
-            areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
-        }
-        return areas;
-    }
-
-    public static List<AreaEntity> getRandomLengthNonEmptyListOfAreaEntity() {
-        Random random = new Random();
         int numberOfAreas = 1 + random.nextInt(12);
         List<AreaEntity> areas = new ArrayList<>();
         for (int i = 0; i <= numberOfAreas; i++) {
