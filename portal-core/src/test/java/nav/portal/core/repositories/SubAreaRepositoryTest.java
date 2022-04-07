@@ -12,11 +12,10 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
+import java.util.*;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.fail;
 
 class SubAreaRepositoryTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -115,22 +114,20 @@ class SubAreaRepositoryTest {
         UUID subAreaId = subAreaRepository.save(subArea);
         subArea.setId(subAreaId);
 
+
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
 
-        AreaEntity area = SampleData.getRandomizedAreaEntity();
-        UUID areaId = areaRepository.save(area);
-        area.setId(areaId);
-
         //Act
-        areaRepository.addSubAreaToArea(areaId, subAreaId);
         subAreaRepository.addServiceToSubArea(subAreaId, serviceId);
         Map.Entry<SubAreaEntity,List<ServiceEntity>> retrievedSubArea = subAreaRepository.retrieveOne(subAreaId);
         //Assert
-        Assertions.assertThat(retrievedSubArea.getValue()).containsExactly(service);
+        List<ServiceEntity> retrievedServices = retrievedSubArea.getValue();
+        Assertions.assertThat(retrievedServices).contains(service);
+        Assertions.assertThat(retrievedSubArea.getKey()).isEqualTo(subArea);
     }
-    /*
+
     @Test
     void setServicesOnSubArea() {
 
@@ -140,20 +137,22 @@ class SubAreaRepositoryTest {
         subArea.setId(subAreaId);
 
         List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
+        List<UUID> serviceIds = new ArrayList<>();
 
         services.forEach(s ->
         {
             s.setId(serviceRepository.save(s));
-            subAreaRepository.addServiceToSubArea(subAreaId, s.getId());
+            serviceIds.add(s.getId());
         });
+
         //Act
-        subAreaRepository.setServicesOnSubArea(subAreaId, services);
+        subAreaRepository.setServicesOnSubArea(subAreaId, serviceIds);
         List<ServiceEntity> retrieved = subAreaRepository.getServicesOnSubArea(subAreaId);
         //Assert
-        Assertions.assertThat(retrieved.size()).isEqualTo(services.size());
+        Assertions.assertThat(retrieved.size()).isEqualTo(serviceIds.size());
         Assertions.assertThat(retrieved).containsAll(services);
     }
-    */
+
     @Test
     void removeServiceFromAllSubAreas() {
         //Arrange
@@ -161,17 +160,22 @@ class SubAreaRepositoryTest {
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
 
-        List<SubAreaEntity> subAreas = SampleData.getNonEmptyListOfSubAreaEntity(3);
+        List<SubAreaEntity> subAreas = SampleData.getNonEmptyListOfSubAreaEntity(1);
 
-        subAreas.forEach(subArea -> subArea.setId(subAreaRepository.save(subArea)));
+        subAreas.forEach(s ->
+        {
+            s.setId(subAreaRepository.save(s));
+            subAreaRepository.addServiceToSubArea(s.getId(), serviceId);
+        });
 
         List<SubAreaEntity> before = subAreaRepository.getAreasContainingService(serviceId);
 
         //Act
         subAreaRepository.removeServiceFromAllSubAreas(serviceId);
+        List<SubAreaEntity> after = subAreaRepository.getAreasContainingService(serviceId);
         //Assert
         Assertions.assertThat(before).containsAll(subAreas);
-        Assertions.assertThat(subAreaRepository.getAreasContainingService(serviceId)).isEmpty();
+        Assertions.assertThat(after).isEmpty();
     }
 
     @Test
@@ -211,6 +215,7 @@ class SubAreaRepositoryTest {
         Map.Entry<SubAreaEntity, List<ServiceEntity>> retrievedSubArea = subAreaRepository.retrieveOne(subAreaId);
         //Assert
         List<ServiceEntity> retrievedServices = retrievedSubArea.getValue();
+        Assertions.assertThat(retrievedServices.size()).isEqualTo(retrievedServices.size());
         Assertions.assertThat(retrievedServices).containsAll(services);
         Assertions.assertThat(retrievedSubArea.getKey()).isEqualTo(subArea);
     }
@@ -246,8 +251,8 @@ class SubAreaRepositoryTest {
         //Act
         Map<SubAreaEntity, List<ServiceEntity>> retrievedAll = subAreaRepository.retrieveAll();
         Map.Entry<SubAreaEntity, List<ServiceEntity>> retrievedSubArea = subAreaRepository.retrieveOne(subAreaId);
-        List<ServiceEntity> retrievedServices = retrievedSubArea.setValue(retrievedSubArea.getValue());
         //Assert
+        List<ServiceEntity> retrievedServices = retrievedSubArea.setValue(retrievedSubArea.getValue());
         Assertions.assertThat(retrievedAll).containsKey(subArea);
         Assertions.assertThat(retrievedAll).containsValue(retrievedServices);
     }
