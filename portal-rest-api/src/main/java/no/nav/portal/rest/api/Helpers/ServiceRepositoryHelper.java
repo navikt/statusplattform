@@ -186,7 +186,7 @@ public class ServiceRepositoryHelper {
 
     static ServiceHistoryMonthEntryDto mapToHistoryMonthDto(List<DailyStatusAggregationForServiceEntity> listOfDailyStatusOneServiceOneMonth, Month month) {
         ServiceHistoryMonthEntryDto result = new ServiceHistoryMonthEntryDto();
-        result.setMonth(month.name());
+        result.setMonth(Util.mapOfMonthsToNorwegian.get(month));
         result.setEntries(listOfDailyStatusOneServiceOneMonth.stream()
                 .map(ServiceRepositoryHelper::mapToHistoryDayDto)
                 .collect(Collectors.toList()));
