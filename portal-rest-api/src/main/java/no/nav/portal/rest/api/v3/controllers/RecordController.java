@@ -47,7 +47,7 @@ public class RecordController {
                 recordRepository.getRecordHistory(service_id,100));
     }
 
-    @POST("/Alert/test")
+    @POST("/Alert")
     public  void postAlert(@JsonBody AlertDto test){
         currentAlert = test;
         System.out.println("HER KOMMER ALERT: ");
@@ -59,7 +59,7 @@ public class RecordController {
 
     }
 
-    @GET("/Alert/test")
+    @GET("/Alert")
     @JsonBody
     public AlertDto getAlert(){
         return currentAlert;
