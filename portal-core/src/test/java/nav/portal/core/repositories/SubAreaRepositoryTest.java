@@ -223,7 +223,7 @@ class SubAreaRepositoryTest {
     @Test
     void retriveAllShallow() {
         //Arrange
-        List<SubAreaEntity> subAreas = SampleData.getRandomLengthListOfSubAreaEntity();
+        List<SubAreaEntity> subAreas = SampleData.getRandomLengthNonEmptyListOfSubAreaEntity();
         subAreas.forEach(subArea -> subArea.setId(subAreaRepository.save(subArea)));
 
         //Act
