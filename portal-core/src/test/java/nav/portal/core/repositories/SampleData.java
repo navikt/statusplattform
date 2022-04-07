@@ -43,7 +43,7 @@ public class SampleData {
 
     public static AreaEntity getRandomizedAreaEntityWithNameNotInList(List<AreaEntity> areas) {
         List<String> usedNames = areas.stream().map(AreaEntity::getName).collect(Collectors.toList());
-        ArrayList<String> possibleNames = areaNames;
+        ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new AreaEntity()
                 .setName(getRandomFromArray(possibleNames))
@@ -75,7 +75,7 @@ public class SampleData {
     }
     public static SubAreaEntity getRandomizedSubAreaEntityWithNameNotInList(List<SubAreaEntity> subAreas) {
         List<String> usedNames = subAreas.stream().map(SubAreaEntity::getName).collect(Collectors.toList());
-        ArrayList<String> possibleNames = areaNames;
+        ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new SubAreaEntity()
                 .setName(getRandomFromArray(possibleNames));
@@ -122,7 +122,7 @@ public class SampleData {
 
     public static ServiceEntity getRandomizedServiceEntityWithNameNotInList(List<ServiceEntity> services) {
         List<String> usedNames = services.stream().map(ServiceEntity::getName).collect(Collectors.toList());
-        ArrayList<String> possibleNames = serviceNames;
+        ArrayList<String> possibleNames = new ArrayList<>(serviceNames);
         possibleNames.removeAll(usedNames);
         return new ServiceEntity()
                 .setName(getRandomFromArray(possibleNames))
