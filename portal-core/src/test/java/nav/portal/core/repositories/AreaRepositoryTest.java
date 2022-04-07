@@ -23,11 +23,11 @@ class AreaRepositoryTest {
     @BeforeEach
     void startConnection() {
         connection = dbContext.startConnection(dataSource);
+        TestUtil.clearAllTableData(dbContext);
     }
 
     @AfterEach
     void endConnection() {
-        TestUtil.clearAllTableData(dbContext);
         connection.close();
     }
 

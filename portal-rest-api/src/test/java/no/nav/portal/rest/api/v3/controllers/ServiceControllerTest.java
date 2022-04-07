@@ -38,11 +38,11 @@ class ServiceControllerTest {
     void startConnection() {
         connection = dbContext.startConnection(dataSource);
         recordCompressor.setDataSource(dataSource);
+        TestUtil.clearAllTableData(dbContext);
     }
 
     @AfterEach
     void endConnection() {
-        TestUtil.clearAllTableData(dbContext);
         connection.close();
     }
 
