@@ -179,7 +179,7 @@ public class SubAreaRepository {
     }
 
     public List<SubAreaEntity> getAreasContainingService(UUID service_id) {
-        DbContextTableAlias subAreaAlias = areaTable.alias("sub_area");
+        DbContextTableAlias subAreaAlias = subAreaTable.alias("sub_area");
         DbContextTableAlias sa2s = subAreaServiceTable.alias("sa2s");
         return subAreaAlias
                 .leftJoin(subAreaAlias.column("id"), sa2s.column("sub_area_id"))
