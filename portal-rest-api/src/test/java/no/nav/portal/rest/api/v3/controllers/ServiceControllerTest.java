@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -210,6 +211,9 @@ class ServiceControllerTest {
         List<ServiceEntity> serviceEntities = SampleData.getNonEmptyListOfServiceEntity(1);
         serviceEntities.forEach(s -> s.setId(serviceRepository.save(s)));
 
+        Map<Month, String> monthMapBetweenLanguages = createMapBetweenEngAndNor();
+        String dateNowInNorwegian = monthMapBetweenLanguages.get(LocalDate.now().getMonth());
+
         int numberOfDays = 365;
         int minBetweenUpdates = 60;
 
@@ -223,7 +227,28 @@ class ServiceControllerTest {
 
         //Assert
         Assertions.assertThat(result.getHistory().get(0).getMonth())
-                .isEqualTo(LocalDate.now().getMonth().toString());
+                .isEqualTo(dateNowInNorwegian);
         Assertions.assertThat(result.getHistory().size()).isEqualTo(12);
+    }
+
+
+
+//  HELPERS below
+    private Map<Month, String> createMapBetweenEngAndNor() {
+        Map<Month, String> monthMapBetweenLanguages = new HashMap();
+        monthMapBetweenLanguages.put(Month.JANUARY, "Januar");
+        monthMapBetweenLanguages.put(Month.FEBRUARY, "Februar");
+        monthMapBetweenLanguages.put(Month.MARCH, "Mars");
+        monthMapBetweenLanguages.put(Month.APRIL, "April");
+        monthMapBetweenLanguages.put(Month.MAY, "Mai");
+        monthMapBetweenLanguages.put(Month.JUNE, "Juni");
+        monthMapBetweenLanguages.put(Month.JULY, "Juli");
+        monthMapBetweenLanguages.put(Month.AUGUST, "August");
+        monthMapBetweenLanguages.put(Month.SEPTEMBER, "September");
+        monthMapBetweenLanguages.put(Month.OCTOBER, "Oktober");
+        monthMapBetweenLanguages.put(Month.NOVEMBER, "November");
+        monthMapBetweenLanguages.put(Month.DECEMBER, "Desember");
+
+        return monthMapBetweenLanguages;
     }
 }

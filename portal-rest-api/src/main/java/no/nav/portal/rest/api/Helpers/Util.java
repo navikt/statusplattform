@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Util {
-    static  Map<Month,String> mapOfMonthsToNorwegian = new HashMap();
+    static Map<Month, String> mapOfMonthsToNorwegian = new HashMap();
 
     static {
         mapOfMonthsToNorwegian.put(Month.JANUARY, "Januar");
