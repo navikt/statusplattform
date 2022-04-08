@@ -7,6 +7,9 @@ public class DailyStatusAggregationForServiceEntity {
     private UUID id;
     private UUID service_id;
     private LocalDate aggregation_date;
+    private String Information;
+
+
     private int number_of_status_ok;
     private int number_of_status_issue;
     private int number_of_status_down;
@@ -20,6 +23,15 @@ public class DailyStatusAggregationForServiceEntity {
 
     public DailyStatusAggregationForServiceEntity setId(UUID id) {
         this.id = id;
+        return this;
+    }
+
+    public String getInformation() {
+        return Information;
+    }
+
+    public DailyStatusAggregationForServiceEntity setInformation(String information) {
+        Information = information;
         return this;
     }
 
