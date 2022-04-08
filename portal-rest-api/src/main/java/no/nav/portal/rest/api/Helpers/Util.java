@@ -6,20 +6,20 @@ import java.util.Map;
 
 public class Util {
     static  Map<Month,String> mapOfMonthsToNorwegian = new HashMap();
+
     static {
-        Map<Month,String> map = new HashMap<>();
-        map.put(Month.JANUARY, "Januar");
-        map.put(Month.FEBRUARY, "Februar");
-        map.put(Month.MARCH, "Mars");
-        map.put(Month.APRIL, "April");
-        map.put(Month.MAY, "Mai");
-        map.put(Month.JUNE, "Juni");
-        map.put(Month.JULY, "Juli");
-        map.put(Month.AUGUST, "August");
-        map.put(Month.SEPTEMBER, "September");
-        map.put(Month.OCTOBER, "Oktober");
-        map.put(Month.NOVEMBER, "November");
-        map.put(Month.DECEMBER, "Desember");
+        mapOfMonthsToNorwegian.put(Month.JANUARY, "Januar");
+        mapOfMonthsToNorwegian.put(Month.FEBRUARY, "Februar");
+        mapOfMonthsToNorwegian.put(Month.MARCH, "Mars");
+        mapOfMonthsToNorwegian.put(Month.APRIL, "April");
+        mapOfMonthsToNorwegian.put(Month.MAY, "Mai");
+        mapOfMonthsToNorwegian.put(Month.JUNE, "Juni");
+        mapOfMonthsToNorwegian.put(Month.JULY, "Juli");
+        mapOfMonthsToNorwegian.put(Month.AUGUST, "August");
+        mapOfMonthsToNorwegian.put(Month.SEPTEMBER, "September");
+        mapOfMonthsToNorwegian.put(Month.OCTOBER, "Oktober");
+        mapOfMonthsToNorwegian.put(Month.NOVEMBER, "November");
+        mapOfMonthsToNorwegian.put(Month.DECEMBER, "Desember");
     }
 
 
