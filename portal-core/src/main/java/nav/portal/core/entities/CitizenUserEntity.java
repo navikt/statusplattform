@@ -4,18 +4,18 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CitizenUserEntity {
-    private UUID userID;
+    private UUID id;
     private String email;
     private String firstName;
     private String lastName;
     private String phoneNumber;
 
-    public UUID getUserID() {
-        return userID;
+    public UUID getId() {
+        return id;
     }
 
-    public CitizenUserEntity setUserID(UUID userID) {
-        this.userID = userID;
+    public CitizenUserEntity setId(UUID id) {
+        this.id = id;
         return this;
     }
 
@@ -62,12 +62,12 @@ public class CitizenUserEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CitizenUserEntity that = (CitizenUserEntity) o;
-        return Objects.equals(userID, that.userID) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(email, that.email);
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userID, firstName, lastName, phoneNumber, email);
+        return Objects.hash(id, firstName, lastName, phoneNumber, email);
     }
 
 }

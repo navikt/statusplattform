@@ -1,7 +1,6 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.CitizenUserEntity;
-import nav.portal.core.entities.ServiceEntity;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -38,7 +37,7 @@ public class CitizenUserRepositoryTest {
         CitizenUserEntity user = SampleData.getRandomizedCitizenEntity();
         //Act
         UUID uuid = citizenUserRepository.save(user);
-        user.setUserID(uuid);
+        user.setId(uuid);
         Optional<CitizenUserEntity> retrievedCitizen = citizenUserRepository.retrieve(uuid);
         //Assert
         retrievedCitizen.ifPresent(citizenUserEntity -> Assertions.assertThat(citizenUserEntity).isEqualTo(user));

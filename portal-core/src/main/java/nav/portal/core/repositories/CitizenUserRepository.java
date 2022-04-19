@@ -1,8 +1,6 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.CitizenUserEntity;
-import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.enums.ServiceType;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.fluentjdbc.DatabaseRow;
 import org.fluentjdbc.DbContext;
@@ -22,15 +20,15 @@ public class CitizenUserRepository {
     }
 
     public UUID save(CitizenUserEntity entity){
-        return citizenUserTable.newSaveBuilderWithUUID("id", entity.getUserID())
+        return citizenUserTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("firstName", entity.getFirstName())
                 .setField("lastName", entity.getLastName())
                 .setField("email", entity.getEmail())
-                .setField("phoneNumber", entity.getEmail()).execute().getId();
+                .setField("phoneNumber", entity.getPhoneNumber()).execute().getId();
     }
 
     public Optional<CitizenUserEntity> retrieve(UUID id) {
-        return citizenUserTable.where("userId", id)
+        return citizenUserTable.where("id", id)
                 .singleObject(CitizenUserRepository::toCitizenUser);
     }
 
@@ -39,7 +37,7 @@ public class CitizenUserRepository {
     static CitizenUserEntity toCitizenUser(DatabaseRow row) {
         try {
             return new CitizenUserEntity()
-                    .setUserID(row.getUUID("userId"))
+                    .setId(row.getUUID("id"))
                     .setFirstName(row.getString("firstName"))
                     .setLastName(row.getString("lastName"))
                     .setEmail(row.getString("email"))

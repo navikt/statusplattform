@@ -31,6 +31,8 @@ public class SampleData {
     static final ArrayList<String> firstNames = new ArrayList<>(Arrays.asList("Arne", "Bodil", "Gudrun", "Kjell Åge", "Hufsa", "Elg", "Rake", "Æskild", "Øygunn"));
     static final ArrayList<String> lastNames = new ArrayList<>(Arrays.asList("Tacokrydder", "Plaskelaksen", "Grompesen", "Hamsterhjul"));
     static final ArrayList<String> emails = new ArrayList<>(Arrays.asList("tacokrydder@elgeforeningen.no", "plaskelaksen@laksegård.com", "epostkongen@hemmelig.no", "usbstick@feilinnsatt.no"));
+    static final ArrayList<String> phoneNumbers = new ArrayList<>(Arrays.asList("01020304", "13371337", "69691337", "42069117"));
+
 
    public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -118,7 +120,8 @@ public class SampleData {
         return new CitizenUserEntity()
                 .setFirstName(getRandomFromArray(firstNames))
                 .setLastName(getRandomFromArray(lastNames))
-                .setEmail(getRandomFromArray(emails));
+                .setEmail(getRandomFromArray(emails))
+                .setPhoneNumber(getRandomFromArray(phoneNumbers));
     }
 
 
