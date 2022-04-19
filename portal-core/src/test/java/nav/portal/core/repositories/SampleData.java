@@ -28,6 +28,9 @@ public class SampleData {
 
     static final ArrayList<String> icons = new ArrayList<>(Arrays.asList("0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011", "0012"));
 
+    static final ArrayList<String> firstNames = new ArrayList<>(Arrays.asList("Arne", "Bodil", "Gudrun", "Kjell Åge", "Hufsa", "Elg", "Rake", "Æskild", "Øygunn"));
+    static final ArrayList<String> lastNames = new ArrayList<>(Arrays.asList("Tacokrydder", "Plaskelaksen", "Grompesen", "Hamsterhjul"));
+    static final ArrayList<String> emails = new ArrayList<>(Arrays.asList("tacokrydder@elgeforeningen.no", "plaskelaksen@laksegård.com", "epostkongen@hemmelig.no", "usbstick@feilinnsatt.no"));
 
    public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -109,6 +112,13 @@ public class SampleData {
              subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
         }
         return subAreas;
+    }
+
+    public static CitizenUserEntity getRandomizedCitizenEntity() {
+        return new CitizenUserEntity()
+                .setFirstName(getRandomFromArray(firstNames))
+                .setLastName(getRandomFromArray(lastNames))
+                .setEmail(getRandomFromArray(emails));
     }
 
 

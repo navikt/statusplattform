@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public class CitizenUserEntity {
     private UUID userID;
-    private String epost;
-    private String fornavn;
-    private String etternavn;
-    private String tlf;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
 
     public UUID getUserID() {
         return userID;
@@ -19,39 +19,39 @@ public class CitizenUserEntity {
         return this;
     }
 
-    public String getFornavn() {
-        return fornavn;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public CitizenUserEntity setFornavn(String fornavn) {
-        this.fornavn = fornavn;
+    public CitizenUserEntity setFirstName(String firstName) {
+        this.firstName = firstName;
         return this;
     }
 
-    public String getEtternavn() {
-        return etternavn;
+    public String getLastName() {
+        return lastName;
     }
 
-    public CitizenUserEntity setEtternavn(String etternavn) {
-        this.etternavn = etternavn;
+    public CitizenUserEntity setLastName(String lastName) {
+        this.lastName = lastName;
         return this;
     }
 
-    public String getTlf() {
-        return tlf;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public CitizenUserEntity setTlf(String tlf) {
-        this.tlf = tlf;
+    public CitizenUserEntity setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
         return this;
     }
 
-    public String getEpost() {
-        return epost;
+    public String getEmail() {
+        return email;
     }
 
-    public CitizenUserEntity setEpost(String epost) {
-        this.epost = epost;
+    public CitizenUserEntity setEmail(String email) {
+        this.email = email;
         return this;
     }
 
@@ -62,12 +62,12 @@ public class CitizenUserEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CitizenUserEntity that = (CitizenUserEntity) o;
-        return Objects.equals(userID, that.userID) && Objects.equals(fornavn, that.fornavn) && Objects.equals(etternavn, that.etternavn) && Objects.equals(tlf, that.tlf) && Objects.equals(epost, that.epost);
+        return Objects.equals(userID, that.userID) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userID, fornavn, etternavn, tlf, epost);
+        return Objects.hash(userID, firstName, lastName, phoneNumber, email);
     }
 
 }
