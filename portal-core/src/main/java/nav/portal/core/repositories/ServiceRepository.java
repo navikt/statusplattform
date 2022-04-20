@@ -158,7 +158,12 @@ public class ServiceRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Service with id " + service_id));
     }
 
-    public Map<ServiceEntity, List<ServiceEntity>> retrieveAll() {
+    public  List<ServiceEntity> retrieveAllShallow() {
+        return  serviceTable.where("deleted",Boolean.FALSE).list(ServiceRepository::toService);
+
+    }
+
+    public Map<ServiceEntity, List<ServiceEntity>> retrieveAllDeep() {
         DbContextTableAlias s2s = service_serviceTable.alias("s2s");
         DbContextTableAlias service = serviceTable.alias("service");
         DbContextTableAlias dependentService = serviceTable.alias("dependent_service");

@@ -3,6 +3,7 @@ package nav.portal.jobs.recordAggregation;
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.RecordEntity;
 
+import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 
@@ -12,7 +13,6 @@ import org.fluentjdbc.DbContextConnection;
 import org.fluentjdbc.DbTransaction;
 
 import javax.sql.DataSource;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class RecordCompressor extends Thread{
 
         try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
-                getOldRecords_AggregateAndSave();
+                getOldRecordsAggregateAndSave();
                 deleteOldRecords();
                 transaction.setComplete();
             }
@@ -62,11 +62,26 @@ public class RecordCompressor extends Thread{
                 .collect(Collectors.toList());
     }
 
-
-    private void getOldRecords_AggregateAndSave(){
+    private void getOldRecordsAggregateAndSave(){
+        if(isJobAlreadyRun()){
+            return;
+        }
+        List<UUID> serviceUUIDS = serviceRepository.retrieveAllShallow().stream().map(ServiceEntity::getId).collect(Collectors.toList());
         List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS);
 
+        Map<UUID,List<RecordEntity>> serviceID_recordsMap = new HashMap<>();
+        //TODO dette mappet kan lages direkte fra en spørring i repo
+        for(UUID uuid: serviceUUIDS){
+            serviceID_recordsMap.put(uuid,outdatedRecords.stream().filter(recordEntity -> recordEntity.getServiceId().equals(uuid)).collect(Collectors.toList()));
+        }
 
+        serviceID_recordsMap.forEach(this::compressAndSave);
+    }
+
+    private void compressAndSave(UUID serviceID, List<RecordEntity> outdatedRecords) {
+        if(outdatedRecords.isEmpty()){
+            createEmptyHistoryForServiceForOneDay(serviceID);
+        }
         Map<Integer,List<RecordEntity>> dayOfYearWithUUIDandRecords = new HashMap<>();
 
         while (outdatedRecords.size() > 0){
@@ -76,7 +91,12 @@ public class RecordCompressor extends Thread{
             outdatedRecords = filterOutProssesedReckords(outdatedRecords, dayOfYear);
         }
 
-        dayOfYearWithUUIDandRecords.values().forEach(this::compressOneDay);
+        dayOfYearWithUUIDandRecords.values().forEach(this::compressOneDayAndSaveResult);
+    }
+
+
+    private boolean isJobAlreadyRun(){
+        return !recordRepository.getServiceHistoryForNumberOfDaysForAllServices(AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS).isEmpty();
 
     }
 
@@ -84,7 +104,7 @@ public class RecordCompressor extends Thread{
         return outdatedRecords.stream().filter(r -> !dayOfYear.equals(r.getCreated_at().getDayOfYear())).collect(Collectors.toList());
     }
 
-    private void compressOneDay(List<RecordEntity> recordsForOneDay){
+    private void compressOneDayAndSaveResult(List<RecordEntity> recordsForOneDay){
         Map<UUID,List<RecordEntity>> serviceUUIDRecordsMap = new HashMap<>();
         while (recordsForOneDay.size() > 0 ){
             RecordEntity record = recordsForOneDay.get(0);
@@ -97,17 +117,24 @@ public class RecordCompressor extends Thread{
                     .stream().filter(r -> !r.getServiceId().equals(record.getServiceId())).collect(Collectors.toList());
         }
 
-        serviceUUIDRecordsMap.entrySet().forEach(this::compressAndSave);
+        serviceUUIDRecordsMap.forEach(this::createAndSaveAggregation);
     }
 
 
-    private void compressAndSave(Map.Entry<UUID, List<RecordEntity>> serviceEntry) {
+    private void createAndSaveAggregation(UUID serviceID, List<RecordEntity> records) {
         DailyStatusAggregationForServiceEntity aggregatedRecords = new DailyStatusAggregationForServiceEntity();
-        aggregatedRecords.setService_id(serviceEntry.getKey());
-        aggregatedRecords.setAggregation_date(serviceEntry.getValue().get(0).getCreated_at().toLocalDate());
-        aggregatedRecords.setNumber_of_status_down((int) getCount(serviceEntry.getValue(), ServiceStatus.DOWN));
-        aggregatedRecords.setNumber_of_status_issue((int) getCount(serviceEntry.getValue(), ServiceStatus.ISSUE));
-        aggregatedRecords.setNumber_of_status_ok((int) getCount(serviceEntry.getValue(), ServiceStatus.OK));
+        aggregatedRecords.setService_id(serviceID);
+        aggregatedRecords.setAggregation_date(records.get(0).getCreated_at().toLocalDate());
+        aggregatedRecords.setNumber_of_status_down((int) getCount(records, ServiceStatus.DOWN));
+        aggregatedRecords.setNumber_of_status_issue((int) getCount(records, ServiceStatus.ISSUE));
+        aggregatedRecords.setNumber_of_status_ok((int) getCount(records, ServiceStatus.OK));
+        recordRepository.saveAggregatedRecords(aggregatedRecords);
+    }
+
+    private void createEmptyHistoryForServiceForOneDay(UUID serviceID) {
+        DailyStatusAggregationForServiceEntity aggregatedRecords = new DailyStatusAggregationForServiceEntity();
+        aggregatedRecords.setService_id(serviceID);
+        aggregatedRecords.setAggregation_date(LocalDate.now().minusDays(AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS));
         recordRepository.saveAggregatedRecords(aggregatedRecords);
     }
 

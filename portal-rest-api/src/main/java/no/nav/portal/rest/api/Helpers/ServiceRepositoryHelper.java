@@ -28,7 +28,7 @@ public class ServiceRepositoryHelper {
 
     //Denne returnerer avhengigheter ett nivå ned.
     public List<ServiceDto> getAll() {
-        Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAll();
+        Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllDeep();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
