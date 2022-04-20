@@ -80,6 +80,7 @@ public class RecordCompressor extends Thread{
 
     private void compressAndSave(UUID serviceID, List<RecordEntity> outdatedRecords) {
         if(outdatedRecords.isEmpty()){
+            //Dersom en tjeneste ikke har fått inn noen statuser lages det et tomt historyobjet for en  dag
             createEmptyHistoryForServiceForOneDay(serviceID);
         }
         Map<Integer,List<RecordEntity>> dayOfYearWithUUIDandRecords = new HashMap<>();
