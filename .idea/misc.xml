@@ -8,6 +8,7 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/portal-citizen-users/pom.xml" />
         <option value="$PROJECT_DIR$/portal-nav-employee/pom.xml" />
       </set>
     </option>
