@@ -16,7 +16,6 @@
         <module>portal-oauth2</module>
         <module>portal-polling</module>
         <module>portal-jobs</module>
-        <module>portal-citizen-users</module>
     </modules>
 
 
