@@ -7,7 +7,7 @@ env:
 
 jobs:
 
-  build:
+  build-and-run-tests:
     name: Build and push Docker container
     runs-on: ubuntu-latest
     steps:
@@ -22,18 +22,15 @@ jobs:
 
   deploy-test:
     name: Deploy application to test env
-    needs: test-build-and-push
-    if: github.ref == 'refs/heads/develop'
+    needs: build-and-run-tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Deploy application
-        uses: nais/deploy/actions/deploy@v1
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: nais-test.yaml
+          RESOURCE: nais-test.yml
           VAR: image=${{ env.docker_image }}
 
   deploy-prod:
@@ -42,12 +39,10 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Deploy application
-        uses: nais/deploy/actions/deploy@v1
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: nais.yaml
-          VAR: version=${{ env.docker_image }}
+          RESOURCE: nais.yml
+          VAR: image=${{ env.docker_image }}
