@@ -14,12 +14,12 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ServiceRepositoryHelper {
+public class ServiceControllerHelper {
     ServiceRepository serviceRepository;
     RecordRepository recordRepository;
     AreaRepository areaRepository;
 
-    public ServiceRepositoryHelper(DbContext context){
+    public ServiceControllerHelper(DbContext context){
         this.areaRepository = new AreaRepository(context);
         this.serviceRepository = new ServiceRepository(context);
         this.recordRepository = new RecordRepository(context);
@@ -93,7 +93,7 @@ public class ServiceRepositoryHelper {
         }
         return serviceOpeningHoursDto.getDailyOpeningHours()
                 .stream()
-                .map(ServiceRepositoryHelper::mapOneDayToOpeningHoursEntity)
+                .map(ServiceControllerHelper::mapOneDayToOpeningHoursEntity)
                 .collect(Collectors.toList());
     }
 
@@ -152,12 +152,6 @@ public class ServiceRepositoryHelper {
         return maintenanceDto;
     }
 
-    public OPSmessageDto addOPSmessega(OPSmessageDto opsMessageDto) {
-        return opsMessageDto;
-    }
-
-
-
     public ServiceHistoryDto getServiceHistoryForTwelveMonths(UUID serviceID, int number_of_months) {
         return mapToHistoryDto(recordRepository.getServiceHistoryForNumberOfMonths(serviceID, number_of_months));
     }
@@ -188,7 +182,7 @@ public class ServiceRepositoryHelper {
         ServiceHistoryMonthEntryDto result = new ServiceHistoryMonthEntryDto();
         result.setMonth(Util.mapOfMonthsToNorwegian.get(month));
         result.setEntries(listOfDailyStatusOneServiceOneMonth.stream()
-                .map(ServiceRepositoryHelper::mapToHistoryDayDto)
+                .map(ServiceControllerHelper::mapToHistoryDayDto)
                 .collect(Collectors.toList()));
         result.setYear(result.getEntries().get(0).getDate().getYear());
         return result;

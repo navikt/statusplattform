@@ -1,9 +1,7 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.AreaWithServices;
 import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.entities.SubAreaEntity;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.repositories.RecordRepository;
@@ -20,14 +18,14 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class AreaRepositoryHelper {
+public class AreaControllerHelper {
     private final AreaRepository areaRepository;
     private final DashboardRepository dashboardRepository;
     private final ServiceRepository serviceRepository;
     private final RecordRepository recordRepository;
 
 
-    public AreaRepositoryHelper(DbContext dbContext) {
+    public AreaControllerHelper(DbContext dbContext) {
         this.areaRepository = new AreaRepository(dbContext);
         this.dashboardRepository = new DashboardRepository(dbContext);
         this.serviceRepository = new ServiceRepository(dbContext);

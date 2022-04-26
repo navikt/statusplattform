@@ -1134,34 +1134,32 @@ components:
       title: OPSmessage
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
         affectedServices:
           type: array
           example: "[Liste av påvirkede service/komponent UUIDer]"
           items:
             type: string
             format: uuid
-        internal_header:
+        internalHeader:
           type: string
-        internal_text:
+        internalMessage:
           type: string
-        external_header:
+        externalHeader:
           type: string
-        external_text:
+        externalMessage:
           type: string
-        only_show_for_internal:
+        onlyShowForNavEmployees:
           type: boolean
-        startTime:
-          type: string
-          format: date-time
-          example: "2017-07-21T17:30:00Z"
-        endTime:
-          type: string
-          format: date-time
-          example: "2017-07-21T19:32:28Z"
+        isActive:
+          type: boolean
       required:
-        - internal_text
-        - internal_header
-        - only_show_for_internal
+        - internalMessage
+        - internalHeader
+        - onlyShowForInternal
     ServiceHistory:
       title: ServiceHistory
       type: object

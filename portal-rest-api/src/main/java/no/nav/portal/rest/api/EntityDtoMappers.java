@@ -52,6 +52,36 @@ public class EntityDtoMappers {
         return dto;
     }
 
+    public static OPSmessageDto toOpsMessageDtoShallow(OpsMessageEntity entity) {
+        OPSmessageDto dto = new OPSmessageDto();
+        dto.setId(entity.getId());
+        dto.setInternalHeader(entity.getInternalHeader());
+        dto.setInternalMessage(entity.getInternalText());
+        dto.setExternalHeader(entity.getExternalHeader());
+        dto.setExternalMessage(entity.getExternalText());
+        dto.setIsActive(entity.getIsActive());
+        dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());
+        return dto;
+    }
+
+    public static OPSmessageDto toOpsMessageDtoDeep(OpsMessageEntity entity, List<UUID> services) {
+        OPSmessageDto dto = toOpsMessageDtoShallow(entity);
+        dto.setAffectedServices(services);
+        return dto;
+    }
+
+    public static OpsMessageEntity toOpsMessageEntity(OPSmessageDto opsMessageDto) {
+        OpsMessageEntity opsMessageEntity = new OpsMessageEntity();
+        opsMessageEntity.setId(opsMessageDto.getId());
+        opsMessageEntity.setExternalHeader(opsMessageDto.getExternalHeader());
+        opsMessageEntity.setExternalText(opsMessageDto.getExternalMessage());
+        opsMessageEntity.setInternalHeader(opsMessageDto.getInternalHeader());
+        opsMessageEntity.setInternalText(opsMessageDto.getInternalMessage());
+        opsMessageEntity.setIsActive(opsMessageDto.getIsActive());
+        opsMessageEntity.setOnlyShowForNavEmployees(opsMessageDto.getOnlyShowForNavEmployees());
+        return opsMessageEntity;
+    }
+
     public static ServiceDto toServiceDtoDeep(ServiceEntity service ,List<ServiceEntity> dependencies){
         Map<ServiceEntity, List<ServiceEntity>> map = new HashMap<>();
         map.put(service,dependencies);

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class DashboardRepositoryHelper {
+public class DashboardControllerHelper {
 
     private final DashboardRepository dashboardRepository;
     private final RecordRepository recordRepository;
@@ -22,7 +22,7 @@ public class DashboardRepositoryHelper {
     private final SubAreaRepository subAreaRepository;
 
 
-    public DashboardRepositoryHelper(DbContext dbContext) {
+    public DashboardControllerHelper(DbContext dbContext) {
         this.dashboardRepository = new DashboardRepository(dbContext);
         this.recordRepository = new RecordRepository(dbContext);
         this.areaRepository = new AreaRepository(dbContext);

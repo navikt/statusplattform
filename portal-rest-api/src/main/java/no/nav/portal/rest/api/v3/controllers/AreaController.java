@@ -3,8 +3,8 @@ package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
-import no.nav.portal.rest.api.Helpers.SubAreaRepositoryHelper;
+import no.nav.portal.rest.api.Helpers.AreaControllerHelper;
+import no.nav.portal.rest.api.Helpers.SubAreaControllerHelper;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
@@ -17,29 +17,29 @@ import java.util.stream.Collectors;
 public class AreaController {
 
    private final AreaRepository areaRepository;
-   private final AreaRepositoryHelper areaRepositoryHelper;
+   private final AreaControllerHelper areaControllerHelper;
    private final SubAreaRepository subAreaRepository;
-   private final SubAreaRepositoryHelper subAreaRepositoryHelper;
+   private final SubAreaControllerHelper subAreaControllerHelper;
 
    public AreaController(DbContext dbContext) {
-      this.areaRepositoryHelper = new AreaRepositoryHelper(dbContext);
+      this.areaControllerHelper = new AreaControllerHelper(dbContext);
       this.areaRepository = new AreaRepository(dbContext);
       this.subAreaRepository = new SubAreaRepository(dbContext);
-      this.subAreaRepositoryHelper = new SubAreaRepositoryHelper(dbContext);
+      this.subAreaControllerHelper = new SubAreaControllerHelper(dbContext);
    }
 
 
    @GET("/Areas")
    @JsonBody
    public List<AreaDto> getAllAreas() {
-      return areaRepositoryHelper.getAllAreas();
+      return areaControllerHelper.getAllAreas();
 
    }
 
    @POST("/Areas")
    @JsonBody
    public UUID newArea(@JsonBody AreaDto areaDto) {
-      UUID uuid = areaRepositoryHelper.newArea(areaDto).getId();
+      UUID uuid = areaControllerHelper.newArea(areaDto).getId();
       areaRepository.setServicesOnArea(uuid,
               areaDto.getServices().stream().map(
                       ServiceDto::getId).collect(Collectors.toList()));
@@ -49,7 +49,7 @@ public class AreaController {
    @PUT("/Area/:Area_id")
    @JsonBody
    public void updateArea(@PathParam("Area_id") UUID area_id, @JsonBody AreaDto areaDto ) {
-      areaRepositoryHelper.updateArea(area_id, areaDto);
+      areaControllerHelper.updateArea(area_id, areaDto);
    }
 
    @DELETE("/Area/:Area_id")
@@ -64,7 +64,7 @@ public class AreaController {
    @GET("/Areas/:Dashboard_id")
    @JsonBody
    public List<AreaDto> getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
-      return areaRepositoryHelper.getAreasOnDashboard(dashboard_id);
+      return areaControllerHelper.getAreasOnDashboard(dashboard_id);
    }
 
    @PUT("/Area/:Area_id/:Service_id")
@@ -90,7 +90,7 @@ public class AreaController {
    @POST("/SubArea")
    @JsonBody
    public UUID newSubArea(@JsonBody SubAreaDto subAreaDto) {
-      UUID uuid = subAreaRepositoryHelper.newSubArea(subAreaDto).getId();
+      UUID uuid = subAreaControllerHelper.newSubArea(subAreaDto).getId();
       subAreaRepository.setServicesOnSubArea(uuid,
               subAreaDto.getServices().stream().map(
                       ServiceDto::getId).collect(Collectors.toList()));

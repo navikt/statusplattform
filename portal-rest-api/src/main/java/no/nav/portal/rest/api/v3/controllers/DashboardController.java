@@ -3,8 +3,8 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.repositories.DashboardRepository;
 import nav.portal.core.util.UuidListBody;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.nav.portal.rest.api.Helpers.AreaRepositoryHelper;
-import no.nav.portal.rest.api.Helpers.DashboardRepositoryHelper;
+import no.nav.portal.rest.api.Helpers.AreaControllerHelper;
+import no.nav.portal.rest.api.Helpers.DashboardControllerHelper;
 import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.DashboardDto;
 
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 public class DashboardController {
 
     private final DashboardRepository dashboardRepository;
-    private final DashboardRepositoryHelper dashboardRepositoryHelper;
-    private AreaRepositoryHelper areaRepositoryHelper;
+    private final DashboardControllerHelper dashboardControllerHelper;
+    private AreaControllerHelper areaControllerHelper;
 
 
     public DashboardController(DbContext dbContext) {
         this.dashboardRepository = new DashboardRepository(dbContext);
-        this.dashboardRepositoryHelper = new DashboardRepositoryHelper(dbContext);
-        this.areaRepositoryHelper = new AreaRepositoryHelper(dbContext);
+        this.dashboardControllerHelper = new DashboardControllerHelper(dbContext);
+        this.areaControllerHelper = new AreaControllerHelper(dbContext);
     }
 
     @GET("/Dashboards")
@@ -49,7 +49,7 @@ public class DashboardController {
     @DELETE("/Dashboard/:Dashboard_id")
     @JsonBody
     public void deleteDashboard(@PathParam("Dashboard_id") UUID dashboard_id) {
-        dashboardRepositoryHelper.deleteDashboard(dashboard_id);
+        dashboardControllerHelper.deleteDashboard(dashboard_id);
     }
 
 
@@ -66,7 +66,7 @@ public class DashboardController {
     @GET("/Dashboard/:Dashboard_id")
     @JsonBody
     public DashboardDto getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
-        return dashboardRepositoryHelper.getDashboard(dashboard_id);
+        return dashboardControllerHelper.getDashboard(dashboard_id);
     }
 
 
