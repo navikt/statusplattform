@@ -34,8 +34,8 @@ spec:
       tenant: nav.no
       # optional
       replyURLs:
-      - "https://portal.labs.nais.io/oauth2/callback"
-      - "https://portal.labs.nais.io/Dashboard/Privatperson"
+      - "https://status.nav.no/sp/rest/oauth2/callback"
+      - "https://status.nav.no/sp/rest/Dashboard/Privatperson"
       claims:
         extra:
           - "NAVident"
