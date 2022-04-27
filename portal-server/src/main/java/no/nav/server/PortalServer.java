@@ -29,7 +29,6 @@ public class PortalServer {
     private final PortalPoller portalPoller = new PortalPoller();
     private final JobScheduler jobScheduler = new JobScheduler();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
-    private Boolean isLocal = false;
 
     public PortalServer() {
         HttpConfiguration config = new HttpConfiguration();
@@ -55,7 +54,6 @@ public class PortalServer {
         new ConfigObserver("portal")
                 .onPrefixedValue("dataSource", DataSourceTransformer::create, this::setDataSource)
                 .onInetSocketAddress("http.port", port, this::setHttpPort)
-                .onStringValue("isLocal", "false", this::setIsLocal)
                 /*Når man legger inn autentisering med OIDC for Profil / Admin så er det ca slik. Se denne commit for hvordan det funket for rest før
                 .onStringValue("openid.discovery_url", null, brukergrupperRestApi::setOpenIdConfiguration)
                 .onStringValue("openid.client_id", null, brukergrupperRestApi::setClientId)
@@ -64,11 +62,11 @@ public class PortalServer {
         ;
     }
 
-    private void setIsLocal(String isLocal) {
-        boolean isLocalBool= Boolean.parseBoolean(isLocal);
-        this.isLocal = isLocalBool;
-        logInnApi.setIsLocal(isLocalBool);
-        portalRestApi.setIsLocal(isLocalBool);
+    private void setFrontEndLocation(){
+        //TODO lage denne smartere
+        String frontEndLocation =  System.getenv("FRONTEND_LOCATION");
+        logInnApi.setFrontEndLocation(frontEndLocation);
+        portalRestApi.setFrontEndLocation(frontEndLocation);
     }
 
     private void setDataSource(DataSource dataSource) {

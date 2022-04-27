@@ -43,7 +43,7 @@ public class PortalRestApi extends ClasspathWebAppContext {
         filter.setDataSource(dataSource);
     }
 
-    public void setIsLocal(boolean isLocal) {
-        corsFilter.setIsLocal(isLocal);
+    public void setFrontEndLocation(String frontEndLocation){
+        corsFilter.setFrontendLocation(frontEndLocation);
     }
 }
