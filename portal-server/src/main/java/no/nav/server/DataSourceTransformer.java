@@ -10,12 +10,13 @@ import java.util.Map;
 import java.util.Properties;
 
 public class DataSourceTransformer {
-    public static DataSource create(Map<String, String> props) {
-
+    public static DataSource create() {
 
         Properties properties = new Properties();
-        props.forEach(properties::put);
-        properties.put("password", System.getenv("dbpass"));
+        properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
+        properties.put("username", "postgres");
+        properties.put("password", System.getenv("dbpas"));
+        properties.put("maximumPoolSize","32");
 
         int count = 0;
         int maxTries = 10;
