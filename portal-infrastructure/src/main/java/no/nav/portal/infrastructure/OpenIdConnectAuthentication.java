@@ -191,7 +191,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         }
 
         JsonObject tokenResponse = JsonObject.read(tokenRequest);
-        logger.info(tokenResponse.toJson());
+
         String id_token = tokenResponse.requiredString("id_token");
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
         response.sendRedirect(frontEndUrl + "/Dashboard/Privatperson/");

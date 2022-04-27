@@ -43,6 +43,7 @@ public class PortalServer {
                 swaggerDocumentation
                 ));
         setupConfiguration();
+        setFrontEndLocation();
     }
 
     private void setupConfiguration() {

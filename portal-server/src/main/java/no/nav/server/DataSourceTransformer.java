@@ -15,9 +15,7 @@ public class DataSourceTransformer {
 
         Properties properties = new Properties();
         props.forEach(properties::put);
-        String passwordName = properties.get("passwordName").toString();
-        properties.remove("passwordName");
-        properties.put("password", System.getenv(passwordName));
+        properties.put("password", System.getenv("dbpass"));
 
         int count = 0;
         int maxTries = 10;
