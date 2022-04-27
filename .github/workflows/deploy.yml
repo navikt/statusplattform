@@ -36,7 +36,7 @@ jobs:
 
   deploy-prod:
     name: Deploy application to prod
-    needs: deploy-test
+    needs: build-and-run-tests
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:

@@ -19,7 +19,7 @@ spec:
     - https://status.nav.no/sp/backend
   gcp:
     sqlInstances:
-      - name: navstatus
+      - name: navstatusDB
         cascadingDelete: true
         type: POSTGRES_12
         highAvailability: true

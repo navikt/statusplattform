@@ -13,7 +13,7 @@ public class DataSourceTransformer {
     public static DataSource create() {
 
         Properties properties = new Properties();
-        properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
+        properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatusDB");
         properties.put("username", "postgres");
         properties.put("password", System.getenv("dbpass"));
         properties.put("maximumPoolSize","32");
