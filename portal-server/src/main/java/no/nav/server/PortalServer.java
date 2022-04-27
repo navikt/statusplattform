@@ -43,10 +43,13 @@ public class PortalServer {
                 swaggerDocumentation
                 ));
         setupConfiguration();
-        setFrontEndLocation();
+
     }
 
     private void setupConfiguration() {
+        setFrontEndLocation();
+        setDataSource(DataSourceTransformer.create());
+
         int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt)
                 .orElse(3005);
         connector.setPort(port);
