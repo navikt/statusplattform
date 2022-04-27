@@ -23,5 +23,6 @@ EXPOSE 3005
 
 
 COPY --from=maven portal-server/target/portal-server-0.1-SNAPSHOT.jar ./portal-server.jar
+COPY --from=maven portal-server/portal.properties ./portal.properties
 
 CMD ["java", "-jar", "./portal-server.jar"]
