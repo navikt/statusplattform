@@ -4,7 +4,6 @@ import nav.portal.core.entities.OpsMessageEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.OpsControllerHelper;
-import no.nav.portal.rest.api.Helpers.ServiceControllerHelper;
 import no.portal.web.generated.api.OPSmessageDto;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
@@ -14,7 +13,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 class OpsControllerTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -56,5 +57,41 @@ class OpsControllerTest {
 
     @Test
     void createMaintenanceMessage() {
+    }
+
+
+    @Test
+    void getAllOpsMessages() {
+        //Arrange
+        List<OpsMessageEntity> opsMessagesEntitiesList = SampleData.getNonEmptyListOfOpsMessageEntity(3);
+        List<OPSmessageDto> opsMessagesDtoList = opsMessagesEntitiesList.stream().map(EntityDtoMappers::toOpsMessageDtoShallow).collect(Collectors.toList());
+
+        //Act
+        opsMessagesDtoList.forEach(dto -> dto.setId(opsController.createOpsMessage(dto).getId()));
+        List<OPSmessageDto> retrievedOpsMessages = opsController.getAllOpsMessages();
+
+        //Assert
+        Assertions.assertThat(opsMessagesDtoList).containsExactlyInAnyOrderElementsOf(retrievedOpsMessages);
+    }
+
+    @Test
+    void deleteOpsMessage() {
+        //Arrange
+        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        OPSmessageDto opsMessageDto = EntityDtoMappers.toOpsMessageDtoShallow(opsMessageEntity);
+
+        //Act
+        UUID opsMessageId = opsController.createOpsMessage(opsMessageDto).getId();
+        opsMessageEntity.setId(opsMessageId);
+        OpsMessageEntity retrievedEntity = opsRepository.retrieveOne(opsMessageId).getKey();
+        
+        Boolean isEntryDeleted = opsRepository.isEntryDeleted(retrievedEntity.getId());
+        opsController.deleteOpsMessage(retrievedEntity.getId());
+
+        //Assert
+        Assertions.assertThat(isEntryDeleted).isEqualTo(false);
+        Assertions.assertThat(opsRepository.isEntryDeleted(opsMessageId)).isEqualTo(true);
+        
+
     }
 }

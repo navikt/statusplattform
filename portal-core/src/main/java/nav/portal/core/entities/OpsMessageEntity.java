@@ -12,6 +12,16 @@ public class OpsMessageEntity {
     private String externalText;
     private boolean isActive;
     private boolean onlyShowForNavEmployees;
+    private boolean deleted;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public OpsMessageEntity setDeleted(boolean deleted) {
+        this.deleted = deleted;
+        return this;
+    }
 
     public OpsMessageEntity() {
     }

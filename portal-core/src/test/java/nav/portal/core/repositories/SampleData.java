@@ -30,6 +30,9 @@ public class SampleData {
     static final ArrayList<String> icons = new ArrayList<>(Arrays.asList("0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011", "0012"));
 
     static final ArrayList<String> firstNames = new ArrayList<>(Arrays.asList("Arne", "Bodil", "Gudrun", "Kjell Åge", "Hufsa", "Elg", "Rake", "Æskild", "Øygunn"));
+    static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
+    static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
+    static final ArrayList<Boolean> booleans = new ArrayList<>(Arrays.asList(true, false));
 
    public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -44,10 +47,18 @@ public class SampleData {
 
     public static OpsMessageEntity getRandomOpsMessageEntity() {
         return new OpsMessageEntity()
-                .setInternalHeader(getRandomFromArray(firstNames))
-                .setInternalText(getRandomFromArray(areaNames))
-                .setOnlyShowForNavEmployees(true)
-                .setIsActive(true);
+                .setInternalHeader(getRandomFromArray(headersForOpsMessages))
+                .setInternalText(getRandomFromArray(infoTextForOpsMessages))
+                .setOnlyShowForNavEmployees(getRandomBoolFromArray(booleans))
+                .setIsActive(getRandomBoolFromArray(booleans));
+    }
+
+    public static List<OpsMessageEntity> getNonEmptyListOfOpsMessageEntity(int numberOfOpsMessages) {
+        List<OpsMessageEntity> opsMessages = new ArrayList<>();
+        for (int i = 0; i < numberOfOpsMessages; i++) {
+            opsMessages.add(getRandomOpsMessageEntity());
+        }
+        return opsMessages;
     }
 
     public static AreaEntity getRandomizedAreaEntityWithNameNotInList(List<AreaEntity> areas) {
@@ -178,6 +189,15 @@ public class SampleData {
            //Hit skal man ikke komme
            return null;
        }
+        Random random = new Random();
+        return array.get(random.nextInt(array.size()));
+    }
+
+    private static Boolean getRandomBoolFromArray(ArrayList<Boolean> array) {
+        if(array.size()==0){
+            //Hit skal man ikke komme
+            return null;
+        }
         Random random = new Random();
         return array.get(random.nextInt(array.size()));
     }

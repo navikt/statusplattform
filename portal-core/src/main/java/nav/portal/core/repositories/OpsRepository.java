@@ -35,6 +35,13 @@ public class OpsRepository {
         return result.getId();
     }
 
+    public void deleteOps(UUID id) {
+        opsMessageTable.where("id", id)
+                .update()
+                .setField("deleted", true)
+                .execute();
+    }
+
     public void setServicesOnOpsMessage(UUID opsId, List<UUID> services) {
         opsMessageServiceTable.where("ops_message_id", opsId).executeDelete();
 
@@ -71,6 +78,28 @@ public class OpsRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: OpsMessage with id " + ops_id));
     }
 
+    public Map<OpsMessageEntity, List<ServiceEntity>> retrieveAll() {
+        DbContextTableAlias ops = opsMessageTable.alias("ops");
+        DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
+        DbContextTableAlias service = serviceTable.alias("service");
+
+        Map<OpsMessageEntity, List<ServiceEntity>> result = new HashMap<>();
+        ops
+                .where("deleted",Boolean.FALSE)
+                .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
+                .leftJoin(o2s.column("service_id"), service.column("id"))
+                .list(row -> {
+                    List<ServiceEntity> serviceList = result
+                            .computeIfAbsent(toOps(row.table(ops)), ignored -> new ArrayList<>());
+
+                    DatabaseRow serivceRow = row.table(service);
+                    Optional.ofNullable(row.getUUID("service_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
+                    return null;
+                });
+        return result;
+    }
+
     static OpsMessageEntity toOps(DatabaseRow row){
         try {
             return new OpsMessageEntity()
@@ -80,9 +109,18 @@ public class OpsRepository {
                     .setExternalHeader(row.getString("extern_header"))
                     .setExternalText(row.getString("extern_text"))
                     .setIsActive(row.getBoolean("is_active"))
-                    .setOnlyShowForNavEmployees(row.getBoolean("only_show_for_nav_employees"));
+                    .setOnlyShowForNavEmployees(row.getBoolean("only_show_for_nav_employees"))
+                    .setDeleted(row.getBoolean("deleted"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }
+    }
+
+
+    public Boolean isEntryDeleted(UUID id){
+        return opsMessageTable
+                .where("id", id)
+                .where("deleted", true)
+                .singleObject(OpsRepository::toOps).isPresent();
     }
 }
