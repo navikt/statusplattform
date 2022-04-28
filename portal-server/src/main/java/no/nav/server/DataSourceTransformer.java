@@ -14,8 +14,8 @@ public class DataSourceTransformer {
 
         Properties properties = new Properties();
         properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
-        properties.put("username", System.getenv("NAIS_DATABASE_PORTALSERVER_NAVSTATUS_USERNAME"));
-        properties.put("password", System.getenv("NAIS_DATABASE_PORTALSERVER_NAVSTATUS_PASSWORD"));
+        properties.put("username", System.getenv("DB_USERNAME"));
+        properties.put("password", System.getenv("DB_PASSWORD"));
         properties.put("maximumPoolSize","32");
 
         int count = 0;
