@@ -19,7 +19,7 @@ spec:
     - https://status.nav.no/sp/backend
   gcp:
     sqlInstances:
-      - name: statusdb
+      - name: portalserver
         type: POSTGRES_12
         highAvailability: true
         tier: db-custom-2-3840
