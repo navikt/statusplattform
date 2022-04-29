@@ -34,8 +34,8 @@ spec:
       tenant: nav.no
       # optional
       replyURLs:
-      - "https://status-api.nav.no/oauth2/callback"
-      - "https://status-api.nav.no/Dashboard/Privatperson"
+      - "https://status.nav.no/oauth2/callback"
+      - "https://status.nav.no/Dashboard/Privatperson"
       claims:
         extra:
           - "NAVident"
