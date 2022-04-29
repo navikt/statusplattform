@@ -16,7 +16,7 @@ spec:
   image: {{ image }}
   port: 3005
   ingresses:
-    - https://statusplatform.nav.no
+    - https://status-api.nav.no
   gcp:
     sqlInstances:
       - name: navstatus
@@ -34,8 +34,8 @@ spec:
       tenant: nav.no
       # optional
       replyURLs:
-      - "https://statusplatform.nav.no/oauth2/callback"
-      - "https://statusplatform.nav.no/Dashboard/Privatperson"
+      - "https://status-api.nav.no/oauth2/callback"
+      - "https://status-api.nav.no/Dashboard/Privatperson"
       claims:
         extra:
           - "NAVident"
