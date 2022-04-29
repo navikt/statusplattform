@@ -10,7 +10,7 @@ spec:
     - secret: nav-status-db-pass
   env:
     - name: FRONTEND_LOCATION
-      value: https://status.nav.no
+      value: https://status.nav.no/sp
   secureLogs:
     enabled: true
   image: {{ image }}
@@ -34,8 +34,8 @@ spec:
       tenant: nav.no
       # optional
       replyURLs:
-      - "https://status.nav.no/oauth2/callback"
-      - "https://status.nav.no/Dashboard/Privatperson"
+      - "https://status.nav.no/sp/oauth2/callback"
+      - "https://status.nav.no/sp/Dashboard/Privatperson"
       claims:
         extra:
           - "NAVident"
