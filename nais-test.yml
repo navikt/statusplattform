@@ -41,8 +41,8 @@ spec:
           - "NAVident"
           - "azp_name"
       # optional, defaults shown
-      sidecar:
-        enabled: true
-        autoLogin: false
-        errorPath: ""
       singlePageApplication: false
+    sidecar:
+      enabled: true
+      autoLogin: false
+      errorPath: ""
