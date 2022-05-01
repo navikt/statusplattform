@@ -156,20 +156,21 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("redirectToAuthorize ---------------------------");
-        /*
+/*
         response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
         String authorizationState = UUID.randomUUID().toString();
         response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
         response.sendRedirect(getAuthorizationUrl(request, authorizationState));
 z           */
 
-        response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "https://portal.labs.nais.io/sp/Dashboard/Privatperson");
+        response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
 
         return Authentication.SEND_CONTINUE;
     }
 
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("oauth2callback ---------------------------");
+        /*
         boolean secure = request.isSecure();
         if (!secure && !request.getServerName().equals("localhost")) {
             response.sendError(400, "Must use https");
@@ -196,10 +197,15 @@ z           */
         }
 
         JsonObject tokenResponse = JsonObject.read(tokenRequest);
+          response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
+
 
         String id_token = tokenResponse.requiredString("id_token");
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
+
+         */
         response.sendRedirect(frontEndUrl + "/Dashboard/Privatperson/");
+
         return Authentication.SEND_CONTINUE;
     }
     //Flytte denne?
