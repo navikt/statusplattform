@@ -11,6 +11,8 @@ spec:
   env:
     - name: FRONTEND_LOCATION
       value: https://status.nav.no/sp
+    - name: BACKEND_LOCATION
+      value: https://status-api.nav.no
   secureLogs:
     enabled: true
   image: {{ image }}
@@ -42,3 +44,7 @@ spec:
           - "azp_name"
       # optional, defaults shown
       singlePageApplication: false
+    sidecar:
+      enabled: true
+      autoLogin: false
+      errorPath: ""

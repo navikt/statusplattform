@@ -156,10 +156,15 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("redirectToAuthorize ---------------------------");
+        /*
         response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
         String authorizationState = UUID.randomUUID().toString();
         response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
         response.sendRedirect(getAuthorizationUrl(request, authorizationState));
+z           */
+
+        response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "https://portal.labs.nais.io/sp/Dashboard/Privatperson");
+
         return Authentication.SEND_CONTINUE;
     }
 

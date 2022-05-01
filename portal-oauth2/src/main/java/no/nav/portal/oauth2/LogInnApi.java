@@ -16,7 +16,7 @@ public class LogInnApi extends ClasspathWebAppContext {
 
         private final CORSFilter corsFilter;
 
-        public LogInnApi(String context) {
+        public LogInnApi(String context, String frontendLocation) {
             super(context, "/webapp-web");
             corsFilter = new CORSFilter();
             addServlet(new ServletHolder(new WebJarServlet("swagger-ui")), "/swagger/*");
@@ -26,12 +26,13 @@ public class LogInnApi extends ClasspathWebAppContext {
 
             ))), "/*");
 
-            addFilter(new FilterHolder( new AuthenticationFilter(authentication)), "/*", EnumSet.of(DispatcherType.REQUEST));
+            addFilter(new FilterHolder( new AuthenticationFilter(authentication,frontendLocation)), "/*", EnumSet.of(DispatcherType.REQUEST));
         }
 
         public void setFrontEndLocation(String frontEndLocation){
             corsFilter.setFrontendLocation(frontEndLocation);
             authentication.setFrontendLocation(frontEndLocation);
+
         }
 
 

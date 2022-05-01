@@ -10,7 +10,7 @@ spec:
     - secret: nav-status-db-pass
   env:
     - name: FRONTEND_LOCATION
-      value: https://portal.labs.nais.io
+      value: https://portal.labs.nais.io/sp
   secureLogs:
     enabled: true
   image: {{ image }}
@@ -34,11 +34,15 @@ spec:
       tenant: nav.no
       # optional
       replyURLs:
-      - "https://portal.labs.nais.io/oauth2/callback"
-      - "https://portal.labs.nais.io/Dashboard/Privatperson"
+      - "https://portal.labs.nais.io/sp/oauth2/callback"
+      - "https://portal.labs.nais.io/sp/Dashboard/Privatperson"
       claims:
         extra:
           - "NAVident"
           - "azp_name"
       # optional, defaults shown
+      sidecar:
+        enabled: true
+        autoLogin: false
+        errorPath: ""
       singlePageApplication: false

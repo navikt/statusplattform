@@ -25,10 +25,12 @@ public class PortalServer {
     private final Server server = new Server();
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
-    private final LogInnApi logInnApi = new LogInnApi("/oauth2");
+    private String frontEndLocation =  System.getenv("FRONTEND_LOCATION");
+    private final LogInnApi logInnApi = new LogInnApi("/authenticate",frontEndLocation);
     private final PortalPoller portalPoller = new PortalPoller();
     private final JobScheduler jobScheduler = new JobScheduler();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
+
 
     public PortalServer() {
         HttpConfiguration config = new HttpConfiguration();
@@ -67,8 +69,7 @@ public class PortalServer {
 
     private void setFrontEndLocation(){
         //TODO lage denne smartere
-        String frontEndLocation =  System.getenv("FRONTEND_LOCATION");
-        logInnApi.setFrontEndLocation(frontEndLocation);
+       // logInnApi.setFrontEndLocation(frontEndLocation);
         portalRestApi.setFrontEndLocation(frontEndLocation);
     }
 
