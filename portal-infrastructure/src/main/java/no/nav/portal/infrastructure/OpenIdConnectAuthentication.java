@@ -45,12 +45,13 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static URL openIdConfiguration;
     private static String clientId = System.getenv("AZURE_APP_CLIENT_ID");
     private static String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
-    private String frontEndUrl;
+    private static String frontEndUrl;
 
     private int COOKIE_SESSION_TIMEOUT_DURATION_IN_WEEKS = 60*60*24*7;
 
     static {
         try{
+            frontEndUrl  = System.getenv("FRONTEND_LOCATION");
             openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
         }
         catch (MalformedURLException e){
@@ -59,9 +60,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         }
     }
 
-    public void setFrontendLocation(String frontEndLocation){
-        this.frontEndUrl = frontEndLocation;
-    }
 
 
 
@@ -157,12 +155,12 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("redirectToAuthorize ---------------------------");
 /*
-        response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
-        String authorizationState = UUID.randomUUID().toString();
-        response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
         response.sendRedirect(getAuthorizationUrl(request, authorizationState));
 z           */
 
+        String authorizationState = UUID.randomUUID().toString();
+        response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
+        response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
         response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
 
         return Authentication.SEND_CONTINUE;
@@ -170,7 +168,7 @@ z           */
 
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("oauth2callback ---------------------------");
-        /*
+
         boolean secure = request.isSecure();
         if (!secure && !request.getServerName().equals("localhost")) {
             response.sendError(400, "Must use https");
@@ -180,6 +178,7 @@ z           */
             response.sendError(400, "Invalid state");
             return Authentication.SEND_FAILURE;
         }
+        /*
         response.addCookie(removeCookie(request, AUTHORIZATION_STATE_COOKIE));
 
         OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
@@ -197,14 +196,16 @@ z           */
         }
 
         JsonObject tokenResponse = JsonObject.read(tokenRequest);
-          response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
 
 
         String id_token = tokenResponse.requiredString("id_token");
         response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
+        response.sendRedirect(frontEndUrl + "/Dashboard/Privatperson/");
 
          */
-        response.sendRedirect(frontEndUrl + "/Dashboard/Privatperson/");
+
+        response.sendRedirect(  frontEndUrl);
+
 
         return Authentication.SEND_CONTINUE;
     }

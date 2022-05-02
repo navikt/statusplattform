@@ -31,7 +31,6 @@ public class LogInnApi extends ClasspathWebAppContext {
 
         public void setFrontEndLocation(String frontEndLocation){
             corsFilter.setFrontendLocation(frontEndLocation);
-            authentication.setFrontendLocation(frontEndLocation);
 
         }
 
