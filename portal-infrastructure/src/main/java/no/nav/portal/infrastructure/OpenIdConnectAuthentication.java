@@ -36,6 +36,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static final Logger logger = LoggerFactory.getLogger(OpenIdConnectAuthentication.class);
     public static final String ID_TOKEN_COOKIE = "tmp_token";
     public static final String AUTHORIZATION_STATE_COOKIE = "authorization_state";
+    public static final String AUTHENTICATION_HEADER= "Authenticate";
 
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(1));
 
@@ -64,13 +65,39 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     public Authentication authenticate(ServletRequest servletRequest) {
         System.out.println("authenticate(ServletRequest servletRequest) ---------------------------");
         //Sette verdier fra header isteden for cookie
-        return getCookie(servletRequest, ID_TOKEN_COOKIE)
-                .flatMap(this::getUser)
+        return getUserv2(servletRequest)
                 .orElse(this);
+    }
+
+    private Optional<Authentication> getUserv2(ServletRequest servletRequest) {
+        System.out.println("getUser ---------------------------");
+
+        String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHENTICATION_HEADER);
+        String[] splited = encodedAuthentication.split("[.]");
+
+        String encodedHeader = splited[0];
+        String encodedPayload = splited[1];
+        String encodedSignature = splited[2];
+
+        String decodedHeader  = new String(Base64.getDecoder().decode(encodedHeader));
+        String decodedPayload  = new String(Base64.getDecoder().decode(encodedPayload));
+
+        JsonObject headerJson =  JsonObject.parse(decodedHeader);
+        JsonObject payloadJson = JsonObject.parse(decodedPayload);
+        Principal principal = createPrincipalv2(payloadJson);
+
+        return Optional.of(new UserAuthentication("user", createUserIdentity(principal)));
+    }
+
+    public Principal createPrincipalv2(JsonObject payloadJson){
+        System.out.println("createPrincipal ---------------------------");
+        logger.info(payloadJson.toJson());
+        return new PortalRestPrincipal(payloadJson.requiredString("name"), payloadJson.stringValue("NAVident").orElse(null));
     }
 
     @Override
     public Authentication authenticate(ServletRequest servletRequest, ServletResponse servletResponse) {
+
         System.out.println("authenticate ---------------------------");
         try {
             return doAuthenticate((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
@@ -108,6 +135,9 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         }
     }
+
+
+
 
     private Optional<Authentication> getUser(String idToken) {
         System.out.println("getUser ---------------------------");
@@ -180,41 +210,6 @@ z           */
              logger.info("Header element: "+   headers.nextElement());
          }
 
-        /*
-        boolean secure = request.isSecure();
-        if (!secure && !request.getServerName().equals("localhost")) {
-            response.sendError(400, "Must use https");
-            return Authentication.SEND_FAILURE;
-        }
-        if (!isMatchingState(request)) {
-            response.sendError(400, "Invalid state");
-            return Authentication.SEND_FAILURE;
-        }
-        /*
-        response.addCookie(removeCookie(request, AUTHORIZATION_STATE_COOKIE));
-
-        OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
-        HttpURLConnection tokenRequest = configuration.openTokenConnection();
-        tokenRequest.setRequestMethod("POST");
-        tokenRequest.setDoOutput(true);
-        tokenRequest.getOutputStream().write(getTokenPayload(
-                getValidatedCode(request),
-                getRedirectUri(getContextPath(request))
-        ).getBytes());
-
-        int responseCode = tokenRequest.getResponseCode();
-        if(responseCode >= 400){
-            throw new RuntimeException(String.format("OIDC Authentication failed with code %s and error message %s",  responseCode, stringify(tokenRequest.getErrorStream())));
-        }
-
-        JsonObject tokenResponse = JsonObject.read(tokenRequest);
-
-
-        String id_token = tokenResponse.requiredString("id_token");
-        response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
-        response.sendRedirect(frontEndUrl + "/Dashboard/Privatperson/");
-
-         */
 
         response.sendRedirect(FRONTEND_LOCATION);
 
