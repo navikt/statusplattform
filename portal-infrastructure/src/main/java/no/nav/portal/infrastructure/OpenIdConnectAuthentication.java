@@ -171,13 +171,13 @@ z           */
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("oauth2callback ---------------------------");
 
-
         String authorization = request.getHeader("Authorization");
         Enumeration<String> headers = request.getHeaderNames();
         logger.info("autorization: " + authorization);
         logger.info("autorization decoded: " + decodeBase64Url(authorization.getBytes(StandardCharsets.UTF_8)) );
         logger.info("headers: " + headers);
 
+        /*
         boolean secure = request.isSecure();
         if (!secure && !request.getServerName().equals("localhost")) {
             response.sendError(400, "Must use https");
