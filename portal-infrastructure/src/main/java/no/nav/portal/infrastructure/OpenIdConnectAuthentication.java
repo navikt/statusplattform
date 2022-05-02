@@ -169,14 +169,14 @@ z           */
     }
 
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("oauth2callback ---------------------------");
+        logger.info("oauth2callback ---------------------------");
 
 
         String authorization = request.getHeader("Authorization");
         Enumeration<String> headers = request.getHeaderNames();
-        System.out.println("autorization: " + authorization);
-        System.out.println("autorization decoded: " + decodeBase64Url(authorization.getBytes(StandardCharsets.UTF_8)) );
-        System.out.println("headers: " + headers);
+        logger.info("autorization: " + authorization);
+        logger.info("autorization decoded: " + decodeBase64Url(authorization.getBytes(StandardCharsets.UTF_8)) );
+        logger.info("headers: " + headers);
 
         boolean secure = request.isSecure();
         if (!secure && !request.getServerName().equals("localhost")) {
