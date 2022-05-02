@@ -175,7 +175,9 @@ z           */
         Enumeration<String> headers = request.getHeaderNames();
         logger.info("autorization: " + authorization);
         logger.info("autorization decoded: " + decodeBase64Url(authorization.getBytes(StandardCharsets.UTF_8)) );
-        logger.info("headers: " + headers);
+         while(headers.hasMoreElements()){
+             logger.info("Header element: "+   headers.nextElement());
+         }
 
         /*
         boolean secure = request.isSecure();
