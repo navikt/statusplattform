@@ -52,7 +52,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
             openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
         }
         catch (MalformedURLException e){
-            System.out.println(e);
+            logger.info(e.toString());
 
         }
     }
@@ -63,6 +63,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     @Override
     public Authentication authenticate(ServletRequest servletRequest) {
         System.out.println("authenticate(ServletRequest servletRequest) ---------------------------");
+        //Sette verdier fra header isteden for cookie
         return getCookie(servletRequest, ID_TOKEN_COOKIE)
                 .flatMap(this::getUser)
                 .orElse(this);

@@ -13,13 +13,10 @@ import java.io.IOException;
 public class AuthenticationFilter implements Filter {
 
     private final Authentication authentication;
-    private final String frontendLocation;
-    private final String backendLocation;
 
-    public AuthenticationFilter(Authentication authentication, String frontendLocation) {
-        this.frontendLocation = frontendLocation;
+
+    public AuthenticationFilter(Authentication authentication) {
         this.authentication = authentication;
-        this.backendLocation = System.getenv("BACKEND_LOCATION");
     }
 
     @Override

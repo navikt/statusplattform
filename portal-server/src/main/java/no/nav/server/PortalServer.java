@@ -26,7 +26,7 @@ public class PortalServer {
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
     private String frontEndLocation =  System.getenv("FRONTEND_LOCATION");
-    private final LogInnApi logInnApi = new LogInnApi("/authenticate",frontEndLocation);
+    private final LogInnApi logInnApi = new LogInnApi("/authenticate");
     private final PortalPoller portalPoller = new PortalPoller();
     private final JobScheduler jobScheduler = new JobScheduler();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
@@ -68,8 +68,6 @@ public class PortalServer {
     }
 
     private void setFrontEndLocation(){
-        //TODO lage denne smartere
-       // logInnApi.setFrontEndLocation(frontEndLocation);
         portalRestApi.setFrontEndLocation(frontEndLocation);
     }
 
@@ -105,7 +103,6 @@ public class PortalServer {
     }
 
     public static void main(String[] args) throws Exception {
-        //HttpsURLConnection.setDefaultSSLSocketFactory(CertificateTrustStore.loadFromDirectory(new File(".")).createSslSocketFactory());
         new PortalServer().start();
     }
 }
