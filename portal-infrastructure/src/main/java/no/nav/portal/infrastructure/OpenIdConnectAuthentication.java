@@ -18,17 +18,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.*;
 import java.util.Base64;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,15 +40,15 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(1));
 
     private static URL openIdConfiguration;
-    private static String clientId = System.getenv("AZURE_APP_CLIENT_ID");
-    private static String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
-    private static String frontEndUrl;
+    private static String CLIENT_ID = System.getenv("AZURE_APP_CLIENT_ID");
+    private static String CLIENT_SECRET = System.getenv("AZURE_APP_CLIENT_SECRET");
+    private static String FRONTEND_LOCATION;
 
     private int COOKIE_SESSION_TIMEOUT_DURATION_IN_WEEKS = 60*60*24*7;
 
     static {
         try{
-            frontEndUrl  = System.getenv("FRONTEND_LOCATION");
+            FRONTEND_LOCATION = System.getenv("FRONTEND_LOCATION");
             openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
         }
         catch (MalformedURLException e){
@@ -156,18 +153,30 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         System.out.println("redirectToAuthorize ---------------------------");
 /*
         response.sendRedirect(getAuthorizationUrl(request, authorizationState));
-z           */
 
         String authorizationState = UUID.randomUUID().toString();
         response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
         response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
+z           */
+
         response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
 
         return Authentication.SEND_CONTINUE;
     }
 
+    private String decodeBase64Url(byte[] encoded){
+        return Base64.getUrlEncoder().encodeToString(encoded);
+    }
+
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.info("oauth2callback ---------------------------");
+        System.out.println("oauth2callback ---------------------------");
+
+
+        String authorization = request.getHeader("Authorization");
+        Enumeration<String> headers = request.getHeaderNames();
+        System.out.println("autorization: " + authorization);
+        System.out.println("autorization decoded: " + decodeBase64Url(authorization.getBytes(StandardCharsets.UTF_8)) );
+        System.out.println("headers: " + headers);
 
         boolean secure = request.isSecure();
         if (!secure && !request.getServerName().equals("localhost")) {
@@ -204,7 +213,7 @@ z           */
 
          */
 
-        response.sendRedirect(  frontEndUrl);
+        response.sendRedirect(FRONTEND_LOCATION);
 
 
         return Authentication.SEND_CONTINUE;
@@ -225,7 +234,7 @@ z           */
         OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
         System.out.println("Endsession!:" +configuration.getEndSessionEndpoint().toString());
 
-        response.sendRedirect(configuration.getEndSessionEndpoint() + "?post_logout_redirect_uri=" + (frontEndUrl + "/Dashboard/Privatperson/"));
+        response.sendRedirect(configuration.getEndSessionEndpoint() + "?post_logout_redirect_uri=" + (FRONTEND_LOCATION + "/Dashboard/Privatperson/"));
 
     }
 
@@ -245,7 +254,7 @@ z           */
     }
 
     protected String getTokenPayload(String code, String redirectUri) {
-        return "client_id=" + clientId + "&client_secret=" + clientSecret + "&redirect_uri=" + redirectUri + "&code=" + code + "&grant_type=authorization_code";
+        return "client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&redirect_uri=" + redirectUri + "&code=" + code + "&grant_type=authorization_code";
     }
 
     protected Cookie createCookie(HttpServletRequest request, String name, String value) {
@@ -293,7 +302,7 @@ z           */
 
     protected String getAuthorizationQuery(String authorizationState, String contextPath) {
         try {
-            return "client_id=" + clientId
+            return "client_id=" + CLIENT_ID
                     + "&state=" + authorizationState
                     + "&response_type=code"
                     + "&scope=" + encode("openid profile", Charset.forName("UTF-8").name())
@@ -304,7 +313,7 @@ z           */
     }
 
     protected String getRedirectUri(String contextPath) {
-        return  frontEndUrl + "/oauth2/callback";
+        return  FRONTEND_LOCATION + "/oauth2/callback";
     }
 
 
