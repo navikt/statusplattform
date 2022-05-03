@@ -2,9 +2,6 @@ package no.nav.portal.infrastructure;
 
 
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
-import com.nimbusds.jose.proc.JWKSecurityContext;
-import com.nimbusds.jose.proc.SecurityContext;
-import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.security.UserAuthentication;
 import org.eclipse.jetty.server.Authentication;
@@ -14,6 +11,8 @@ import org.jsonbuddy.parse.JsonHttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 
 import javax.security.auth.Subject;
 import javax.servlet.ServletRequest;
@@ -67,6 +66,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         }
     }
+
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("oauth2callback ---------------------------");
 
@@ -80,7 +80,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
 
 
-        DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
+        //DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
 
         response.setStatus(200);
         response.sendRedirect(FRONTEND_LOCATION);
