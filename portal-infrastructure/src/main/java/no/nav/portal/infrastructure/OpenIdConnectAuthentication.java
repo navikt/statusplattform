@@ -100,7 +100,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         logger.info("getUser ---------------------------");
 
         String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHORIZATION_HEADER);
-        if(encodedAuthentication.isEmpty()){
+        if(encodedAuthentication == null || encodedAuthentication.isEmpty()){
             return Optional.empty();
         }
         String[] splited = encodedAuthentication.split("[.]");
