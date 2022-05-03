@@ -73,6 +73,7 @@ public class AuthenticationFilter implements Filter {
             if (encodedAuthentication == null || encodedAuthentication.isEmpty()) {
                 return;
             }
+            logger.info("Encoded: "+ encodedAuthentication);
             String[] splited = encodedAuthentication.split("[.]");
 
             String encodedHeader = splited[0];
