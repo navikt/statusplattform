@@ -1,4 +1,4 @@
-FROM maven:3.6.3-openjdk-11 as maven
+FROM maven:17-ea-jdk-oracle as maven
 
 COPY pom.xml pom.xml
 
