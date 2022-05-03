@@ -16,6 +16,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -66,25 +67,31 @@ public class AuthenticationFilter implements Filter {
 
     private void getUserv2(ServletRequest servletRequest) {
         logger.info("IN AUTHENTICATION FILTER, /authenticate");
+        try {
+            String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHORIZATION_HEADER);
 
-        String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHORIZATION_HEADER);
+            if (encodedAuthentication == null || encodedAuthentication.isEmpty()) {
+                return;
+            }
+            String[] splited = encodedAuthentication.split("[.]");
 
-        if(encodedAuthentication == null || encodedAuthentication.isEmpty() ){
-            return;
+            String encodedHeader = splited[0];
+            String encodedPayload = splited[1];
+            //String encodedSignature = splited[2];
+
+            String decodedHeader = new String(Base64.getDecoder().decode(encodedHeader));
+            String decodedPayload = new String(Base64.getDecoder().decode(encodedPayload));
+
+            JsonObject headerJson = JsonObject.parse(decodedHeader);
+            JsonObject payloadJson = JsonObject.parse(decodedPayload);
+
+            logger.info("Useridentity: " + headerJson + payloadJson);
         }
-        String[] splited = encodedAuthentication.split("[.]");
-
-        String encodedHeader = splited[0];
-        String encodedPayload = splited[1];
-        String encodedSignature = splited[2];
-
-        String decodedHeader  = new String(Base64.getDecoder().decode(encodedHeader));
-        String decodedPayload  = new String(Base64.getDecoder().decode(encodedPayload));
-
-        JsonObject headerJson =  JsonObject.parse(decodedHeader);
-        JsonObject payloadJson = JsonObject.parse(decodedPayload);
-
-        logger.info("Useridentity: "+ headerJson + payloadJson);
+        catch (Exception e){
+            logger.info("Could not read authorization token");
+            logger.info(e.getMessage());
+            Arrays.stream(e.getStackTrace()).forEach(stackTraceElement -> logger.info(stackTraceElement.toString()));
+        }
 
     }
 
