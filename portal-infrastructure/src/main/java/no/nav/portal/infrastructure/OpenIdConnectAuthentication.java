@@ -10,7 +10,6 @@ import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonHttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 
@@ -32,7 +31,6 @@ import java.util.*;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 
 import static java.net.URLEncoder.encode;
 
@@ -41,7 +39,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static final Logger logger = LoggerFactory.getLogger(OpenIdConnectAuthentication.class);
     public static final String ID_TOKEN_COOKIE = "tmp_token";
     public static final String AUTHORIZATION_STATE_COOKIE = "authorization_state";
-    public static final String AUTHENTICATION_HEADER= "Authenticate";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(1));
 
@@ -80,7 +78,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
 
 
-        //DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
+        DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
 
         response.setStatus(200);
         response.sendRedirect(FRONTEND_LOCATION);
@@ -94,7 +92,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     @Override
     public Authentication authenticate(ServletRequest servletRequest) {
-        System.out.println("authenticate(ServletRequest servletRequest) ---------------------------");
+        logger.info("authenticate(ServletRequest servletRequest) ---------------------------");
         //Sette verdier fra header isteden for cookie
         return getUserv2(servletRequest)
                 .orElse(this);
@@ -103,7 +101,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private Optional<Authentication> getUserv2(ServletRequest servletRequest) {
         logger.info("getUser ---------------------------");
 
-        String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHENTICATION_HEADER);
+        String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHORIZATION_HEADER);
         if(encodedAuthentication.isEmpty()){
             return Optional.empty();
         }
@@ -173,16 +171,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
 
 
-
-    private Optional<Authentication> getUser(String idToken) {
-        System.out.println("getUser ---------------------------");
-        Principal principal = cache.getOrCompute(idToken, () -> getPrincipal(idToken));
-        if (principal == null) {
-            return Optional.empty();
-        }
-        MDC.put("remoteUser", principal.getName());
-        return Optional.of(new UserAuthentication("brukergrupper-identity", createUserIdentity(principal)));
-    }
 
 
     protected Optional<Principal> getPrincipal(String idToken) {
