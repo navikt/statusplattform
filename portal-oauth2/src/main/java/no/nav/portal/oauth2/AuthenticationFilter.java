@@ -32,16 +32,20 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        logger.info("IN AUTHENTICATION FILTER");
+
         MDC.clear();
         ((Request)request).setAuthentication(authentication);
 
         String pathInfo = ((Request) request).getPathInfo();
+        logger.info("Path: "+ pathInfo);
+        getUserv2(request);
 
        /**
-        if (pathInfo.startsWith("/login") ) {
+         if (pathInfo.startsWith("/login") ) {
             ((HttpServletResponse) response).sendRedirect(backendLocation +"/oauth2/login?redirect="+ frontendLocation);
             return;
-        }
+       }
         if ( pathInfo.startsWith("/callback")) {
             ((HttpServletResponse) response).sendRedirect(backendLocation + "/oauth2/callback");
             return;
@@ -56,19 +60,18 @@ public class AuthenticationFilter implements Filter {
         }
         if( pathInfo.startsWith("/authenticate")){
             getUserv2(request);
-            ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
         }
         chain.doFilter(request, response);
     }
 
     private void getUserv2(ServletRequest servletRequest) {
         logger.info("IN AUTHENTICATION FILTER, /authenticate");
-        logger.info("IN AUTHENTICATION FILTER, /authenticate");
-        logger.info("IN AUTHENTICATION FILTER, /authenticate");
-        logger.info("IN AUTHENTICATION FILTER, /authenticate");
 
         String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHORIZATION_HEADER);
 
+        if(encodedAuthentication == null || encodedAuthentication.isEmpty() ){
+            return;
+        }
         String[] splited = encodedAuthentication.split("[.]");
 
         String encodedHeader = splited[0];
