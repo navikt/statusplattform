@@ -101,7 +101,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     private Optional<Authentication> getUserv2(ServletRequest servletRequest) {
-        System.out.println("getUser ---------------------------");
+        logger.info("getUser ---------------------------");
 
         String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHENTICATION_HEADER);
         if(encodedAuthentication.isEmpty()){
@@ -118,12 +118,13 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         JsonObject headerJson =  JsonObject.parse(decodedHeader);
         JsonObject payloadJson = JsonObject.parse(decodedPayload);
-        Principal principal = createPrincipalv2(payloadJson);
+        PortalRestPrincipal principal = createPrincipalv2(payloadJson);
 
+        logger.info("Useridentity: "+ principal.getName() + principal.getNavIdent());
         return Optional.of(new UserAuthentication("user", createUserIdentity(principal)));
     }
 
-    public Principal createPrincipalv2(JsonObject payloadJson){
+    public PortalRestPrincipal createPrincipalv2(JsonObject payloadJson){
         System.out.println("createPrincipal ---------------------------");
         logger.info(payloadJson.toJson());
         return new PortalRestPrincipal(payloadJson.requiredString("name"), payloadJson.stringValue("NAVident").orElse(null));
