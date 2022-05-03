@@ -22,6 +22,17 @@
             <artifactId>swagger-ui</artifactId>
             <version>3.20.5</version>
         </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-client-core</artifactId>
+            <version>2.0.15</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-core</artifactId>
+            <version>2.0.15</version>
+        </dependency>
+
     </dependencies>
 
     <properties>
@@ -61,6 +72,7 @@
                         <artifactId>openapi-generator-java-annotationfree</artifactId>
                         <version>0.1.1</version>
                     </dependency>
+
                 </dependencies>
             </plugin>
         </plugins>

@@ -1,6 +1,10 @@
 package no.nav.portal.infrastructure;
 
 
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
+import com.nimbusds.jose.proc.JWKSecurityContext;
+import com.nimbusds.jose.proc.SecurityContext;
+import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.security.UserAuthentication;
 import org.eclipse.jetty.server.Authentication;
@@ -18,6 +22,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -28,6 +33,7 @@ import java.util.*;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 
 import static java.net.URLEncoder.encode;
 
@@ -40,24 +46,49 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(1));
 
-    private static URL openIdConfiguration;
+
     private static String CLIENT_ID = System.getenv("AZURE_APP_CLIENT_ID");
     private static String CLIENT_SECRET = System.getenv("AZURE_APP_CLIENT_SECRET");
+    private static String PUBLIC_JWKS = System.getenv("AZURE_OPENID_CONFIG_JWKS_URI");
+    private static String AZURE_OPENID_CONFIG_ISSUER = System.getenv("AZURE_OPENID_CONFIG_ISSUER");
+    private static URL AZURE_WELL_KNOW_URL;
     private static String FRONTEND_LOCATION;
 
     private int COOKIE_SESSION_TIMEOUT_DURATION_IN_WEEKS = 60*60*24*7;
 
     static {
         try{
+            AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
             FRONTEND_LOCATION = System.getenv("FRONTEND_LOCATION");
-            openIdConfiguration = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
+
         }
         catch (MalformedURLException e){
             logger.info(e.toString());
 
         }
     }
+    protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("oauth2callback ---------------------------");
 
+        String authorization = request.getHeader("Authorization");
+        Enumeration<String> headers = request.getHeaderNames();
+        logger.info("autorization: " + authorization);
+        logger.info("autorization decoded: " + decodeBase64Url(authorization.getBytes(StandardCharsets.UTF_8)) );
+        while(headers.hasMoreElements()){
+            logger.info("Header element: "+   headers.nextElement());
+        }
+
+
+
+        DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
+
+        response.setStatus(200);
+        response.sendRedirect(FRONTEND_LOCATION);
+
+
+
+        return Authentication.SEND_CONTINUE;
+    }
 
 
 
@@ -73,6 +104,9 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         System.out.println("getUser ---------------------------");
 
         String encodedAuthentication = ((HttpServletRequest) servletRequest).getHeader(AUTHENTICATION_HEADER);
+        if(encodedAuthentication.isEmpty()){
+            return Optional.empty();
+        }
         String[] splited = encodedAuthentication.split("[.]");
 
         String encodedHeader = splited[0];
@@ -188,7 +222,10 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
         String authorizationState = UUID.randomUUID().toString();
         response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
         response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
+
 z           */
+
+
 
         response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
 
@@ -199,21 +236,40 @@ z           */
         return Base64.getUrlEncoder().encodeToString(encoded);
     }
 
-    protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+
+    protected Authentication oauth2callbackOld(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("oauth2callback ---------------------------");
+        boolean secure = request.isSecure();
+        if (!secure && !request.getServerName().equals("localhost")) {
+            response.sendError(400, "Must use https");
+            return Authentication.SEND_FAILURE;
+        }
+        if (!isMatchingState(request)) {
+            response.sendError(400, "Invalid state");
+            return Authentication.SEND_FAILURE;
+        }
+        response.addCookie(removeCookie(request, AUTHORIZATION_STATE_COOKIE));
 
-        String authorization = request.getHeader("Authorization");
-        Enumeration<String> headers = request.getHeaderNames();
-        logger.info("autorization: " + authorization);
-        logger.info("autorization decoded: " + decodeBase64Url(authorization.getBytes(StandardCharsets.UTF_8)) );
-         while(headers.hasMoreElements()){
-             logger.info("Header element: "+   headers.nextElement());
-         }
+        OpenIdConfiguration configuration = OpenIdConfiguration.read(AZURE_WELL_KNOW_URL);
+        HttpURLConnection tokenRequest = configuration.openTokenConnection();
+        tokenRequest.setRequestMethod("POST");
+        tokenRequest.setDoOutput(true);
+        tokenRequest.getOutputStream().write(getTokenPayload(
+                getValidatedCode(request),
+                getRedirectUri(getContextPath(request))
+        ).getBytes());
 
+        int responseCode = tokenRequest.getResponseCode();
+        if(responseCode >= 400){
+            throw new RuntimeException(String.format("OIDC Authentication failed with code %s and error message %s",  responseCode, stringify(tokenRequest.getErrorStream())));
+        }
 
-        response.sendRedirect(FRONTEND_LOCATION);
+        JsonObject tokenResponse = JsonObject.read(tokenRequest);
 
-
+        String id_token = tokenResponse.requiredString("id_token");
+        response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
+        response.sendRedirect("frontEndUrl" + "/Dashboard/Privatperson/");
         return Authentication.SEND_CONTINUE;
     }
     //Flytte denne?
@@ -229,7 +285,7 @@ z           */
     }
 
     private void logOutAzure(HttpServletResponse response) throws IOException {
-        OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
+        OpenIdConfiguration configuration = OpenIdConfiguration.read(AZURE_WELL_KNOW_URL);
         System.out.println("Endsession!:" +configuration.getEndSessionEndpoint().toString());
 
         response.sendRedirect(configuration.getEndSessionEndpoint() + "?post_logout_redirect_uri=" + (FRONTEND_LOCATION + "/Dashboard/Privatperson/"));
@@ -290,7 +346,7 @@ z           */
     }
 
     protected String getAuthorizationUrl(HttpServletRequest request, String authorizationState) throws IOException {
-        OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
+        OpenIdConfiguration configuration = OpenIdConfiguration.read(AZURE_WELL_KNOW_URL);
         return configuration.getAuthorizationEndpoint() + "?" + getAuthorizationQuery(authorizationState, getContextPath(request));
     }
 
