@@ -51,7 +51,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static URL AZURE_WELL_KNOW_URL;
     private static String FRONTEND_LOCATION;
 
-    private int COOKIE_SESSION_TIMEOUT_DURATION_IN_WEEKS = 60*60*24*7;
 
     static {
         try{
@@ -80,7 +79,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
 
-        response.setStatus(200);
         response.sendRedirect(FRONTEND_LOCATION);
 
 
@@ -140,7 +138,12 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
     protected Authentication doAuthenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("Request uri = " + request.getRequestURI());
+        logger.info("Request uri = " + request.getRequestURI());
+
+        if (request.getRequestURI().startsWith(request.getContextPath() + "/authenticate")) {
+            return getUserv2(request)
+                    .orElse(this);
+        }
         if (request.getRequestURI().startsWith(request.getContextPath() + "/callback")) {
             return oauth2callback(request, response);
         } else if (request.getRequestURI().startsWith(request.getContextPath() + "/login")) {
@@ -158,43 +161,10 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     }
 
 
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
-            request.getSession().invalidate();
-            logOutAzure(response);
-
-        }catch (Exception e){
-
-        }
-    }
 
 
 
 
-
-    protected Optional<Principal> getPrincipal(String idToken) {
-        System.out.println("getPrincipal ---------------------------");
-        try {
-            /*OpenIdConfiguration configuration = OpenIdConfiguration.read(openIdConfiguration);
-            HttpURLConnection userRequest = configuration.openUserinfoConnection();
-            logger.debug("Fetching userinfo");
-            userRequest.setRequestProperty("Authorization", "Bearer " + idToken);
-            return Optional.of(createPrincipal(JsonObject.read(userRequest)));*/
-
-            String jsonIdToken = new String(Base64.getDecoder().decode(idToken.split("\\.")[1]), StandardCharsets.UTF_8);
-            return Optional.of(createPrincipal(JsonObject.parse(jsonIdToken)));
-        } catch (JsonHttpException e) {
-            logger.warn("Failed to fetch userinfo: {}: {}", e, e.getJsonError());
-            return Optional.empty();
-        }
-    }
-
-    public Principal createPrincipal(JsonObject userinfo){
-        System.out.println("createPrincipal ---------------------------");
-        logger.info(userinfo.toJson());
-        return new PortalRestPrincipal(userinfo.requiredString("name"), userinfo.stringValue("NAVident").orElse(null));
-    }
 
     private DefaultUserIdentity createUserIdentity(Principal principal) {
         System.out.println("createUserIdentity ---------------------------");
@@ -205,14 +175,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("redirectToAuthorize ---------------------------");
-/*
-        response.sendRedirect(getAuthorizationUrl(request, authorizationState));
 
-        String authorizationState = UUID.randomUUID().toString();
-        response.addCookie(removeCookie(request, ID_TOKEN_COOKIE));
-        response.addCookie(createCookie(request, AUTHORIZATION_STATE_COOKIE, authorizationState));
-
-z           */
 
 
 
@@ -227,171 +190,13 @@ z           */
 
 
 
-    protected Authentication oauth2callbackOld(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.info("oauth2callback ---------------------------");
-        boolean secure = request.isSecure();
-        if (!secure && !request.getServerName().equals("localhost")) {
-            response.sendError(400, "Must use https");
-            return Authentication.SEND_FAILURE;
-        }
-        if (!isMatchingState(request)) {
-            response.sendError(400, "Invalid state");
-            return Authentication.SEND_FAILURE;
-        }
-        response.addCookie(removeCookie(request, AUTHORIZATION_STATE_COOKIE));
-
-        OpenIdConfiguration configuration = OpenIdConfiguration.read(AZURE_WELL_KNOW_URL);
-        HttpURLConnection tokenRequest = configuration.openTokenConnection();
-        tokenRequest.setRequestMethod("POST");
-        tokenRequest.setDoOutput(true);
-        tokenRequest.getOutputStream().write(getTokenPayload(
-                getValidatedCode(request),
-                getRedirectUri(getContextPath(request))
-        ).getBytes());
-
-        int responseCode = tokenRequest.getResponseCode();
-        if(responseCode >= 400){
-            throw new RuntimeException(String.format("OIDC Authentication failed with code %s and error message %s",  responseCode, stringify(tokenRequest.getErrorStream())));
-        }
-
-        JsonObject tokenResponse = JsonObject.read(tokenRequest);
-
-        String id_token = tokenResponse.requiredString("id_token");
-        response.addCookie(createCookie(request, ID_TOKEN_COOKIE, id_token));
-        response.sendRedirect("frontEndUrl" + "/Dashboard/Privatperson/");
-        return Authentication.SEND_CONTINUE;
-    }
-    //Flytte denne?
-    private static String stringify(InputStream inputStream) throws IOException {
-        try (Reader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-            StringBuilder result = new StringBuilder();
-            int c;
-            while ((c = reader.read()) != -1) {
-                result.append((char) c);
-            }
-            return result.toString();
-        }
-    }
-
-    private void logOutAzure(HttpServletResponse response) throws IOException {
-        OpenIdConfiguration configuration = OpenIdConfiguration.read(AZURE_WELL_KNOW_URL);
-        System.out.println("Endsession!:" +configuration.getEndSessionEndpoint().toString());
-
-        response.sendRedirect(configuration.getEndSessionEndpoint() + "?post_logout_redirect_uri=" + (FRONTEND_LOCATION + "/Dashboard/Privatperson/"));
-
-    }
-
-    private String getValidatedCode(HttpServletRequest request) {
-        String code = request.getParameter("code");
-        if(code == null){
-            throw new IllegalArgumentException("Mangler code param");
-        }
-
-        String regex = "^[a-zA-Z0-9_\\-.]+$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(code);
-        if(!matcher.matches()){
-            throw new IllegalArgumentException("Forventer at code samsvarer med gitt pattern. Koden var: " + code);
-        }
-        return code;
-    }
-
-    protected String getTokenPayload(String code, String redirectUri) {
-        return "client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&redirect_uri=" + redirectUri + "&code=" + code + "&grant_type=authorization_code";
-    }
-
-    protected Cookie createCookie(HttpServletRequest request, String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(COOKIE_SESSION_TIMEOUT_DURATION_IN_WEEKS); //IE11 trenger visst verdi her
-        cookie.setPath(request.getContextPath());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(request.isSecure());
-        return cookie;
-    }
-
-    protected Cookie removeCookie(String name) {
-        Cookie cookie = new Cookie(name, "");
-        cookie.setMaxAge(0);
-        cookie.setHttpOnly(true);
-        return cookie;
-    }
-
-    protected Cookie removeCookie(HttpServletRequest request, String name) {
-        Cookie cookie = new Cookie(name, "");
-        cookie.setMaxAge(0);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(request.isSecure());
-        return cookie;
-    }
-
-    private boolean isMatchingState(HttpServletRequest request) {
-        String stateCookie = getCookie(request, AUTHORIZATION_STATE_COOKIE).orElse("missing");
-        String stateParameter = request.getParameter("state");
-        if (!stateCookie.equals(stateParameter) && !getServerURL(request).equals("http://localhost:3000")) {
-            logger.warn("Unexpected state={} (expected={})", stateParameter, stateCookie);
-            return false;
-        }
-        return true;
-    }
-
-    protected String getAuthorizationUrl(HttpServletRequest request, String authorizationState) throws IOException {
-        OpenIdConfiguration configuration = OpenIdConfiguration.read(AZURE_WELL_KNOW_URL);
-        return configuration.getAuthorizationEndpoint() + "?" + getAuthorizationQuery(authorizationState, getContextPath(request));
-    }
-
-    protected String getContextPath(HttpServletRequest request) {
-        return getServerURL(request) + request.getContextPath();
-    }
-
-    protected String getAuthorizationQuery(String authorizationState, String contextPath) {
-        try {
-            return "client_id=" + CLIENT_ID
-                    + "&state=" + authorizationState
-                    + "&response_type=code"
-                    + "&scope=" + encode("openid profile", Charset.forName("UTF-8").name())
-                    + "&redirect_uri=" + getRedirectUri(contextPath);
-        } catch (UnsupportedEncodingException e) {
-            throw ExceptionUtil.softenCheckedException(e);
-        }
-    }
-
-    protected String getRedirectUri(String contextPath) {
-        return  FRONTEND_LOCATION + "/oauth2/callback";
-    }
 
 
 
 
-    private Optional<String> getCookie(ServletRequest servletRequest, String name) {
-        return Arrays.stream(Optional.ofNullable(((HttpServletRequest) servletRequest).getCookies())
-                .orElse(new Cookie[0]))
-                .filter(c -> c.getName().equals(name))
-                .map(Cookie::getValue)
-                .findAny();
-    }
 
-    public String getServerURL(HttpServletRequest req) {
-        String host = Optional.ofNullable(req.getHeader("X-Forwarded-Host"))
-                .orElseGet(() -> req.getServerName() + (getServerPort(req) != getDefaultPort(req) ?  ":" + getServerPort(req) : ""));
-        return getScheme(req) + "://" + host;
-    }
 
-    private int getServerPort(HttpServletRequest req) {
-        return Optional.ofNullable(req.getHeader("X-Forwarded-Port"))
-                .map(Integer::parseInt)
-                .orElseGet(() -> {
-                    int port = req.getServerPort();
-                    return port == 80 || port == 443 ? getDefaultPort(req) : port;
-                });
-    }
 
-    private String getScheme(HttpServletRequest req) {
-        return Optional.ofNullable(req.getHeader("X-Forwarded-Proto")).orElse(req.getScheme());
-    }
-
-    private int getDefaultPort(HttpServletRequest req) {
-        return getScheme(req).equals("https") ? 443 : (getScheme(req).equals("http") ? 80 : -1);
-    }
 
     @Override
     public Authentication logout(ServletRequest request) {
