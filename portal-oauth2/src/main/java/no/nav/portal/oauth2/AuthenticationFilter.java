@@ -84,6 +84,7 @@ public class AuthenticationFilter implements Filter {
         }
         catch (Exception e){
             logger.info("Error in constructiong JwtTokenValidationHandler");
+            logger.info(e.getMessage());
         }
     }
 
