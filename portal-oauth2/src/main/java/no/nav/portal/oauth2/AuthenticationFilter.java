@@ -72,6 +72,9 @@ public class AuthenticationFilter implements Filter {
 
     private JwtTokenClaims readAuthorizationFromHeader(ServletRequest request) {
         String encodedAuthentication = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
+        logger.info("In readAuthorizationFromHeader : ");
+        logger.info("encodedAuthentication: " + encodedAuthentication);
+
         if (encodedAuthentication == null || encodedAuthentication.isEmpty()) {
             return null;
         }
