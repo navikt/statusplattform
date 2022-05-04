@@ -68,11 +68,16 @@ public class AuthenticationFilter implements Filter {
         IssuerProperties issuerProperties = new IssuerProperties(AZURE_WELL_KNOW_URL);
         logger.info("IN Authenticationfilter: ");
         logger.info("AZURE_WELL_KNOW_URL: " +AZURE_WELL_KNOW_URL.toString() );
-        Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
-        logger.info(issuerProperties.toString());
-        issuerPropertiesMap.put("AzureAd", issuerProperties);
-        MultiIssuerConfiguration multiIssuerConfiguration = new MultiIssuerConfiguration(issuerPropertiesMap);
-        this.jwtTokenValidationHandler = new JwtTokenValidationHandler(multiIssuerConfiguration);
+        try {
+            Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
+            logger.info(issuerProperties.toString());
+            issuerPropertiesMap.put("AzureAd", issuerProperties);
+            MultiIssuerConfiguration multiIssuerConfiguration = new MultiIssuerConfiguration(issuerPropertiesMap);
+            this.jwtTokenValidationHandler = new JwtTokenValidationHandler(multiIssuerConfiguration);
+        }
+        catch (Exception e){
+            logger.info("Error in constructiong JwtTokenValidationHandler");
+        }
     }
 
     @Override
