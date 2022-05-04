@@ -67,7 +67,7 @@ public class AuthenticationFilter implements Filter {
 
     public AuthenticationFilter(Authentication authentication) {
         this.authentication = authentication;
-        IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL, List.of(CLIENT_ID) );
+        IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL, List.of("api://"+CLIENT_ID,CLIENT_ID) );
         //IssuerProperties(AZURE_WELL_KNOW_URL, List<String> acceptedAudience, String cookieName, IssuerProperties.Validation validation, IssuerProperties.JwksCache jwksCache)
         //IssuerProperties issuerProperties2 = new IssuerProperties(PUBLIC_JWKS_URL);
         logger.info("IN Authenticationfilter: ");
@@ -111,7 +111,7 @@ public class AuthenticationFilter implements Filter {
         }
         //Legg til principal her? for alle some ikke er login eller callback
         // se linje 120 i OpenIdConnectAuthentication
-        logger.info("Trying to create user for request");
+        logger.info("Trying to create user for request to " + pathInfo);
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
         if(jwtTokenClaims == null){
             chain.doFilter(request,response);
