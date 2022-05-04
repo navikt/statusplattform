@@ -30,10 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class AuthenticationFilter implements Filter {
@@ -70,16 +67,17 @@ public class AuthenticationFilter implements Filter {
 
     public AuthenticationFilter(Authentication authentication) {
         this.authentication = authentication;
-        IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL);
+        IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL, List.of(CLIENT_ID) );
         //IssuerProperties(AZURE_WELL_KNOW_URL, List<String> acceptedAudience, String cookieName, IssuerProperties.Validation validation, IssuerProperties.JwksCache jwksCache)
         //IssuerProperties issuerProperties2 = new IssuerProperties(PUBLIC_JWKS_URL);
         logger.info("IN Authenticationfilter: ");
         logger.info("AZURE_WELL_KNOW_URL: " +AZURE_WELL_KNOW_URL.toString() );
-        readPublicJwt();
+        //readPublicJwt();
         try {
             Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
             logger.info(issuerProperties.toString());
             issuerPropertiesMap.put("AzureAd", issuerProperties);
+            logger.info("Trying to create: MultiIssuerConfiguration: " );
             MultiIssuerConfiguration multiIssuerConfiguration = new MultiIssuerConfiguration(issuerPropertiesMap);
             this.jwtTokenValidationHandler = new JwtTokenValidationHandler(multiIssuerConfiguration);
         }
