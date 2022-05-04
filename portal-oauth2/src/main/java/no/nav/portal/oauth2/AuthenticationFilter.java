@@ -78,6 +78,7 @@ public class AuthenticationFilter implements Filter {
             logger.info(issuerProperties.toString());
             issuerPropertiesMap.put("AzureAd", issuerProperties);
             logger.info("Trying to create: MultiIssuerConfiguration: " );
+            logger.info("Issuer properties: "+ issuerProperties);
             MultiIssuerConfiguration multiIssuerConfiguration = new MultiIssuerConfiguration(issuerPropertiesMap);
             this.jwtTokenValidationHandler = new JwtTokenValidationHandler(multiIssuerConfiguration);
         }
