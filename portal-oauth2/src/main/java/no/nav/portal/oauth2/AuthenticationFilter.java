@@ -23,7 +23,10 @@ import javax.security.auth.Subject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
@@ -36,11 +39,12 @@ import java.util.Map;
 public class AuthenticationFilter implements Filter {
     private static String CLIENT_ID = System.getenv("AZURE_APP_CLIENT_ID");
     private static String CLIENT_SECRET = System.getenv("AZURE_APP_CLIENT_SECRET");
-    private static String PUBLIC_JWKS = System.getenv("AZURE_OPENID_CONFIG_JWKS_URI");
+    private static String PUBLIC_JWKS_URI = System.getenv("AZURE_OPENID_CONFIG_JWKS_URI");
     private static String AZURE_OPENID_CONFIG_ISSUER = System.getenv("AZURE_OPENID_CONFIG_ISSUER");
     private static URL AZURE_WELL_KNOW_URL;
     private static String FRONTEND_LOCATION;
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static URL PUBLIC_JWKS_URL;
     private final Authentication authentication;
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 
@@ -52,6 +56,7 @@ public class AuthenticationFilter implements Filter {
         try{
             AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
             FRONTEND_LOCATION = System.getenv("FRONTEND_LOCATION");
+            PUBLIC_JWKS_URL = new URL(PUBLIC_JWKS_URI);
 
         }
         catch (MalformedURLException e){
@@ -65,9 +70,12 @@ public class AuthenticationFilter implements Filter {
 
     public AuthenticationFilter(Authentication authentication) {
         this.authentication = authentication;
-        IssuerProperties issuerProperties = new IssuerProperties(AZURE_WELL_KNOW_URL);
+        IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL);
+        //IssuerProperties(AZURE_WELL_KNOW_URL, List<String> acceptedAudience, String cookieName, IssuerProperties.Validation validation, IssuerProperties.JwksCache jwksCache)
+        //IssuerProperties issuerProperties2 = new IssuerProperties(PUBLIC_JWKS_URL);
         logger.info("IN Authenticationfilter: ");
         logger.info("AZURE_WELL_KNOW_URL: " +AZURE_WELL_KNOW_URL.toString() );
+        readPublicJwt();
         try {
             Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
             logger.info(issuerProperties.toString());
@@ -227,7 +235,32 @@ public class AuthenticationFilter implements Filter {
     }
 
     @Override
-    public void destroy() {
+    public void destroy() {    }
 
+    private void readPublicJwt(){
+        try {
+            logger.info("Trying to read public jwt");
+
+            HttpURLConnection con = (HttpURLConnection) PUBLIC_JWKS_URL.openConnection(); //Http URL Connection Created...
+            BufferedReader br = null;
+            if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
+                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+            }
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            con.disconnect();
+            String publicJwt = sb.toString();
+            logger.info("publicJWt:" + publicJwt);
+
+            logger.info("Connection Response Message : "+con.getResponseMessage());
+        }
+        catch (Exception e) {
+            logger.info( e.getMessage());
+        }
     }
 }
