@@ -58,7 +58,7 @@ public class AuthenticationFilter implements Filter {
         JsonObject jsonObject = getJsonBody(request);
         PortalRestPrincipal principal = createPrincipalv2(jsonObject);
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
-    //    ((Request) request).setAuthentication(authenticationForUser);
+        ((Request) request).setAuthentication(authenticationForUser);
         chain.doFilter(request, response);
     }
 
