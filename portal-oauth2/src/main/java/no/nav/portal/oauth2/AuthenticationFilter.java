@@ -48,7 +48,14 @@ public class AuthenticationFilter implements Filter {
         logger.info("Path: "+ pathInfo);
         getUserv2(request);
 
-        if (pathInfo.startsWith("/login") || pathInfo.startsWith("/callback")) {
+        if (pathInfo.startsWith("/login")) {
+            ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
+            return;
+        }
+        if ( pathInfo.startsWith("/callback")) {
+            logger.info("Trying to create user for request in /callback");
+            getJsonBody(request);
+
             ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
             return;
         }
@@ -58,6 +65,7 @@ public class AuthenticationFilter implements Filter {
         JsonObject jsonObject = getJsonBody(request);
         if(jsonObject == null){
             chain.doFilter(request,response);
+            return;
         }
         PortalRestPrincipal principal = createPrincipalv2(jsonObject);
 
@@ -116,7 +124,7 @@ public class AuthenticationFilter implements Filter {
             return null;
         }
         try {
-
+            logger.info("In get jsonBody, encodedAuthentication: "+ encodedAuthentication);
 
             String[] splited = encodedAuthentication.split("[.]");
             String encodedHeader = splited[0];
@@ -125,6 +133,8 @@ public class AuthenticationFilter implements Filter {
             //byte[] decodedBytes = Base64.getDecoder().decode(encodedAuthentication);
             String decodedHeader = new String(Base64.getDecoder().decode(encodedHeader));
             String decodedPayload = new String(Base64.getDecoder().decode(encodedPayload));
+            logger.info("decodedHeader: "+ encodedAuthentication);
+            logger.info("decodedPayload: "+ encodedAuthentication);
             JsonObject headerJson = JsonObject.parse(decodedHeader);
             JsonObject payloadJson = JsonObject.parse(decodedPayload);
             return payloadJson;
