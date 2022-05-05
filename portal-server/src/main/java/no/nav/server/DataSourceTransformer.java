@@ -21,8 +21,11 @@ public class DataSourceTransformer {
         Properties properties = new Properties();
         properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
         properties.put("username", System.getenv("DB_USERNAME"));
-        properties.put("password", System.getenv("DB_PASSWORD"));
-        properties.put("password", new String(Base64.getDecoder().decode(System.getenv("DB_PASSWORD"))));
+
+        String encodedPassword = System.getenv("DB_PASSWORD");
+        logger.info("DB_PASSWORD Ecoded: "+ encodedPassword);
+        String password = new String(Base64.getDecoder().decode(encodedPassword));
+        properties.put("password", password);
         logger.info("DB_USERNAME: "+ properties.get("username"));
         logger.info("DB_PASSWORD: "+ properties.get("password"));
         properties.put("maximumPoolSize","32");
