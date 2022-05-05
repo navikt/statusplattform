@@ -1,6 +1,7 @@
 package no.nav.portal.oauth2;
 
 
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import no.nav.portal.infrastructure.PortalRestPrincipal;
 import no.nav.security.token.support.core.configuration.IssuerProperties;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
@@ -8,6 +9,7 @@ import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.http.HttpRequest;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
+import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.security.UserAuthentication;
 import org.eclipse.jetty.server.Authentication;
@@ -29,6 +31,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.*;
 
@@ -99,14 +102,14 @@ public class AuthenticationFilter implements Filter {
         logger.info("Path: "+ pathInfo);
 
         if (pathInfo.startsWith("/login")) {
-            ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
+            redirectToAuthorize((HttpServletRequest) request, (HttpServletResponse) response);
             return;
         }
         if ( pathInfo.startsWith("/callback")) {
             logger.info("Trying to create user for request in /callback");
             readAuthorizationFromHeader(request);
-            doTokenValidation((HttpServletRequest) request,(HttpServletResponse) response, chain);
-            ((HttpServletRequest)request).authenticate((HttpServletResponse)response);
+            doTokenValidation((HttpServletRequest) request,(HttpServletResponse) response);
+            callBack((HttpServletRequest)request,(HttpServletResponse) response);
             return;
         }
         //Legg til principal her? for alle some ikke er login eller callback
@@ -122,6 +125,22 @@ public class AuthenticationFilter implements Filter {
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
         ((Request) request).setAuthentication(authenticationForUser);
         chain.doFilter(request, response);
+    }
+
+    protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("redirectToAuthorize ---------------------------");
+
+        response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
+
+        return Authentication.SEND_CONTINUE;
+    }
+    protected Authentication callBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+
+        //DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
+
+        response.sendRedirect(FRONTEND_LOCATION);
+        return Authentication.SEND_CONTINUE;
     }
 
     private JwtTokenClaims readAuthorizationFromHeader(ServletRequest request) {
@@ -164,8 +183,17 @@ public class AuthenticationFilter implements Filter {
         return null;
     }
 
+    private void doTokenValidation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("In doTokenValidation");
+        Map<String, JwtToken> issuerShortNameValidatedTokenMap = new HashMap<>();
+        issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
+        TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens((HttpRequest)request);
+        logger.info(context.toString());
 
-    private void doTokenValidation(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+    }
+
+    private void doTokenValidation2(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         logger.info("In doTokenValidation");
         Map<String, JwtToken> issuerShortNameValidatedTokenMap = new HashMap<>();
         issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
@@ -181,6 +209,7 @@ public class AuthenticationFilter implements Filter {
             }
         };
         contextHolder.setTokenValidationContext(this.jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request)));
+
 
         try {
             chain.doFilter(request, response);
