@@ -46,7 +46,7 @@ public class AuthenticationFilter implements Filter {
     private static String FRONTEND_LOCATION;
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static URL PUBLIC_JWKS_URL;
-    private final Authentication authentication;
+    //private final Authentication authentication;
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     private  JwtTokenValidationHandler jwtTokenValidationHandler;
@@ -55,21 +55,32 @@ public class AuthenticationFilter implements Filter {
 
     static {
         try{
+            /*
             AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
             FRONTEND_LOCATION = System.getenv("FRONTEND_LOCATION");
             PUBLIC_JWKS_URL = new URL(PUBLIC_JWKS_URI);
 
+
+             */
         }
-        catch (MalformedURLException e){
+        catch (Exception e){
             logger.info(e.toString());
 
         }
     }
+    @Override
+    public void init(FilterConfig filterConfig) {
+
+    }
+
+    @Override
+    public void destroy() {    }
 
 
 
 
     public AuthenticationFilter(Authentication authentication) {
+        /*
         this.authentication = authentication;
         IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL, List.of("api://"+CLIENT_ID,CLIENT_ID) );
         //IssuerProperties(AZURE_WELL_KNOW_URL, List<String> acceptedAudience, String cookieName, IssuerProperties.Validation validation, IssuerProperties.JwksCache jwksCache)
@@ -89,13 +100,14 @@ public class AuthenticationFilter implements Filter {
         catch (Exception e){
             logger.info("Error in constructiong JwtTokenValidationHandler");
             logger.info(e.getMessage());
-        }
+        }*/
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         logger.info("IN AUTHENTICATION FILTER");
-
+        chain.doFilter(request,response);
+        /*
         MDC.clear();
         ((Request)request).setAuthentication(authentication);
 
@@ -127,9 +139,9 @@ public class AuthenticationFilter implements Filter {
 
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
         ((Request) request).setAuthentication(authenticationForUser);
-        chain.doFilter(request, response);
+        chain.doFilter(request, response);*/
     }
-
+/*
     protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("redirectToAuthorize ---------------------------");
 
@@ -288,13 +300,7 @@ public class AuthenticationFilter implements Filter {
             }
         };
     }
-    @Override
-    public void init(FilterConfig filterConfig) {
 
-    }
-
-    @Override
-    public void destroy() {    }
 
     private void readPublicJwt(){
         try {
@@ -321,5 +327,5 @@ public class AuthenticationFilter implements Filter {
         catch (Exception e) {
             logger.info( e.getMessage());
         }
-    }
+    }*/
 }
