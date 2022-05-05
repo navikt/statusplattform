@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -20,7 +21,7 @@ public class DataSourceTransformer {
         Properties properties = new Properties();
         properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
         properties.put("username", System.getenv("DB_USERNAME"));
-        properties.put("password", System.getenv("DB_PASSWORD"));
+        properties.put("password", Base64.getDecoder().decode(("DB_PASSWORD")));
         properties.put("maximumPoolSize","32");
         logger.info("DB_USERNAME: "+ properties.get("username"));
         logger.info("DB_PASSWORD: "+ properties.get("password"));
