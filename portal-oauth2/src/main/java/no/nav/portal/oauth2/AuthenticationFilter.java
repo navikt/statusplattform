@@ -109,7 +109,7 @@ public class AuthenticationFilter implements Filter {
         if ( pathInfo.startsWith("/callback")) {
             logger.info("Trying to create user for request in /callback");
             readAuthorizationFromHeader(request);
-            doTokenValidation(request);
+            doTokenValidation((HttpServletRequest)request);
             callBack((HttpServletRequest)request,(HttpServletResponse) response);
             return;
         }
@@ -186,11 +186,11 @@ public class AuthenticationFilter implements Filter {
         return null;
     }
 
-    private void doTokenValidation(ServletRequest request) {
+    private void doTokenValidation(HttpServletRequest request) {
         logger.info("In doTokenValidation");
         Map<String, JwtToken> issuerShortNameValidatedTokenMap = new HashMap<>();
         issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
-        HttpRequest httpRequest = mapToNavSecuretyHttpRequest((HttpServletRequest) request);
+        HttpRequest httpRequest = mapToNavSecuretyHttpRequest(request);
         TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens(httpRequest);
         logger.info(context.toString());
 
