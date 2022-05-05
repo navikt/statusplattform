@@ -34,6 +34,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AuthenticationFilter implements Filter {
@@ -108,7 +109,7 @@ public class AuthenticationFilter implements Filter {
         if ( pathInfo.startsWith("/callback")) {
             logger.info("Trying to create user for request in /callback");
             readAuthorizationFromHeader(request);
-            doTokenValidation((HttpServletRequest) request,(HttpServletResponse) response);
+            doTokenValidation(request);
             callBack((HttpServletRequest)request,(HttpServletResponse) response);
             return;
         }
@@ -120,6 +121,8 @@ public class AuthenticationFilter implements Filter {
             chain.doFilter(request,response);
             return;
         }
+        //Create userprinciple from header
+        //Legg til refresh token funksjonalitet
         PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
 
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
@@ -183,14 +186,41 @@ public class AuthenticationFilter implements Filter {
         return null;
     }
 
-    private void doTokenValidation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void doTokenValidation(ServletRequest request) {
         logger.info("In doTokenValidation");
         Map<String, JwtToken> issuerShortNameValidatedTokenMap = new HashMap<>();
         issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
-        TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens((HttpRequest)request);
+        HttpRequest httpRequest = mapToNavSecuretyHttpRequest((HttpServletRequest) request);
+        TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens(httpRequest);
         logger.info(context.toString());
 
 
+    }
+
+    private HttpRequest mapToNavSecuretyHttpRequest(HttpServletRequest httpServletRequest){
+       return new HttpRequest() {
+            @Override
+            public String getHeader(String headerName) {
+                return httpServletRequest.getHeader(headerName);
+            }
+
+            @Override
+            public NameValue[] getCookies() {
+                return Arrays.stream(httpServletRequest.getCookies())
+                        .map(cookie -> new NameValue() {
+                            @Override
+                            public String getName() {
+                                return cookie.getName();
+                            }
+
+                            @Override
+                            public String getValue() {
+                                return cookie.getValue();
+                            }
+
+                        }).collect(Collectors.toList()).toArray(NameValue[]::new);
+            }
+        };
     }
 
     private void doTokenValidation2(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
