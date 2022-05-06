@@ -19,7 +19,7 @@ public class DataSourceTransformer {
 
         logger.info("DatasourceTransformer: ");
         Properties properties = new Properties();
-        properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatusdb");
+        properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/testdb");
         properties.put("username", System.getenv("DB_USERNAME"));
 
         String password = System.getenv("DB_PASSWORD");
