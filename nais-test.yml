@@ -8,7 +8,7 @@ metadata:
 spec:
   env:
     - name: FRONTEND_LOCATION
-      value: https://portal.labs.nais.io/sp
+      value: https://portal.labs.nais.io
   secureLogs:
     enabled: true
   image: {{ image }}
