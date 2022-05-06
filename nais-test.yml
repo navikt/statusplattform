@@ -17,7 +17,6 @@ spec:
     - https://digitalstatus.ekstern.dev.nav.no
   gcp:
     sqlInstances:
-      - cascadingDelete: true
         name: navstatus
         type: POSTGRES_12
         highAvailability: true
