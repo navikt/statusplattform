@@ -27,15 +27,17 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.Duration;
+import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import java.util.*;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+    /*
 import static java.net.URLEncoder.encode;
 
 public class OpenIdConnectAuthentication implements Authentication.Deferred {
-
     private static final Logger logger = LoggerFactory.getLogger(OpenIdConnectAuthentication.class);
     public static final String ID_TOKEN_COOKIE = "tmp_token";
     public static final String AUTHORIZATION_STATE_COOKIE = "authorization_state";
@@ -63,6 +65,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         }
     }
+
 
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("oauth2callback ---------------------------");
@@ -139,11 +142,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
     protected Authentication doAuthenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("Request uri = " + request.getRequestURI());
-
-        if (request.getRequestURI().startsWith(request.getContextPath() + "/authenticate")) {
-            return getUserv2(request)
-                    .orElse(this);
-        }
         if (request.getRequestURI().startsWith(request.getContextPath() + "/callback")) {
             return oauth2callback(request, response);
         } else if (request.getRequestURI().startsWith(request.getContextPath() + "/login")) {
@@ -202,4 +200,6 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     public Authentication logout(ServletRequest request) {
         return null;
     }
+
 }
+     */
