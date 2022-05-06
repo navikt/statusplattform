@@ -6,8 +6,6 @@ metadata:
   labels:
     team: navdig
 spec:
-  envFrom:
-    - secret: nav-status-db-pass
   env:
     - name: FRONTEND_LOCATION
       value: https://portal.labs.nais.io/sp
@@ -19,6 +17,7 @@ spec:
     - https://digitalstatus.ekstern.dev.nav.no
   gcp:
     sqlInstances:
+      - cascadingDelete: true
       - name: testdb
         type: POSTGRES_12
         highAvailability: true
