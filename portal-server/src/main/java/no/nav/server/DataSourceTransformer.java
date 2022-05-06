@@ -22,9 +22,8 @@ public class DataSourceTransformer {
         properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
         properties.put("username", System.getenv("DB_USERNAME"));
 
-        String encodedPassword = System.getenv("DB_PASSWORD");
-        logger.info("DB_PASSWORD Ecoded: "+ encodedPassword);
-        String password = new String(Base64.getDecoder().decode(encodedPassword));
+        String password = System.getenv("DB_PASSWORD");
+        logger.info("DB_PASSWORD Ecoded: "+ password);
         properties.put("password", password);
         logger.info("DB_USERNAME: "+ properties.get("username"));
         logger.info("DB_PASSWORD: "+ properties.get("password"));
