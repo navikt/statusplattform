@@ -25,7 +25,7 @@ public class PortalServer {
     private final Server server = new Server();
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
-    private String frontEndLocation =  System.getenv("FRONTEND_LOCATION");
+    private String frontEndLocation;
     private final LogInnApi logInnApi = new LogInnApi("/authenticate");
     private final PortalPoller portalPoller = new PortalPoller();
     private final JobScheduler jobScheduler = new JobScheduler();
@@ -49,7 +49,7 @@ public class PortalServer {
     }
 
     private void setupConfiguration() {
-        setFrontEndLocation();
+        setFrontEndLocation(System.getenv("FRONTEND_LOCATION"));
         setDataSource(DataSourceTransformer.create());
 
         int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt)
@@ -67,7 +67,7 @@ public class PortalServer {
         ;
     }
 
-    private void setFrontEndLocation(){
+    private void setFrontEndLocation(String frontEndLocation){
         portalRestApi.setFrontEndLocation(frontEndLocation);
     }
 

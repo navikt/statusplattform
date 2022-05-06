@@ -1,5 +1,8 @@
 package no.nav.portal.infrastructure;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -18,7 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 public class CORSFilter implements Filter {
 
 
-    private String frontendLocation;
+    private static String frontendLocation;
+    private Logger logger =  LoggerFactory.getLogger(CORSFilter.class);
 
 
     public CORSFilter() {
@@ -42,6 +46,7 @@ public class CORSFilter implements Filter {
         // Authorize (allow) all domains to consume the content
         //TODO hvordan skal dette håndteres? Dersom frontend og backend hostes på samme server trenger ikke
 
+        logger.info("corsefilter should allow fronteendlocation: "+ frontendLocation);
        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", frontendLocation);
        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Methods","GET, OPTIONS, HEAD, PUT, POST, DELETE");
        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers", "*");
