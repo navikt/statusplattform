@@ -18,7 +18,7 @@ spec:
   gcp:
     sqlInstances:
       - cascadingDelete: true
-      - name: testdb
+        name: navstatus
         type: POSTGRES_12
         highAvailability: true
         tier: db-custom-2-3840
