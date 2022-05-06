@@ -34,14 +34,14 @@ import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-    /*
 import static java.net.URLEncoder.encode;
 
 public class OpenIdConnectAuthentication implements Authentication.Deferred {
     private static final Logger logger = LoggerFactory.getLogger(OpenIdConnectAuthentication.class);
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    /*
     public static final String ID_TOKEN_COOKIE = "tmp_token";
     public static final String AUTHORIZATION_STATE_COOKIE = "authorization_state";
-    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private CachedHashMap<String, Principal> cache = new CachedHashMap<>(Duration.ofMinutes(1));
 
@@ -65,11 +65,11 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         }
     }
-
+    */
 
     protected Authentication oauth2callback(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.info("oauth2callback ---------------------------");
-
+        /*
         String authorization = request.getHeader("Authorization");
         Enumeration<String> headers = request.getHeaderNames();
         logger.info("autorization: " + authorization);
@@ -84,7 +84,7 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
 
         response.sendRedirect(FRONTEND_LOCATION);
 
-
+*/
 
         return Authentication.SEND_CONTINUE;
     }
@@ -200,6 +200,4 @@ public class OpenIdConnectAuthentication implements Authentication.Deferred {
     public Authentication logout(ServletRequest request) {
         return null;
     }
-
 }
-     */
