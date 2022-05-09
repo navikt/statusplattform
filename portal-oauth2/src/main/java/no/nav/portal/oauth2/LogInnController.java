@@ -19,6 +19,6 @@ public class LogInnController {
                         .name(loggedInUser.getName())
                         .navIdent(loggedInUser.getNavIdent())
                 )
-                .orElse(new NavUserDto());
+                .orElse(new NavUserDto().name("Name").navIdent("1337"));
     }
 }
