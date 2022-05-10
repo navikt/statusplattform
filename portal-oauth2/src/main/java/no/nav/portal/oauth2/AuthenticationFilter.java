@@ -116,12 +116,13 @@ public class AuthenticationFilter implements Filter {
         logger.info("Trying to create user for request to " + pathInfo);
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
         doTokenValidation((HttpServletRequest)request);
+        chain.doFilter(request, response);
+        MDC.clear();
+        return;/*
         PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
 
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
-        ((Request) request).setAuthentication(authenticationForUser);
-        chain.doFilter(request, response);
-        MDC.clear();
+        ((Request) request).setAuthentication(authenticationForUser);*/
     }
 
 
@@ -170,6 +171,11 @@ public class AuthenticationFilter implements Filter {
     private void doTokenValidation(HttpServletRequest request) {
         logger.info("In doTokenValidation");
         Map<String, JwtToken> issuerShortNameValidatedTokenMap = new HashMap<>();
+        JwtToken jwtToken = getJwtToken(request);
+        if(jwtToken == null){
+            return;
+        }
+
         issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
         HttpRequest navSecuretyHttpRequest = mapToNavSecuretyHttpRequest(request);
         TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens(navSecuretyHttpRequest);
