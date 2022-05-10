@@ -128,21 +128,21 @@ public class AuthenticationFilter implements Filter {
 
 
     private JwtTokenClaims readAuthorizationFromHeader(ServletRequest request) {
-        String encodedAuthentication = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
+        String encodedAuthorization = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
         logger.info("In readAuthorizationFromHeader : ");
-        logger.info("encodedAuthentication: " + encodedAuthentication);
+        logger.info("encodedAuthorization: " + encodedAuthorization);
 
-        if (encodedAuthentication == null || encodedAuthentication.isEmpty()) {
+        if (encodedAuthorization == null || encodedAuthorization.isEmpty()) {
             return null;
         }
         try {
             //TODO linja under fjerner "Bearer " fra starten av encodedAuth, denne bør kunne leses smudere
-            encodedAuthentication = encodedAuthentication.substring(7,encodedAuthentication.length()-1);
-            JwtToken jwtToken = new JwtToken(encodedAuthentication);
+            encodedAuthorization = encodedAuthorization.substring(7,encodedAuthorization.length()-1);
+            JwtToken jwtToken = new JwtToken(encodedAuthorization);
             return jwtToken.getJwtTokenClaims();
 
          }   catch (Exception e){
-            logger.info("Couldt not read encoded authentication: "+ encodedAuthentication);
+            logger.info("Couldt not read encoded authentication: "+ encodedAuthorization);
             logger.info(e.getMessage());
         }
         return null;
