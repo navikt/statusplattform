@@ -106,57 +106,26 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         logger.info("IN AUTHENTICATION FILTER");
-        chain.doFilter(request,response);
-        /*
-        MDC.clear();
-        ((Request)request).setAuthentication(authentication);
+
+        //DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
 
         String pathInfo = ((Request) request).getPathInfo();
+
         logger.info("Path: "+ pathInfo);
 
-        if (pathInfo.startsWith("/login")) {
-            redirectToAuthorize((HttpServletRequest) request, (HttpServletResponse) response);
-            return;
-        }
-        if ( pathInfo.startsWith("/callback")) {
-            logger.info("Trying to create user for request in /callback");
-            readAuthorizationFromHeader(request);
-            doTokenValidation((HttpServletRequest)request);
-            callBack((HttpServletRequest)request,(HttpServletResponse) response);
-            return;
-        }
-        //Legg til principal her? for alle some ikke er login eller callback
-        // se linje 120 i OpenIdConnectAuthentication
         logger.info("Trying to create user for request to " + pathInfo);
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
-        if(jwtTokenClaims == null){
-            chain.doFilter(request,response);
-            return;
-        }
-        //Create userprinciple from header
-        //Legg til refresh token funksjonalitet
+        doTokenValidation((HttpServletRequest)request);
         PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
 
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
         ((Request) request).setAuthentication(authenticationForUser);
-        chain.doFilter(request, response);*/
+        chain.doFilter(request, response);
+        MDC.clear();
     }
-/*
-    protected Authentication redirectToAuthorize(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("redirectToAuthorize ---------------------------");
-
-        response.sendRedirect("https://digitalstatus.ekstern.dev.nav.no" +"/oauth2/login?redirect="+ "/authenticate/callback");
-
-        return Authentication.SEND_CONTINUE;
-    }
-    protected Authentication callBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 
-        //DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
 
-        response.sendRedirect(FRONTEND_LOCATION);
-        return Authentication.SEND_CONTINUE;
-    }
 
     private JwtTokenClaims readAuthorizationFromHeader(ServletRequest request) {
         String encodedAuthentication = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
@@ -202,11 +171,9 @@ public class AuthenticationFilter implements Filter {
         logger.info("In doTokenValidation");
         Map<String, JwtToken> issuerShortNameValidatedTokenMap = new HashMap<>();
         issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
-        HttpRequest httpRequest = mapToNavSecuretyHttpRequest(request);
-        TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens(httpRequest);
+        HttpRequest navSecuretyHttpRequest = mapToNavSecuretyHttpRequest(request);
+        TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens(navSecuretyHttpRequest);
         logger.info(context.toString());
-
-
     }
 
     private HttpRequest mapToNavSecuretyHttpRequest(HttpServletRequest httpServletRequest){
@@ -235,31 +202,7 @@ public class AuthenticationFilter implements Filter {
         };
     }
 
-    private void doTokenValidation2(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        logger.info("In doTokenValidation");
-        Map<String, JwtToken> issuerShortNameValidatedTokenMap = new HashMap<>();
-        issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
-        TokenValidationContextHolder contextHolder = new TokenValidationContextHolder() {
-            @Override
-            public TokenValidationContext getTokenValidationContext() {
-                return null;
-            }
 
-            @Override
-            public void setTokenValidationContext(TokenValidationContext tokenValidationContext) {
-
-            }
-        };
-        contextHolder.setTokenValidationContext(this.jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request)));
-
-
-        try {
-            chain.doFilter(request, response);
-        } finally {
-            contextHolder.setTokenValidationContext((TokenValidationContext)null);
-        }
-
-    }
 
 
     public PortalRestPrincipal createPortalPrinciplaFromAdClaims(JwtTokenClaims jwtTokenClaims){
@@ -327,5 +270,5 @@ public class AuthenticationFilter implements Filter {
         catch (Exception e) {
             logger.info( e.getMessage());
         }
-    }*/
+    }
 }
