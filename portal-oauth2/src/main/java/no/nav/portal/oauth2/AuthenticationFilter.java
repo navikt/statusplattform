@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
+import no.nav.security.token.support.core.validation.JwtTokenRetriever;
 
 import javax.security.auth.Subject;
 import javax.servlet.*;
@@ -48,6 +49,7 @@ public class AuthenticationFilter implements Filter {
     public static URL PUBLIC_JWKS_URL;
     //private final Authentication authentication;
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+    private JwtTokenRetriever jwtTokenRetriever;
 
     private  JwtTokenValidationHandler jwtTokenValidationHandler;
 
@@ -55,13 +57,13 @@ public class AuthenticationFilter implements Filter {
 
     static {
         try{
-            /*
+
             AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
             FRONTEND_LOCATION = System.getenv("FRONTEND_LOCATION");
             PUBLIC_JWKS_URL = new URL(PUBLIC_JWKS_URI);
 
 
-             */
+
         }
         catch (Exception e){
             logger.info(e.toString());
@@ -79,9 +81,7 @@ public class AuthenticationFilter implements Filter {
 
 
 
-    public AuthenticationFilter(Authentication authentication) {
-        /*
-        this.authentication = authentication;
+    public AuthenticationFilter() {
         IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL, List.of("api://"+CLIENT_ID,CLIENT_ID) );
         //IssuerProperties(AZURE_WELL_KNOW_URL, List<String> acceptedAudience, String cookieName, IssuerProperties.Validation validation, IssuerProperties.JwksCache jwksCache)
         //IssuerProperties issuerProperties2 = new IssuerProperties(PUBLIC_JWKS_URL);
@@ -100,30 +100,26 @@ public class AuthenticationFilter implements Filter {
         catch (Exception e){
             logger.info("Error in constructiong JwtTokenValidationHandler");
             logger.info(e.getMessage());
-        }*/
+        }
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        logger.info("IN AUTHENTICATION FILTER");
+//        logger.info("IN AUTHENTICATION FILTER");
 
         //DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
-
-        String pathInfo = ((Request) request).getPathInfo();
-
-        logger.info("Path: "+ pathInfo);
-
-        logger.info("Trying to create user for request to " + pathInfo);
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
-        doTokenValidation((HttpServletRequest)request);
+        if(jwtTokenClaims == null){
+            return;
+        }
+        doTokenValidation((HttpServletRequest) request);
+        PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
+        Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
+        ((Request) request).setAuthentication(authenticationForUser);
         chain.doFilter(request, response);
         MDC.clear();
-        return;/*
-        PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
-
-        Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
-        ((Request) request).setAuthentication(authenticationForUser);*/
     }
+
 
 
 
@@ -137,7 +133,7 @@ public class AuthenticationFilter implements Filter {
             return null;
         }
         try {
-            //TODO linja under fjerner "Bearer " fra starten av encodedAuth, denne bør kunne leses smudere
+            //TODO linja under fjerner "Bearer " fra starten av encodedAuth, denne bør kunne leses smudere. Bruk JwtTokenValidationHandler.
             encodedAuthorization = encodedAuthorization.substring(7,encodedAuthorization.length()-1);
             JwtToken jwtToken = new JwtToken(encodedAuthorization);
             return jwtToken.getJwtTokenClaims();
@@ -178,8 +174,8 @@ public class AuthenticationFilter implements Filter {
 
         issuerShortNameValidatedTokenMap.put("AzureAd", getJwtToken(request));
         HttpRequest navSecuretyHttpRequest = mapToNavSecuretyHttpRequest(request);
-        TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens(navSecuretyHttpRequest);
-        logger.info(context.toString());
+       // TokenValidationContext context =  jwtTokenValidationHandler.getValidatedTokens(navSecuretyHttpRequest);
+    //    logger.info(context.toString());
     }
 
     private HttpRequest mapToNavSecuretyHttpRequest(HttpServletRequest httpServletRequest){
