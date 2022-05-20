@@ -58,9 +58,9 @@ public class AuthenticationFilter implements Filter {
     static {
         try{
 
-            AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
-            FRONTEND_LOCATION = System.getenv("FRONTEND_LOCATION");
-            PUBLIC_JWKS_URL = new URL(PUBLIC_JWKS_URI);
+            //AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
+            //FRONTEND_LOCATION = System.getenv("FRONTEND_LOCATION");
+            //PUBLIC_JWKS_URL = new URL(PUBLIC_JWKS_URI);
 
 
 
@@ -112,7 +112,7 @@ public class AuthenticationFilter implements Filter {
         if(jwtTokenClaims == null){
             return;
         }
-        doTokenValidation((HttpServletRequest) request);
+        //doTokenValidation((HttpServletRequest) request);
         PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
         ((Request) request).setAuthentication(authenticationForUser);
