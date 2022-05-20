@@ -17,7 +17,7 @@ spec:
   image: {{ image }}
   port: 3005
   ingresses:
-    - https://digitalstatus.ekstern.dev.nav.no
+    - https://status-api.dev.nav.no
   gcp:
     sqlInstances:
       - name: navstatus
