@@ -81,7 +81,7 @@ public class AuthenticationFilter implements Filter {
 
 
 
-    public AuthenticationFilter() {
+    public AuthenticationFilter() {/*
         IssuerProperties issuerProperties = new  IssuerProperties(AZURE_WELL_KNOW_URL, List.of("api://"+CLIENT_ID,CLIENT_ID) );
         //IssuerProperties(AZURE_WELL_KNOW_URL, List<String> acceptedAudience, String cookieName, IssuerProperties.Validation validation, IssuerProperties.JwksCache jwksCache)
         //IssuerProperties issuerProperties2 = new IssuerProperties(PUBLIC_JWKS_URL);
@@ -101,6 +101,7 @@ public class AuthenticationFilter implements Filter {
             logger.info("Error in constructiong JwtTokenValidationHandler");
             logger.info(e.getMessage());
         }
+        */
     }
 
     @Override
