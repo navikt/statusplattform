@@ -26,7 +26,7 @@ public class LogInnApi extends ClasspathWebAppContext {
 
             ))), "/*");
 
-            addFilter(new FilterHolder( new AuthenticationFilter(authentication)), "/*", EnumSet.of(DispatcherType.REQUEST));
+            addFilter(new FilterHolder( new AuthenticationFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));
         }
 
 
