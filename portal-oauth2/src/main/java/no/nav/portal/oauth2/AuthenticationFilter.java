@@ -110,15 +110,18 @@ public class AuthenticationFilter implements Filter {
 
         //DefaultJwtTokenValidator tokenValidator = new DefaultJwtTokenValidator(AZURE_OPENID_CONFIG_ISSUER,List.of(CLIENT_ID),new RemoteJWKSet(AZURE_WELL_KNOW_URL));
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
+        chain.doFilter(request, response);
+        MDC.clear();
+
+        /*
         if(jwtTokenClaims == null){
             return;
         }
         //doTokenValidation((HttpServletRequest) request);
-        PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
-        Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
-        ((Request) request).setAuthentication(authenticationForUser);
-        chain.doFilter(request, response);
-        MDC.clear();
+        //PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
+        //Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
+        //((Request) request).setAuthentication(authenticationForUser);
+        */
     }
 
 
