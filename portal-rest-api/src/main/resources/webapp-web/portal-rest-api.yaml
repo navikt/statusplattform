@@ -1286,5 +1286,10 @@ components:
           $ref: '#/components/schemas/Time'
         closingTime:
           $ref: '#/components/schemas/Time'
+    IdContainer:
+      properties:
+        id:
+          type: string
+          format: uuid
 
 

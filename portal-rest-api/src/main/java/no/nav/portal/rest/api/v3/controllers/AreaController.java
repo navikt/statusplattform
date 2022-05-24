@@ -38,12 +38,12 @@ public class AreaController {
 
    @POST("/Areas")
    @JsonBody
-   public UUID newArea(@JsonBody AreaDto areaDto) {
+   public IdContainerDto newArea(@JsonBody AreaDto areaDto) {
       UUID uuid = areaControllerHelper.newArea(areaDto).getId();
       areaRepository.setServicesOnArea(uuid,
               areaDto.getServices().stream().map(
                       ServiceDto::getId).collect(Collectors.toList()));
-      return uuid;
+      return new IdContainerDto().id(uuid);
    }
 
    @PUT("/Area/:Area_id")
@@ -89,12 +89,12 @@ public class AreaController {
 
    @POST("/SubArea")
    @JsonBody
-   public UUID newSubArea(@JsonBody SubAreaDto subAreaDto) {
+   public IdContainerDto newSubArea(@JsonBody SubAreaDto subAreaDto) {
       UUID uuid = subAreaControllerHelper.newSubArea(subAreaDto).getId();
       subAreaRepository.setServicesOnSubArea(uuid,
               subAreaDto.getServices().stream().map(
                       ServiceDto::getId).collect(Collectors.toList()));
-      return uuid;
+      return new IdContainerDto().id(uuid);
    }
 
 

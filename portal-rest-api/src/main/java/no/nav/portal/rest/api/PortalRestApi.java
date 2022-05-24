@@ -16,7 +16,6 @@ import java.util.List;
 public class PortalRestApi extends ClasspathWebAppContext {
 
     private final DbContext dbContext = new DbContext();
-    private final Authentication authentication = new OpenIdConnectAuthentication();
 
     private final ApiFilter filter;
     private final CORSFilter corsFilter;
@@ -31,10 +30,11 @@ public class PortalRestApi extends ClasspathWebAppContext {
                 new DashboardController(dbContext),
                 new ServiceController(dbContext),
                 new RecordController(dbContext),
-                new OpsController(dbContext)
+                new OpsController(dbContext),
+                new UserController()
         ))), "/*");
 
-        addFilter(new FilterHolder( new AuthenticationFilter(authentication)), "/*", EnumSet.of(DispatcherType.REQUEST));
+        addFilter(new FilterHolder( new AuthenticationFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));
         filter = new ApiFilter(dbContext);
         addFilter(new FilterHolder(filter), "/*", EnumSet.of(DispatcherType.REQUEST));
     }
