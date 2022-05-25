@@ -9,6 +9,7 @@ import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.DashboardDto;
 
 import no.portal.web.generated.api.DashboardNameIdDto;
+import no.portal.web.generated.api.IdContainerDto;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -38,12 +39,12 @@ public class DashboardController {
 
     @POST("/Dashboard")
     @JsonBody
-    public UUID postDashboard(@JsonBody DashboardDto dashboardDto) {
+    public IdContainerDto postDashboard(@JsonBody DashboardDto dashboardDto) {
         UUID uuid = dashboardRepository.save(dashboardDto.getName());
         dashboardRepository.settAreasOnDashboard(uuid,
                 dashboardDto.getAreas().stream().map(
                         AreaDto::getId).collect(Collectors.toList()));
-        return uuid;
+        return new IdContainerDto().id(uuid);
     }
 
     @DELETE("/Dashboard/:Dashboard_id")

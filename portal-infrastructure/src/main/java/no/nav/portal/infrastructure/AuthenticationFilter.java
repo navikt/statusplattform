@@ -42,8 +42,8 @@ public class AuthenticationFilter implements Filter {
 
     static{
         try{
-            AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
-            PUBLIC_JWKS_URL = new URL(PUBLIC_JWKS_URI);
+            //AZURE_WELL_KNOW_URL = new URL(System.getenv("AZURE_APP_WELL_KNOWN_URL"));
+            //PUBLIC_JWKS_URL = new URL(PUBLIC_JWKS_URI);
         }
         catch (Exception e){
             logger.error("Could not read Azure urls in auth filter: "+ e);
