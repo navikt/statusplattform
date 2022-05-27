@@ -58,11 +58,11 @@ public class AuthenticationFilter implements Filter {
         //
         //Kan trolig fjerne oauth2 modul.
         /*
-        JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
         PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
         Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
         ((Request) request).setAuthentication(authenticationForUser);
         doTokenValidation((HttpServletRequest) request);*/
+        JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
         chain.doFilter(request, response);
     }
 
@@ -96,7 +96,7 @@ public class AuthenticationFilter implements Filter {
             logger.info(e.getMessage());
         }
             */
-/*
+
     }
     public PortalRestPrincipal createPortalPrinciplaFromAdClaims(JwtTokenClaims jwtTokenClaims){
         System.out.println("createPrincipal ---------------------------");
@@ -124,6 +124,7 @@ public class AuthenticationFilter implements Filter {
             //TODO linja under fjerner "Bearer " fra starten av encodedAuth, denne bør kunne leses smudere. Bruk JwtTokenValidationHandler.
             encodedAuthorization = encodedAuthorization.substring(7,encodedAuthorization.length()-1);
             JwtToken jwtToken = new JwtToken(encodedAuthorization);
+            logger.info("jwtToken: "+ jwtToken.getJwtTokenClaims());
             return jwtToken.getJwtTokenClaims();
 
         }   catch (Exception e){
@@ -132,6 +133,7 @@ public class AuthenticationFilter implements Filter {
         }
         return null;
     }
+    /*
     private JwtToken getJwtToken(ServletRequest request) {
         String encodedAuthentication = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
         logger.info("In readAuthorizationFromHeader : ");
@@ -191,7 +193,7 @@ public class AuthenticationFilter implements Filter {
                         }).collect(Collectors.toList()).toArray(NameValue[]::new);
             }
         };
-*/
     }
+*/
 
 }
