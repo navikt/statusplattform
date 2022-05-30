@@ -31,23 +31,3 @@ spec:
         databases:
           - name: navstatus
             envVarPrefix: DB
-  azure:
-    application:
-      enabled: true
-      # optional, enum of {trygdeetaten.no, nav.no}
-      # defaults to trygdeetaten.no in dev-* clusters, nav.no in production
-      tenant: nav.no
-      # optional
-      replyURLs:
-      - "https://status.nav.no/sp/oauth2/callback"
-      - "https://status.nav.no/sp/Dashboard/Privatperson"
-      claims:
-        extra:
-          - "NAVident"
-          - "azp_name"
-      # optional, defaults shown
-      singlePageApplication: false
-    sidecar:
-      enabled: true
-      autoLogin: false
-      errorPath: ""

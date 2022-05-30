@@ -22,16 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AuthenticationFilter implements Filter {
 
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_HEADER = "authorization";
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
     private JwtTokenValidationHandler jwtTokenValidationHandler;
     private static String PUBLIC_JWKS_URI = System.getenv("AZURE_OPENID_CONFIG_JWKS_URI");
@@ -52,18 +49,20 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        MDC.clear();
         //TODO fiks her
         // if ikke auth og annet enn get -> login
         //
         //Kan trolig fjerne oauth2 modul.
         /*
-        PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
-        Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
-        ((Request) request).setAuthentication(authenticationForUser);
         doTokenValidation((HttpServletRequest) request);*/
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
+        if(jwtTokenClaims != null){
+            PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
+            Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
+            ((Request) request).setAuthentication(authenticationForUser);
+        }
         chain.doFilter(request, response);
+        MDC.clear();
     }
 
     @Override
@@ -117,6 +116,12 @@ public class AuthenticationFilter implements Filter {
         String encodedAuthorization = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
         logger.info("In readAuthorizationFromHeader : ");
         logger.info("encodedAuthorization: " + encodedAuthorization);
+        Enumeration<String> headersNames =  ((HttpServletRequest) request).getHeaderNames();
+        logger.info("All headers: ");
+        while (headersNames.hasMoreElements()){
+            String headername = headersNames.nextElement();
+            logger.info(headername+ " " + ((HttpServletRequest) request).getHeader(headername));
+        }
         if (encodedAuthorization == null || encodedAuthorization.isEmpty()) {
             return null;
         }
