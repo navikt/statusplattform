@@ -17,6 +17,6 @@ public class UserController {
                         .name(loggedInUser.getName())
                         .navIdent(loggedInUser.getNavIdent())
                 )
-                .orElse(new NavUserDto().name("Name").navIdent("1337"));
+                .orElse(new NavUserDto());
     }
 }

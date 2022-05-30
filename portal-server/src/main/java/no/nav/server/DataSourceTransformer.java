@@ -17,18 +17,14 @@ public class DataSourceTransformer {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
     public static DataSource create() {
 
-        logger.info("DatasourceTransformer: ");
+        String userName = System.getenv("DB_USERNAME");
+        String password = System.getenv("DB_PASSWORD");
         Properties properties = new Properties();
-        String userName = "navstatus";//System.getenv("DB_USERNAME");
         properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
         properties.put("username", userName);
-
-        String password ="X-jPWBcaZpVnMzD8glJtNw7t9Kwxrq63TqadCifPbuY";// System.getenv("DB_PASSWORD");
-        logger.info("DB_PASSWORD Ecoded: "+ password);
         properties.put("password", password);
-        logger.info("DB_USERNAME: "+ properties.get("username"));
-        logger.info("DB_PASSWORD: "+ properties.get("password"));
         properties.put("maximumPoolSize","32");
+
         int count = 0;
         int maxTries = 10;
         HikariDataSource dataSource;

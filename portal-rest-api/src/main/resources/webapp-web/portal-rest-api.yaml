@@ -65,7 +65,7 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
-  /Dashboard/Update/{Dashboard_id}:
+  /Dashboard/{Dashboard_id}:
     put:
       tags:
         - Dashboard
@@ -82,7 +82,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Dashboard'
+              $ref: '#/components/schemas/DashboardUpdate'
       responses:
         '200':
           description: OK
@@ -95,41 +95,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-      deprecated: false
-  /Dashboard/{Dashboard_id}:
-    put:
-      tags:
-        - Dashboard
-      summary: Legg inn/ fjern/ endre rekkefølge på områder på dashbord
-      description: Legg inn liste av område-ider som hører til på dashboardet. Første id vil komme først osv.
-      operationId: putDashboards
-      parameters:
-        - name: Dashboard_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: array
-              items:
-                type: string
-                format: uuid
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: Unauthorized
-          content: {}
-        '403':
-          description: Forbidden
-          content: {}
-        '404':
-          description: Not Found
-          content: {}
       deprecated: false
     get:
       tags:
@@ -1291,5 +1256,14 @@ components:
         id:
           type: string
           format: uuid
+    DashboardUpdate:
+      properties:
+        name:
+          type: string
+        areas:
+          type: array
+          items:
+            type: string
+            format: uuid
 
 

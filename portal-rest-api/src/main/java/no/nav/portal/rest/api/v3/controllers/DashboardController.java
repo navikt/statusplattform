@@ -5,11 +5,8 @@ import nav.portal.core.util.UuidListBody;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.AreaControllerHelper;
 import no.nav.portal.rest.api.Helpers.DashboardControllerHelper;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.DashboardDto;
+import no.portal.web.generated.api.*;
 
-import no.portal.web.generated.api.DashboardNameIdDto;
-import no.portal.web.generated.api.IdContainerDto;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
@@ -55,13 +52,8 @@ public class DashboardController {
 
 
     @PUT("/Dashboard/:Dashboard_id")
-    public void addAreaToDashboard(@PathParam("Dashboard_id") UUID dashboard_id, @UuidListBody List<UUID> areaIds) {
-        dashboardRepository.settAreasOnDashboard(dashboard_id, areaIds);
-    }
-
-    @PUT("/Dashboard/Update/:Dashboard_id")
-    public void updateNameOfDashboard(@PathParam("Dashboard_id") UUID dashboard_id, @JsonBody DashboardDto dashboard) {
-        dashboardRepository.updateNameOfDashboard(dashboard_id, dashboard.getName());
+    public void updateDashboard(@PathParam("Dashboard_id") UUID dashboard_id, @JsonBody DashboardUpdateDto dashboardUpdateDto) {
+        dashboardControllerHelper.updateDashboard(dashboard_id,dashboardUpdateDto);
     }
 
     @GET("/Dashboard/:Dashboard_id")

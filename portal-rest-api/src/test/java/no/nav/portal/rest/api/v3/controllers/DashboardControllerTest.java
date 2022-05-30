@@ -4,6 +4,7 @@ import nav.portal.core.repositories.*;
 import no.portal.web.generated.api.DashboardDto;
 import no.portal.web.generated.api.DashboardNameIdDto;
 
+import no.portal.web.generated.api.DashboardUpdateDto;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -151,11 +152,13 @@ class DashboardControllerTest {
 
         dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
         DashboardDto dashboardDto = dashboardController.getAreas(dashboardId);
+
         String oldName = dashboardDto.getName();
         String newName = "Test";
         dashboardDto.setName(newName);
+        DashboardUpdateDto dashboardUpdateDto = new DashboardUpdateDto().name(newName).areas(areaIds);
         //Act
-        dashboardController.updateNameOfDashboard(dashboardId, dashboardDto);
+        dashboardController.updateDashboard(dashboardId, dashboardUpdateDto);
         Map.Entry<DashboardEntity, List<AreaWithServices>>aName = dashboardRepository.retrieveOneFromName(newName);
         String retrievedName = aName.getKey().getName();
         //Assert

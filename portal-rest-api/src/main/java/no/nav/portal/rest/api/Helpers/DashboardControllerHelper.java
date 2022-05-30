@@ -113,4 +113,15 @@ public class DashboardControllerHelper {
         dashboardRepository.deleteDashboard(dashboard_id);
 
     }
+
+    public void updateDashboard(UUID dashboard_id, DashboardUpdateDto dashboardUpdateDto) {
+        dashboardRepository.updateNameOfDashboard(dashboard_id, dashboardUpdateDto.getName());
+        List<UUID> areasOnDashboard = dashboardRepository.retrieveOne(dashboard_id).getValue().stream().map(a -> a.getArea().getId()).collect(Collectors.toList());
+        List<UUID> updatedAreasOnDashboard = dashboardUpdateDto.getAreas();
+        if (areasOnDashboard.containsAll(updatedAreasOnDashboard)
+                && updatedAreasOnDashboard.containsAll(areasOnDashboard)) {
+            return;
+        }
+        dashboardRepository.settAreasOnDashboard(dashboard_id, dashboardUpdateDto.getAreas());
+    }
 }

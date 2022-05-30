@@ -13,6 +13,9 @@ spec:
       value: https://status.nav.no/sp
     - name: BACKEND_LOCATION
       value: https://status-api.nav.no
+  replicas:
+    min: 1
+    max: 1
   secureLogs:
     enabled: true
   image: {{ image }}
