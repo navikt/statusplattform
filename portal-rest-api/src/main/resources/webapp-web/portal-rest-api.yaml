@@ -69,9 +69,8 @@ paths:
     put:
       tags:
         - Dashboard
-      summary: Oppdater dashbordnavn
-      description: Oppdater dashbord ved å legge inn nytt navn
-      operationId: updateDashboard
+      summary: Oppdater dashboard
+      description: Endre feltene i dashboard
       parameters:
         - name: Dashboard_id
           in: path
@@ -79,23 +78,23 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
-          'application/json':
+          application/json:
             schema:
               $ref: '#/components/schemas/DashboardUpdate'
+          text/plain:
+            schema:
+              type: string
       responses:
-        '200':
-          description: OK
-        '401':
-          description: Unauthorized
-          content: { }
+        '201':
+          description: Created
         '403':
           description: Forbidden
           content: { }
         '404':
           description: Not Found
           content: { }
-      deprecated: false
     get:
       tags:
         - Dashboard
