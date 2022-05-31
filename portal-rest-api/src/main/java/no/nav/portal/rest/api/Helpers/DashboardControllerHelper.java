@@ -92,7 +92,7 @@ public class DashboardControllerHelper {
             service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation().toUpperCase()));
             return;
         }
-        service.setStatus(StatusDto.ISSUE);
+        service.setStatus(null);
     }
 
     private StatusDto getWorstStatusAmongst(List<ServiceDto> services){
@@ -104,7 +104,11 @@ public class DashboardControllerHelper {
                 .map(ServiceDto::getStatus)
                 .collect(Collectors.toList())
                 .contains(StatusDto.ISSUE)) return StatusDto.ISSUE;
-        return StatusDto.OK;
+        if(services.stream()
+                .map(ServiceDto::getStatus)
+                .collect(Collectors.toList())
+                .contains(StatusDto.OK)) return StatusDto.OK;
+        return null;
     }
 
 
