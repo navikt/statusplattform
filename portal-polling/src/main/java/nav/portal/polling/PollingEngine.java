@@ -51,7 +51,6 @@ public class PollingEngine  extends Thread{
     }
     private void getPollingServicesAndPoll(){
         List<ServiceEntity> pollingServices = serviceRepository.retrieveServicesWithPolling();
-        //System.out.println(pollingServices.stream().map(ServiceEntity::getName).collect(Collectors.toList()));
         pollingServices.forEach(this::poll);
     }
 
