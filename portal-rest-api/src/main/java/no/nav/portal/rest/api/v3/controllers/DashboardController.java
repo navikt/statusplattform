@@ -58,7 +58,7 @@ public class DashboardController {
 
     @GET("/Dashboard/:Dashboard_id")
     @JsonBody
-    public DashboardDto getAreas(@PathParam("Dashboard_id") UUID dashboard_id) {
+    public DashboardDto getDashboard(@PathParam("Dashboard_id") UUID dashboard_id) {
         return dashboardControllerHelper.getDashboard(dashboard_id);
     }
 

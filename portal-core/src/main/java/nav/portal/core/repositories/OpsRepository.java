@@ -100,6 +100,25 @@ public class OpsRepository {
         return result;
     }
 
+    public List<OpsMessageEntity> retrieveAllForServices(List<UUID> serviceIds) {
+        DbContextTableAlias ops = opsMessageTable.alias("ops");
+        DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
+
+        ArrayList<OpsMessageEntity> result = new ArrayList<>();
+        ops
+                .where("deleted",Boolean.FALSE)
+                .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
+                .whereIn("o2s.service_id", serviceIds)
+                .list(row -> {
+                    OpsMessageEntity msg = toOps(row);
+                   if(!result.contains(msg)){
+                       result.add(msg);
+                   }
+                    return null;
+                });
+        return result;
+    }
+
     static OpsMessageEntity toOps(DatabaseRow row){
         try {
             return new OpsMessageEntity()

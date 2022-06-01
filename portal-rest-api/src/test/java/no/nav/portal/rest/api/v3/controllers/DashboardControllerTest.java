@@ -151,7 +151,7 @@ class DashboardControllerTest {
             });
 
         dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
-        DashboardDto dashboardDto = dashboardController.getAreas(dashboardId);
+        DashboardDto dashboardDto = dashboardController.getDashboard(dashboardId);
 
         String oldName = dashboardDto.getName();
         String newName = "Test";
@@ -180,7 +180,7 @@ class DashboardControllerTest {
          });
         dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
         //Act
-        DashboardDto dashboardDto = dashboardController.getAreas(dashboardId);
+        DashboardDto dashboardDto = dashboardController.getDashboard(dashboardId);
         UUID afterId = dashboardDto.getId();
         //Assert
         Assertions.assertThat(afterId).isEqualTo(dashboardId);

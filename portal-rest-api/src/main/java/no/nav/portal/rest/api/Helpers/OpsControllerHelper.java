@@ -1,3 +1,4 @@
+
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.AreaEntity;
@@ -6,9 +7,7 @@ import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.entities.SubAreaEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.OPSmessageDto;
-import no.portal.web.generated.api.SubAreaDto;
+import no.portal.web.generated.api.*;
 import org.fluentjdbc.DatabaseRow;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextTableAlias;
@@ -37,6 +36,24 @@ public class OpsControllerHelper {
         List<OPSmessageDto> result = new ArrayList<>();
         retrievedOpsMessageEntities.forEach((k,v)-> result.add(EntityDtoMappers.toOpsMessageDtoDeep(k,v.stream().map(ServiceEntity::getId).collect(Collectors.toList()))));
         return result;
+    }
+
+    public List<OPSmessageDto> getOpsMessagesForDashboard(DashboardDto dashboardDto){
+        ArrayList<UUID> servicesOnDashboard = new ArrayList<>();
+
+        dashboardDto.getAreas().forEach(area -> {
+            area.getServices().stream().map(ServiceDto::getId).forEach(serviceId -> {
+                    if(!servicesOnDashboard.contains(serviceId)){
+                        servicesOnDashboard.add(serviceId);
+                    }
+
+            }
+            );
+        });
+        return  opsRepository.retrieveAllForServices(servicesOnDashboard)
+                .stream().map(EntityDtoMappers::toOpsMessageDtoShallow)
+                .collect(Collectors.toList());
+
     }
 
     public void deleteOps(UUID id) {

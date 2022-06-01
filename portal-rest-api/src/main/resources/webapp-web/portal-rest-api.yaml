@@ -968,6 +968,11 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/Area'
+        opsMessages:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/OPSmessage'
     Area:
       title: Area
       type: object

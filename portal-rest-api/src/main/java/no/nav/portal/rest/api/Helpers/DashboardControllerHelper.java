@@ -1,9 +1,6 @@
 package no.nav.portal.rest.api.Helpers;
 
-import nav.portal.core.repositories.AreaRepository;
-import nav.portal.core.repositories.DashboardRepository;
-import nav.portal.core.repositories.RecordRepository;
-import nav.portal.core.repositories.SubAreaRepository;
+import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
@@ -20,6 +17,8 @@ public class DashboardControllerHelper {
     private final RecordRepository recordRepository;
     private final AreaRepository areaRepository;
     private final SubAreaRepository subAreaRepository;
+    private final OpsControllerHelper opsControllerHelper;
+
 
 
     public DashboardControllerHelper(DbContext dbContext) {
@@ -27,6 +26,7 @@ public class DashboardControllerHelper {
         this.recordRepository = new RecordRepository(dbContext);
         this.areaRepository = new AreaRepository(dbContext);
         this.subAreaRepository = new SubAreaRepository(dbContext);
+        this.opsControllerHelper = new OpsControllerHelper(dbContext);
     }
 
     public DashboardDto getDashboard(UUID dashboard_id){
@@ -42,6 +42,7 @@ public class DashboardControllerHelper {
 
         setStatusOnAreas(dashboardDto);
 
+        dashboardDto.setOpsMessages(opsControllerHelper.getOpsMessagesForDashboard(dashboardDto));
 
         return dashboardDto;
     }
