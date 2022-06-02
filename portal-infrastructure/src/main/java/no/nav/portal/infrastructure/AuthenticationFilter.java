@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import javax.security.auth.Subject;
+import javax.security.sasl.AuthenticationException;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +57,10 @@ public class AuthenticationFilter implements Filter {
         /*
         doTokenValidation((HttpServletRequest) request);*/
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
+        if(List.of("POST","PUT","DELETE").contains(((HttpServletRequest) request).getMethod())
+                && jwtTokenClaims == null){
+            throw new AuthenticationException("Cant access closed endpoints, PUT, POST, DELETE, without authenticated user");
+        }
         if(jwtTokenClaims != null){
             PortalRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
             Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
