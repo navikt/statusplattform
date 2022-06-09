@@ -7,7 +7,7 @@ metadata:
     team: navdig
 spec:
   envFrom:
-    - secret: nav-status-db-pass
+    - secret: swagger-api-konfig
   env:
     - name: FRONTEND_LOCATION
       value: https://status.nav.no/sp
