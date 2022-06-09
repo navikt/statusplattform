@@ -35,6 +35,8 @@ public class AuthenticationFilter implements Filter {
     private static String PUBLIC_JWKS_URI = System.getenv("AZURE_OPENID_CONFIG_JWKS_URI");
     private static String CLIENT_ID = System.getenv("AZURE_APP_CLIENT_ID");
     private static String CLIENT_SECRET = System.getenv("AZURE_APP_CLIENT_SECRET");
+    private static String SWAGGER_API_KEY_HEADERNAME = "Apikey";
+    private static String SWAGGER_API_KEY= System.getenv("swagger-api-key");
     public static URL PUBLIC_JWKS_URL;
     private static URL AZURE_WELL_KNOW_URL;
 
@@ -50,12 +52,16 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        //TODO fiks her
-        // if ikke auth og annet enn get -> login
+
         //
-        //Kan trolig fjerne oauth2 modul.
+
         /*
         doTokenValidation((HttpServletRequest) request);*/
+        if(validateSwaggerAuthentication(request)){
+            chain.doFilter(request, response);
+            MDC.clear();
+            return;
+        }
         JwtTokenClaims jwtTokenClaims = readAuthorizationFromHeader(request);
         if(List.of("POST","PUT","DELETE").contains(((HttpServletRequest) request).getMethod())
                 && jwtTokenClaims == null){
@@ -68,6 +74,13 @@ public class AuthenticationFilter implements Filter {
         }
         chain.doFilter(request, response);
         MDC.clear();
+    }
+
+    private boolean validateSwaggerAuthentication(ServletRequest request) {
+        String apikey = ((HttpServletRequest) request).getHeader(SWAGGER_API_KEY_HEADERNAME);
+        return SWAGGER_API_KEY.equals(apikey);
+
+
     }
 
     @Override

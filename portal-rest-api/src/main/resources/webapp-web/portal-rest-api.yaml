@@ -1269,5 +1269,12 @@ components:
           items:
             type: string
             format: uuid
+  securitySchemes:
+    ApiKeyAuth: # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: Apikey  # name of the header, query parameter or cookie
+security:
+  - ApiKeyAuth: [ ]
 
 

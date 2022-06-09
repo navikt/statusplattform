@@ -9,6 +9,8 @@ spec:
   env:
     - name: FRONTEND_LOCATION
       value: https://status.dev.nav.no
+  envFrom:
+    - secret: swagger-api-konfig
   replicas:
     min: 1
     max: 1
