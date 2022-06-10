@@ -31,6 +31,13 @@ public class OpsControllerHelper {
         return EntityDtoMappers.toOpsMessageDtoDeep(ops.getKey(), ops.getValue().stream().map(ServiceEntity::getId).collect(Collectors.toList()));
     }
 
+    public OPSmessageDto getOpsMessage(UUID ops_id) {
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageEntity = opsRepository.retrieveOne(ops_id);
+        OPSmessageDto result = EntityDtoMappers.toOpsMessageDtoDeep(retrievedOpsMessageEntity.getKey(),
+                retrievedOpsMessageEntity.getValue().stream().map(ServiceEntity::getId).collect(Collectors.toList()));
+        return result;
+    }
+
     public List<OPSmessageDto> getAllOpsMessages() {
         Map<OpsMessageEntity,List<ServiceEntity>> retrievedOpsMessageEntities = opsRepository.retrieveAll();
         List<OPSmessageDto> result = new ArrayList<>();

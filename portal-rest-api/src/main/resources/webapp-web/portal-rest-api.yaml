@@ -914,11 +914,36 @@ paths:
           description: Not Found
           content: { }
   /OpsMessage:
+    get:
+      tags:
+        - OPS
+      summary: Hent alle avviksmeldinger
+      operationId: getServices
+      description: Henter alle avviksmeldinger definert i OPS-GUIet
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OPSmessage'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
     post:
       tags:
         - OPS
-      summary: Legg til Avviksmelding
-      description: Legg til Avviksmelding.
+      summary: Legg til avviksmelding
+      description: Legg til avviksmelding.
       requestBody:
         required: true
         content:
@@ -931,6 +956,51 @@ paths:
       responses:
         '201':
           description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /OpsMessage/{OpsMessage_id}:
+    put:
+      tags:
+        - OPS
+      summary: Rediger avviksmelding
+      description: Rediger avviksmelding
+      requestBody:
+        description: Oppdaterte verdier for avviksmelding
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OPSmessage'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - OPS
+      summary: Slett avviksmelding
+      description: Fjerner en avviksmelding fullstendig
+      parameters:
+        - name: OpsMessage_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Deleted
         '403':
           description: Forbidden
           content: { }

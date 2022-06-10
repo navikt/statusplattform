@@ -34,6 +34,12 @@ public class OpsController {
         return opsControllerHelper.getAllOpsMessages();
     }
 
+    @GET("/OpsMessage/:Ops_id")
+    @JsonBody
+    public OPSmessageDto getSpecificOpsMessage(@PathParam("Ops_id") UUID ops_id ) {
+        return opsControllerHelper.getOpsMessage(ops_id);
+    }
+
     @DELETE("/OpsMessage/:Ops_id")
     @JsonBody
     public void deleteOpsMessage(@PathParam("Ops_id") UUID ops_id ) {
