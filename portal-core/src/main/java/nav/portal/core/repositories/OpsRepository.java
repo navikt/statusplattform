@@ -1,7 +1,11 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.OpsMessageEntity;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.OpsMessageSeverity;
+import nav.portal.core.enums.OpsMessageState;
+import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.fluentjdbc.*;
 
@@ -30,6 +34,10 @@ public class OpsRepository {
                 .setField("extern_text", entity.getExternalText())
                 .setField("is_active", entity.getIsActive())
                 .setField("only_show_for_nav_employees", entity.getOnlyShowForNavEmployees())
+                .setField("start_time", entity.getStartTime())
+                .setField("end_time", entity.getEndTime())
+                .setField("severity", entity.getSeverity())
+                .setField("state", entity.getState())
                 .execute();
         setServicesOnOpsMessage(result.getId(), services);
         return result.getId();
@@ -129,12 +137,32 @@ public class OpsRepository {
                     .setExternalText(row.getString("extern_text"))
                     .setIsActive(row.getBoolean("is_active"))
                     .setOnlyShowForNavEmployees(row.getBoolean("only_show_for_nav_employees"))
+                    .setStartTime(row.getZonedDateTime("start_time"))
+                    .setEndTime(row.getZonedDateTime("end_time"))
+                    .setSeverity(OpsMessageSeverity.fromDb(row.getString("severity")).orElse(null))
+                    .setState(OpsMessageState.fromDb(row.getString("state")).orElse(null))
                     .setDeleted(row.getBoolean("deleted"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }
     }
 
+
+
+    public void updateOpsMessage(OpsMessageEntity opsMessageEntity) {
+        opsMessageTable.where("id", opsMessageEntity.getId()).update()
+                .setFieldIfPresent("internal_header", opsMessageEntity.getInternalHeader())
+                .setField("internal_message", opsMessageEntity.getInternalText())
+                .setField("external_header", opsMessageEntity.getExternalHeader())
+                .setField("external_message", opsMessageEntity.getExternalText())
+                .setField("only_show_for_nav_emploees", opsMessageEntity.getOnlyShowForNavEmployees())
+                .setField("is_active", opsMessageEntity.getIsActive())
+                .setField("start_time", opsMessageEntity.getStartTime())
+                .setField("end_time", opsMessageEntity.getEndTime())
+                .setField("severity", opsMessageEntity.getSeverity())
+                .setField("state", opsMessageEntity.getState())
+                .execute();
+    }
 
     public Boolean isEntryDeleted(UUID id){
         return opsMessageTable

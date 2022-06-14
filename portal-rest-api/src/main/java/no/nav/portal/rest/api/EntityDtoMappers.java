@@ -79,9 +79,9 @@ public class EntityDtoMappers {
         return dto;
     }
 
-    public static OPSmessageDto toOpsMessageDtoDeep(OpsMessageEntity entity, List<UUID> services) {
+    public static OPSmessageDto toOpsMessageDtoDeep(OpsMessageEntity entity, List<ServiceEntity> services) {
         OPSmessageDto dto = toOpsMessageDtoShallow(entity);
-        dto.setAffectedServices(services);
+        dto.setAffectedServices(services.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
         return dto;
     }
 

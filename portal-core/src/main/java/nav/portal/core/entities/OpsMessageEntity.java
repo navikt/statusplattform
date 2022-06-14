@@ -1,5 +1,9 @@
 package nav.portal.core.entities;
 
+import nav.portal.core.enums.OpsMessageSeverity;
+import nav.portal.core.enums.OpsMessageState;
+
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -12,6 +16,11 @@ public class OpsMessageEntity {
     private String externalText;
     private boolean isActive;
     private boolean onlyShowForNavEmployees;
+    private ZonedDateTime startTime;
+    private ZonedDateTime endTime;
+    private OpsMessageSeverity severity;
+    private OpsMessageState state;
+
     private boolean deleted;
 
     public boolean isDeleted() {
@@ -86,6 +95,41 @@ public class OpsMessageEntity {
 
     public OpsMessageEntity setExternalText(String externalText) {
         this.externalText = externalText;
+        return this;
+    }
+    public ZonedDateTime getStartTime() {
+        return startTime;
+    }
+
+    public OpsMessageEntity setStartTime(ZonedDateTime startTime) {
+        this.startTime = startTime;
+        return this;
+    }
+
+    public ZonedDateTime getEndTime() {
+        return endTime;
+    }
+
+    public OpsMessageEntity setEndTime(ZonedDateTime endTime) {
+        this.endTime = endTime;
+        return this;
+    }
+
+    public OpsMessageSeverity getSeverity() {
+        return severity;
+    }
+
+    public OpsMessageEntity setSeverity(OpsMessageSeverity severity) {
+        this.severity = severity;
+        return this;
+    }
+
+    public OpsMessageState getState() {
+        return state;
+    }
+
+    public OpsMessageEntity setState(OpsMessageState state) {
+        this.state = state;
         return this;
     }
 

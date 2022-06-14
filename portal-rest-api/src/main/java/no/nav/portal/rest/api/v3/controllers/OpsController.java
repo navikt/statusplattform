@@ -3,10 +3,7 @@ package no.nav.portal.rest.api.v3.controllers;
 import no.nav.portal.rest.api.Helpers.OpsControllerHelper;
 import no.nav.portal.rest.api.Helpers.ServiceControllerHelper;
 import no.portal.web.generated.api.OPSmessageDto;
-import org.actioncontroller.DELETE;
-import org.actioncontroller.GET;
-import org.actioncontroller.POST;
-import org.actioncontroller.PathParam;
+import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
@@ -38,6 +35,12 @@ public class OpsController {
     @JsonBody
     public OPSmessageDto getSpecificOpsMessage(@PathParam("Ops_id") UUID ops_id ) {
         return opsControllerHelper.getOpsMessage(ops_id);
+    }
+
+    @PUT("/OpsMessage/:Ops_id")
+    @JsonBody
+    public OPSmessageDto updateSpecificOpsMessage(@JsonBody OPSmessageDto opsMessageDto, @PathParam("Ops_id") UUID ops_id ) {
+        return opsControllerHelper.updateOpsMessage(ops_id, opsMessageDto);
     }
 
     @DELETE("/OpsMessage/:Ops_id")
