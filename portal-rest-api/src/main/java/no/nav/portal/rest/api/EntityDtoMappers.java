@@ -3,6 +3,8 @@ package no.nav.portal.rest.api;
 import nav.portal.core.entities.*;
 import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
+import org.apache.commons.validator.routines.UrlValidator;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,9 +23,22 @@ public class EntityDtoMappers {
         entity.setType(ServiceType.fromDb(dto.getType().getValue()));
         entity.setTeam(dto.getTeam());
         entity.setMonitorlink(dto.getMonitorlink());
-        entity.setPolling_url(dto.getPollingUrl());
+        entity.setPolling_url(getAndValidetePollingUrl(dto.getPollingUrl()));
         return entity;
     }
+
+    private static String getAndValidetePollingUrl(String pollingUrlFromUser){
+        //Sets pollingurl to null if not valid
+        String[] schemes = {"http","https"}; // DEFAULT schemes = "http", "https", "ftp"
+        UrlValidator urlValidator = new UrlValidator(schemes);
+        if (urlValidator.isValid(pollingUrlFromUser)) {
+           return pollingUrlFromUser;
+        } else {
+            return null;
+        }
+
+    }
+
 
     public static AreaEntity toAreaEntity(AreaDto dto){
         AreaEntity entity = new AreaEntity();
