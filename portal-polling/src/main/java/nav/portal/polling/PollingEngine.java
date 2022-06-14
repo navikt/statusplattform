@@ -28,6 +28,8 @@ import java.util.List;
 public class PollingEngine  extends Thread{
     private static final String MOCK_URL = "https://mockservice.dev.nav.no/mock/Service/";
     private static final  String MOCK = "MOCK";
+    private static final  String STATUSHOLDER = "STATUSHOLDER";
+    private static final String STATUSHOLDER_URL = System.getenv("statusholder_url");
     private final ServiceRepository serviceRepository;
     private final RecordRepository recordRepository;
     private final DbContext dbContext;
@@ -143,8 +145,13 @@ public class PollingEngine  extends Thread{
 
     private HttpURLConnection getConnectionToServicePollEndpoint(ServiceEntity serviceEntity) throws IOException {
         //Logikken under må bort på et tidspunkt. Dette er for polling av mock data.
-        String urlString = serviceEntity.getPolling_url().equals(MOCK)? MOCK_URL + serviceEntity.getId():
-               serviceEntity.getPolling_url();
+        String urlString;
+        switch (serviceEntity.getPolling_url()){
+            case MOCK: urlString = MOCK_URL + serviceEntity.getId();
+            case STATUSHOLDER: urlString = STATUSHOLDER_URL + serviceEntity.getId();
+            default: urlString = serviceEntity.getPolling_url();
+        }
+
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
