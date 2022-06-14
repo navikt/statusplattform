@@ -918,7 +918,7 @@ paths:
       tags:
         - OPS
       summary: Hent alle avviksmeldinger
-      operationId: getServices
+      operationId: getOpsMessages
       description: Henter alle avviksmeldinger definert i OPS-GUIet
       responses:
         '200':
@@ -968,6 +968,12 @@ paths:
         - OPS
       summary: Rediger avviksmelding
       description: Rediger avviksmelding
+      parameters:
+        - name: OpsMessage_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         description: Oppdaterte verdier for avviksmelding
         required: true
@@ -1179,10 +1185,9 @@ components:
           readOnly: true
         affectedServices:
           type: array
-          example: "[Liste av påvirkede service/komponent UUIDer]"
+          example: "[Liste av påvirkede servicer/komponenter]"
           items:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/Service'
         internalHeader:
           type: string
         internalMessage:
@@ -1195,10 +1200,25 @@ components:
           type: boolean
         isActive:
           type: boolean
+        startTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        endTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        severity:
+          type: string
+          enum:
+            - NØYTRAL
+            - GRØNN
+            - GUL
+            - RØD
       required:
         - internalMessage
         - internalHeader
-        - onlyShowForInternal
+        - onlyShowForNavEmployees
     ServiceHistory:
       title: ServiceHistory
       type: object
