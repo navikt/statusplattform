@@ -1143,6 +1143,8 @@ components:
           readOnly: true
           allOf:
             - $ref: '#/components/schemas/Status'
+        statusNotFromTeam:
+          type: boolean
     ServiceStatus:
       title: ServiceStatus
       type: object

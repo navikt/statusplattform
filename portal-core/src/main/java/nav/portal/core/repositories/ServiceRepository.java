@@ -58,6 +58,7 @@ public class ServiceRepository {
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
                 .setField("polling_url", service.getPolling_url())
+                .setField("status_not_from_team", service.getStatusNotFromTeam())
                 .execute()
                 .getId();
     }
@@ -86,6 +87,7 @@ public class ServiceRepository {
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
                 .setField("polling_url", service.getPolling_url()== null? null:service.getPolling_url())
+                .setField("status_not_from_team", service.getStatusNotFromTeam())
                 .execute();
     }
 
@@ -276,7 +278,8 @@ public class ServiceRepository {
                     .setType(ServiceType.fromDb(row.getString("type")))
                     .setMonitorlink(row.getString("monitorlink"))
                     .setPolling_url(row.getString("polling_url"))
-                    .setDeleted(row.getBoolean("deleted"));
+                    .setDeleted(row.getBoolean("deleted"))
+                    .setStatusNotFromTeam(row.getBoolean("status_not_from_team"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }

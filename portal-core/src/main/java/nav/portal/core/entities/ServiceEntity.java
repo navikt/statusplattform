@@ -13,6 +13,7 @@ public class ServiceEntity {
     private String monitorlink;
     private String polling_url;
     private Boolean isDeleted;
+    private Boolean statusNotFromTeam;
 
     public ServiceEntity() {
     }
@@ -41,6 +42,15 @@ public class ServiceEntity {
 
     public ServiceEntity setId(UUID id) {
         this.id = id;
+        return this;
+    }
+
+    public Boolean getStatusNotFromTeam() {
+        return statusNotFromTeam;
+    }
+
+    public ServiceEntity setStatusNotFromTeam(Boolean statusNotFromTeam) {
+        this.statusNotFromTeam = statusNotFromTeam;
         return this;
     }
 
