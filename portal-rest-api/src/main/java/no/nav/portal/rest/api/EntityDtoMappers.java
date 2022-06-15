@@ -27,11 +27,13 @@ public class EntityDtoMappers {
         return entity;
     }
 
+    //TODO kanskje denne valideringen hører hjemme et annet sted?
     private static String getAndValidetePollingUrl(String pollingUrlFromUser){
         //Sets pollingurl to null if not valid
+        String STATUSHOLDER = "STATUSHOLDER";
         String[] schemes = {"http","https"}; // DEFAULT schemes = "http", "https", "ftp"
         UrlValidator urlValidator = new UrlValidator(schemes);
-        if (urlValidator.isValid(pollingUrlFromUser)) {
+        if (urlValidator.isValid(pollingUrlFromUser) || pollingUrlFromUser.equals(STATUSHOLDER)) {
            return pollingUrlFromUser;
         } else {
             return null;
