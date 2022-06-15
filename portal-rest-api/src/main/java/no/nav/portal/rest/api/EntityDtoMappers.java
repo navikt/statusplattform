@@ -24,6 +24,7 @@ public class EntityDtoMappers {
         entity.setTeam(dto.getTeam());
         entity.setMonitorlink(dto.getMonitorlink());
         entity.setPolling_url(getAndValidetePollingUrl(dto.getPollingUrl()));
+        entity.setStatusNotFromTeam(dto.getStatusNotFromTeam());
         return entity;
     }
 
@@ -33,7 +34,7 @@ public class EntityDtoMappers {
         String STATUSHOLDER = "STATUSHOLDER";
         String[] schemes = {"http","https"}; // DEFAULT schemes = "http", "https", "ftp"
         UrlValidator urlValidator = new UrlValidator(schemes);
-        if (urlValidator.isValid(pollingUrlFromUser) || pollingUrlFromUser.equals(STATUSHOLDER)) {
+        if (urlValidator.isValid(pollingUrlFromUser) || STATUSHOLDER.equals(pollingUrlFromUser)) {
            return pollingUrlFromUser;
         } else {
             return null;

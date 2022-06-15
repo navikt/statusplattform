@@ -136,6 +136,7 @@ public class SampleData {
                 .setName(getRandomFromArray(serviceNames))
                 .setType(getRandomServiceType())
                 .setTeam(getRandomFromArray(teamNames))
+                .setStatusNotFromTeam(Boolean.FALSE)
                 .setMonitorlink(getRandomFromArray(urlStrings));
     }
 
@@ -147,6 +148,7 @@ public class SampleData {
                 .setName(getRandomFromArray(possibleNames))
                 .setType(ServiceType.TJENESTE)
                 .setTeam(getRandomFromArray(teamNames))
+                .setStatusNotFromTeam(Boolean.FALSE)
                 .setMonitorlink(getRandomFromArray(urlStrings));
     }
 
