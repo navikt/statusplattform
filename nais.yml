@@ -12,7 +12,7 @@ spec:
     - name: FRONTEND_LOCATION
       value: https://status.nav.no/sp
     - name: statusholder_url
-      value: https://statusholder.intern.nav.no/status/
+      value: https://statusholder.prod-fss-pub.nais.io/status/
     - name: BACKEND_LOCATION
       value: https://status-api.nav.no
   replicas:
