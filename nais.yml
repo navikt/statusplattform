@@ -33,3 +33,7 @@ spec:
         databases:
           - name: navstatus
             envVarPrefix: DB
+  accessPolicy:
+    outbound:
+      external:
+        - host: statusholder.intern.nav.no
