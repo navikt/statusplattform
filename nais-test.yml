@@ -34,4 +34,4 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: statusholder.dev.intern.nav.no
+        - host: statusholder.dev-fss-pub.nais.io
