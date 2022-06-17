@@ -737,7 +737,7 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /Service/Statusholder/{Service_id}/{Status}:
+  /Statusholder/{Service_id}/{Status}:
     post:
       tags:
         - Statusholder
@@ -771,7 +771,7 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /Service/Statusholder:
+  /Statusholder:
     get:
       tags:
         - Statusholder
