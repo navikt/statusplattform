@@ -77,7 +77,8 @@ public class PollingEngine  extends Thread{
 
             JsonObject jsonObject = toJson(bodyString);
             logger.info("private void poll 5----------------");
-            PolledServiceStatus polledServiceStatus = mapToPolledServiceStatus(jsonObject);
+            boolean serviceFromServiceHolder = STATUSHOLDER_URL.equals(serviceEntity.getPolling_url());
+            PolledServiceStatus polledServiceStatus = mapToPolledServiceStatus(jsonObject, serviceFromServiceHolder);
             logger.info("private void poll 6----------------");
             updateRecordForService(polledServiceStatus,serviceEntity, responseTime);
 
@@ -99,11 +100,14 @@ public class PollingEngine  extends Thread{
         return duration.toMillisPart();
     }
 
-    private PolledServiceStatus mapToPolledServiceStatus(JsonObject jsonObject){
+    private PolledServiceStatus mapToPolledServiceStatus(JsonObject jsonObject,Boolean statusFromStatusholder){
         PolledServiceStatus polledServiceStatus = new PolledServiceStatus();
         polledServiceStatus.setName(jsonObject.getString("name",null));//Trengs denne?
         polledServiceStatus.setTeam(jsonObject.getString("team",null));//Trengs denne?
         polledServiceStatus.setDescrption(jsonObject.getString("description",null));
+        if(statusFromStatusholder){
+            polledServiceStatus.setDescrption("Polled status from Statusholder");
+        }
         polledServiceStatus.setLogglink(jsonObject.getString("logglink",null));
         polledServiceStatus.setStatus(ServiceStatus.valueOf(jsonObject.getString("status")));
         //TODO FINN UT OM DETTE ER RIKTIG:
