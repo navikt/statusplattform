@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.ToDoubleBiFunction;
 
 public class PollingEngine  extends Thread{
 
@@ -105,7 +106,8 @@ public class PollingEngine  extends Thread{
         polledServiceStatus.setDescrption(jsonObject.getString("description",null));
         polledServiceStatus.setLogglink(jsonObject.getString("logglink",null));
         polledServiceStatus.setStatus(ServiceStatus.valueOf(jsonObject.getString("status")));
-        polledServiceStatus.setTimestamp(readDateTimeFromString(jsonObject.getString("timestamp")));
+        //TODO FINN UT OM DETTE ER RIKTIG:
+        polledServiceStatus.setTimestamp(ZonedDateTime.now());
 
         return polledServiceStatus;
     }
