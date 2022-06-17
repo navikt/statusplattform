@@ -712,7 +712,13 @@ paths:
         - Service
       summary: Hent alle vedlikeholdsmeldinger på tjeneste
       description: Hent alle vedlikeholdsmeldinger på tjeneste
-
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -732,7 +738,7 @@ paths:
           description: Not Found
           content: { }
   /Service/Statusholder/{Service_id}/{Status}:
-    get:
+    post:
       tags:
         - Statusholder
       summary: Sett status på tjeneste i statusholder
@@ -770,7 +776,6 @@ paths:
       tags:
         - Statusholder
       summary: Hent allestatuser i statusholder
-
       responses:
         '200':
           description: OK
