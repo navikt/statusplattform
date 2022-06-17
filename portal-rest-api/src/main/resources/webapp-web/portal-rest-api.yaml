@@ -712,13 +712,7 @@ paths:
         - Service
       summary: Hent alle vedlikeholdsmeldinger på tjeneste
       description: Hent alle vedlikeholdsmeldinger på tjeneste
-      parameters:
-        - name: Service_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+
       responses:
         '200':
           description: OK
