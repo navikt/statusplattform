@@ -164,8 +164,8 @@ public class PollingEngine  extends Thread{
         //Logikken under må bort på et tidspunkt. Dette er for polling av mock data.
         String urlString;
         switch (serviceEntity.getPolling_url()){
-            case MOCK: urlString = MOCK_URL + serviceEntity.getId();
-            case STATUSHOLDER: urlString = STATUSHOLDER_URL + serviceEntity.getId();
+            case MOCK: urlString = MOCK_URL + serviceEntity.getId(); break;
+            case STATUSHOLDER: urlString = STATUSHOLDER_URL + serviceEntity.getId();break;
             default: urlString = serviceEntity.getPolling_url();
         }
         logger.info("In poller ..........");
