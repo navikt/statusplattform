@@ -15,6 +15,7 @@ import org.jsonbuddy.JsonObject;
 
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonReader;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -23,6 +24,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -142,7 +144,7 @@ public class ServiceController {
 
     @GET("/Statusholder")
     @JsonBody
-    public JsonObject getStatusHolderStatuses() throws IOException  {
+    public List<JsonObject> getStatusHolderStatuses() throws IOException  {
         try{
             return getAllStatusesFromStatusholder();
         }
@@ -165,32 +167,23 @@ public class ServiceController {
     }
 
 
+    private static List<JsonObject> toJson(String str){
+        try{
+            JsonReader jsonReader = Json.createReader(new StringReader(str));
+            JsonObject object = (JsonObject) jsonReader.readObject();
+            jsonReader.close();
+            return List.of(object);
 
-
-
-
-    private Integer calcResponseTime(LocalDateTime before, LocalDateTime after) {
-        Duration duration = Duration.between(after, before);
-        return duration.toMillisPart();
-    }
-
-
-
-
-
-
-
-    private ZonedDateTime readDateTimeFromString(String str){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss.SSS zzz");
-        return ZonedDateTime.from(formatter.parse(str));
-
-    }
-
-    private static JsonObject toJson(String str){
-        JsonReader jsonReader = Json.createReader(new StringReader(str));
-        JsonObject object = (JsonObject) jsonReader.readObject();
-        jsonReader.close();
-        return object;
+        }catch (javax.json.JsonException e){
+            try {
+                JsonReader jsonReader  =  Json.createReader(new StringReader(str));
+                JsonArray jsonArray = jsonReader.readArray();
+                return jsonArray.stream().map(jsonValue -> JsonObject.parse(jsonValue.toString())).collect(Collectors.toList());
+            }
+            catch (Exception e2){
+                return List.of(new JsonObject());
+            }
+        }
     }
 
     private static String readBody(HttpURLConnection con) throws IOException {
@@ -206,10 +199,10 @@ public class ServiceController {
     }
 
 
-    private JsonObject getAllStatusesFromStatusholder() throws IOException  {
+    private List<JsonObject> getAllStatusesFromStatusholder() throws IOException  {
         HttpURLConnection con = getAllStatusesFromStatusholderConnection();
         String stringBody = readBody(con);
-        JsonObject body = toJson(stringBody);
+        List<JsonObject> body = toJson(stringBody);
         return body;
     }
 
