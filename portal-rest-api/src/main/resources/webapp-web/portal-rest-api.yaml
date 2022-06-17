@@ -740,9 +740,9 @@ paths:
   /Service/Statusholder/{Service_id}/{Status}:
     get:
       tags:
-        - Service
-      summary: Hent alle vedlikeholdsmeldinger på tjeneste
-      description: Hent alle vedlikeholdsmeldinger på tjeneste
+        - Statusholder
+      summary: Sett status på tjeneste i statusholder
+
       parameters:
         - name: Service_id
           in: path
@@ -760,7 +760,7 @@ paths:
           content:
             application/json:
               schema:
-                type: json
+                type: string
 
         '401':
           description: Unauthorized
@@ -774,16 +774,16 @@ paths:
   /Service/Statusholder:
     get:
       tags:
-        - Service
-      summary: Hent alle vedlikeholdsmeldinger på tjeneste
-      description: Hent alle vedlikeholdsmeldinger på tjeneste
+        - Statusholder
+      summary: Hent allestatuser i statusholder
+
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: json
+                type: string
 
         '401':
           description: Unauthorized
