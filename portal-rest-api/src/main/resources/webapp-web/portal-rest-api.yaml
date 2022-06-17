@@ -737,7 +737,63 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Service/Statusholder/{Service_id}/{Status}:
+    get:
+      tags:
+        - Service
+      summary: Hent alle vedlikeholdsmeldinger på tjeneste
+      description: Hent alle vedlikeholdsmeldinger på tjeneste
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Status
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: json
 
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Service/Statusholder:
+    get:
+      tags:
+        - Service
+      summary: Hent alle vedlikeholdsmeldinger på tjeneste
+      description: Hent alle vedlikeholdsmeldinger på tjeneste
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: json
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
   /Alert/test:
     get:
       tags:
