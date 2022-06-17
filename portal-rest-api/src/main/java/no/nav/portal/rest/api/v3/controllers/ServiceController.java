@@ -140,7 +140,7 @@ public class ServiceController {
     }
 
 
-    @GET("/Services/Statusholder")
+    @GET("/Statusholder")
     @JsonBody
     public JsonObject getStatusHolderStatuses() throws IOException  {
         try{
@@ -151,7 +151,7 @@ public class ServiceController {
         }
     }
 
-    @POST("/Service/Statusholder/:Service_id/:Status")
+    @POST("/Statusholder/:Service_id/:Status")
     @JsonBody
     public int addStatusToStatusholder(@PathParam("Service_id") UUID service_id
             ,@PathParam("Status") String status) {
@@ -217,9 +217,6 @@ public class ServiceController {
 
 
     private HttpURLConnection getAllStatusesFromStatusholderConnection() throws IOException {
-
-        String STATUSHOLDER_URL = "https://statusholder.dev-fss-pub.nais.io/status";
-
         URL url = new URL(STATUSHOLDER_URL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
