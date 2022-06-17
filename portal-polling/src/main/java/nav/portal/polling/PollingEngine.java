@@ -8,6 +8,8 @@ import nav.portal.core.repositories.ServiceRepository;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.fluentjdbc.DbTransaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -26,6 +28,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class PollingEngine  extends Thread{
+
+    private static final Logger logger = LoggerFactory.getLogger(PollingEngine.class);
     private static final String MOCK_URL = "https://mockservice.dev.nav.no/mock/Service/";
     private static final  String MOCK = "MOCK";
     private static final  String STATUSHOLDER = "STATUSHOLDER";
@@ -58,19 +62,28 @@ public class PollingEngine  extends Thread{
 
     private void poll(ServiceEntity serviceEntity){
         try{
+            logger.info("private void poll 1----------------");
+
             LocalDateTime before = LocalDateTime.now();
             HttpURLConnection connection = getConnectionToServicePollEndpoint(serviceEntity);
+            logger.info("private void poll 2----------------");
             String bodyString = readBody(connection);
+            logger.info("private void poll  3----------------");
             LocalDateTime after = LocalDateTime.now();
             Integer responseTime = calcResponseTime(before,after);
+            logger.info("private void poll 4----------------");
             connection.disconnect();
 
             JsonObject jsonObject = toJson(bodyString);
+            logger.info("private void poll 5----------------");
             PolledServiceStatus polledServiceStatus = mapToPolledServiceStatus(jsonObject);
+            logger.info("private void poll 6----------------");
             updateRecordForService(polledServiceStatus,serviceEntity, responseTime);
 
         }
         catch (Exception e){
+
+            logger.info("private void poll Exception!!: " + e);
 
             PolledServiceStatus polledServiceStatus =  createPolledServiceStatusForUnresponsiveEndpoint();
             updateRecordForService(polledServiceStatus,serviceEntity, 0);
@@ -130,6 +143,7 @@ public class PollingEngine  extends Thread{
     }
 
     private static String readBody(HttpURLConnection con) throws IOException {
+
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
@@ -138,7 +152,10 @@ public class PollingEngine  extends Thread{
             content.append(inputLine);
         }
         in.close();
-        return content.toString();
+        String result = content.toString();
+        logger.info("In read body ..........");
+        logger.info("result: "+ result);
+        return result;
     }
 
 
@@ -151,7 +168,8 @@ public class PollingEngine  extends Thread{
             case STATUSHOLDER: urlString = STATUSHOLDER_URL + serviceEntity.getId();
             default: urlString = serviceEntity.getPolling_url();
         }
-
+        logger.info("In poller ..........");
+        logger.info("url: "+ urlString);
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
