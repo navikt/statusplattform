@@ -77,7 +77,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>4.3.1</version>
+                <version>5.2.0</version>
                 <executions>
                     <execution>
                         <id>portal-rest-api-java</id>
@@ -103,7 +103,7 @@
                     <dependency>
                         <groupId>io.github.jhannes.openapi</groupId>
                         <artifactId>openapi-generator-java-annotationfree</artifactId>
-                        <version>0.1.1</version>
+                        <version>0.3.4</version>
                     </dependency>
                 </dependencies>
             </plugin>

@@ -1104,6 +1104,9 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/OPSmessage'
+      required:
+        - areas
+        - opsMessages
     Area:
       title: Area
       type: object
@@ -1133,6 +1136,8 @@ components:
             - $ref: '#/components/schemas/Status'
       required:
         - name
+        - services
+        - subAreas
     SubArea:
       title: SubArea
       type: object
@@ -1154,6 +1159,7 @@ components:
             $ref: '#/components/schemas/Service'
       required:
         - name
+        - services
     Service:
       title: Service
       type: object
@@ -1200,6 +1206,11 @@ components:
             - $ref: '#/components/schemas/Status'
         statusNotFromTeam:
           type: boolean
+      required:
+        - serviceDependencies
+        - componentDependencies
+        - areasContainingThisService
+        - servicesDependantOnThisComponant
     ServiceStatus:
       title: ServiceStatus
       type: object
@@ -1276,6 +1287,7 @@ components:
         - internalMessage
         - internalHeader
         - onlyShowForNavEmployees
+        - affectedServices
     ServiceHistory:
       title: ServiceHistory
       type: object
@@ -1284,6 +1296,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ServiceHistoryMonthEntry'
+      required:
+        - history
+
     ServiceHistoryMonthEntry:
       title: ServiceHistoryMonthEntry
       type: object
@@ -1296,6 +1311,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ServiceHistoryDayEntry'
+      required:
+        - entries
     ServiceHistoryDayEntry:
       title: ServiceHistoryDayEntry
       type: object
@@ -1379,6 +1396,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ServiceOpeningHoursDayEntry'
+      required:
+        - dailyOpeningHours
     Time:
       properties:
         hour:
@@ -1416,6 +1435,8 @@ components:
           items:
             type: string
             format: uuid
+      required:
+        - areas
   securitySchemes:
     ApiKeyAuth: # arbitrary name for the security scheme
       type: apiKey
@@ -1423,5 +1444,3 @@ components:
       name: Apikey  # name of the header, query parameter or cookie
 security:
   - ApiKeyAuth: [ ]
-
-
