@@ -39,12 +39,6 @@
         </dependency>
         <dependency>
             <groupId>no.nav</groupId>
-            <artifactId>portal-oauth2</artifactId>
-            <version>0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.nav</groupId>
             <artifactId>portal-polling</artifactId>
             <version>0.1-SNAPSHOT</version>
             <scope>compile</scope>
