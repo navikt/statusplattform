@@ -151,11 +151,11 @@ public class OpsRepository {
 
     public void updateOpsMessage(OpsMessageEntity opsMessageEntity) {
         opsMessageTable.where("id", opsMessageEntity.getId()).update()
-                .setFieldIfPresent("internal_header", opsMessageEntity.getInternalHeader())
-                .setField("internal_message", opsMessageEntity.getInternalText())
-                .setField("external_header", opsMessageEntity.getExternalHeader())
-                .setField("external_message", opsMessageEntity.getExternalText())
-                .setField("only_show_for_nav_emploees", opsMessageEntity.getOnlyShowForNavEmployees())
+                .setFieldIfPresent("intern_header", opsMessageEntity.getInternalHeader())
+                .setField("intern_text", opsMessageEntity.getInternalText())
+                .setField("extern_header", opsMessageEntity.getExternalHeader())
+                .setField("extern_text", opsMessageEntity.getExternalText())
+                .setField("only_show_for_nav_employees", opsMessageEntity.getOnlyShowForNavEmployees())
                 .setField("is_active", opsMessageEntity.getIsActive())
                 .setField("start_time", opsMessageEntity.getStartTime())
                 .setField("end_time", opsMessageEntity.getEndTime())
