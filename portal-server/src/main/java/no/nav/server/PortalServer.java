@@ -4,7 +4,6 @@ package no.nav.server;
 import nav.portal.jobs.recordAggregation.JobScheduler;
 import no.nav.portal.infrastructure.RedirectHandler;
 import nav.portal.polling.PortalPoller;
-import no.nav.portal.oauth2.LogInnApi;
 import no.nav.portal.rest.api.PortalRestApi;
 import no.nav.portal.rest.api.SwaggerDocumentation;
 import org.actioncontroller.config.ConfigObserver;
@@ -26,7 +25,6 @@ public class PortalServer {
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
     private String frontEndLocation;
-    private final LogInnApi logInnApi = new LogInnApi("/authenticate");
     private final PortalPoller portalPoller = new PortalPoller();
     private final JobScheduler jobScheduler = new JobScheduler();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
@@ -41,7 +39,6 @@ public class PortalServer {
         server.setHandler(new HandlerList(
               new RedirectHandler("/", "/doc"),
                 portalRestApi,
-                logInnApi,
                 swaggerDocumentation
                 ));
         setupConfiguration();

@@ -2,7 +2,6 @@ package no.nav.server;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import no.nav.portal.oauth2.AuthenticationFilter;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class DataSourceTransformer {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceTransformer.class);
     public static DataSource create() {
 
         String userName = System.getenv("DB_USERNAME");
