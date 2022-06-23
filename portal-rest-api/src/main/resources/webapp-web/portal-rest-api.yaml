@@ -1437,6 +1437,16 @@ components:
             format: uuid
       required:
         - areas
+    NavUser:
+      title: NavUser
+      type: object
+      properties:
+        navIdent:
+          type: string
+          example: "L154326"
+        name:
+          type: string
+          example: "Ola Norman"
   securitySchemes:
     ApiKeyAuth: # arbitrary name for the security scheme
       type: apiKey
