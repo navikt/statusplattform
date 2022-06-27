@@ -63,16 +63,17 @@ public class RecordCompressor extends Thread{
     }
 
     private void getOldRecordsAggregateAndSave(){
-        if(isJobAlreadyRun()){
-            return;
-        }
         List<UUID> serviceUUIDS = serviceRepository.retrieveAllShallow().stream().map(ServiceEntity::getId).collect(Collectors.toList());
         List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS);
 
         Map<UUID,List<RecordEntity>> serviceID_recordsMap = new HashMap<>();
         //TODO dette mappet kan lages direkte fra en spørring i repo
         for(UUID uuid: serviceUUIDS){
-            serviceID_recordsMap.put(uuid,outdatedRecords.stream().filter(recordEntity -> recordEntity.getServiceId().equals(uuid)).collect(Collectors.toList()));
+            serviceID_recordsMap.put(uuid,
+                    outdatedRecords.stream()
+                            .filter(recordEntity ->
+                                    recordEntity.getServiceId().equals(uuid))
+                            .collect(Collectors.toList()));
         }
 
         serviceID_recordsMap.forEach(this::compressAndSave);
@@ -96,16 +97,17 @@ public class RecordCompressor extends Thread{
     }
 
 
-    private boolean isJobAlreadyRun(){
-        return !recordRepository.getServiceHistoryForNumberOfDaysForAllServices(AGGREGATE_RECORDS_OLDER_THAN_NUMBER_OF_DAYS).isEmpty();
 
-    }
 
     private List<RecordEntity> filterOutProssesedReckords(List<RecordEntity> outdatedRecords, Integer dayOfYear) {
         return outdatedRecords.stream().filter(r -> !dayOfYear.equals(r.getCreated_at().getDayOfYear())).collect(Collectors.toList());
     }
 
     private void compressOneDayAndSaveResult(List<RecordEntity> recordsForOneDay){
+        //Her sjekker vi først om det finnes en aggregert status for dagen:
+
+        if (isAlreadyHandled(recordsForOneDay)) return;
+
         Map<UUID,List<RecordEntity>> serviceUUIDRecordsMap = new HashMap<>();
         while (recordsForOneDay.size() > 0 ){
             RecordEntity record = recordsForOneDay.get(0);
@@ -119,6 +121,18 @@ public class RecordCompressor extends Thread{
         }
 
         serviceUUIDRecordsMap.forEach(this::createAndSaveAggregation);
+    }
+
+    private boolean isAlreadyHandled(List<RecordEntity> recordsForOneDay) {
+        Optional<RecordEntity> recordSample = recordsForOneDay.stream().findFirst();
+        if(recordSample.isPresent()) {
+            Optional<DailyStatusAggregationForServiceEntity> aggregation = recordRepository.
+                    getServiceHistoryForServiceByDate(recordSample.get().getServiceId(), recordSample.get().getCreated_at());
+            if(aggregation.isPresent()){
+                return true;
+            }
+        }
+        return false;
     }
 
 

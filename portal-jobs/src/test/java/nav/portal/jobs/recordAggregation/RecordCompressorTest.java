@@ -97,10 +97,46 @@ class RecordCompressorTest {
 
         //ASSERT
         List<DailyStatusAggregationForServiceEntity>compressedRecords =
-                recordRepository.getServiceHistoryForNumberOfDays(5, myService.getId());
+                recordRepository.getServiceHistoryForNumberOfDays(numberOfDays, myService.getId());
         List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(7);
         Assertions.assertThat(compressedRecords).isNotEmpty();
-        Assertions.assertThat(compressedRecords.size()).isEqualTo(4);//NB! dag 1 er ikke en del av kompression
+        Assertions.assertThat(compressedRecords.size()).isEqualTo(9);//NB! dag 1 er ikke en del av kompression
         Assertions.assertThat(outdatedRecords).isEmpty();
+    }
+
+
+    @Test
+    void shouldNotCompressWhenAlreadyCompressed() {
+        //2x compressions on the same dataset should not result 2 DailyStatusAggregationForServiceEntity for a day
+        //ARRANGE
+        ServiceEntity myService = SampleData.getRandomizedServiceEntity();
+        myService.setId(serviceRepository.save(myService));
+
+        int numberOfDays = 3;
+        int minutesBetweenStatusUpdates = 60;
+        //Under får vi generert satuser for en tjenester hvert 100ede minutt 10 dager tilbake i tid:
+        Map<Integer,List<RecordEntity>> resultForOne =
+                MockDataGenerator.generateRandomStatusesForOneServiceXNumberOfDaysBackInTime(myService, numberOfDays, minutesBetweenStatusUpdates);
+
+        //Vi bruker egen save metode i mockdatagenerater som setter created at explisit.
+        //Dersom vi hadde brukt repository her ville alle statuser kommet inn med created_at nå.
+        MockDataGenerator.saveRecordsToTableForOneService(resultForOne,dbContext);
+
+
+        List<DailyStatusAggregationForServiceEntity> compressedRecords;
+
+        List<DailyStatusAggregationForServiceEntity> doubleCompressedRecords;
+
+        //ACT
+        recordRepository.getLatestRecord(myService.getId());
+        recordCompressor.run();
+        compressedRecords = recordRepository.getServiceHistoryForNumberOfDays(numberOfDays, myService.getId());
+        recordCompressor.run();
+        doubleCompressedRecords = recordRepository.getServiceHistoryForNumberOfDays(numberOfDays, myService.getId());
+        Assertions.assertThat(compressedRecords.size()).isEqualTo(doubleCompressedRecords.size());
+
+
+
+
     }
 }

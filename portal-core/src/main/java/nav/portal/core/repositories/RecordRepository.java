@@ -42,10 +42,11 @@ public class RecordRepository {
                 .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
     }
 
-    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDaysForAllServices(int number_of_days) {
-        return aggregatedStatusTable
-                .whereExpression("aggregation_date >= ?", ZonedDateTime.now().minusDays(number_of_days))
-                .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
+
+    public Optional<DailyStatusAggregationForServiceEntity> getServiceHistoryForServiceByDate(UUID serviceId, ZonedDateTime date) {
+        return aggregatedStatusTable.where("service_id", serviceId)
+                .whereExpression("aggregation_date = ?", date)
+                .singleObject(ServiceRepository::toDailyStatusAggregationForServiceEntity);
     }
 
     public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfMonths(UUID serviceId, int number_of_months) {
