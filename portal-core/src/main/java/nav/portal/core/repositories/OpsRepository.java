@@ -37,7 +37,6 @@ public class OpsRepository {
                 .setField("start_time", entity.getStartTime())
                 .setField("end_time", entity.getEndTime())
                 .setField("severity", entity.getSeverity())
-                .setField("state", entity.getState())
                 .execute();
         setServicesOnOpsMessage(result.getId(), services);
         return result.getId();
@@ -140,7 +139,6 @@ public class OpsRepository {
                     .setStartTime(row.getZonedDateTime("start_time"))
                     .setEndTime(row.getZonedDateTime("end_time"))
                     .setSeverity(OpsMessageSeverity.fromDb(row.getString("severity")).orElse(null))
-                    .setState(OpsMessageState.fromDb(row.getString("state")).orElse(null))
                     .setDeleted(row.getBoolean("deleted"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
@@ -160,7 +158,6 @@ public class OpsRepository {
                 .setField("start_time", opsMessageEntity.getStartTime())
                 .setField("end_time", opsMessageEntity.getEndTime())
                 .setField("severity", opsMessageEntity.getSeverity())
-                .setField("state", opsMessageEntity.getState())
                 .execute();
     }
 
