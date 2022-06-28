@@ -86,25 +86,26 @@ public class DashboardRepository {
 
     private void settSubAreasOnArea(AreaWithServices areaWithServices) {
         UUID areaID = areaWithServices.getArea().getId();
-        List<SubAreaEntity> subareasOnArea = new ArrayList<>();
+        List<SubAreaWithServices> subAreasOnArea = new ArrayList<>();
 
         DbContextTableAlias sa = dbContext.table("sub_area").alias("sa");
         DbContextTableAlias a2sa = dbContext.table("area_sub_area").alias("a2sa");
-        /*
-        sa.where("area_id", areaID)
-                .leftJoin(sa.column("id"),a2sa.column("sub_area_id"))
-                .list(row -> subareasOnArea.add(SubAreaRepository.toSubArea(row.table(sa))));
-        */
+
 
         a2sa.where("area_id", areaID)
                 .leftJoin(a2sa.column("sub_area_id"),sa.column("id"))
-                .list(row -> subareasOnArea.add(SubAreaRepository.toSubArea(row.table(sa))));
+                .list(row -> subAreasOnArea.add( new SubAreaWithServices(SubAreaRepository.toSubArea(row.table(sa)),null )));
+
+        SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
 
 
 
-        areaWithServices.setSubAreas(subareasOnArea);
+        subAreasOnArea.forEach(subAreaWithServices ->
+                subAreaWithServices.setServices(
+                        subAreaRepository.getServicesOnSubArea(subAreaWithServices.getSubArea().getId()))
+        );
+        areaWithServices.setSubAreas(subAreasOnArea);
     }
-
 
     public Map.Entry<DashboardEntity, List<AreaWithServices>> retrieveOneFromName(String name) {
         DbContextTableAlias d = dashboardTable.alias("d");

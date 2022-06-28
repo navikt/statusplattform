@@ -6,24 +6,24 @@ import java.util.Objects;
 public class AreaWithServices {
     private AreaEntity area;
     private List<ServiceEntity> services;
-    private List<SubAreaEntity> subAreas;
+    private List<SubAreaWithServices> subAreas;
 
 
-    public AreaWithServices(AreaEntity area, List<ServiceEntity> services, List<SubAreaEntity> subAreas) {
+    public AreaWithServices(AreaEntity area, List<ServiceEntity> services, List<SubAreaWithServices> subAreas) {
         this.area = area;
         this.services = services;
         this.subAreas = subAreas;
     }
-    public List<SubAreaEntity> getSubAreas() {
+    public List<SubAreaWithServices> getSubAreas() {
         return subAreas;
     }
 
-    public AreaWithServices setSubAreas(List<SubAreaEntity> subAreas) {
+    public AreaWithServices setSubAreas(List<SubAreaWithServices> subAreas) {
         this.subAreas = subAreas;
         return this;
     }
 
-    public AreaWithServices addSubArea(SubAreaEntity subArea) {
+    public AreaWithServices addSubArea(SubAreaWithServices subArea) {
         this.subAreas.add(subArea);
         return this;
     }

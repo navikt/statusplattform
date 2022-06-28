@@ -1,8 +1,6 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.OpsMessageEntity;
-import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.*;
 import nav.portal.core.enums.OpsMessageSeverity;
 import nav.portal.core.enums.OpsMessageState;
 import nav.portal.core.enums.ServiceStatus;
@@ -11,19 +9,25 @@ import org.fluentjdbc.*;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OpsRepository {
-
-
+    private final DashboardRepository dashboardRepository;
     private final DbContextTable opsMessageTable;
     private final DbContextTable opsMessageServiceTable;
     private final DbContextTable serviceTable;
-
+    private final DbContextTable dashboardTable;
+    private final DbContextTable dashboardAreaTable;
+    private final DbContext dbContext;
 
     public OpsRepository(DbContext dbContext) {
+        dashboardRepository = new DashboardRepository( dbContext);
         opsMessageTable = dbContext.table("ops_message");
         serviceTable = dbContext.table("service");
         opsMessageServiceTable = dbContext.table("ops_message_service");
+        dashboardTable = dbContext.table("dashboard");
+        dashboardAreaTable = dbContext.table("dashboard_area");
+        this.dbContext = dbContext;
     }
 
     public UUID save(OpsMessageEntity entity, List<UUID> services) {
@@ -85,6 +89,24 @@ public class OpsRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: OpsMessage with id " + ops_id));
     }
 
+    public List<OpsMessageEntity> getAllOpsMessagesForDashboard(UUID dashboardId){
+
+        Map.Entry<DashboardEntity, List<AreaWithServices>> dashboardEntityListMap = dashboardRepository.retrieveOne(dashboardId);
+
+        List<UUID>serviceIds = new ArrayList<>();
+        dashboardEntityListMap.getValue().forEach(areaWithServices -> {
+            areaWithServices.getServices().stream().map(ServiceEntity::getId).forEach(serviceId -> {
+                if (!serviceIds.contains(serviceId)){
+                    serviceIds.add(serviceId);
+                }
+            });
+        });
+        List<OpsMessageEntity> result;
+        //Bygg opp result
+        return Collections.EMPTY_LIST;
+
+    }
+
     public Map<OpsMessageEntity, List<ServiceEntity>> retrieveAll() {
         DbContextTableAlias ops = opsMessageTable.alias("ops");
         DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
@@ -144,7 +166,6 @@ public class OpsRepository {
             throw ExceptionUtil.soften(e);
         }
     }
-
 
 
     public void updateOpsMessage(OpsMessageEntity opsMessageEntity) {
