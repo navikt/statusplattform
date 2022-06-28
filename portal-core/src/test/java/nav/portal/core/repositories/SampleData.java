@@ -4,10 +4,10 @@ import nav.portal.core.entities.*;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.sql.Time;
+import java.time.*;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 
@@ -15,15 +15,15 @@ public class SampleData {
 
     static final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Arbeidsøker eller permitert", "Pensjon", "Venter barn", "Alene med barn", "Sykmeldt",
             "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
-            "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken","Ett navn til","ab","ac","ad","ae","af","ag","ah","ai","aj","ak","al","am","an","ao","ap","aq","ar","as","at"));
+            "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken", "Ett navn til", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ","ab","ac","ad","ae","af","ag","ah","ai","aj","ak","al","am","an","ao","ap","aq","ar","as","at"));
+    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    static final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste","tjeneste123","tjeneste213","ab","ac","ad","ae","af","ag","ah","ai","aj","ak","al","am","an","ao","ap","aq","ar","as","at"));
+    static final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste", "tjeneste123", "tjeneste213", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("www.random.com", "www.æøå.com", "wwww.123abc.com","ab","ac","ad","ae","af","ag","ah","ai","aj","ak","al","am","an","ao","ap","aq","ar","as","at"));
+    static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("www.random.com", "www.æøå.com", "wwww.123abc.com", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    static final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team1", "teamOrlene", "teamÆØÅ","ab","ac","ad","ae","af","ag","ah","ai","aj","ak","al","am","an","ao","ap","aq","ar","as","at"));
+    static final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team1", "teamOrlene", "teamÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
     static final ArrayList<String> descriptions = new ArrayList<>(Arrays.asList("kort beskrivelse", "laaang beskrivelse ------- laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------", "beskrivelseÆØÅ"));
 
@@ -34,7 +34,7 @@ public class SampleData {
     static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
     static final ArrayList<Boolean> booleans = new ArrayList<>(Arrays.asList(true, false));
 
-   public static String getRandomizedDashboardName() {
+    public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
     }
 
@@ -89,10 +89,12 @@ public class SampleData {
         }
         return areas;
     }
+
     public static SubAreaEntity getRandomizedSubAreaEntity() {
         return new SubAreaEntity()
                 .setName(getRandomFromArray(areaNames));
     }
+
     public static SubAreaEntity getRandomizedSubAreaEntityWithNameNotInList(List<SubAreaEntity> subAreas) {
         List<String> usedNames = subAreas.stream().map(SubAreaEntity::getName).collect(Collectors.toList());
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
@@ -126,7 +128,7 @@ public class SampleData {
         int numberOfSubAreas = length;
         List<SubAreaEntity> subAreas = new ArrayList<>();
         for (int i = 0; i < numberOfSubAreas; i++) {
-             subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
+            subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
         }
         return subAreas;
     }
@@ -159,7 +161,8 @@ public class SampleData {
         for (int i = 0; i < numberOfAreas; i++) {
             services.add(getRandomizedServiceEntityWithNameNotInList(services));
         }
-        return services;    }
+        return services;
+    }
 
     public static List<ServiceEntity> getRandomLengthNonEmptyListOfServiceEntity() {
         Random random = new Random();
@@ -180,23 +183,23 @@ public class SampleData {
     }
 
     public static List<ServiceEntity> getNonEmptyListOfServiceEntityWithUid(int numberOfServices) {
-        List<ServiceEntity> result = getNonEmptyListOfServiceEntity( numberOfServices);
+        List<ServiceEntity> result = getNonEmptyListOfServiceEntity(numberOfServices);
         result.forEach(service -> service.setId(UUID.randomUUID()));
         return result;
     }
 
 
     private static String getRandomFromArray(ArrayList<String> array) {
-       if(array.size()==0){
-           //Hit skal man ikke komme
-           return null;
-       }
+        if (array.size() == 0) {
+            //Hit skal man ikke komme
+            return null;
+        }
         Random random = new Random();
         return array.get(random.nextInt(array.size()));
     }
 
     private static Boolean getRandomBoolFromArray(ArrayList<Boolean> array) {
-        if(array.size()==0){
+        if (array.size() == 0) {
             //Hit skal man ikke komme
             return null;
         }
@@ -225,19 +228,18 @@ public class SampleData {
     }
 
     public static RecordEntity getRandomizedRecordEntity() {
-           return new RecordEntity()
+        return new RecordEntity()
                 .setStatus(getRandomServiceStatus())
                 .setResponsetime(getRandomResponseTime());
     }
 
-    public static RecordEntity getRandomizedRecordEntityForService(ServiceEntity serviceEntity){
-       return new RecordEntity()
-               .setServiceId(serviceEntity.getId())
-               .setStatus(getRandomServiceStatus())
-               .setResponsetime(getRandomResponseTime());
+    public static RecordEntity getRandomizedRecordEntityForService(ServiceEntity serviceEntity) {
+        return new RecordEntity()
+                .setServiceId(serviceEntity.getId())
+                .setStatus(getRandomServiceStatus())
+                .setResponsetime(getRandomResponseTime());
     }
-
-    public static DailyStatusAggregationForServiceEntity getRandomizedDailyStatusAggregationForService(ServiceEntity serviceEntity){
+    public static DailyStatusAggregationForServiceEntity getRandomizedDailyStatusAggregationForService(ServiceEntity serviceEntity) {
         return new DailyStatusAggregationForServiceEntity()
                 .setService_id(serviceEntity.getId())
                 .setNumber_of_status_down(new Random().nextInt(3))
@@ -245,4 +247,18 @@ public class SampleData {
                 .setNumber_of_status_ok(new Random().nextInt(100))
                 .setAggregation_date(LocalDate.now());
     }
+
+    public static OpeningHoursEntity getRandomizedOpeningTime()
+    {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        LocalTime now1 = LocalTime.of(random.nextInt(0, 23), random.nextInt(0, 59), random.nextInt(0, 59));
+        LocalTime now2 = LocalTime.of(random.nextInt(0, 23), random.nextInt(0, 59), random.nextInt(0, 59));
+        Time time1 = Time.valueOf(now1);
+        Time time2 = Time.valueOf(now2);
+        return new OpeningHoursEntity()
+                .setDay_of_the_week(new Random().nextInt(7))
+                .setOpening_time((time1.compareTo(time2) < 0) ? time1: time2)//Sets opening time to the earliest time
+                .setClosing_time((time1.compareTo(time2) > 0) ? time1: time2);//Sets the closing time to the latest
+    }
 }
+

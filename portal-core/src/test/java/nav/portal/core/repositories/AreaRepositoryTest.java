@@ -93,6 +93,22 @@ class AreaRepositoryTest {
     }
 
     @Test
+    void updateArea() {
+        //TODO denne
+        //Arrange
+        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(2);
+
+        areas.forEach(area -> area.setId(areaRepository.save(area)));
+        AreaEntity areaBeforeUpdate = areas.get(0);
+        //Act
+        areaRepository.updateArea(areas.get(0).setName("WhatArea"));
+        AreaEntity areaAfterUpdate = areas.get(0);
+        //Assert
+        Assertions.assertThat(areaBeforeUpdate.getName()).isNotEqualToIgnoringCase(areaAfterUpdate.getName());
+        Assertions.assertThat(areaAfterUpdate.getName()).isEqualTo(areas.get(0).getName());
+    }
+
+    @Test
     void deleteArea() {
         //TODO denne
         //Arrange - Lag area
