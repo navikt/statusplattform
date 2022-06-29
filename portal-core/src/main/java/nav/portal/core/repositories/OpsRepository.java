@@ -90,6 +90,7 @@ public class OpsRepository {
     }
 
     public List<OpsMessageEntity> getAllOpsMessagesForDashboard(UUID dashboardId){
+        //TODO lag logikken under kun ved sql
 
         Map.Entry<DashboardEntity, List<AreaWithServices>> dashboardEntityListMap = dashboardRepository.retrieveOne(dashboardId);
 
@@ -100,10 +101,15 @@ public class OpsRepository {
                     serviceIds.add(serviceId);
                 }
             });
+            areaWithServices.getSubAreas().forEach(subAreaWithServices -> {
+                subAreaWithServices.getServices().forEach(service -> {
+                    if(!serviceIds.contains(service.getId())){
+                        serviceIds.add(service.getId());
+                    }
+                });
+            });
         });
-        List<OpsMessageEntity> result;
-        //Bygg opp result
-        return Collections.EMPTY_LIST;
+        return  retrieveAllForServices(serviceIds);
 
     }
 

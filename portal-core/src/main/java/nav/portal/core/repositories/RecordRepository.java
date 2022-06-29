@@ -18,7 +18,6 @@ public class RecordRepository {
 
 
     public RecordRepository(DbContext dbContext) {
-        //TODO:Vurder skal Record bytte navn til service_status
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
         aggregatedStatusTable = dbContext.table(new DatabaseTableWithTimestamps("daily_status_aggregation_service"));
 
