@@ -1017,18 +1017,11 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /OpsMessage/{OpsMessage_id}:
     put:
       tags:
         - OPS
       summary: Rediger avviksmelding
       description: Rediger avviksmelding
-      parameters:
-        - name: OpsMessage_id
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         description: Oppdaterte verdier for avviksmelding
         required: true
@@ -1048,13 +1041,14 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /OpsMessage/{Ops_id}:
     delete:
       tags:
         - OPS
       summary: Slett avviksmelding
       description: Fjerner en avviksmelding fullstendig
       parameters:
-        - name: OpsMessage_id
+        - name: Ops_id
           in: path
           required: true
           schema:

@@ -13,7 +13,7 @@ import java.util.UUID;
 public class OpsController {
 
 
-    private OpsControllerHelper opsControllerHelper;
+    private final OpsControllerHelper opsControllerHelper;
 
     public OpsController(DbContext dbContext) {
         this.opsControllerHelper = new OpsControllerHelper(dbContext);
@@ -31,17 +31,18 @@ public class OpsController {
         return opsControllerHelper.getAllOpsMessages();
     }
 
+    @PUT("/OpsMessage/")
+    @JsonBody
+    public OPSmessageDto updateSpecificOpsMessage(@JsonBody OPSmessageDto opsMessageDto) {
+        return opsControllerHelper.updateOpsMessage(opsMessageDto);
+    }
+
     @GET("/OpsMessage/:Ops_id")
     @JsonBody
     public OPSmessageDto getSpecificOpsMessage(@PathParam("Ops_id") UUID ops_id ) {
         return opsControllerHelper.getOpsMessage(ops_id);
     }
 
-    @PUT("/OpsMessage/:Ops_id")
-    @JsonBody
-    public OPSmessageDto updateSpecificOpsMessage(@JsonBody OPSmessageDto opsMessageDto, @PathParam("Ops_id") UUID ops_id ) {
-        return opsControllerHelper.updateOpsMessage(ops_id, opsMessageDto);
-    }
 
     @DELETE("/OpsMessage/:Ops_id")
     @JsonBody
