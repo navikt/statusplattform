@@ -30,6 +30,12 @@ public class DashboardRepository {
         return result.getId();
     }
 
+
+    public void settAreasOnDashboard(UUID dashboardId, UUID areaId) {
+        settAreasOnDashboard(dashboardId,List.of(areaId));
+
+    }
+
     public void settAreasOnDashboard(UUID dashboardId, List<UUID> areas) {
         dashboardAreaTable.where("dashboard_id", dashboardId).executeDelete();
 

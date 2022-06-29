@@ -55,13 +55,17 @@ public class OpsRepository {
 
     public void setServicesOnOpsMessage(UUID opsId, List<UUID> services) {
         opsMessageServiceTable.where("ops_message_id", opsId).executeDelete();
-
+        if(services == null || services.isEmpty()){
+            return;
+        }
         for(int i = 0; i < services.size(); i++){
             opsMessageServiceTable.insert()
                     .setField("ops_message_id", opsId)
                     .setField("service_id", services.get(i))
                     .execute();
         }
+
+
     }
 
     public Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrieveOne(UUID ops_id) {
@@ -89,9 +93,9 @@ public class OpsRepository {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: OpsMessage with id " + ops_id));
     }
 
-    public List<OpsMessageEntity> getAllOpsMessagesForDashboard(UUID dashboardId){
-        //TODO lag logikken under kun ved sql
+    public List<OpsMessageEntity> getAllForDashboard(UUID dashboardId){
 
+        //TODO lag logikken under kun ved sql
         Map.Entry<DashboardEntity, List<AreaWithServices>> dashboardEntityListMap = dashboardRepository.retrieveOne(dashboardId);
 
         List<UUID>serviceIds = new ArrayList<>();
