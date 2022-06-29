@@ -96,16 +96,22 @@ class AreaRepositoryTest {
     void updateArea() {
         //TODO denne
         //Arrange
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(2);
 
-        areas.forEach(area -> area.setId(areaRepository.save(area)));
-        AreaEntity areaBeforeUpdate = areas.get(0);
+        String updatedAreaName = "A_name_you_wont_find_in_sampldata";
+        AreaEntity areaBeforeUpdate = SampleData.getRandomizedAreaEntity();
+        areaBeforeUpdate.setId(areaRepository.save(areaBeforeUpdate));
+        AreaEntity areaAfterUpdate =
+                new AreaEntity(areaBeforeUpdate.getId()
+                ,updatedAreaName
+                ,areaBeforeUpdate.getDescription()
+                ,areaBeforeUpdate.getIcon());
+
         //Act
-        areaRepository.updateArea(areas.get(0).setName("WhatArea"));
-        AreaEntity areaAfterUpdate = areas.get(0);
+        areaRepository.updateArea(areaAfterUpdate);
+
         //Assert
         Assertions.assertThat(areaBeforeUpdate.getName()).isNotEqualToIgnoringCase(areaAfterUpdate.getName());
-        Assertions.assertThat(areaAfterUpdate.getName()).isEqualTo(areas.get(0).getName());
+        Assertions.assertThat(areaAfterUpdate.getName()).isEqualTo(updatedAreaName);
     }
 
     @Test
