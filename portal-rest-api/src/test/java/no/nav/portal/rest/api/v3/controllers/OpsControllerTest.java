@@ -8,6 +8,7 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.OpsControllerHelper;
 import no.portal.web.generated.api.OPSmessageDto;
 import org.assertj.core.api.Assertions;
+import org.checkerframework.checker.units.qual.A;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,7 +27,10 @@ class OpsControllerTest {
 
     private final OpsController opsController = new OpsController(dbContext);
     private final OpsControllerHelper opsControllerHelper = new OpsControllerHelper(dbContext);
+    private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
+    private final AreaRepository areaRepository = new AreaRepository(dbContext);
     private final OpsRepository opsRepository = new OpsRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     private DbContextConnection connection;
 
@@ -63,23 +68,24 @@ class OpsControllerTest {
 
     @Test
     void getAllForDashboard() {
-        //------------------ Arrange ------------------------------------
         //Lager dashboard:
         UUID dashbaordId = dashboardRepository.save("Mitt nye fantastiske dashboard!");
 
-        //Lager område:
+        //Lager område og legger til på dashboard:
         AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
+        dashboardRepository.settAreasOnDashboard(dashbaordId,areaId);
 
-        //Lager tjeneste:
+        //Lager tjeneste og legger den på område:
         ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
-        serviceEntity.setId(serviceRepository.save(serviceEntity));
+        UUID serviceId = serviceRepository.save(serviceEntity);
+        serviceEntity.setId(serviceId);
+        areaRepository.addServiceToArea(areaId,serviceId);
 
 
         //Lager ops Message som IKKE er knyttet til noen tjeneste:
-
         OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
-        opsMessageEntity.setId(opsRepository.save(opsMessageEntity,null));
+        opsMessageEntity.setId(opsRepository.save(opsMessageEntity, new ArrayList<>()));
         //Mapper til dto, og setter på tjeneste
         OPSmessageDto opSmessageDto = EntityDtoMappers.toOpsMessageDtoShallow(opsMessageEntity);
         opSmessageDto.setAffectedServices(List.of(EntityDtoMappers.toServiceDtoShallow(serviceEntity)));
@@ -97,21 +103,9 @@ class OpsControllerTest {
 
         //------------------ Assert ------------------------------------
         Assertions.assertThat(shouldBeEmpty).isEmpty();
-        Assertions.assertThat(shouldContainOne).containsExactly(opSmessageDto);
+        Assertions.assertThat(shouldContainOne.size()).isEqualTo(1);
+        Assertions.assertThat(shouldContainOne.get(0).getId()).isEqualTo(opSmessageDto.getId());
 
-
-
-
-        //Arrange
-        List<OpsMessageEntity> opsMessagesEntitiesList = SampleData.getNonEmptyListOfOpsMessageEntity(3);
-        List<OPSmessageDto> opsMessagesDtoList = opsMessagesEntitiesList.stream().map(EntityDtoMappers::toOpsMessageDtoShallow).collect(Collectors.toList());
-
-        //Act
-        opsMessagesDtoList.forEach(dto -> dto.setId(opsController.createOpsMessage(dto).getId()));
-        List<OPSmessageDto> retrievedOpsMessages = opsController.getAllOpsMessages();
-
-        //Assert
-        Assertions.assertThat(opsMessagesDtoList).containsExactlyInAnyOrderElementsOf(retrievedOpsMessages);
     }
 
     @Test

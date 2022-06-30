@@ -36,6 +36,12 @@ public class TestUtil {
         DbContextTable subAreaTable = dbContext.table("sub_area");
         subAreaTable.whereExpression("id is NOT null").executeDelete();
 
+        DbContextTable ops_message = dbContext.table("ops_message");
+        ops_message.whereExpression("id is NOT null").executeDelete();
+
+        DbContextTable ops_message_service = dbContext.table("ops_message_service");
+        ops_message_service.whereExpression("ops_message_id is NOT null").executeDelete();
+
         DbContextTable serviceTable = dbContext.table("service");
         serviceTable.whereExpression("id is NOT null").executeDelete();
 

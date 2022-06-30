@@ -55,7 +55,8 @@ class RecordControllerTest {
         recordController.addServiceStatus(serviceStatusDto);
         //Assert
         ServiceDto serviceDto = serviceController.getService(serviceId);
-        Assertions.assertThat(serviceDto.getStatus()).isEqualTo(StatusDto.fromValue(record.getStatus().getDbRepresentation()));
+        Assertions.assertThat(serviceDto.getRecord().getStatus())
+                .isEqualTo(StatusDto.fromValue(record.getStatus().getDbRepresentation()));
     }
 
     @Test
