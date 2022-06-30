@@ -94,6 +94,9 @@ public class DashboardControllerHelper {
                     EntityDtoMappers.toServiceStatusDto(recordRepository.getLatestRecord(service.getId()).get())
                     );
         }
+        else{
+            service.setRecord(new ServiceStatusDto());
+        }
     }
 
     private StatusDto getWorstStatusAmongst(List<ServiceDto> services){
