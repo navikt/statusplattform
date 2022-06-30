@@ -1,16 +1,12 @@
 
 package no.nav.portal.rest.api.Helpers;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.OpsMessageEntity;
 import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.entities.SubAreaEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
-import org.fluentjdbc.DatabaseRow;
 import org.fluentjdbc.DbContext;
-import org.fluentjdbc.DbContextTableAlias;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,4 +73,10 @@ public class OpsControllerHelper {
     }
 
 
+    public List<OPSmessageDto> getAllForDashboard(UUID dashboard_id) {
+        List<OpsMessageEntity> opsMessageEntities = opsRepository.getAllForDashboard(dashboard_id);
+        return opsMessageEntities.stream()
+                .map(EntityDtoMappers::toOpsMessageDtoShallow)
+                .collect(Collectors.toList());
+    }
 }

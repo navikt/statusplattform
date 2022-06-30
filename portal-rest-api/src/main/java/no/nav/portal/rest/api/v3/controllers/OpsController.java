@@ -7,6 +7,8 @@ import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +33,7 @@ public class OpsController {
         return opsControllerHelper.getAllOpsMessages();
     }
 
-    @PUT("/OpsMessage/")
+    @PUT("/OpsMessage")
     @JsonBody
     public OPSmessageDto updateSpecificOpsMessage(@JsonBody OPSmessageDto opsMessageDto) {
         return opsControllerHelper.updateOpsMessage(opsMessageDto);
@@ -48,5 +50,11 @@ public class OpsController {
     @JsonBody
     public void deleteOpsMessage(@PathParam("Ops_id") UUID ops_id ) {
         opsControllerHelper.deleteOps(ops_id);
+    }
+
+    @GET("/OpsMessage/allForDashboard/:Dashboard_id")
+    @JsonBody
+    public List<OPSmessageDto> getAllForDashboard(@PathParam("Dashboard_id") UUID dashboard_id ) {
+        return opsControllerHelper.getAllForDashboard(dashboard_id);
     }
 }
