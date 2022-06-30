@@ -56,10 +56,9 @@ public class ServiceControllerHelper {
         service.getServiceDependencies().forEach(this::settStatusOnService);
         service.getComponentDependencies().forEach(this::settStatusOnService);
         if(recordRepository.getLatestRecord(service.getId()).isPresent()){
-            service.setStatus(StatusDto.fromValue(recordRepository.getLatestRecord(service.getId()).get().getStatus().getDbRepresentation().toUpperCase()));
+            service.setRecord(EntityDtoMappers.toServiceStatusDto(recordRepository.getLatestRecord(service.getId()).get()));
             return;
         }
-        service.setStatus(null);
     }
 
     public ServiceDto saveNewService(ServiceDto serviceDto){

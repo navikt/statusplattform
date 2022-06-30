@@ -50,7 +50,7 @@ class RecordControllerTest {
         RecordEntity record = SampleData.getRandomizedRecordEntity();
         record.setServiceId(service.getId());
         record.setId(recordRepository.save(record));
-        ServiceStatusDto serviceStatusDto = EntityDtoMappers.serviceStatusDto(record);
+        ServiceStatusDto serviceStatusDto = EntityDtoMappers.toServiceStatusDto(record);
         //Act
         recordController.addServiceStatus(serviceStatusDto);
         //Assert

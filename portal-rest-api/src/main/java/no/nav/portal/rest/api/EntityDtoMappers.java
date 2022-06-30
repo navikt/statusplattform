@@ -216,12 +216,14 @@ public class EntityDtoMappers {
     }
 
     public static List<ServiceStatusDto> toServiceStatusDto(List<RecordEntity> recordHistory) {
-        return recordHistory.stream().map(EntityDtoMappers::serviceStatusDto).collect(Collectors.toList());
+        return recordHistory.stream().map(EntityDtoMappers::toServiceStatusDto).collect(Collectors.toList());
     }
-    public static ServiceStatusDto serviceStatusDto(RecordEntity recordEntity){
+    public static ServiceStatusDto toServiceStatusDto(RecordEntity recordEntity){
         ServiceStatusDto dto = new ServiceStatusDto();
         dto.serviceId(recordEntity.getServiceId());
         dto.setStatus(StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation()));
+        dto.setDescription(recordEntity.getDescription());
+        dto.setLogLink(recordEntity.getLogglink());
         return dto;
     }
 

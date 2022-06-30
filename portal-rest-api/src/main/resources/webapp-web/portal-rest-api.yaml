@@ -1062,6 +1062,8 @@ paths:
         '404':
           description: Not Found
           content: { }
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
 components:
   schemas:
     DashboardNameId:
@@ -1188,16 +1190,15 @@ components:
           example: "[Liste av servicer som er avhengig av denne komponenten]"
           items:
             $ref: '#/components/schemas/Service'
-        ServiceOpeningHours:
+        serviceOpeningHours:
           $ref: '#/components/schemas/ServiceOpeningHours'
         monitorlink:
           type: string
         pollingUrl:
           type: string
-        status:
+        record:
           readOnly: true
-          allOf:
-            - $ref: '#/components/schemas/Status'
+          $ref: '#/components/schemas/ServiceStatus'
         statusNotFromTeam:
           type: boolean
       required:
