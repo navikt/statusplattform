@@ -1062,6 +1062,38 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /OpsMessage/Dashboard/{Dashboard_id}:
+    get:
+      tags:
+        - OPS
+      summary: Hent aktive aviksmeldinger på et dashboard
+      operationId: getAllForDashboard
+      description: Hent aktive aviksmeldinger på et dashboard
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OPSmessage'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
 components:
