@@ -98,15 +98,15 @@ public class DashboardControllerHelper {
 
     private StatusDto getWorstStatusAmongst(List<ServiceDto> services){
         if(services.stream()
-                .map(s -> s.getRecord().getStatus())
+                .map(s -> s.getRecord() != null? s.getRecord().getStatus(): null)
                 .collect(Collectors.toList())
                 .contains(StatusDto.DOWN)) return StatusDto.DOWN;
         if(services.stream()
-                .map(s -> s.getRecord().getStatus())
+                .map(s -> s.getRecord() != null? s.getRecord().getStatus(): null)
                 .collect(Collectors.toList())
                 .contains(StatusDto.ISSUE)) return StatusDto.ISSUE;
         if(services.stream()
-                .map(s -> s.getRecord().getStatus())
+                .map(s -> s.getRecord() != null? s.getRecord().getStatus(): null)
                 .collect(Collectors.toList())
                 .contains(StatusDto.OK)) return StatusDto.OK;
         return null;
