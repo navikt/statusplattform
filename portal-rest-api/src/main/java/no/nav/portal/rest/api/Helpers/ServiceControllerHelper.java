@@ -83,7 +83,10 @@ public class ServiceControllerHelper {
         List<UUID> areasCointainingService = serviceDto.getAreasContainingThisService().stream().map(AreaDto::getId).collect(Collectors.toList());
         areaRepository.addServiceToAreas(areasCointainingService,service.getId());
 
-        return EntityDtoMappers.toServiceDtoDeep(service, dependencies);
+        ServiceDto result = EntityDtoMappers.toServiceDtoDeep(service, dependencies);
+        result.setRecord(new ServiceStatusDto());
+
+        return result;
     }
 
 
