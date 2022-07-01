@@ -29,14 +29,14 @@ public class ServiceControllerHelper {
     //Denne returnerer avhengigheter ett nivå ned.
     public List<ServiceDto> getAll() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllDeep();
-        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).toList();
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
         return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
     }
     public List<ServiceDto> getAllComponents() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllComponents();
-        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).toList();
         result.forEach(componentDto -> componentDto.setServicesDependantOnThisComponant(getServicesDependantOnComponent(componentDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
@@ -45,7 +45,7 @@ public class ServiceControllerHelper {
 
     public List<ServiceDto> getAllServices() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllServices();
-        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).collect(Collectors.toList());
+        List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).toList();
         result.forEach(serviceDto -> serviceDto.setAreasContainingThisService(getAreasContainingService(serviceDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
@@ -57,7 +57,8 @@ public class ServiceControllerHelper {
         service.getComponentDependencies().forEach(this::settStatusOnService);
         if(recordRepository.getLatestRecord(service.getId()).isPresent()){
             service.setRecord(EntityDtoMappers.toServiceStatusDto(recordRepository.getLatestRecord(service.getId()).get()));
-            return;
+        } else {
+            service.setRecord(new ServiceStatusDto());
         }
     }
 
@@ -72,7 +73,7 @@ public class ServiceControllerHelper {
                 .collect(Collectors.toList());
         List<ServiceEntity> componentDependencies = serviceDto.getComponentDependencies()
                 .stream().map(EntityDtoMappers::toServiceEntity)
-                .collect(Collectors.toList());
+                .toList();
         dependencies.addAll(componentDependencies);
         serviceRepository.addDependencyToService(service, dependencies);
 
