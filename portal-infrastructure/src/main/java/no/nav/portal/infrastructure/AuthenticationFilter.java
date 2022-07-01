@@ -138,7 +138,7 @@ public class AuthenticationFilter implements Filter {
         //logger.info("All headers: ");
         while (headersNames.hasMoreElements()){
             String headername = headersNames.nextElement();
-            logger.info(headername+ " " + ((HttpServletRequest) request).getHeader(headername));
+            //logger.info(headername+ " " + ((HttpServletRequest) request).getHeader(headername));
         }
         if (encodedAuthorization == null || encodedAuthorization.isEmpty()) {
             return null;
