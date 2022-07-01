@@ -46,7 +46,6 @@ public class CORSFilter implements Filter {
         // Authorize (allow) all domains to consume the content
         //TODO hvordan skal dette håndteres? Dersom frontend og backend hostes på samme server trenger ikke
 
-        logger.info("corsefilter should allow fronteendlocation: "+ frontendLocation);
        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", frontendLocation);
        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Methods","GET, OPTIONS, HEAD, PUT, POST, DELETE");
        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers", "*");
