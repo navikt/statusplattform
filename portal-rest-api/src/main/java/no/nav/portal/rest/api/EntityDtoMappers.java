@@ -23,24 +23,12 @@ public class EntityDtoMappers {
         entity.setType(ServiceType.fromDb(dto.getType().getValue()));
         entity.setTeam(dto.getTeam());
         entity.setMonitorlink(dto.getMonitorlink());
-        entity.setPolling_url(getAndValidetePollingUrl(dto.getPollingUrl()));
+        entity.setPolling_url(dto.getPollingUrl());
         entity.setStatusNotFromTeam(dto.getStatusNotFromTeam());
         return entity;
     }
 
     //TODO kanskje denne valideringen hører hjemme et annet sted?
-    private static String getAndValidetePollingUrl(String pollingUrlFromUser){
-        //Sets pollingurl to null if not valid
-        String STATUSHOLDER = "STATUSHOLDER";
-        String[] schemes = {"http","https"}; // DEFAULT schemes = "http", "https", "ftp"
-        UrlValidator urlValidator = new UrlValidator(schemes);
-        if (urlValidator.isValid(pollingUrlFromUser) || STATUSHOLDER.equals(pollingUrlFromUser)) {
-           return pollingUrlFromUser;
-        } else {
-            return null;
-        }
-
-    }
 
 
     public static AreaEntity toAreaEntity(AreaDto dto){

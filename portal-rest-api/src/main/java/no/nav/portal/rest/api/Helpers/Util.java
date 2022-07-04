@@ -1,5 +1,7 @@
 package no.nav.portal.rest.api.Helpers;
 
+import org.apache.commons.validator.routines.UrlValidator;
+
 import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,22 @@ public class Util {
         mapOfMonthsToNorwegian.put(Month.NOVEMBER, "November");
         mapOfMonthsToNorwegian.put(Month.DECEMBER, "Desember");
     }
+
+    public static Boolean validateUrl(String pollingUrlFromUser){
+        if(pollingUrlFromUser == null || pollingUrlFromUser.equals("")){
+            return true;
+        }
+        String STATUSHOLDER = "STATUSHOLDER";
+        String[] schemes = {"http","https"}; // DEFAULT schemes = "http", "https", "ftp"
+        UrlValidator urlValidator = new UrlValidator(schemes);
+        if (urlValidator.isValid(pollingUrlFromUser) || STATUSHOLDER.equals(pollingUrlFromUser)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 
 
 
