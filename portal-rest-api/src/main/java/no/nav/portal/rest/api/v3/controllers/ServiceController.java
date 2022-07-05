@@ -87,8 +87,12 @@ public class ServiceController {
     @PUT("/Service/:Service_id")
     @JsonBody
     public void updateService(@PathParam("Service_id") UUID service_id, @JsonBody ServiceDto serviceDto) {
-        serviceDto.setId(service_id);
-        serviceControllerHelper.updateService(serviceDto);
+        if(Util.validateUrl(serviceDto.getPollingUrl())){
+            serviceDto.setId(service_id);
+            serviceControllerHelper.updateService(serviceDto);
+        }
+        throw new HttpRequestException("Polling not valid: "+ serviceDto.getPollingUrl());
+
     }
 
     @PUT("/Service/:Service_id/:DependentOnService_id")
