@@ -235,7 +235,9 @@ public class ServiceRepository {
     }
 
     public List<ServiceEntity> retrieveServicesWithPolling() {
-        return serviceTable.query().whereExpression("polling_url is not null").stream(ServiceRepository::toService).collect(Collectors.toList());
+        return serviceTable.query().whereExpression("polling_url is not null")
+                .where("deleted", false)
+                .stream(ServiceRepository::toService).collect(Collectors.toList());
     }
 
     public Boolean doesEntryExist(UUID id){
