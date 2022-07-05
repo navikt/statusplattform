@@ -48,6 +48,7 @@ public class ServiceRepository {
     public UUID save(ServiceEntity service) {
         //Sjekk på navn+type kombinasjon
         if(serviceTable.where("name",service.getName())
+                .where("deleted",false)
                 .where("type", service.getType()).getCount()>0){
             throw new HttpRequestException("Tjeneste med navn: "+ service.getName()
                     +", og type: "+service.getType()+" finnes allerede");
