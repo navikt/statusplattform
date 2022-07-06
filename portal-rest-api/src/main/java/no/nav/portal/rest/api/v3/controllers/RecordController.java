@@ -7,6 +7,7 @@ import nav.portal.core.repositories.RecordRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.GET;
+import org.actioncontroller.HttpRequestException;
 import org.actioncontroller.POST;
 import org.actioncontroller.PathParam;
 import org.actioncontroller.json.JsonBody;
@@ -31,9 +32,12 @@ public class RecordController {
     @POST("/ServiceStatus")
     public  void addServiceStatus(@JsonBody ServiceStatusDto serviceStatusDto){
         //TODO denne må utbedres
+        ServiceStatus status = ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue().toUpperCase())
+                .orElseThrow(() -> new HttpRequestException("Could not parse status: "+ serviceStatusDto.getStatus() +
+                        " should be on format: OK, ISSUE or DOWN"));
         RecordEntity entity = new RecordEntity()
                 .setServiceId(serviceStatusDto.getServiceId())
-                .setStatus(ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue().toUpperCase()).orElse(ServiceStatus.ISSUE))
+                .setStatus(status)
                 .setDescription(serviceStatusDto.getDescription())
                 .setCreated_at(ZonedDateTime.now())
                 .setResponsetime(42);//TODO se her
