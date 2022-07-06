@@ -90,6 +90,7 @@ public class ServiceController {
         if(Util.validateUrl(serviceDto.getPollingUrl())){
             serviceDto.setId(service_id);
             serviceControllerHelper.updateService(serviceDto);
+            return;
         }
         throw new HttpRequestException("Polling not valid: "+ serviceDto.getPollingUrl());
 

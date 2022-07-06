@@ -54,6 +54,7 @@ public class EntityDtoMappers {
         dto.setName(entity.getName());
         dto.setType(ServiceTypeDto.fromValue(entity.getType().getDbRepresentation()));
         dto.setTeam(entity.getTeam());
+        dto.setPollingUrl(entity.getPolling_url());
         dto.setMonitorlink(entity.getMonitorlink());
         dto.setStatusNotFromTeam(entity.getStatusNotFromTeam());
         return dto;

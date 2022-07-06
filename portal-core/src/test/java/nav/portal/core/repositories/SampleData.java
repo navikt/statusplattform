@@ -21,7 +21,7 @@ public class SampleData {
 
     static final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste", "tjeneste123", "tjeneste213", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("www.random.com", "www.æøå.com", "wwww.123abc.com", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+    static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.nrk.no", "https://www.nrk.no/nyheter/", "https://wwww.123abc.com", "https://wwww.ab.no", "https://wwww.ac.no", "https://wwww.ad.no", "https://wwww.ae.no", "https://wwww.af", "https://wwww.ag", "https://wwww.ah.no", "https://wwww.ai.no", "https://wwww.aj.no", "https://wwww.ak.no", "https://wwww.al.no", "https://wwww.am.no", "https://wwww.an.no", "https://wwww.ao.no"));
 
     static final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team1", "teamOrlene", "teamÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
@@ -150,6 +150,7 @@ public class SampleData {
                 .setName(getRandomFromArray(possibleNames))
                 .setType(ServiceType.TJENESTE)
                 .setTeam(getRandomFromArray(teamNames))
+                .setPolling_url(getRandomFromArray(urlStrings))
                 .setStatusNotFromTeam(Boolean.FALSE)
                 .setMonitorlink(getRandomFromArray(urlStrings));
     }
