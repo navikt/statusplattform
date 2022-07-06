@@ -12,10 +12,7 @@ import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.SubAreaDto;
 import org.fluentjdbc.DbContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AreaControllerHelper {
@@ -45,7 +42,10 @@ public class AreaControllerHelper {
             result.add(areaDto);
                 }
         );
-        return result;
+        Comparator<AreaDto> areaNameComparator
+                = Comparator.comparing(AreaDto::getName);
+        return result.stream().sorted(areaNameComparator)
+                .collect(Collectors.toList());
     }
 
 
