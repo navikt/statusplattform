@@ -56,9 +56,9 @@ public class ServiceControllerHelper {
         service.getServiceDependencies().forEach(this::settStatusOnService);
         service.getComponentDependencies().forEach(this::settStatusOnService);
         if(recordRepository.getLatestRecord(service.getId()).isPresent()){
-            service.setRecord(EntityDtoMappers.toServiceStatusDto(recordRepository.getLatestRecord(service.getId()).get()));
+            service.setRecord(EntityDtoMappers.toRecordDto(recordRepository.getLatestRecord(service.getId()).get()));
         } else {
-            service.setRecord(new ServiceStatusDto());
+            service.setRecord(new RecordDto());
         }
     }
 
@@ -84,7 +84,7 @@ public class ServiceControllerHelper {
         areaRepository.addServiceToAreas(areasCointainingService,service.getId());
 
         ServiceDto result = EntityDtoMappers.toServiceDtoDeep(service, dependencies);
-        result.setRecord(new ServiceStatusDto());
+        result.setRecord(new RecordDto());
 
         return result;
     }

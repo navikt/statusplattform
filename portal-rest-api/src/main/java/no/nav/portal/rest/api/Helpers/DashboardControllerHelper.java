@@ -91,11 +91,11 @@ public class DashboardControllerHelper {
     private void settStatusOnService(ServiceDto service){
         if(recordRepository.getLatestRecord(service.getId()).isPresent()){
             service.setRecord(
-                    EntityDtoMappers.toServiceStatusDto(recordRepository.getLatestRecord(service.getId()).get())
+                    EntityDtoMappers.toRecordDto(recordRepository.getLatestRecord(service.getId()).get())
                     );
         }
         else{
-            service.setRecord(new ServiceStatusDto());
+            service.setRecord(new RecordDto());
         }
     }
 

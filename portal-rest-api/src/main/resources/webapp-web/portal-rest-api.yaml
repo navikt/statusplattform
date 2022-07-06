@@ -849,7 +849,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServiceStatus'
+              $ref: '#/components/schemas/Record'
           text/plain:
             schema:
               type: string
@@ -1230,7 +1230,7 @@ components:
           type: string
         record:
           readOnly: true
-          $ref: '#/components/schemas/ServiceStatus'
+          $ref: '#/components/schemas/Record'
         statusNotFromTeam:
           type: boolean
       required:
@@ -1238,10 +1238,13 @@ components:
         - componentDependencies
         - areasContainingThisService
         - servicesDependantOnThisComponant
-    ServiceStatus:
-      title: ServiceStatus
+    Record:
+      title: Record
       type: object
       properties:
+        timestamp:
+          type: string
+          format: date-time
         serviceId:
           type: string
           format: uuid

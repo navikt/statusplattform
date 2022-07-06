@@ -3,7 +3,6 @@ package no.nav.portal.rest.api;
 import nav.portal.core.entities.*;
 import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
-import org.apache.commons.validator.routines.UrlValidator;
 
 
 import java.util.*;
@@ -204,11 +203,11 @@ public class EntityDtoMappers {
         return entities.stream().map(EntityDtoMappers::toDashboardDtoShallow).collect(Collectors.toList());
     }
 
-    public static List<ServiceStatusDto> toServiceStatusDto(List<RecordEntity> recordHistory) {
-        return recordHistory.stream().map(EntityDtoMappers::toServiceStatusDto).collect(Collectors.toList());
+    public static List<RecordDto> toRecordDto(List<RecordEntity> recordHistory) {
+        return recordHistory.stream().map(EntityDtoMappers::toRecordDto).collect(Collectors.toList());
     }
-    public static ServiceStatusDto toServiceStatusDto(RecordEntity recordEntity){
-        ServiceStatusDto dto = new ServiceStatusDto();
+    public static RecordDto toRecordDto(RecordEntity recordEntity){
+        RecordDto dto = new RecordDto();
         dto.serviceId(recordEntity.getServiceId());
         dto.setStatus(StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation()));
         dto.setDescription(recordEntity.getDescription());

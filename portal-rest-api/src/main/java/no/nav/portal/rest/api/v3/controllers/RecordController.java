@@ -1,6 +1,5 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import com.unboundid.ldap.sdk.unboundidds.AlertSeverity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
@@ -30,15 +29,15 @@ public class RecordController {
 
 
     @POST("/ServiceStatus")
-    public  void addServiceStatus(@JsonBody ServiceStatusDto serviceStatusDto){
+    public  void addServiceStatus(@JsonBody RecordDto recordDto){
         //TODO denne må utbedres
-        ServiceStatus status = ServiceStatus.fromDb(serviceStatusDto.getStatus().getValue().toUpperCase())
-                .orElseThrow(() -> new HttpRequestException("Could not parse status: "+ serviceStatusDto.getStatus() +
+        ServiceStatus status = ServiceStatus.fromDb(recordDto.getStatus().getValue().toUpperCase())
+                .orElseThrow(() -> new HttpRequestException("Could not parse status: "+ recordDto.getStatus() +
                         " should be on format: OK, ISSUE or DOWN"));
         RecordEntity entity = new RecordEntity()
-                .setServiceId(serviceStatusDto.getServiceId())
+                .setServiceId(recordDto.getServiceId())
                 .setStatus(status)
-                .setDescription(serviceStatusDto.getDescription())
+                .setDescription(recordDto.getDescription())
                 .setCreated_at(ZonedDateTime.now())
                 .setResponsetime(42);//TODO se her
         recordRepository.save(entity);
@@ -46,8 +45,8 @@ public class RecordController {
 
     @GET("/ServiceStatus/:Service_id")
     @JsonBody
-    public List<ServiceStatusDto> getRecordHistory(@PathParam("Service_id") UUID service_id) {
-        return EntityDtoMappers.toServiceStatusDto(
+    public List<RecordDto> getRecordHistory(@PathParam("Service_id") UUID service_id) {
+        return EntityDtoMappers.toRecordDto(
                 recordRepository.getRecordHistory(service_id,100));
     }
 
@@ -58,8 +57,8 @@ public class RecordController {
         System.out.println(test.getStatus());
         System.out.println(test.getCommonLabels().getAlertname());
         System.out.println(test.getCommonAnnotations().getSeverity());
-        ServiceStatusDto serviceStatusDto = generateServiceStatusFromAlert(test);
-        addServiceStatus(serviceStatusDto);
+        RecordDto recordDto = generateServiceStatusFromAlert(test);
+        addServiceStatus(recordDto);
 
     }
 
@@ -71,29 +70,29 @@ public class RecordController {
 
 
 
-    private ServiceStatusDto generateServiceStatusFromAlert(AlertDto alertDto){
+    private RecordDto generateServiceStatusFromAlert(AlertDto alertDto){
         if(AlertStatusDto.RESOLVED.equals(alertDto.getStatus())){
-            return new ServiceStatusDto()
+            return new RecordDto()
                     .serviceId(alertDto.getCommonLabels().getAlertname())
                     .status(StatusDto.OK)
                     .description("Resolved alert from prometheus");
         }
         if(SeverityDto.GOOD.equals(alertDto.getCommonAnnotations().getSeverity())){
-            return new ServiceStatusDto()
+            return new RecordDto()
                     .serviceId(alertDto.getCommonLabels().getAlertname())
                     .status(StatusDto.OK)
                     .description("Received alert from prometheus, with status ok");
 
         }
         if(SeverityDto.WARNING.equals(alertDto.getCommonAnnotations().getSeverity())){
-            return new ServiceStatusDto()
+            return new RecordDto()
                     .serviceId(alertDto.getCommonLabels().getAlertname())
                     .status(StatusDto.ISSUE)
                     .description("Received alert from prometheus, with status warning");
 
         }
         if(SeverityDto.DANGER.equals(alertDto.getCommonAnnotations().getSeverity())){
-            return new ServiceStatusDto()
+            return new RecordDto()
                     .serviceId(alertDto.getCommonLabels().getAlertname())
                     .status(StatusDto.DOWN)
                     .description("Received alert from prometheus, with status danger");
