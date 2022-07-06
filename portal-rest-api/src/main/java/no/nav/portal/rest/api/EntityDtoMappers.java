@@ -22,7 +22,12 @@ public class EntityDtoMappers {
         entity.setType(ServiceType.fromDb(dto.getType().getValue()));
         entity.setTeam(dto.getTeam());
         entity.setMonitorlink(dto.getMonitorlink());
-        entity.setPolling_url(dto.getPollingUrl());
+        if(dto.getPollingUrl() != null && dto.getPollingUrl().equals("")){
+            entity.setPolling_url(null);
+        }
+        else {
+            entity.setPolling_url(dto.getPollingUrl());
+        }
         entity.setStatusNotFromTeam(dto.getStatusNotFromTeam());
         return entity;
     }
