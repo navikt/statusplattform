@@ -7,7 +7,6 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.RecordDto;
 import no.portal.web.generated.api.ServiceDto;
 
-import no.portal.web.generated.api.ServiceStatusDto;
 import no.portal.web.generated.api.StatusDto;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
