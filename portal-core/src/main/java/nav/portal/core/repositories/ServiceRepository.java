@@ -158,7 +158,7 @@ public class ServiceRepository {
         return result
                 .entrySet()
                 .stream().findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Not found: Service with id " + service_id));
+                .orElseThrow(() -> new HttpRequestException("Not found: Service with id " + service_id));
     }
 
     public  List<ServiceEntity> retrieveAllShallow() {
@@ -242,7 +242,8 @@ public class ServiceRepository {
 
     public Boolean doesEntryExist(UUID id){
         return serviceTable.where("id", id)
-                .singleObject(ServiceRepository::toService).isPresent();
+                .singleObject(ServiceRepository::toService)
+                .isPresent();
     }
     public List<ServiceEntity> retrieve(List<String> ids) {
         return serviceTable.whereIn("id", ids)

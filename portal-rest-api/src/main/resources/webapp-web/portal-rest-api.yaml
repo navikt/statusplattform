@@ -1245,6 +1245,7 @@ components:
         timestamp:
           type: string
           format: date-time
+          example: "2017-07-21T17:30:00Z"
         serviceId:
           type: string
           format: uuid
