@@ -39,6 +39,7 @@ public class RecordController {
                 .setStatus(status)
                 .setDescription(recordDto.getDescription())
                 .setCreated_at(ZonedDateTime.now())
+                .setLogglink(recordDto.getLogLink())
                 .setResponsetime(42);//TODO se her
         recordRepository.save(entity);
     }
