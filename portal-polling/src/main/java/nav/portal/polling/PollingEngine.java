@@ -105,10 +105,6 @@ public class PollingEngine  extends Thread{
         polledServiceStatus.setName(jsonObject.getString("name",null));//Trengs denne?
         polledServiceStatus.setTeam(jsonObject.getString("team",null));//Trengs denne?
         polledServiceStatus.setDescrption(jsonObject.getString("description",null));
-        if(statusFromStatusholder){
-            logger.info("Setting status from statusholder");
-            polledServiceStatus.setDescrption("Polled status from Statusholder");
-        }
         polledServiceStatus.setLogglink(jsonObject.getString("logglink",null));
         polledServiceStatus.setStatus(ServiceStatus.valueOf(jsonObject.getString("status")));
         //TODO FINN UT OM DETTE ER RIKTIG:
