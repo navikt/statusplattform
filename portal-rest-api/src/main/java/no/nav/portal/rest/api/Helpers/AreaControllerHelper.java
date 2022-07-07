@@ -43,7 +43,7 @@ public class AreaControllerHelper {
                 }
         );
         Comparator<AreaDto> areaNameComparator
-                = Comparator.comparing(AreaDto::getName);
+                = Comparator.comparing(a -> a.getName().toLowerCase());
         return result.stream().sorted(areaNameComparator)
                 .collect(Collectors.toList());
     }
