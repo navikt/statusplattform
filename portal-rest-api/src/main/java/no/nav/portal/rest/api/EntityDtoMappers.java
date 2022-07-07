@@ -5,6 +5,8 @@ import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
 
 
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -217,6 +219,8 @@ public class EntityDtoMappers {
         dto.setStatus(StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation()));
         dto.setDescription(recordEntity.getDescription());
         dto.setLogLink(recordEntity.getLogglink());
+        ZonedDateTime entityTime = recordEntity.getCreated_at();
+        dto.setTimestamp(OffsetDateTime.of(entityTime.toLocalDateTime(),entityTime.getOffset()));
         return dto;
     }
 

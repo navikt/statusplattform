@@ -98,8 +98,8 @@ public class RecordRepository {
         return new RecordEntity()
                 .setId(row.getUUID("id"))
                 .setServiceId(row.getUUID("service_id"))
-                .setDescription("description")
-                .setLogglink("logglink")
+                .setDescription(row.getString("description"))
+                .setLogglink(row.getString("logglink"))
                 .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
                 .setCreated_at(row.getZonedDateTime("created_at"))
                 .setResponsetime(row.getInt("response_time"));
