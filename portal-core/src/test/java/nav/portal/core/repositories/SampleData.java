@@ -230,6 +230,7 @@ public class SampleData {
 
     public static RecordEntity getRandomizedRecordEntity() {
         return new RecordEntity()
+                .setCreated_at(ZonedDateTime.now())
                 .setStatus(getRandomServiceStatus())
                 .setResponsetime(getRandomResponseTime());
     }
