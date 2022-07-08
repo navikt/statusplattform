@@ -37,7 +37,7 @@ public class ServiceControllerHelper {
     public List<ServiceDto> getAllComponents() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllComponents();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).toList();
-        result.forEach(componentDto -> componentDto.setServicesDependantOnThisComponent(getServicesDependantOnComponent(componentDto.getId())));
+        result.forEach(componentDto -> componentDto.setServicesDependentOnThisComponent(getServicesDependantOnComponent(componentDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
         return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());

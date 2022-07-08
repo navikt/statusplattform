@@ -1217,7 +1217,7 @@ components:
           example: "[Liste av område UUIDer]"
           items:
             $ref: '#/components/schemas/Area'
-        servicesDependantOnThisComponent:
+        servicesDependentOnThisComponent:
           type: array
           example: "[Liste av servicer som er avhengig av denne komponenten]"
           items:
@@ -1237,7 +1237,7 @@ components:
         - serviceDependencies
         - componentDependencies
         - areasContainingThisService
-        - servicesDependantOnThisComponant
+        - servicesDependentOnThisComponent
     Record:
       title: Record
       type: object
