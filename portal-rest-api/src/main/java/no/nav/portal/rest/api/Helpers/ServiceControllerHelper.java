@@ -18,6 +18,8 @@ public class ServiceControllerHelper {
     ServiceRepository serviceRepository;
     RecordRepository recordRepository;
     AreaRepository areaRepository;
+    Comparator<ServiceDto> serviceDtoComparator
+            = Comparator.comparing(a -> a.getName().toLowerCase());
 
     public ServiceControllerHelper(DbContext context){
         this.areaRepository = new AreaRepository(context);
@@ -40,8 +42,12 @@ public class ServiceControllerHelper {
         result.forEach(componentDto -> componentDto.setServicesDependentOnThisComponent(getServicesDependantOnComponent(componentDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
-        return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
+        return result.stream()
+                .sorted(serviceDtoComparator)
+                .collect(Collectors.toList());
     }
+
+
 
     public List<ServiceDto> getAllServices() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllServices();
@@ -49,7 +55,9 @@ public class ServiceControllerHelper {
         result.forEach(serviceDto -> serviceDto.setAreasContainingThisService(getAreasContainingService(serviceDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
-        return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
+        return result.stream()
+                .sorted(serviceDtoComparator)
+                .collect(Collectors.toList());
     }
 
     private void settStatusOnService(ServiceDto service){
