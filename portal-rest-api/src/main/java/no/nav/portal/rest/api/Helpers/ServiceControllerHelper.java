@@ -125,15 +125,13 @@ public class ServiceControllerHelper {
 
     public void updateService(ServiceDto serviceDto) {
         ServiceEntity serviceEntity = EntityDtoMappers.toServiceEntity(serviceDto);
-        serviceRepository.update(serviceEntity)
-        ;
+        serviceRepository.update(serviceEntity);
         areaRepository.removeServiceFromAllAreas(serviceDto.getId());
         areaRepository
-                .addServiceToAreas(serviceDto.getAreasContainingThisService()
+                .addServiceToAreas(serviceDto
+                        .getAreasContainingThisService()
                                              .stream().map(AreaDto::getId).collect(Collectors.toList()), serviceDto.getId());
-
-
-        serviceRepository.removeAllDependenciesFromService(serviceDto.getId());
+        serviceRepository.resetDependenciesOnService(serviceDto.getId());
         List<ServiceDto> dependencies = serviceDto.getComponentDependencies();
         dependencies.addAll(serviceDto.getServiceDependencies());
         serviceRepository.addDependencyToService(serviceEntity,

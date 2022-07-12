@@ -125,7 +125,6 @@ public class ServiceRepository {
     }
 
     public void removeAllDependenciesFromService(UUID serviceId){
-        //Sletter både avhengigheter fra tjenesten til andre tjenester
         service_serviceTable.where("service1_id", serviceId).executeDelete();
     }
 
