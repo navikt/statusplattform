@@ -1,6 +1,7 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.*;
+import nav.portal.core.enums.OpsMessageSeverity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 
@@ -32,7 +33,7 @@ public class SampleData {
     static final ArrayList<String> firstNames = new ArrayList<>(Arrays.asList("Arne", "Bodil", "Gudrun", "Kjell Åge", "Hufsa", "Elg", "Rake", "Æskild", "Øygunn"));
     static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
     static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
-    static final ArrayList<Boolean> booleans = new ArrayList<>(Arrays.asList(true, false));
+    static final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK,OpsMessageSeverity.ISSUE,OpsMessageSeverity.NEUTRAL));
 
     public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -46,11 +47,19 @@ public class SampleData {
     }
 
     public static OpsMessageEntity getRandomOpsMessageEntity() {
+        Random random = new Random();
         return new OpsMessageEntity()
                 .setInternalHeader(getRandomFromArray(headersForOpsMessages))
                 .setInternalText(getRandomFromArray(infoTextForOpsMessages))
-                .setOnlyShowForNavEmployees(getRandomBoolFromArray(booleans))
-                .setIsActive(getRandomBoolFromArray(booleans));
+                .setStartTime(getZonedDateTimeNowWithOutDecimals())
+                .setEndTime(getZonedDateTimeNowWithOutDecimals().plusDays(2))
+                .setSeverity(getRandomOpsMessageSeverity())
+                .setOnlyShowForNavEmployees(random.nextBoolean())
+                .setIsActive(random.nextBoolean());
+    }
+
+    private static ZonedDateTime getZonedDateTimeNowWithOutDecimals(){
+        return ZonedDateTime.of(LocalDate.now(),LocalTime.of(0,0),ZoneId.of("Europe/Paris"));
     }
 
     public static List<OpsMessageEntity> getNonEmptyListOfOpsMessageEntity(int numberOfOpsMessages) {
@@ -199,13 +208,9 @@ public class SampleData {
         return array.get(random.nextInt(array.size()));
     }
 
-    private static Boolean getRandomBoolFromArray(ArrayList<Boolean> array) {
-        if (array.size() == 0) {
-            //Hit skal man ikke komme
-            return null;
-        }
+    private static OpsMessageSeverity getRandomOpsMessageSeverity() {
         Random random = new Random();
-        return array.get(random.nextInt(array.size()));
+        return opsMessageSeverity.get(random.nextInt(opsMessageSeverity.size()));
     }
 
     private static ServiceType getRandomServiceType() {

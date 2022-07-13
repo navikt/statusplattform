@@ -1,0 +1,1 @@
+ALTER TABLE ops_message ALTER COLUMN end_time timestamp with time zone NULL;

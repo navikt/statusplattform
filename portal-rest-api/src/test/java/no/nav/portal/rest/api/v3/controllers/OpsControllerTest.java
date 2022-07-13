@@ -112,7 +112,9 @@ class OpsControllerTest {
     void getAllOpsMessages() {
         //Arrange
         List<OpsMessageEntity> opsMessagesEntitiesList = SampleData.getNonEmptyListOfOpsMessageEntity(3);
-        List<OPSmessageDto> opsMessagesDtoList = opsMessagesEntitiesList.stream().map(EntityDtoMappers::toOpsMessageDtoShallow).collect(Collectors.toList());
+        List<OPSmessageDto> opsMessagesDtoList = opsMessagesEntitiesList
+                .stream().map(EntityDtoMappers::toOpsMessageDtoShallow)
+                .collect(Collectors.toList());
 
         //Act
         opsMessagesDtoList.forEach(dto -> dto.setId(opsController.createOpsMessage(dto).getId()));

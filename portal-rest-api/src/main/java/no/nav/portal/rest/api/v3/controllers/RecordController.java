@@ -78,21 +78,21 @@ public class RecordController {
                     .status(StatusDto.OK)
                     .description("Resolved alert from prometheus");
         }
-        if(SeverityDto.GOOD.equals(alertDto.getCommonAnnotations().getSeverity())){
+        if(AlertSeverityDto.GOOD.equals(alertDto.getCommonAnnotations().getSeverity())){
             return new RecordDto()
                     .serviceId(alertDto.getCommonLabels().getAlertname())
                     .status(StatusDto.OK)
                     .description("Received alert from prometheus, with status ok");
 
         }
-        if(SeverityDto.WARNING.equals(alertDto.getCommonAnnotations().getSeverity())){
+        if(AlertSeverityDto.WARNING.equals(alertDto.getCommonAnnotations().getSeverity())){
             return new RecordDto()
                     .serviceId(alertDto.getCommonLabels().getAlertname())
                     .status(StatusDto.ISSUE)
                     .description("Received alert from prometheus, with status warning");
 
         }
-        if(SeverityDto.DANGER.equals(alertDto.getCommonAnnotations().getSeverity())){
+        if(AlertSeverityDto.DANGER.equals(alertDto.getCommonAnnotations().getSeverity())){
             return new RecordDto()
                     .serviceId(alertDto.getCommonLabels().getAlertname())
                     .status(StatusDto.DOWN)
