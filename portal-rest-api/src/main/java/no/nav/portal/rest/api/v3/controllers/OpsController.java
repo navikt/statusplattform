@@ -33,9 +33,10 @@ public class OpsController {
         return opsControllerHelper.getAllOpsMessages();
     }
 
-    @PUT("/OpsMessage")
+    @PUT("/OpsMessage/:Ops_id")
     @JsonBody
-    public OPSmessageDto updateSpecificOpsMessage(@JsonBody OPSmessageDto opsMessageDto) {
+    public OPSmessageDto updateSpecificOpsMessage(@PathParam("Ops_id") UUID ops_id ,@JsonBody OPSmessageDto opsMessageDto) {
+        opsMessageDto.setId(ops_id);
         return opsControllerHelper.updateOpsMessage(opsMessageDto);
     }
 

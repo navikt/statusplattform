@@ -1,6 +1,7 @@
 package no.nav.portal.rest.api;
 
 import nav.portal.core.entities.*;
+import nav.portal.core.enums.OpsMessageSeverity;
 import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
 
@@ -73,6 +74,9 @@ public class EntityDtoMappers {
         dto.setInternalMessage(entity.getInternalText());
         dto.setExternalHeader(entity.getExternalHeader());
         dto.setExternalMessage(entity.getExternalText());
+        dto.setStartTime(entity.getStartTime().toOffsetDateTime());
+        dto.setEndTime(entity.getEndTime().toOffsetDateTime());
+        dto.setSeverity(OPSmessageDto.SeverityEnum.fromValue(entity.getSeverity().getDbRepresentation()));
         dto.setIsActive(entity.getIsActive());
         dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());
         return dto;
@@ -91,8 +95,11 @@ public class EntityDtoMappers {
         opsMessageEntity.setExternalText(opsMessageDto.getExternalMessage());
         opsMessageEntity.setInternalHeader(opsMessageDto.getInternalHeader());
         opsMessageEntity.setInternalText(opsMessageDto.getInternalMessage());
+        opsMessageEntity.setSeverity(OpsMessageSeverity.valueOf((opsMessageDto.getSeverity().getValue())));
         opsMessageEntity.setIsActive(opsMessageDto.getIsActive());
         opsMessageEntity.setOnlyShowForNavEmployees(opsMessageDto.getOnlyShowForNavEmployees());
+        opsMessageEntity.setStartTime(opsMessageDto.getStartTime().toZonedDateTime());
+        opsMessageEntity.setEndTime(opsMessageDto.getEndTime().toZonedDateTime());
         return opsMessageEntity;
     }
 

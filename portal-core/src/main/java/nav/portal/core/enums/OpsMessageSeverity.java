@@ -5,7 +5,8 @@ import java.util.Optional;
 public enum OpsMessageSeverity implements DbEnum {
     OK("OK"),
     DOWN("DOWN"),
-    ISSUE("ISSUE");
+    ISSUE("ISSUE"),
+    NEUTRAL("NEUTRAL");
 
     private String dbRepresentation;
 

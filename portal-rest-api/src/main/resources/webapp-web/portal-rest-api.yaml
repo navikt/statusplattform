@@ -1017,30 +1017,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-    put:
-      tags:
-        - OPS
-      summary: Rediger avviksmelding
-      description: Rediger avviksmelding
-      requestBody:
-        description: Oppdaterte verdier for avviksmelding
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OPSmessage'
-          text/plain:
-            schema:
-              type: string
-      responses:
-        '201':
-          description: Updated
-        '403':
-          description: Forbidden
-          content: { }
-        '404':
-          description: Not Found
-          content: { }
   /OpsMessage/{Ops_id}:
     delete:
       tags:
@@ -1056,6 +1032,36 @@ paths:
       responses:
         '201':
           description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    put:
+      tags:
+        - OPS
+      summary: Rediger avviksmelding
+      description: Rediger avviksmelding
+      parameters:
+        - name: Ops_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Oppdaterte verdier for avviksmelding
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OPSmessage'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
         '403':
           description: Forbidden
           content: { }
@@ -1310,10 +1316,10 @@ components:
         severity:
           type: string
           enum:
-            - NØYTRAL
-            - GRØNN
-            - GUL
-            - RØD
+            - NEUTRAL
+            - OK
+            - ISSUE
+            - DOWN
       required:
         - internalMessage
         - internalHeader
@@ -1392,7 +1398,7 @@ components:
       title: CommonAnnotations
       properties:
         severity:
-          $ref: '#/components/schemas/Severity'
+          $ref: '#/components/schemas/AlertSeverity'
     CommonLabels:
       title: commonLabels
       properties:
@@ -1404,7 +1410,7 @@ components:
       enum:
         - firing
         - resolved
-    Severity:
+    AlertSeverity:
       type: string
       enum:
         - good
