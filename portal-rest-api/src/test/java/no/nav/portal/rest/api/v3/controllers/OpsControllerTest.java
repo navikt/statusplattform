@@ -111,7 +111,7 @@ class OpsControllerTest {
     @Test
     void getAllOpsMessages() {
         //Arrange
-        List<OpsMessageEntity> opsMessagesEntitiesList = SampleData.getNonEmptyListOfOpsMessageEntity(3);
+        List<OpsMessageEntity> opsMessagesEntitiesList = SampleData.getNonEmptyListOfOpsMessageEntity(1);
         List<OPSmessageDto> opsMessagesDtoList = opsMessagesEntitiesList
                 .stream().map(EntityDtoMappers::toOpsMessageDtoShallow)
                 .collect(Collectors.toList());
