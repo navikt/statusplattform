@@ -6,6 +6,7 @@ import nav.portal.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class RecordRepository {
     }
 
 
-    public Optional<DailyStatusAggregationForServiceEntity> getServiceHistoryForServiceByDate(UUID serviceId, ZonedDateTime date) {
+    public Optional<DailyStatusAggregationForServiceEntity> getServiceHistoryForServiceByDate(UUID serviceId, LocalDate date) {
         return aggregatedStatusTable.where("service_id", serviceId)
                 .whereExpression("aggregation_date = ?", date)
                 .singleObject(ServiceRepository::toDailyStatusAggregationForServiceEntity);
