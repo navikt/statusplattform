@@ -74,8 +74,8 @@ public class EntityDtoMappers {
         dto.setInternalMessage(entity.getInternalText());
         dto.setExternalHeader(entity.getExternalHeader());
         dto.setExternalMessage(entity.getExternalText());
-        dto.setStartTime(entity.getStartTime().toOffsetDateTime());
-        dto.setEndTime(entity.getEndTime().toOffsetDateTime());
+        dto.setStartTime(entity.getStartTime() != null? entity.getStartTime().toOffsetDateTime():null);
+        dto.setEndTime(entity.getEndTime() != null? entity.getEndTime().toOffsetDateTime():null);
         dto.setSeverity(OPSmessageDto.SeverityEnum.fromValue(entity.getSeverity().getDbRepresentation()));
         dto.setIsActive(entity.getIsActive());
         dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());
