@@ -76,7 +76,7 @@ public class EntityDtoMappers {
         dto.setExternalMessage(entity.getExternalText());
         dto.setStartTime(entity.getStartTime() != null? entity.getStartTime().toOffsetDateTime():null);
         dto.setEndTime(entity.getEndTime() != null? entity.getEndTime().toOffsetDateTime():null);
-        dto.setSeverity( entity.getSeverity() != null?
+        dto.setSeverity(entity.getSeverity() != null?
                 OPSmessageDto.SeverityEnum.fromValue(entity.getSeverity().getDbRepresentation())
                 :null);
         dto.setIsActive(entity.getIsActive());
@@ -97,7 +97,9 @@ public class EntityDtoMappers {
         opsMessageEntity.setExternalText(opsMessageDto.getExternalMessage());
         opsMessageEntity.setInternalHeader(opsMessageDto.getInternalHeader());
         opsMessageEntity.setInternalText(opsMessageDto.getInternalMessage());
-        opsMessageEntity.setSeverity(OpsMessageSeverity.valueOf((opsMessageDto.getSeverity().getValue())));
+        opsMessageEntity.setSeverity(opsMessageDto.getSeverity() != null?
+                OpsMessageSeverity.valueOf((opsMessageDto.getSeverity().getValue())):
+                null);
         opsMessageEntity.setIsActive(opsMessageDto.getIsActive());
         opsMessageEntity.setOnlyShowForNavEmployees(opsMessageDto.getOnlyShowForNavEmployees());
         opsMessageEntity.setStartTime(opsMessageDto.getStartTime() != null?
