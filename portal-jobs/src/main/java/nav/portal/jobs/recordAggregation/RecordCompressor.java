@@ -127,7 +127,7 @@ public class RecordCompressor extends Thread{
         Optional<RecordEntity> recordSample = recordsForOneDay.stream().findFirst();
         if(recordSample.isPresent()) {
             Optional<DailyStatusAggregationForServiceEntity> aggregation = recordRepository.
-                    getServiceHistoryForServiceByDate(recordSample.get().getServiceId(), recordSample.get().getCreated_at());
+                    getServiceHistoryForServiceByDate(recordSample.get().getServiceId(), recordSample.get().getCreated_at().toLocalDate());
             if(aggregation.isPresent()){
                 return true;
             }
