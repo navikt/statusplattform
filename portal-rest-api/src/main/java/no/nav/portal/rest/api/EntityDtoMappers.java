@@ -100,8 +100,12 @@ public class EntityDtoMappers {
         opsMessageEntity.setSeverity(OpsMessageSeverity.valueOf((opsMessageDto.getSeverity().getValue())));
         opsMessageEntity.setIsActive(opsMessageDto.getIsActive());
         opsMessageEntity.setOnlyShowForNavEmployees(opsMessageDto.getOnlyShowForNavEmployees());
-        opsMessageEntity.setStartTime(opsMessageDto.getStartTime().toZonedDateTime());
-        opsMessageEntity.setEndTime(opsMessageDto.getEndTime().toZonedDateTime());
+        opsMessageEntity.setStartTime(opsMessageDto.getStartTime() != null?
+                opsMessageDto.getStartTime().toZonedDateTime():
+                null);
+        opsMessageEntity.setEndTime(opsMessageDto.getEndTime() != null?
+                opsMessageDto.getEndTime().toZonedDateTime():
+                null);
         return opsMessageEntity;
     }
 
