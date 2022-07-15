@@ -45,10 +45,10 @@ public class PollingEngine extends Thread {
 
 
     public void run(){
-        Thread.currentThread().setUncaughtExceptionHandler(new PollingThreadExceptionHandler(dbContext));
+        Thread.currentThread().setUncaughtExceptionHandler(new PollingThreadExceptionHandler(dbContext,dataSource));
         try{
             startPoll();
-       }
+        }
         catch (Exception e){
             Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),e);
         }

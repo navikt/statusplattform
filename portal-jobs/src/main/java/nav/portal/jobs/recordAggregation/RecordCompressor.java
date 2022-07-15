@@ -34,7 +34,14 @@ public class RecordCompressor extends Thread{
         this.dbContext = dbContext;
     }
     public void run(){
-        startCompression();
+        Thread.currentThread().setUncaughtExceptionHandler(new CompressionThreadExceptionHandler(dbContext,dataSource));
+        try{
+            startCompression();
+        }
+        catch (Exception e){
+            Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),e);
+        }
+
     }
 
     public void setDataSource(DataSource dataSource) {

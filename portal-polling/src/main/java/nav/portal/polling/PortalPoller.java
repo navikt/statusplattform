@@ -17,7 +17,6 @@ public class PortalPoller  {
 
     public PortalPoller() {
         pollingEngine = new PollingEngine(dbContext);
-        pollingEngine.setUncaughtExceptionHandler(new PollingThreadExceptionHandler(dbContext));
         pollingEngine.setDaemon(true);
         pollingEngine.setName("Polling thread");
     }

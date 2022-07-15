@@ -1,4 +1,4 @@
-package nav.portal.polling;
+package nav.portal.jobs.recordAggregation;
 
 import org.fluentjdbc.DbContext;
 import org.slf4j.Logger;
@@ -6,13 +6,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
-public class PollingThreadExceptionHandler implements Thread.UncaughtExceptionHandler
+public class CompressionThreadExceptionHandler implements Thread.UncaughtExceptionHandler
 {
-    private static final Logger logger = LoggerFactory.getLogger(PollingThreadExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(CompressionThreadExceptionHandler.class);
     private final DbContext dbContext;
     private final DataSource dataSourse;
 
-    public PollingThreadExceptionHandler(DbContext dbContext, DataSource dataSource){
+    public CompressionThreadExceptionHandler(DbContext dbContext, DataSource dataSource){
         this.dbContext = dbContext;
         this.dataSourse = dataSource;
     }
@@ -24,9 +24,10 @@ public class PollingThreadExceptionHandler implements Thread.UncaughtExceptionHa
         logger.info("Exception: %s: %s\n", e.getClass().getName(), e.getMessage());
         logger.info("Stack Trace: \n");
         logger.info("Thread status: %s\n", t.getState());
-        PortalPoller portalPoller = new PortalPoller();
-        portalPoller.setDataSource(dataSourse);
-        portalPoller.start();
+        JobScheduler jobScheduler = new JobScheduler();
+        jobScheduler.setDataSource(dataSourse);
+        jobScheduler.start();
     }
 
 }
+
