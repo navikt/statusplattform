@@ -28,6 +28,7 @@ public class PortalServer {
     private final PortalPoller portalPoller = new PortalPoller();
     private final JobScheduler jobScheduler = new JobScheduler();
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
+    private boolean isLocalHost;
 
 
     public PortalServer() {
@@ -52,6 +53,9 @@ public class PortalServer {
         int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt)
                 .orElse(3005);
         connector.setPort(port);
+        if(port == 3005){
+            this.isLocalHost = true;
+        }
 
 
         new ConfigObserver("portal")
@@ -89,8 +93,10 @@ public class PortalServer {
 
     public void start() throws Exception {
         server.start();
-        portalPoller.start();
-        jobScheduler.start();
+        if(!isLocalHost){
+            portalPoller.start();
+            jobScheduler.start();
+        }
         connector.start();
         logger.warn("Started on {}", getURI());
     }

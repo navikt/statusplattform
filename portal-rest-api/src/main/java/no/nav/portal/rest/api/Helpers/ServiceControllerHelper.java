@@ -85,6 +85,9 @@ public class ServiceControllerHelper {
         dependencies.addAll(componentDependencies);
         serviceRepository.addDependencyToService(service, dependencies);
 
+        //Dersom ny tjeneste er av type komponent, kan andre tjenester være avhengig av denne:
+        serviceDto.getServicesDependentOnThisComponent().forEach(s -> serviceRepository.addDependencyToService(s.getId(),service.getId()));
+
         serviceRepository.saveOpeningHours(mapToOpeningHoursEntity(serviceDto.getServiceOpeningHours()));
 
         //Adding service to areas:
@@ -95,6 +98,26 @@ public class ServiceControllerHelper {
         result.setRecord(new RecordDto());
 
         return result;
+    }
+
+    public void updateService(ServiceDto serviceDto) {
+        ServiceEntity serviceEntity = EntityDtoMappers.toServiceEntity(serviceDto);
+        serviceRepository.update(serviceEntity);
+        areaRepository.removeServiceFromAllAreas(serviceDto.getId());
+        areaRepository
+                .addServiceToAreas(serviceDto
+                        .getAreasContainingThisService()
+                        .stream().map(AreaDto::getId).collect(Collectors.toList()), serviceDto.getId());
+        serviceRepository.resetDependenciesOnService(serviceDto.getId());
+        List<ServiceDto> dependencies = serviceDto.getComponentDependencies();
+        dependencies.addAll(serviceDto.getServiceDependencies());
+        serviceRepository.addDependencyToService(serviceEntity,
+                dependencies.stream().map(EntityDtoMappers::toServiceEntity)
+                        .collect(Collectors.toList()));
+        //Dersom service er av type komponent kan tjenester ha avhengighet til denne
+        serviceDto.getServicesDependentOnThisComponent().forEach(s -> serviceRepository.addDependencyToService(s.getId(),serviceDto.getId()));
+
+
     }
 
 
@@ -123,23 +146,7 @@ public class ServiceControllerHelper {
         serviceRepository.delete(component_id);
     }
 
-    public void updateService(ServiceDto serviceDto) {
-        ServiceEntity serviceEntity = EntityDtoMappers.toServiceEntity(serviceDto);
-        serviceRepository.update(serviceEntity);
-        areaRepository.removeServiceFromAllAreas(serviceDto.getId());
-        areaRepository
-                .addServiceToAreas(serviceDto
-                        .getAreasContainingThisService()
-                                             .stream().map(AreaDto::getId).collect(Collectors.toList()), serviceDto.getId());
-        serviceRepository.resetDependenciesOnService(serviceDto.getId());
-        List<ServiceDto> dependencies = serviceDto.getComponentDependencies();
-        dependencies.addAll(serviceDto.getServiceDependencies());
-        serviceRepository.addDependencyToService(serviceEntity,
-                dependencies.stream().map(EntityDtoMappers::toServiceEntity)
-                        .collect(Collectors.toList()));
 
-
-    }
 
     public ServiceDto retrieveOneService(UUID service_id) {
         ServiceDto serviceDto =  EntityDtoMappers.toServiceDtoDeep(serviceRepository.retrieveOneWithDependencies(service_id));
