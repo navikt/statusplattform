@@ -22,9 +22,8 @@ class DashboardRepositoryTest {
     private final DbContext dbContext = new DbContext();
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private DbContextConnection connection;
-
-
 
 
     @BeforeEach
@@ -97,6 +96,21 @@ class DashboardRepositoryTest {
     }
 
     @Test
+    void updateNameOfDashboard(){
+        //Arrange
+        String dashboardName =SampleData.getRandomizedDashboardName();
+        //Lagra java-obj ned i db
+        UUID dashboardId = dashboardRepository.save(dashboardName);
+        //Act
+        String newDashboardName = "Non existing name";
+        dashboardRepository.updateNameOfDashboard(dashboardId, newDashboardName);
+        Map.Entry<DashboardEntity, List<AreaWithServices>>retrievedDashboardEntity = dashboardRepository.retrieveOne(dashboardId);
+        //Assert
+        Assertions.assertThat(retrievedDashboardEntity.getKey().getName()).isNotEqualToIgnoringCase(dashboardName);
+        Assertions.assertThat(retrievedDashboardEntity.getKey().getName()).isEqualTo(newDashboardName);
+    }
+
+    @Test
     void getAllDashboardUUIDsAndNames() {
         //Arrange
         List<String> dashboardNames = SampleData.getDashboardNames();
@@ -123,8 +137,6 @@ class DashboardRepositoryTest {
             Assertions.assertThat(name).isEqualTo(entity.getName());
             Assertions.assertThat(entity.getId()).isExactlyInstanceOf(UUID.class);
         });
-
-
     }
 
     @Test
@@ -138,29 +150,30 @@ class DashboardRepositoryTest {
     Assertions.assertThat(uuid).isExactlyInstanceOf(UUID.class);
     }
 
-    /*
     @Test
     void retrieveOne() {
         //TODO denne
         //Arrange -
-        String dashboardname = "Dashboard";
-        UUID dashboardId = dashboardRepository.save(dashboardname);
-
-        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
-
-        List<UUID> areaIds =  new ArrayList<>();
-        areas.forEach(area -> {area.setId(areaRepository.save(area));
-                               areaIds.add(area.getId());}
+        String dashboardName = SampleData.getRandomizedDashboardName();
+        UUID dashboardId = dashboardRepository.save(dashboardName);
+        List<ServiceEntity>services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+        List<UUID>serviceIds = new ArrayList<>();
+        services.forEach(service -> {service.setId(serviceRepository.save(service));
+                                     serviceIds.add(service.getId());}
         );
-
-        dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
+        List<UUID>areaIds = new ArrayList<>();
+        area.setId(areaRepository.save(area));
+        areaIds.add(area.getId());
+        areaRepository.setServicesOnArea(area.getId(), serviceIds);
+        dashboardRepository.settAreasOnDashboard(dashboardId, areaIds);
         //Act
         Map.Entry<DashboardEntity, List<AreaWithServices>>exists = dashboardRepository.retrieveOne(dashboardId);
         //Assert
-        Assertions.assertThat(exists.getKey().getName()).isEqualTo(dashboardname);
-        Assertions.assertThat(exists.getValue().size()).isEqualTo(areaIds.size());
+        Assertions.assertThat(exists.getKey().getName()).isEqualTo(dashboardName);
+        Assertions.assertThat(exists.getValue().get(0).getArea()).isEqualTo(area);
+        Assertions.assertThat(exists.getValue().get(0).getServices()).containsAll(services);
     }
-*/
 
     @Test
     void retrieveOneFromName() {
@@ -173,7 +186,6 @@ class DashboardRepositoryTest {
         //Assert
         Assertions.assertThat(retrievedDashboard.getKey().getName()).isEqualTo(dashboardname);
         Assertions.assertThat(uuid).isEqualTo(retrievedDashboard.getKey().getId());
-
     }
 
     @Test
@@ -216,14 +228,11 @@ class DashboardRepositoryTest {
                 .collect(Collectors.toList());
 
         servicesOnAreas.forEach(list -> Assertions.assertThat(list).isEmpty());*/
-
-
     }
 
-    /*
+
     @Test
     void deleteAreasFromDashboard() {
-
         //Arrange
         String dashboardname = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardname);
@@ -239,11 +248,10 @@ class DashboardRepositoryTest {
         dashboardRepository.deleteAreasFromDashboard(dashboardId);
         Map.Entry<DashboardEntity, List<AreaWithServices>> result = dashboardRepository.retrieveOneFromName(dashboardname);
         //Assert
-
-        Assertions.assertThat(result.getValue().size()).isEqualTo(0);
+        Assertions.assertThat(result.getValue()).isEmpty();
     }
 
-     */
+
     @Test
     void deleteDashboard() {
         //Arrange
