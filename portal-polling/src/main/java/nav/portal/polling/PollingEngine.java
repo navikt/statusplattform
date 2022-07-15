@@ -59,10 +59,12 @@ public class PollingEngine extends Thread {
     }
 
     private void startPoll() {
+        logger.info("Starting poll ----------------");
         try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
                 getPollingServicesAndPoll();
                 transaction.setComplete();
+                logger.info("Polled successfully poll ----------------");
             }
         }
     }
@@ -77,23 +79,23 @@ public class PollingEngine extends Thread {
 
     private void poll(ServiceEntity serviceEntity, Optional<RecordEntity> latestRecord){
         try{
-            logger.info("private void poll 1----------------");
+           // logger.info("private void poll 1----------------");
 
             LocalDateTime before = LocalDateTime.now();
             HttpURLConnection connection = getConnectionToServicePollEndpoint(serviceEntity);
-            logger.info("private void poll 2----------------");
+            //logger.info("private void poll 2----------------");
             String bodyString = readBody(connection);
-            logger.info("private void poll  3----------------");
+            //logger.info("private void poll  3----------------");
             LocalDateTime after = LocalDateTime.now();
             Integer responseTime = calcResponseTime(before,after);
-            logger.info("private void poll 4----------------");
+            //logger.info("private void poll 4----------------");
             connection.disconnect();
 
             JsonObject jsonObject = toJson(bodyString);
-            logger.info("private void poll 5----------------");
+            //logger.info("private void poll 5----------------");
             boolean serviceFromServiceHolder = STATUSHOLDER.equals(serviceEntity.getPolling_url());
             PolledServiceStatus polledServiceStatus = mapToPolledServiceStatus(jsonObject, serviceFromServiceHolder);
-            logger.info("private void poll 6----------------");
+            //logger.info("private void poll 6----------------");
             updateRecordForService(polledServiceStatus,latestRecord,serviceEntity, responseTime);
 
         }
