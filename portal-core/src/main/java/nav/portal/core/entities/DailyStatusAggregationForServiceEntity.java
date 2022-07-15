@@ -1,6 +1,7 @@
 package nav.portal.core.entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 public class DailyStatusAggregationForServiceEntity {
@@ -8,8 +9,6 @@ public class DailyStatusAggregationForServiceEntity {
     private UUID service_id;
     private LocalDate aggregation_date;
     private String Information;
-
-
     private int number_of_status_ok;
     private int number_of_status_issue;
     private int number_of_status_down;
@@ -78,5 +77,18 @@ public class DailyStatusAggregationForServiceEntity {
     public DailyStatusAggregationForServiceEntity setNumber_of_status_down(int number_of_status_down) {
         this.number_of_status_down = number_of_status_down;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DailyStatusAggregationForServiceEntity that = (DailyStatusAggregationForServiceEntity) o;
+        return number_of_status_ok == that.number_of_status_ok && number_of_status_issue == that.number_of_status_issue && number_of_status_down == that.number_of_status_down && Objects.equals(id, that.id) && Objects.equals(service_id, that.service_id) && Objects.equals(aggregation_date, that.aggregation_date) && Objects.equals(Information, that.Information);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, service_id, aggregation_date, Information, number_of_status_ok, number_of_status_issue, number_of_status_down);
     }
 }
