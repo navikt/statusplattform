@@ -116,13 +116,13 @@ public class AuthenticationFilter implements Filter {
 
     }
     public PortalRestPrincipal createPortalPrinciplaFromAdClaims(JwtTokenClaims jwtTokenClaims){
-        System.out.println("createPrincipal ---------------------------");
+        //System.out.println("createPrincipal ---------------------------");
         //payloadJson =
         return new PortalRestPrincipal(jwtTokenClaims.getStringClaim("name"), jwtTokenClaims.getStringClaim("NAVident"));
     }
 
     private DefaultUserIdentity createUserIdentity(Principal principal) {
-        System.out.println("createUserIdentity ---------------------------");
+        //System.out.println("createUserIdentity ---------------------------");
         Subject subject = new Subject();
         subject.getPrincipals().add(principal);
         return new DefaultUserIdentity(subject, principal, new String[0]);
@@ -132,7 +132,7 @@ public class AuthenticationFilter implements Filter {
 
     private JwtTokenClaims readAuthorizationFromHeader(ServletRequest request) {
         String encodedAuthorization = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
-        logger.info("In readAuthorizationFromHeader : ");
+        //logger.info("In readAuthorizationFromHeader : ");
         //logger.info("encodedAuthorization: " + encodedAuthorization);
         Enumeration<String> headersNames =  ((HttpServletRequest) request).getHeaderNames();
         //logger.info("All headers: ");
