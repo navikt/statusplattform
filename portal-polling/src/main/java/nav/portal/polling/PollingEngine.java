@@ -15,20 +15,16 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.function.ToDoubleBiFunction;
+import java.util.*;
 
-public class PollingEngine  extends Thread{
+public class PollingEngine extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(PollingEngine.class);
     private static final String MOCK_URL = "https://mockservice.dev.nav.no/mock/Service/";
@@ -47,8 +43,22 @@ public class PollingEngine  extends Thread{
         this.dbContext = dbContext;
     }
 
-    private void startPoll() {
 
+    public void run(){
+        Thread.currentThread().setUncaughtExceptionHandler(new PollingThreadExceptionHandler(dbContext));
+        try{
+            startPoll();
+       }
+        catch (Exception e){
+            Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),e);
+        }
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    private void startPoll() {
         try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
                 getPollingServicesAndPoll();
@@ -57,11 +67,15 @@ public class PollingEngine  extends Thread{
         }
     }
     private void getPollingServicesAndPoll(){
+        Map<ServiceEntity,Optional<RecordEntity>> servicesWithLatestRecord = new HashMap<>();
+        // TODO Dette kan gjøres ved en db spørring.
         List<ServiceEntity> pollingServices = serviceRepository.retrieveServicesWithPolling();
-        pollingServices.forEach(this::poll);
+        pollingServices.forEach(s -> servicesWithLatestRecord.put(s,recordRepository.getLatestRecord(s.getId())));
+        servicesWithLatestRecord.forEach(this::poll);
+        //pollingServices.forEach(this::poll);
     }
 
-    private void poll(ServiceEntity serviceEntity){
+    private void poll(ServiceEntity serviceEntity, Optional<RecordEntity> latestRecord){
         try{
             logger.info("private void poll 1----------------");
 
@@ -80,7 +94,7 @@ public class PollingEngine  extends Thread{
             boolean serviceFromServiceHolder = STATUSHOLDER.equals(serviceEntity.getPolling_url());
             PolledServiceStatus polledServiceStatus = mapToPolledServiceStatus(jsonObject, serviceFromServiceHolder);
             logger.info("private void poll 6----------------");
-            updateRecordForService(polledServiceStatus,serviceEntity, responseTime);
+            updateRecordForService(polledServiceStatus,latestRecord,serviceEntity, responseTime);
 
         }
         catch (Exception e){
@@ -88,7 +102,7 @@ public class PollingEngine  extends Thread{
             logger.info("private void poll Exception!!: " + e);
 
             PolledServiceStatus polledServiceStatus =  createPolledServiceStatusForUnresponsiveEndpoint();
-            updateRecordForService(polledServiceStatus,serviceEntity, 0);
+            updateRecordForService(polledServiceStatus,latestRecord,serviceEntity, 0);
 
         }
 
@@ -113,7 +127,13 @@ public class PollingEngine  extends Thread{
         return polledServiceStatus;
     }
 
-    private void updateRecordForService(PolledServiceStatus polledServiceStatus, ServiceEntity serviceEntity, Integer responseTime){
+    private void updateRecordForService(PolledServiceStatus polledServiceStatus,Optional<RecordEntity> lastRecord, ServiceEntity serviceEntity, Integer responseTime){
+        //TODO legge inn logik for å lagre statuser med diff i status
+//        if(lastRecord.isPresent() && lastRecord.get().getStatus().equals(polledServiceStatus.getStatus())){
+//            //Uppdate recordtable that only keeps changings statuses:
+//
+//        }
+
         RecordEntity recordEntity = new RecordEntity()
                 .setServiceId(serviceEntity.getId())
                 .setStatus(polledServiceStatus.getStatus())
@@ -156,8 +176,8 @@ public class PollingEngine  extends Thread{
         }
         in.close();
         String result = content.toString();
-        logger.info("In read body ..........");
-        logger.info("result: "+ result);
+        //logger.info("In read body ..........");
+        //logger.info("result: "+ result);
         return result;
     }
 
@@ -180,11 +200,5 @@ public class PollingEngine  extends Thread{
     }
 
 
-    public void run(){
-        startPoll();
-    }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 }

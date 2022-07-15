@@ -13,10 +13,11 @@ public class PortalPoller  {
     private final DbContext dbContext = new DbContext();
     private PollingEngine pollingEngine;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final int POLLING_INTERVAL_IN_SECONDS = 60;
+    private final int POLLING_INTERVAL_IN_MINUTES = 3;
 
     public PortalPoller() {
         pollingEngine = new PollingEngine(dbContext);
+        pollingEngine.setUncaughtExceptionHandler(new PollingThreadExceptionHandler(dbContext));
         pollingEngine.setDaemon(true);
         pollingEngine.setName("Polling thread");
     }
@@ -26,7 +27,7 @@ public class PortalPoller  {
 
     }
     public void start(){
-        scheduler.scheduleWithFixedDelay(pollingEngine,0,POLLING_INTERVAL_IN_SECONDS,TimeUnit.SECONDS);
+        scheduler.scheduleWithFixedDelay(pollingEngine,0, POLLING_INTERVAL_IN_MINUTES,TimeUnit.MINUTES);
 
     }
 
