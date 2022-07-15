@@ -93,10 +93,9 @@ public class PortalServer {
 
     public void start() throws Exception {
         server.start();
-        if(!isLocalHost){
-            portalPoller.start();
-            jobScheduler.start();
-        }
+        portalPoller.start();
+        jobScheduler.start();
+
         connector.start();
         logger.warn("Started on {}", getURI());
     }
