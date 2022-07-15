@@ -94,6 +94,61 @@ class RecordRepositoryTest {
 
     }
 
+    @Test
+    void getServiceHistoryForServiceByDate() {
+        //Arrange
+        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
+        serviceEntity.setId(serviceRepository.save(serviceEntity));
+        DailyStatusAggregationForServiceEntity aggregation = SampleData.getRandomizedDailyStatusAggregationForService(serviceEntity);
+        aggregation.setAggregation_date(LocalDate.now().minusDays(50));
+
+        recordRepository.saveAggregatedRecords(aggregation);
+        UUID serviceId = serviceEntity.getId();
+        //Act
+        Optional<DailyStatusAggregationForServiceEntity> shouldBeEmpty =
+                recordRepository.getServiceHistoryForServiceByDate(serviceId, LocalDate.now().minusDays(40));
+        Optional<DailyStatusAggregationForServiceEntity> shouldContainOne =
+                recordRepository.getServiceHistoryForServiceByDate(serviceId, LocalDate.now().minusDays(50));
+        //Assert
+        Assertions.assertThat(shouldBeEmpty).isEmpty();
+        Assertions.assertThat(shouldContainOne).isPresent();
+    }
+
+    @Test
+    void getServiceHistoryForServiceByMonths() {
+        //Arrange
+        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
+        serviceEntity.setId(serviceRepository.save(serviceEntity));
+        DailyStatusAggregationForServiceEntity aggregation = SampleData.getRandomizedDailyStatusAggregationForService(serviceEntity);
+        aggregation.setAggregation_date(LocalDate.now().minusMonths(3));
+
+        recordRepository.saveAggregatedRecords(aggregation);
+        UUID serviceId = serviceEntity.getId();
+        //Act
+        List<DailyStatusAggregationForServiceEntity> shouldBeEmpty =
+                recordRepository.getServiceHistoryForNumberOfMonths(serviceId, 1);
+        List<DailyStatusAggregationForServiceEntity> shouldContainOne =
+                recordRepository.getServiceHistoryForNumberOfMonths(serviceId, 4);
+        //Assert
+        Assertions.assertThat(shouldBeEmpty).isEmpty();
+        Assertions.assertThat(shouldContainOne.size()).isEqualTo(1);
+    }
+
+    @Test
+    void saveAggregatedRecords() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        DailyStatusAggregationForServiceEntity aggregation = SampleData.getRandomizedDailyStatusAggregationForService(service);
+        //Act
+        UUID aggregationId = recordRepository.saveAggregatedRecords(aggregation);
+        aggregation.setId(aggregationId);
+        List<DailyStatusAggregationForServiceEntity> retrievedAggregatedRecords = recordRepository.getServiceHistoryForNumberOfDays(1, serviceId);
+        //Assert
+        Assertions.assertThat(retrievedAggregatedRecords.size()).isEqualTo(1);
+        Assertions.assertThat(retrievedAggregatedRecords).contains(aggregation);
+    }
 
     @Test
     void getLatestRecord2() {
@@ -137,26 +192,6 @@ class RecordRepositoryTest {
         List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(5);
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
         Assertions.assertThat(retrievedRecordsAfter).isEmpty();
-    }
-    @Test
-    void getServiceHistoryForServiceByDate() {
-        //Arrange
-        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
-        serviceEntity.setId(serviceRepository.save(serviceEntity));
-        DailyStatusAggregationForServiceEntity aggregation = SampleData.getRandomizedDailyStatusAggregationForService(serviceEntity);
-        aggregation.setAggregation_date(LocalDate.now().minusDays(5));
-
-        recordRepository.saveAggregatedRecords(aggregation);
-        UUID serviceId = serviceEntity.getId();
-        //Act
-        Optional<DailyStatusAggregationForServiceEntity> shouldBeEmpty =
-                recordRepository.getServiceHistoryForServiceByDate(serviceId, LocalDate.now().minusDays(4));
-        Optional<DailyStatusAggregationForServiceEntity> shouldContainOne =
-                recordRepository.getServiceHistoryForServiceByDate(serviceId, LocalDate.now().minusDays(5));
-        //Assert
-        recordRepository.getServiceHistoryForNumberOfDays(10, serviceId);
-        Assertions.assertThat(shouldBeEmpty).isEmpty();
-        Assertions.assertThat(shouldContainOne).isPresent();
     }
 
 }
