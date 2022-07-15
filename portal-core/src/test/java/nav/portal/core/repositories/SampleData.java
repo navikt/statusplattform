@@ -55,7 +55,7 @@ public class SampleData {
                 .setEndTime(getZonedDateTimeNowWithOutDecimals().plusDays(2))
                 .setSeverity(getRandomOpsMessageSeverity())
                 .setOnlyShowForNavEmployees(random.nextBoolean())
-                .setIsActive(random.nextBoolean());
+                .setIsActive(true);
     }
 
     private static ZonedDateTime getZonedDateTimeNowWithOutDecimals(){
