@@ -193,8 +193,6 @@ public class PollingEngine extends Thread {
             case STATUSHOLDER: urlString = STATUSHOLDER_URL + serviceEntity.getId();break;
             default: urlString = serviceEntity.getPolling_url();
         }
-        logger.info("In poller ..........");
-        logger.info("url: "+ urlString);
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
