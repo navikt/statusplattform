@@ -146,6 +146,7 @@ public class OpsRepository {
         ArrayList<OpsMessageEntity> result = new ArrayList<>();
         ops
                 .where("deleted",Boolean.FALSE)
+                .where("is_active", Boolean.TRUE)
                 .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
                 .whereIn("o2s.service_id", serviceIds)
                 .list(row -> {
