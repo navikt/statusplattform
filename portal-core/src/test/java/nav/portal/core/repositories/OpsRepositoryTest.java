@@ -156,24 +156,6 @@ class OpsRepositoryTest {
     }
 
     @Test
-    void retriveAll() {
-        //Arrange
-        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
-      /*for(ServiceEntity service : services){
-         service.setId(serviceRepository.save(service));
-      }*/
-        //TODO legge til dependencies/ gjøre assertioens motsatt vei: Det vi kontrollerer .someComparingFunction(Forventet verdi)
-
-        services.forEach(service -> service.setId(serviceRepository.save(service)));
-        //Act
-        Map<ServiceEntity, List<ServiceEntity>> allRetrieved =
-                serviceRepository.retrieveAllDeep();
-        //Assert
-        Assertions.assertThat(allRetrieved.size()).isEqualTo(services.size());
-        Assertions.assertThat(allRetrieved.keySet()).containsAll(services);
-    }
-
-    @Test
     void retrieveAll() {
         //Arrange
         List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
