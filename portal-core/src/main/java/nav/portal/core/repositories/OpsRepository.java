@@ -64,8 +64,6 @@ public class OpsRepository {
                     .setField("service_id", services.get(i))
                     .execute();
         }
-
-
     }
 
     public Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrieveOne(UUID ops_id) {

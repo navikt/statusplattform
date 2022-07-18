@@ -11,10 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class OpsRepositoryTest {
 
@@ -39,21 +37,102 @@ class OpsRepositoryTest {
     }
 
     @Test
+    void save() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        //Act
+        opsMessageEntity.setId(opsRepository.save(opsMessageEntity, serviceIds));
+        UUID opsId = opsMessageEntity.getId();
+        //Assert
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> messageOnServices = opsRepository.retrieveOne(opsId);
+        Assertions.assertThat(messageOnServices.getKey()).isEqualTo(opsMessageEntity);
+        Assertions.assertThat(messageOnServices.getValue()).containsAll(services);
+    }
+
+    @Test
+    void deleteOps() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        OpsMessageEntity opsMessageToBeDeleted = SampleData.getRandomOpsMessageEntity();
+        UUID opsId = opsRepository.save(opsMessageToBeDeleted, serviceIds);
+        opsMessageToBeDeleted.setId(opsId);
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageBeforeDelete
+                = opsRepository.retrieveOne(opsId);
+        //Act
+        opsRepository.deleteOps(opsId);
+        boolean isDeleted = opsRepository.isEntryDeleted(opsId);
+        //Assert
+        Assertions.assertThat(retrievedOpsMessageBeforeDelete.getKey()).isEqualTo(opsMessageToBeDeleted);
+        Assertions.assertThat(retrievedOpsMessageBeforeDelete.getValue()).containsAll(services);
+        Assertions.assertThat(isDeleted).isTrue();
+    }
+
+    @Test
+    void setServicesOnOpsMessage() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        UUID opsId = opsRepository.save(opsMessageEntity, new ArrayList<>());
+        //Act
+        opsRepository.setServicesOnOpsMessage(opsId, serviceIds);
+        //Assert
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> messageOnServices = opsRepository.retrieveOne(opsId);
+        Assertions.assertThat(messageOnServices.getKey().getId()).isEqualTo(opsId);
+        Assertions.assertThat(messageOnServices.getKey().getExternalHeader()).isEqualTo(opsMessageEntity.getExternalHeader());
+        Assertions.assertThat(messageOnServices.getValue()).containsAll(services);
+    }
+
+    @Test
+    void retrieveOne() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        opsMessageEntity.setId(opsRepository.save(opsMessageEntity, serviceIds));
+        UUID opsId = opsMessageEntity.getId();
+        //Act
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedMessagesOnServices = opsRepository.retrieveOne(opsId);
+        //Assert
+        Assertions.assertThat(retrievedMessagesOnServices.getKey()).isEqualTo(opsMessageEntity);
+        Assertions.assertThat(retrievedMessagesOnServices.getValue()).containsAll(services);
+    }
+
+    @Test
     void getAllOpsMessagesForDashboard() {
 
         //------------------ Arrange ------------------------------------
         //Lager dashboard:
-        UUID dashbaordId = dashboardRepository.save("Mitt nye fantastiske dashboard!");
+        UUID dashboardId = dashboardRepository.save("Mitt nye fantastiske dashboard!");
 
         //Lager område og legger til på dashboard:
         AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
-        dashboardRepository.settAreasOnDashboard(dashbaordId,areaId);
+        dashboardRepository.settAreasOnDashboard(dashboardId, areaId);
 
         //Lager tjeneste og legger den på område:
         ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(serviceEntity);
-        areaRepository.addServiceToArea(areaId,serviceId);
+        areaRepository.addServiceToArea(areaId, serviceId);
 
 
         //Lager ops Message som IKKE er knyttet til noen tjeneste:
@@ -63,13 +142,11 @@ class OpsRepositoryTest {
         //------------------ Act ------------------------------------
 
         //Henter først alle opsmeldinger på dashboardet. Nå skal ingen meldinger ligge på dashboardet.
-        List<OpsMessageEntity> shouldBeEmpty = opsRepository.getAllForDashboard(dashbaordId);
+        List<OpsMessageEntity> shouldBeEmpty = opsRepository.getAllForDashboard(dashboardId);
         //Kobler opsmeldingen til tjenesten
         opsRepository.setServicesOnOpsMessage(opsMessageEntity.getId(), List.of(serviceId));
         //Nå skal opsmeldingen være koblet mot dashboardet via tjenesten:
-        List<OpsMessageEntity> shouldContainOne = opsRepository.getAllForDashboard(dashbaordId);
-
-
+        List<OpsMessageEntity> shouldContainOne = opsRepository.getAllForDashboard(dashboardId);
 
         //------------------ Assert ------------------------------------
         Assertions.assertThat(shouldBeEmpty).isEmpty();
@@ -77,4 +154,44 @@ class OpsRepositoryTest {
         Assertions.assertThat(shouldContainOne.get(0)).isEqualTo(opsMessageEntity);
 
     }
+
+    @Test
+    void retriveAll() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
+      /*for(ServiceEntity service : services){
+         service.setId(serviceRepository.save(service));
+      }*/
+        //TODO legge til dependencies/ gjøre assertioens motsatt vei: Det vi kontrollerer .someComparingFunction(Forventet verdi)
+
+        services.forEach(service -> service.setId(serviceRepository.save(service)));
+        //Act
+        Map<ServiceEntity, List<ServiceEntity>> allRetrieved =
+                serviceRepository.retrieveAllDeep();
+        //Assert
+        Assertions.assertThat(allRetrieved.size()).isEqualTo(services.size());
+        Assertions.assertThat(allRetrieved.keySet()).containsAll(services);
+    }
+
+    @Test
+    void retrieveAll() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        UUID opsId = opsRepository.save(opsMessageEntity, serviceIds);
+        opsMessageEntity.setId(opsId);
+        //Act
+        Map<OpsMessageEntity, List<ServiceEntity>> retrievedAllMessagesOnServices
+                = opsRepository.retrieveAll();
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedMessagesOnServices = opsRepository.retrieveOne(opsId);
+        //Assert
+        Assertions.assertThat(retrievedAllMessagesOnServices).containsKey(retrievedMessagesOnServices.getKey());
+        Assertions.assertThat(retrievedAllMessagesOnServices).containsValue(retrievedMessagesOnServices.getValue());
+    }
+
 }

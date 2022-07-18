@@ -68,7 +68,6 @@ class AreaRepositoryTest {
         Map.Entry<AreaEntity, List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
         //Assert
         List<ServiceEntity>retrievedServices = retrievedArea.getValue();
-        Assertions.assertThat(retrievedServices.size()).isEqualTo(retrievedServices.size());
         Assertions.assertThat(retrievedServices).containsAll(services);
         Assertions.assertThat(retrievedArea.getKey()).isEqualTo(area);
     }
