@@ -7,19 +7,24 @@ import org.fluentjdbc.*;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RecordRepository {
     private final DbContextTable recordTable;
+    private final DbContextTable recordDiffTable;
     private final DbContextTable aggregatedStatusTable;
 
 
     public RecordRepository(DbContext dbContext) {
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
+        recordDiffTable = dbContext.table(new DatabaseTableWithTimestamps("service_status_delta"));
         aggregatedStatusTable = dbContext.table(new DatabaseTableWithTimestamps("daily_status_aggregation_service"));
 
     }
@@ -34,6 +39,33 @@ public class RecordRepository {
                 .execute();
 
         return result.getId();
+    }
+
+    //UUIDen som settes her skal IKKE generes, men settes fra uid fra orginal record.
+    public UUID saveDiff(RecordEntity entity) {
+        DatabaseSaveResult<UUID> result = recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("service_id", entity.getServiceId())
+                .setField("status", entity.getStatus())
+                .setField("description", entity.getDescription())
+                .setField("logglink", entity.getLogglink())
+                .setField("response_time", entity.getResponsetime())
+                .execute();
+
+        return result.getId();
+    }
+    public Optional<RecordEntity> getLatestRecordDiff(UUID serviceId) {
+        return recordDiffTable.where("service_id", serviceId)
+                .orderBy("created_at DESC")
+                .limit(1)
+                .singleObject(RecordRepository::toRecord);
+    }
+
+    public Optional<RecordEntity> getLatestRecordDiffBeforeDate(UUID serviceId, LocalDate date) {
+        return recordDiffTable.where("service_id", serviceId)
+                .whereExpression("created_at <= ?", LocalDateTime.of(date, LocalTime.of(0,0)))
+                .orderBy("created_at DESC")
+                .limit(1)
+                .singleObject(RecordRepository::toRecord);
     }
 
     public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceId) {
@@ -84,6 +116,36 @@ public class RecordRepository {
                 .list(RecordRepository::toRecord);
     }
 
+
+    public Map<UUID, Map<LocalDate,List<RecordEntity>>> getAllRecordsOrderedByServiceIdAndDate(){
+
+        List<RecordEntity> allRecords = recordTable.unordered().list(RecordRepository::toRecord);
+        List<UUID> serviceUUIDs = allRecords.stream().map(RecordEntity::getServiceId).distinct().collect(Collectors.toList());
+        Map<UUID, Map<LocalDate,List<RecordEntity>>> result = new HashMap<>();
+        serviceUUIDs.forEach(uuid -> {
+            List<RecordEntity> recordsForService = allRecords.stream().filter(r -> r.getServiceId().equals(uuid)).collect(Collectors.toList());
+            List<LocalDate> dates = recordsForService.stream().map(r -> r.getCreated_at().toLocalDate()).distinct().collect(Collectors.toList());
+            Map<LocalDate,List<RecordEntity>> resultForOneService = new HashMap<>();
+            dates.forEach(date -> {
+                resultForOneService.put(date,recordsForService.stream().filter(r -> r.getCreated_at().toLocalDate().equals(date)).collect(Collectors.toList()));
+            });
+            result.put(uuid,resultForOneService);
+
+        });
+        return result;
+
+    }
+
+
+    public List<RecordEntity> getAllRecordsFromYesterday(){
+        ZonedDateTime yesterdayMidnight = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
+        ZonedDateTime todayMidnight = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);
+
+        return recordTable
+                .whereExpression("created_at <= ?", todayMidnight )
+                .whereExpression("created_at >= ?", yesterdayMidnight)
+                .list(RecordRepository::toRecord);
+    }
     public List<RecordEntity> getRecordsOlderThan(int daysOld){
         return recordTable
                 .whereExpression("created_at <= ?", ZonedDateTime.now().minusDays(daysOld))
@@ -93,6 +155,13 @@ public class RecordRepository {
         recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusDays(daysOld))
                 .executeDelete();
     }
+    public void deleteRecordsForDate(UUID serviceID,LocalDate date) {
+        recordTable.where("id", serviceID)
+                .whereExpression("created_at >= ?", date.minusDays(1))
+                .whereExpression("created_at <= ?", date)
+                .executeDelete();
+    }
+
 
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
@@ -106,6 +175,11 @@ public class RecordRepository {
                 .setResponsetime(row.getInt("response_time"));
     }
 
+    public void deleteRecords(List<RecordEntity> records) {
+        recordTable.whereIn("id", records.stream().map(RecordEntity::getId).collect(Collectors.toList()))
+                .executeDelete();
+
+    }
 
 
     public static class Query {

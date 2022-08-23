@@ -60,11 +60,6 @@ public class PortalServer {
 
         new ConfigObserver("portal")
                 .onInetSocketAddress("http.port", port, this::setHttpPort)
-                /*Når man legger inn autentisering med OIDC for Profil / Admin så er det ca slik. Se denne commit for hvordan det funket for rest før
-                .onStringValue("openid.discovery_url", null, brukergrupperRestApi::setOpenIdConfiguration)
-                .onStringValue("openid.client_id", null, brukergrupperRestApi::setClientId)
-                .onStringValue("openid.client_secret", null, brukergrupperRestApi::setClientSecret)*/
-
         ;
     }
 
@@ -95,7 +90,6 @@ public class PortalServer {
         server.start();
         portalPoller.start();
         jobScheduler.start();
-
         connector.start();
         logger.warn("Started on {}", getURI());
     }

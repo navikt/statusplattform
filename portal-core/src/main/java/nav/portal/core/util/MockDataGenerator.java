@@ -45,6 +45,12 @@ public class MockDataGenerator {
 
         );
     }
+    public static void saveRecordsToTableForOneServiceOneDay(List<RecordEntity> recordsToInsert, DbContext dbContext) {
+        recordsToInsert.forEach(
+                recordEntity -> MockDataGenerator.saveRecordBackInTime(recordEntity, dbContext)
+                    );
+
+    }
 
 
     public static  Map<Integer,List<RecordEntity>> generateRandomStatusesForOneServiceXNumberOfDaysBackInTime(ServiceEntity serviceEntity, int numberOfDays, int interval_between_status_update_minutes) {
@@ -55,10 +61,10 @@ public class MockDataGenerator {
         }
         return result;
     }
-    private static List<RecordEntity> generateRandomStatusesForServiceForOneDayXNumberOfDaysBackInTime(ServiceEntity serviceEntity,int numberOfDays, int interval_between_status_update_minutes){
-
-        int NUMBER_OF_STATUS = 24*60/interval_between_status_update_minutes;
-        LocalDateTime startTime = LocalDateTime.of(LocalDate.now().minusDays(numberOfDays),  LocalTime.of(0,0,0,0));
+    public static List<RecordEntity> generateRandomStatusesForServiceForOneDayXNumberOfDaysBackInTime(ServiceEntity serviceEntity,int numberOfDaysBack, int interval_between_status_update_minutes){
+        int MINUTES_IN_A_DAY = 24*60;
+        int NUMBER_OF_STATUS = MINUTES_IN_A_DAY/interval_between_status_update_minutes;
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now().minusDays(numberOfDaysBack),  LocalTime.of(0,0,0,0));
         ZonedDateTime creation_time = ZonedDateTime.of(startTime, ZoneId.of("Europe/Paris"));
         int numberOfStatusesGanerated = 0;
         List<RecordEntity> result = new ArrayList<>();
@@ -72,7 +78,7 @@ public class MockDataGenerator {
 
     }
 
-    private static  RecordEntity generateRandomStatus(ServiceEntity serviceEntity, ZonedDateTime creation_time) {
+    public static  RecordEntity generateRandomStatus(ServiceEntity serviceEntity, ZonedDateTime creation_time) {
         RecordEntity recordEntity = new RecordEntity();
         recordEntity.setServiceId(serviceEntity.getId());
         recordEntity.setStatus(getRandomServiceStatus());

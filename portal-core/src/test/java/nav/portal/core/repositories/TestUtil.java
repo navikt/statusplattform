@@ -21,6 +21,9 @@ public class TestUtil {
         DbContextTable serviceStatusTable = dbContext.table("service_status");
         serviceStatusTable.whereExpression("id is NOT null").executeDelete();
 
+        DbContextTable serviceStatusDeltaTable = dbContext.table("service_status_delta");
+        serviceStatusDeltaTable.whereExpression("id is NOT null").executeDelete();
+
         DbContextTable areaServiceTable = dbContext.table("area_service");
         areaServiceTable.whereExpression("service_id is NOT null").executeDelete();
 

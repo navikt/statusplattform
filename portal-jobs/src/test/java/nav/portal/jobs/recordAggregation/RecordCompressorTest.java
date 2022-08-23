@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 class RecordCompressorTest {
@@ -41,6 +43,7 @@ class RecordCompressorTest {
     @Test
     void basic_SetUpTest_forAll() {
         //ARRANGE
+        //Denne testen generer records for alle tjenestene tilbake i tid, og ser at history objekter opprettes for alle etter komprimering.
         List<ServiceEntity> myServices = SampleData.getNonEmptyListOfServiceEntity(10);
         myServices.forEach(s -> s.setId(serviceRepository.save(s)));
         int numberOfDays = 10;
@@ -60,18 +63,19 @@ class RecordCompressorTest {
                 .forEach(s ->
                         compressedRecordsMap
                                 //NB! dag 1 rekorder ikke er en del av kompression
-                                .put(s.getId(), recordRepository.getServiceHistoryForNumberOfDays(5,s.getId())));
+                                .put(s.getId(), recordRepository.getServiceHistoryForNumberOfDays(numberOfDays,s.getId())));
 
-
-        List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(7);
 
         compressedRecordsMap.values().forEach(historyEntry -> {
                     Assertions.assertThat(historyEntry).isNotEmpty();
 
-                    Assertions.assertThat(historyEntry.size()).isEqualTo(4); //NB! dag 1 er eskludert fra kompression
+                    Assertions.assertThat(historyEntry.size()).isEqualTo(10); //NB! dag 1 er eskludert fra kompression
                 }
         );
-        Assertions.assertThat(outdatedRecords).isEmpty();
+
+        //Komprimeringen skal resultere i sletting av alle records eldre enn i dag:
+        Map<UUID, Map<LocalDate,List<RecordEntity>>>  recordsAfterCompression = recordRepository.getAllRecordsOrderedByServiceIdAndDate();
+        Assertions.assertThat(recordsAfterCompression).isEmpty();
 
 
     }
@@ -100,7 +104,7 @@ class RecordCompressorTest {
                 recordRepository.getServiceHistoryForNumberOfDays(numberOfDays, myService.getId());
         List<RecordEntity> outdatedRecords = recordRepository.getRecordsOlderThan(7);
         Assertions.assertThat(compressedRecords).isNotEmpty();
-        Assertions.assertThat(compressedRecords.size()).isEqualTo(9);//NB! dag 1 er ikke en del av kompression
+        Assertions.assertThat(compressedRecords.size()).isEqualTo(numberOfDays);//NB! dag 1 er ikke en del av kompression
         Assertions.assertThat(outdatedRecords).isEmpty();
     }
 
@@ -134,9 +138,41 @@ class RecordCompressorTest {
         recordCompressor.run();
         doubleCompressedRecords = recordRepository.getServiceHistoryForNumberOfDays(numberOfDays, myService.getId());
         Assertions.assertThat(compressedRecords.size()).isEqualTo(doubleCompressedRecords.size());
+    }
 
+    @Test
+    void shouldNotCompressTodaysRecords() {
+        //Records that are created today should not be compressed
+        //ARRANGE
+        ServiceEntity myService = SampleData.getRandomizedServiceEntity();
+        myService.setId(serviceRepository.save(myService));
 
+        List<RecordEntity> generatedRecords = MockDataGenerator.generateRandomStatusesForServiceForOneDayXNumberOfDaysBackInTime(myService,0, 10);
+        MockDataGenerator.saveRecordsToTableForOneServiceOneDay(generatedRecords,dbContext);
 
+        //ACT
+        recordCompressor.run();
+        Optional<DailyStatusAggregationForServiceEntity> shouldBeEmpty = recordRepository.getServiceHistoryForServiceByDate(myService.getId(),LocalDate.now());
+
+        Assertions.assertThat(shouldBeEmpty).isEmpty();
+    }
+
+    @Test
+    void shouldCompressYesterdaysRecords() {
+        //Records that are created today should not be compressed
+        //ARRANGE
+        ServiceEntity myService = SampleData.getRandomizedServiceEntity();
+        myService.setId(serviceRepository.save(myService));
+
+        List<RecordEntity> generatedRecords = MockDataGenerator.generateRandomStatusesForServiceForOneDayXNumberOfDaysBackInTime(myService,1, 10);
+        MockDataGenerator.saveRecordsToTableForOneServiceOneDay(generatedRecords,dbContext);
+
+        //ACT
+        recordCompressor.run();
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        Optional<DailyStatusAggregationForServiceEntity> shouldBePresent = recordRepository.getServiceHistoryForServiceByDate(myService.getId(),yesterday);
+
+        Assertions.assertThat(shouldBePresent).isNotEmpty();
 
     }
 }
