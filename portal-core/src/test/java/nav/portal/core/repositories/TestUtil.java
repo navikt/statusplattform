@@ -12,7 +12,6 @@ public class TestUtil {
 
     public static void clearAllTableData(DbContext dbContext){
         DbContextTable serviceServiceTable = dbContext.table("service_service");
-       // serviceServiceTable.unordered().executeDelete();
         serviceServiceTable.whereExpression("service1_id is NOT null").executeDelete();
 
         DbContextTable daily_status_aggregation_service = dbContext.table("daily_status_aggregation_service");

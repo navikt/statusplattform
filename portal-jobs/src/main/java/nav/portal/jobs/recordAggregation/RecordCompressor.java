@@ -3,7 +3,6 @@ package nav.portal.jobs.recordAggregation;
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.RecordEntity;
 
-import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 
@@ -94,7 +93,7 @@ public class RecordCompressor extends Thread{
 
         for(RecordEntity record : records){
             if(!record.getStatus().equals(latestStatus)){
-                recordRepository.saveDiff(record);
+                recordRepository.saveStatusDiff(record);
                 latestStatus = record.getStatus();
             }
 

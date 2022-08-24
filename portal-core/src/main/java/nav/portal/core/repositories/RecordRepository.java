@@ -24,8 +24,8 @@ public class RecordRepository {
 
     public RecordRepository(DbContext dbContext) {
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
-        recordDiffTable = dbContext.table(new DatabaseTableWithTimestamps("service_status_delta"));
         aggregatedStatusTable = dbContext.table(new DatabaseTableWithTimestamps("daily_status_aggregation_service"));
+        recordDiffTable = dbContext.table(new DatabaseTableImpl("service_status_delta")); // Record diff bruker samme klokkeslett som er i service_status, derfor er denne ikke med timestamps
 
     }
 
@@ -42,15 +42,15 @@ public class RecordRepository {
     }
 
     //UUIDen som settes her skal IKKE generes, men settes fra uid fra orginal record.
-    public UUID saveDiff(RecordEntity entity) {
+    public UUID saveStatusDiff(RecordEntity entity) {
         DatabaseSaveResult<UUID> result = recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
                 .setField("description", entity.getDescription())
+                .setField("created_at", entity.getCreated_at())
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
                 .execute();
-
         return result.getId();
     }
     public Optional<RecordEntity> getLatestRecordDiff(UUID serviceId) {

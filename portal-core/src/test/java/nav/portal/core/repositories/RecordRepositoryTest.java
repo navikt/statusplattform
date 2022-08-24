@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 import java.util.UUID;
@@ -193,5 +195,30 @@ class RecordRepositoryTest {
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
         Assertions.assertThat(retrievedRecordsAfter).isEmpty();
     }
+
+
+    @Test
+    void serviceStatusDeltaShouldHaveSameTimeAsOriginalServiceStatus() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity record = SampleData.getRandomizedRecordEntity();
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(5);
+        record.setCreated_at(fiveDaysBack);
+        record.setServiceId(service.getId());
+        record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+
+        //Act
+        recordRepository.saveStatusDiff(record);
+        Optional<RecordEntity> serviceStatusDelta = recordRepository.getLatestRecordDiff(serviceId);
+        //Assert
+        Assertions.assertThat(serviceStatusDelta).isNotEmpty();
+        Assertions.assertThat(serviceStatusDelta.get().getCreated_at().truncatedTo(ChronoUnit.SECONDS)).isEqualTo(record.getCreated_at().truncatedTo(ChronoUnit.SECONDS)); //Trunkerer til sekunder, da millisekunder blir lagret forskjellig i 4 desimal.
+    }
+
+
+
 
 }
