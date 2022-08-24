@@ -1,14 +1,18 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.MaintenanceEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import nav.portal.core.util.MockDataGenerator;
 import nav.portal.jobs.recordAggregation.RecordCompressor;
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.nav.portal.rest.api.PortalRestApi;
 import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.MaintenanceDto;
 
 import no.portal.web.generated.api.ServiceHistoryDto;
+import org.actioncontroller.PathParam;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -19,8 +23,10 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import nav.portal.core.enums.ServiceType;
 
 
 class ServiceControllerTest {
@@ -93,6 +99,47 @@ class ServiceControllerTest {
         return dto;
     }*/
 
+    @Test
+    void getComponents(){
+        //Arrange
+        int NumberOfComponents = 4;
+        List<ServiceEntity> components = SampleData.getNonEmptyListOfServiceEntity(NumberOfComponents);
+        //SetType til Komponenter
+        components.forEach(s ->{
+            s.setType(ServiceType.KOMPONENT);
+            s.setId(serviceRepository.save(s));
+        });
+
+        //Lager tilfeldig status for hver component
+        Map<UUID, RecordEntity> componentsWithStatus = new HashMap<>();
+        components.forEach(s -> componentsWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
+
+        //Lagrer statusen på tjenesten til DB
+        componentsWithStatus.values().forEach(recordRepository::save);
+
+        //En av Komponenter er avhengig av resten
+        ServiceEntity componentWithDependencies = components.get(0);
+        List<ServiceEntity> dependencies = components.subList(1,components.size());
+        UUID expectedUUIDOfComponentWithDependecies = componentWithDependencies.getId();
+
+        serviceRepository.addDependencyToService(componentWithDependencies, dependencies);
+
+        //Act
+        List<ServiceDto> resultingDtos = serviceController.getComponents();
+
+        //Assert
+        Assertions.assertThat(resultingDtos.size()).isEqualTo(NumberOfComponents);
+
+        //Finner alle Komponenter med avhengigheter fra resultatet
+        List<ServiceDto> retrievedComponentsWithDependencies = resultingDtos
+                .stream()
+                .filter(dto -> dto.getComponentDependencies().size() +dto.getServiceDependencies().size() > 0)
+                .collect(Collectors.toList());
+        //Forventer at det bare er en tjeneste med avhengighet
+        Assertions.assertThat(retrievedComponentsWithDependencies.size()).isEqualTo(1);
+        //Forventer at den har samme UUID som entiteten vi valgte skulle ha avhengigheter
+        Assertions.assertThat(retrievedComponentsWithDependencies.get(0).getId()).isEqualTo(expectedUUIDOfComponentWithDependecies);
+    }
 
     @Test
     void getService() {
@@ -193,17 +240,44 @@ class ServiceControllerTest {
         Assertions.assertThat(serviceRepository.doesEntryExist(UUIDServiceWithDependecies)).isTrue();
         Assertions.assertThat(serviceRepository.retrieve(UUIDServiceWithDependecies)).isNotEmpty();
         Assertions.assertThat(serviceRepository.retrieve(UUIDServiceWithDependecies).orElse(null).getDeleted());
-        //Assertions.assertThat(serviceRepository.retrieve(UUIDServiceWithDependecies).get().getDeleted()).isTrue();
-        //TODO: ORLENE/BJØRG:
-        // Lag 4 forskjellige tester her:
-        //                                - En som har avhengighet til annen tjeneste/(er)
-        //                                - En som har avhengighet til komponent/(er)
-        //                                - En som som ligger i et område
-        //                                - En som ikke har noen avhengigheter eller områder
-        //  Videre: prøv å identifisere lignende tilfeller
-        //  Dersom vi har tester av disse typene blir det mye lettere å feilsøke når noe ikke virker
 
     }
+
+
+    @Test
+    void deleteComponent() {
+        //Arrange
+        int NumberOfComponents = 4;
+        List<ServiceEntity> components = SampleData.getNonEmptyListOfServiceEntity(NumberOfComponents);
+        //SetType til Komponenter
+        components.forEach(s ->{
+            s.setType(ServiceType.KOMPONENT);
+            s.setId(serviceRepository.save(s));
+        });
+
+        //Lager tilfeldig status for hver component
+        Map<UUID, RecordEntity> componentsWithStatus = new HashMap<>();
+        components.forEach(s -> componentsWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
+
+        //Lagrer statusen på tjenesten til DB
+        componentsWithStatus.values().forEach(recordRepository::save);
+
+        //En av Komponenter er avhengig av resten
+        ServiceEntity componentWithDependencies = components.get(0);
+        List<ServiceEntity> dependencies = components.subList(1,components.size());
+        UUID UUIDComponentWithDependecies = componentWithDependencies.getId();
+
+        serviceRepository.addDependencyToService(componentWithDependencies, dependencies);
+        Boolean exists = serviceRepository.doesEntryExist(UUIDComponentWithDependecies);
+        //Act
+        serviceController.deleteService(UUIDComponentWithDependecies);
+        //Assert
+        Assertions.assertThat(exists).isTrue();
+        Assertions.assertThat(serviceRepository.doesEntryExist(UUIDComponentWithDependecies)).isTrue();
+        Assertions.assertThat(serviceRepository.retrieve(UUIDComponentWithDependecies)).isNotEmpty();
+        Assertions.assertThat(Objects.requireNonNull(serviceRepository.retrieve(UUIDComponentWithDependecies).orElse(null)).getDeleted());
+    }
+
 
     @Test
     //TODO SE på denne
@@ -253,5 +327,45 @@ class ServiceControllerTest {
         monthMapBetweenLanguages.put(Month.DECEMBER, "Desember");
 
         return monthMapBetweenLanguages;
+    }
+
+    @Test
+    void addDependencyToService() {
+        //Arrange
+        ServiceEntity service1 = SampleData.getRandomizedServiceEntity();
+        ServiceEntity service2 = SampleData.getRandomizedServiceEntityWithNameNotInList(List.of(service1));
+        UUID uuid1 = serviceRepository.save(service1);
+        UUID uuid2 = serviceRepository.save(service2);
+        service1.setId(uuid1);
+        service2.setId(uuid2);
+        //Act
+        serviceController.addDependencyToService(uuid1, uuid2);
+        Map.Entry<ServiceEntity, List<ServiceEntity>> retrievedDependency =
+                serviceRepository.retrieveOneWithDependencies(uuid1);
+        //Assert
+        Assertions.assertThat(retrievedDependency.getValue()).containsExactly(service2);
+    }
+
+    @Test
+    void addMaintenance() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        MaintenanceDto maintenanceDto = SampleDataDto.getRandomizedMaintenanceDto(serviceId);
+        //Act
+        serviceController.addMaintenance(maintenanceDto);
+        //Assert
+        List<MaintenanceDto> retrievedMaintenance = serviceController.addMaintenance(serviceId);
+        retrievedMaintenance.get(0);
+        Assertions.assertThat(retrievedMaintenance.get(0)).isNotNull();
+        Assertions.assertThat(retrievedMaintenance.get(0).getServiceId().equals(serviceId));
+    }
+
+    @Test
+    void getAreasContainingService() {
+        //Arrange
+        //Act
+        //Assert
     }
 }

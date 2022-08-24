@@ -44,6 +44,9 @@ public class TestUtil {
         DbContextTable ops_message_service = dbContext.table("ops_message_service");
         ops_message_service.whereExpression("ops_message_id is NOT null").executeDelete();
 
+        DbContextTable maintenanceTable = dbContext.table("service_maintenance");
+        maintenanceTable.whereExpression("id is NOT null").executeDelete();
+
         DbContextTable serviceTable = dbContext.table("service");
         serviceTable.whereExpression("id is NOT null").executeDelete();
 

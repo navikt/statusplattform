@@ -176,4 +176,29 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedAllMessagesOnServices).containsValue(retrievedMessagesOnServices.getValue());
     }
 
+    @Test
+    void retrieveAllForServices(){
+        //Arrange
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(1);
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        List<OpsMessageEntity>opsMessageEntities = SampleData.getNonEmptyListOfOpsMessageEntity(1);
+
+        for (OpsMessageEntity opsMessageEntity : opsMessageEntities) {
+            opsMessageEntity.setId(opsRepository.save(opsMessageEntity, serviceIds));
+            opsRepository.setServicesOnOpsMessage(opsMessageEntity.getId(), serviceIds);
+        }
+
+        //Act
+        List<OpsMessageEntity>retrievedOpsMessages = opsRepository.retrieveAllForServices(serviceIds);
+        //Assert
+        Assertions.assertThat(retrievedOpsMessages.size()).isEqualTo(1);
+        Assertions.assertThat(retrievedOpsMessages).containsAll(opsMessageEntities);
+    }
+
+
+
 }
