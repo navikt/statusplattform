@@ -40,23 +40,6 @@ public class OpsControllerHelper {
         return result;
     }
 
-    public List<OPSmessageDto> getOpsMessagesForDashboard(DashboardDto dashboardDto){
-        ArrayList<UUID> servicesOnDashboard = new ArrayList<>();
-
-        dashboardDto.getAreas().forEach(area ->
-            area.getServices().stream().map(ServiceDto::getId).forEach(serviceId -> {
-                    if(!servicesOnDashboard.contains(serviceId)){
-                        servicesOnDashboard.add(serviceId);
-                    }
-            }
-            )
-        );
-        return  opsRepository.retrieveAllForServices(servicesOnDashboard)
-                .stream().map(EntityDtoMappers::toOpsMessageDtoShallow)
-                .collect(Collectors.toList());
-
-    }
-
 
     public OPSmessageDto updateOpsMessage(OPSmessageDto opsMessageDto){
         opsRepository.setServicesOnOpsMessage(opsMessageDto.getId(), opsMessageDto.getAffectedServices().stream()
@@ -71,8 +54,29 @@ public class OpsControllerHelper {
     public void deleteOps(UUID id) {
         opsRepository.deleteOps(id);
     }
+    public List<OPSmessageDto> getOpsMessagesForDashboard(DashboardDto dashboardDto){
+        ArrayList<UUID> servicesOnDashboard = new ArrayList<>();
 
-
+        dashboardDto.getAreas().forEach(area ->
+                area.getServices().stream().map(ServiceDto::getId).forEach(serviceId -> {
+                            if(!servicesOnDashboard.contains(serviceId)){
+                                servicesOnDashboard.add(serviceId);
+                            }
+                        }
+                )
+        );
+        Map<OpsMessageEntity, List<ServiceEntity>> allActive = opsRepository.retrieveAllActive();
+        List<OPSmessageDto> result = new ArrayList<>();
+        allActive.forEach((k,v) ->{
+            if(allActive.get(k).isEmpty()){
+                result.add(EntityDtoMappers.toOpsMessageDtoShallow(k));
+            }
+        } );
+        result.addAll(opsRepository.retrieveAllForServices(servicesOnDashboard)
+                .stream().map(EntityDtoMappers::toOpsMessageDtoShallow)
+                .collect(Collectors.toList()));
+        return  result;
+    }
     public List<OPSmessageDto> getAllForDashboard(UUID dashboard_id) {
         List<OpsMessageEntity> opsMessageEntities = opsRepository.getAllForDashboard(dashboard_id);
         return opsMessageEntities.stream()

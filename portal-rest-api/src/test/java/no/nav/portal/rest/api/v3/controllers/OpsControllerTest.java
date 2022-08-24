@@ -93,7 +93,8 @@ class OpsControllerTest {
         //------------------ Act ------------------------------------
 
         //Henter først alle opsmeldinger på dashboardet. Nå skal ingen meldinger ligge på dashboardet.
-        List<OPSmessageDto> shouldBeEmpty = opsController.getAllForDashboard(dashbaordId);
+        //EDIT: Endret funksjonalitet: Opsmeldinger som ikke er knyttet til noe dashboard, skal komme opp på alle,
+        List<OPSmessageDto> shouldAlsoContainOne = opsController.getAllForDashboard(dashbaordId);
         //Kobler opsmeldingen til tjenesten
         opsRepository.setServicesOnOpsMessage(opsMessageEntity.getId(), List.of(serviceEntity.getId()));
         //Nå skal opsmeldingen være koblet mot dashboardet via tjenesten:
@@ -102,7 +103,7 @@ class OpsControllerTest {
 
 
         //------------------ Assert ------------------------------------
-        Assertions.assertThat(shouldBeEmpty).isEmpty();
+        Assertions.assertThat(shouldAlsoContainOne.size()).isEqualTo(1);
         Assertions.assertThat(shouldContainOne.size()).isEqualTo(1);
         Assertions.assertThat(shouldContainOne.get(0).getId()).isEqualTo(opSmessageDto.getId());
 

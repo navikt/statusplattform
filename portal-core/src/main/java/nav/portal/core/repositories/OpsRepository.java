@@ -111,7 +111,17 @@ public class OpsRepository {
                 });
             });
         });
-        return  retrieveAllForServices(serviceIds);
+        List<OpsMessageEntity> result = retrieveAllForServices(serviceIds);
+
+        Map<OpsMessageEntity,List<ServiceEntity>> allActive = retrieveAllActive();
+
+        allActive.forEach((k,v) ->{
+            if(allActive.get(k).isEmpty()){
+                result.add(k);
+            }
+        } );
+
+        return  result;
 
     }
 
@@ -156,6 +166,31 @@ public class OpsRepository {
                 });
         return result;
     }
+
+    public Map<OpsMessageEntity, List<ServiceEntity>> retrieveAllActive() {
+        DbContextTableAlias ops = opsMessageTable.alias("ops");
+        DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
+        DbContextTableAlias service = serviceTable.alias("service");
+
+        Map<OpsMessageEntity, List<ServiceEntity>> result = new HashMap<>();
+        ops
+                .where("deleted",Boolean.FALSE)
+                .where("is_active", Boolean.TRUE)
+                .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
+                .leftJoin(o2s.column("service_id"), service.column("id"))
+                .list(row -> {
+                    List<ServiceEntity> serviceList = result
+                            .computeIfAbsent(toOps(row.table(ops)), ignored -> new ArrayList<>());
+
+                    DatabaseRow serivceRow = row.table(service);
+                    Optional.ofNullable(row.getUUID("service_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
+                    return null;
+                });
+        return result;
+    }
+
+
 
     static OpsMessageEntity toOps(DatabaseRow row){
         try {
