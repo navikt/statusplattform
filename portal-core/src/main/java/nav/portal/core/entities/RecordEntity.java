@@ -16,9 +16,9 @@ public class RecordEntity {
     private String logglink;
     private ZonedDateTime created_at;
     private Integer responsetime;
+    private Integer counter;
 
     public RecordEntity() {
-
     }
 
     public UUID getId() {
@@ -69,6 +69,16 @@ public class RecordEntity {
     public ZonedDateTime getCreated_at() {
         return created_at;
     }
+
+    public Integer getCounter() {
+        return counter;
+    }
+
+    public RecordEntity setCounter(Integer counter) {
+        this.counter = counter;
+        return this;
+    }
+
 
     @Override
     public boolean equals(Object o) {

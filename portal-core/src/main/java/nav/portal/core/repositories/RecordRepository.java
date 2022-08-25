@@ -25,7 +25,7 @@ public class RecordRepository {
     public RecordRepository(DbContext dbContext) {
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
         aggregatedStatusTable = dbContext.table(new DatabaseTableWithTimestamps("daily_status_aggregation_service"));
-        recordDiffTable = dbContext.table(new DatabaseTableImpl("service_status_delta")); // Record diff bruker samme klokkeslett som er i service_status, derfor er denne ikke med timestamps
+        recordDiffTable = dbContext.table(new DatabaseTableWithTimestamps("service_status_delta"));
 
     }
 
@@ -50,8 +50,16 @@ public class RecordRepository {
                 .setField("created_at", entity.getCreated_at())
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
+                .setField("counter", 1) // Når denne metoden brukes, skal det være første gang diff lagres, og counter skal være 1
                 .execute();
         return result.getId();
+    }
+
+    public void increaseCountOnStatusDiff(RecordEntity entity) {
+        recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("counter", entity.getCounter() + 1)
+                .execute();
+
     }
     public Optional<RecordEntity> getLatestRecordDiff(UUID serviceId) {
         return recordDiffTable.where("service_id", serviceId)
@@ -165,20 +173,36 @@ public class RecordRepository {
 
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
+        Integer counter;
+        try{
+            counter = row.getInt("counter");
+
+        }
+        catch (IllegalArgumentException e){
+            counter = null;
+        }
         return new RecordEntity()
-                .setId(row.getUUID("id"))
-                .setServiceId(row.getUUID("service_id"))
-                .setDescription(row.getString("description"))
-                .setLogglink(row.getString("logglink"))
-                .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
-                .setCreated_at(row.getZonedDateTime("created_at"))
-                .setResponsetime(row.getInt("response_time"));
+                    .setId(row.getUUID("id"))
+                    .setServiceId(row.getUUID("service_id"))
+                    .setDescription(row.getString("description"))
+                    .setCounter(counter)
+                    .setLogglink(row.getString("logglink"))
+                    .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
+                    .setCreated_at(row.getZonedDateTime("created_at"))
+                    .setResponsetime(row.getInt("response_time"));
+
+
     }
 
     public void deleteRecords(List<RecordEntity> records) {
         recordTable.whereIn("id", records.stream().map(RecordEntity::getId).collect(Collectors.toList()))
                 .executeDelete();
 
+    }
+
+    public void deleteRecordsOlderThen48hours() {
+        recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusHours(48))
+                .executeDelete();
     }
 
 
