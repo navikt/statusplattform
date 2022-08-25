@@ -20,8 +20,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class PollingEngine extends Thread {
@@ -59,18 +59,24 @@ public class PollingEngine extends Thread {
     }
 
     private void startPoll() {
-        logger.info("Starting poll ----------------");
+
         try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
                 getPollingServicesAndPoll();
                 transaction.setComplete();
-                logger.info("Polled successfully poll ----------------");
+                logger.info("Polled successfully  ---------------- ");
             }
         }
     }
     private void getPollingServicesAndPoll(){
+        logger.info("Starting poll ----------------");
+        LocalDateTime startTime = LocalDateTime.now();
         List<ServiceEntity> pollingServices = serviceRepository.retrieveServicesWithPolling();
         pollingServices.forEach(this::poll);
+        LocalDateTime endTime = LocalDateTime.now();
+        logger.info("Polled successfully  ---------------- ");
+        logger.info("Polled " + pollingServices.size() + " services ");
+        logger.info("In "  + calcDiffBetween(endTime,startTime) +  " milliseconds");
     }
 
     private void poll(ServiceEntity serviceEntity){
@@ -78,7 +84,7 @@ public class PollingEngine extends Thread {
             LocalDateTime before = LocalDateTime.now();
             PolledServiceStatus polledServiceStatus = getPolledServiceStatus(serviceEntity);
             LocalDateTime after = LocalDateTime.now();
-            Integer responseTime = calcResponseTime(before,after);
+            Integer responseTime = calcDiffBetween(before,after);
             updateRecordForService(polledServiceStatus,serviceEntity, responseTime);
 
         }
@@ -102,7 +108,7 @@ public class PollingEngine extends Thread {
         return polledServiceStatus;
     }
 
-    private Integer calcResponseTime(LocalDateTime before, LocalDateTime after) {
+    private Integer calcDiffBetween(LocalDateTime before, LocalDateTime after) {
         Duration duration = Duration.between(after, before);
         return duration.toMillisPart();
     }
