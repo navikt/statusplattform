@@ -64,7 +64,6 @@ public class PollingEngine extends Thread {
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
                 getPollingServicesAndPoll();
                 transaction.setComplete();
-                logger.info("Polled successfully  ---------------- ");
             }
         }
     }
@@ -122,7 +121,14 @@ public class PollingEngine extends Thread {
 
         //Dersom ny status er forskjellig fra gammel, legges det til en status_diff
         if(latestDiffRecord.isEmpty() || !latestDiffRecord.get().getStatus().equals(newRecord.getStatus())){
+            newRecord.setActive(true);
             recordRepository.saveStatusDiff(newRecord);
+            //Setter den gamle til inaktiv
+            if(latestDiffRecord.isPresent()){
+                RecordEntity oldStatus = latestDiffRecord.get();
+                oldStatus.setActive(false);
+                recordRepository.saveStatusDiff(oldStatus);
+            }
         }
         else{
             //Hvis ikke økes teller på status

@@ -17,10 +17,21 @@ public class RecordEntity {
     private ZonedDateTime created_at;
     private Integer responsetime;
     private Integer counter;
+    private Boolean active;
+
+
 
     public RecordEntity() {
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public RecordEntity setActive(Boolean active) {
+        this.active = active;
+        return this;
+    }
     public UUID getId() {
         return id;
     }

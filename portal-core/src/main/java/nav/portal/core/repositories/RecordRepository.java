@@ -47,6 +47,7 @@ public class RecordRepository {
                 .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
                 .setField("description", entity.getDescription())
+                .setField("active", entity.getActive())
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
                 .setField("counter", 1) // Når denne metoden brukes, skal det være første gang diff lagres, og counter skal være 1
@@ -173,18 +174,22 @@ public class RecordRepository {
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
         Integer counter;
+        Boolean active;
         try{
             counter = row.getInt("counter");
+            active = row.getBoolean("active");
 
         }
         catch (IllegalArgumentException e){
             counter = null;
+            active = false;
         }
         return new RecordEntity()
                     .setId(row.getUUID("id"))
                     .setServiceId(row.getUUID("service_id"))
                     .setDescription(row.getString("description"))
                     .setCounter(counter)
+                    .setActive(active)
                     .setLogglink(row.getString("logglink"))
                     .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
                     .setCreated_at(row.getZonedDateTime("created_at"))
