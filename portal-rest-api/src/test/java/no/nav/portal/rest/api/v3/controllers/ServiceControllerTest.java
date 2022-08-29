@@ -1,18 +1,12 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.MaintenanceEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
-import nav.portal.core.util.MockDataGenerator;
-import nav.portal.jobs.recordAggregation.RecordCompressor;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.nav.portal.rest.api.PortalRestApi;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.MaintenanceDto;
 
-import no.portal.web.generated.api.ServiceHistoryDto;
-import org.actioncontroller.PathParam;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -21,9 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.time.LocalDate;
 import java.time.Month;
-import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import nav.portal.core.enums.ServiceType;
@@ -39,12 +31,10 @@ class ServiceControllerTest {
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private final RecordRepository recordRepository = new RecordRepository(dbContext);
-    private final RecordCompressor recordCompressor = new RecordCompressor(dbContext);
 
     @BeforeEach
     void startConnection() {
         connection = dbContext.startConnection(dataSource);
-        recordCompressor.setDataSource(dataSource);
         TestUtil.clearAllTableData(dbContext);
     }
 
