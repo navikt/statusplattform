@@ -1,5 +1,7 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.AreaEntity;
+import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
@@ -8,6 +10,7 @@ import no.portal.web.generated.api.RecordDto;
 import no.portal.web.generated.api.ServiceDto;
 
 import no.portal.web.generated.api.StatusDto;
+import org.actioncontroller.PathParam;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -16,7 +19,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 class RecordControllerTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -100,4 +108,37 @@ class RecordControllerTest {
         //Assert
         Assertions.assertThat(servicesDtos).isNotEmpty();
     }
+
+    @Test
+    void getRecordHistory() {
+        //Arrange
+        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
+        serviceEntity.setId(serviceRepository.save(serviceEntity));
+        UUID serviceID = serviceEntity.getId();
+        List<RecordEntity> records = new ArrayList<>();
+        records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
+        records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
+        records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
+        records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
+        records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
+        int i = 2;
+        for(RecordEntity record : records){
+            record.setCreated_at(ZonedDateTime.now().minusDays(i).truncatedTo(ChronoUnit.SECONDS));
+            record.setId(RecordRepository.saveRecordBackInTime(record,dbContext));
+            i++;
+        }
+        //Act
+        List<RecordDto> retrievedRecordDtos = recordController.getRecordHistory(serviceID);
+        //Assert
+        List<RecordEntity> retrievedRecords = retrievedRecordDtos
+                .stream().map(EntityDtoMappers::toRecordEntity).collect(Collectors.toList());
+        //Assert
+        Assertions.assertThat(retrievedRecordDtos.size()).isEqualTo(records.size());
+        Assertions.assertThat(retrievedRecords).containsAll(records);
+    }
+
+    private RecordDto truncateCreatedAtToSeconds(RecordDto dto){
+        return  dto.timestamp(dto.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+    }
+
 }

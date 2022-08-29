@@ -1,9 +1,11 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.MaintenanceDto;
 
@@ -27,7 +29,7 @@ class ServiceControllerTest {
     private final DbContext dbContext = new DbContext();
 
     private DbContextConnection connection;
-
+    private final AreaRepository areaRepository = new AreaRepository(dbContext);
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private final RecordRepository recordRepository = new RecordRepository(dbContext);
@@ -229,8 +231,6 @@ class ServiceControllerTest {
         Assertions.assertThat(exists).isTrue();
         Assertions.assertThat(serviceRepository.doesEntryExist(UUIDServiceWithDependecies)).isTrue();
         Assertions.assertThat(serviceRepository.retrieve(UUIDServiceWithDependecies)).isNotEmpty();
-        Assertions.assertThat(serviceRepository.retrieve(UUIDServiceWithDependecies).orElse(null).getDeleted());
-
     }
 
 
@@ -265,7 +265,6 @@ class ServiceControllerTest {
         Assertions.assertThat(exists).isTrue();
         Assertions.assertThat(serviceRepository.doesEntryExist(UUIDComponentWithDependecies)).isTrue();
         Assertions.assertThat(serviceRepository.retrieve(UUIDComponentWithDependecies)).isNotEmpty();
-        Assertions.assertThat(Objects.requireNonNull(serviceRepository.retrieve(UUIDComponentWithDependecies).orElse(null)).getDeleted());
     }
 
 
@@ -297,8 +296,6 @@ class ServiceControllerTest {
 //      //          .isEqualTo(monthYesterday);
 //        Assertions.assertThat(result.getHistory().size()).isEqualTo(12);
 //    }
-
-
 
 //  HELPERS below
     private Map<Month, String> createMapBetweenEngAndNor() {
@@ -347,15 +344,27 @@ class ServiceControllerTest {
         serviceController.addMaintenance(maintenanceDto);
         //Assert
         List<MaintenanceDto> retrievedMaintenance = serviceController.addMaintenance(serviceId);
-        retrievedMaintenance.get(0);
         Assertions.assertThat(retrievedMaintenance.get(0)).isNotNull();
-        Assertions.assertThat(retrievedMaintenance.get(0).getServiceId().equals(serviceId));
+        Assertions.assertThat(retrievedMaintenance.get(0).getServiceId()).isEqualTo(serviceId);
     }
 
     @Test
     void getAreasContainingService() {
         //Arrange
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
+        areas.forEach(area -> area.setId(areaRepository.save(area)));
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        areas.forEach(area -> areaRepository.addServiceToArea(area.getId(), serviceId));
         //Act
+        List<AreaDto> retrievedAreasDtos = serviceController.getAreasContainingService(serviceId);
+        List<AreaEntity> retrievedAreas = new ArrayList<>();
+        retrievedAreasDtos.forEach(areaDto -> retrievedAreas.add(EntityDtoMappers.toAreaEntity(areaDto)));
         //Assert
+        Assertions.assertThat(retrievedAreasDtos.size()).isEqualTo(areas.size());
+        Assertions.assertThat(retrievedAreas).containsAll(areas);
     }
+
+
 }

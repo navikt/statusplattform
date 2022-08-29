@@ -1248,6 +1248,9 @@ components:
       title: Record
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
         timestamp:
           type: string
           format: date-time
@@ -1261,6 +1264,8 @@ components:
           type: string
         logLink:
           type: string
+        responseTime:
+          type: integer
     Maintenance:
       title: Maintenance
       type: object

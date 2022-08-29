@@ -2,11 +2,14 @@ package no.nav.portal.rest.api;
 
 import nav.portal.core.entities.*;
 import nav.portal.core.enums.OpsMessageSeverity;
+import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
 
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -230,13 +233,26 @@ public class EntityDtoMappers {
     }
     public static RecordDto toRecordDto(RecordEntity recordEntity){
         RecordDto dto = new RecordDto();
+        dto.setId(recordEntity.getId());
         dto.serviceId(recordEntity.getServiceId());
         dto.setStatus(StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation()));
         dto.setDescription(recordEntity.getDescription());
         dto.setLogLink(recordEntity.getLogglink());
         ZonedDateTime entityTime = recordEntity.getCreated_at();
+        dto.setResponseTime(recordEntity.getResponsetime());
         dto.setTimestamp(OffsetDateTime.of(entityTime.toLocalDateTime(),entityTime.getOffset()));
         return dto;
+    }
+
+    public static RecordEntity toRecordEntity(RecordDto recordDto) {
+        return new RecordEntity()
+                .setId(recordDto.getId())
+                .setServiceId(recordDto.getServiceId())
+                .setStatus(ServiceStatus.valueOf(recordDto.getStatus().getValue()))
+                .setDescription(recordDto.getDescription())
+                .setLogglink(recordDto.getLogLink())
+                .setResponsetime(recordDto.getResponseTime())
+               .setCreated_at(ZonedDateTime.of(recordDto.getTimestamp().toLocalDateTime(),ZonedDateTime.now().getZone()));
     }
 
     public static MaintenanceEntity toMaintenanceEntity(MaintenanceDto maintenanceDto) {

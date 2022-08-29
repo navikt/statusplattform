@@ -4,6 +4,7 @@ import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 
+import nav.portal.core.repositories.RecordRepository;
 import org.fluentjdbc.*;
 
 
@@ -30,7 +31,7 @@ public class MockDataGenerator {
                 allRecordsForOneService -> allRecordsForOneService.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> MockDataGenerator.saveRecordBackInTime(recordEntity, dbContext)
+                                        recordEntity -> RecordRepository.saveRecordBackInTime(recordEntity, dbContext)
                                 )
                 )
         );
@@ -40,14 +41,14 @@ public class MockDataGenerator {
         recordsToInsert.values().forEach(
                         allRecordsForOneServiceOneDay ->
                                 allRecordsForOneServiceOneDay.forEach(
-                                        recordEntity -> MockDataGenerator.saveRecordBackInTime(recordEntity, dbContext)
+                                        recordEntity -> RecordRepository.saveRecordBackInTime(recordEntity, dbContext)
                                 )
 
         );
     }
     public static void saveRecordsToTableForOneServiceOneDay(List<RecordEntity> recordsToInsert, DbContext dbContext) {
         recordsToInsert.forEach(
-                recordEntity -> MockDataGenerator.saveRecordBackInTime(recordEntity, dbContext)
+                recordEntity -> RecordRepository.saveRecordBackInTime(recordEntity, dbContext)
                     );
 
     }
@@ -101,17 +102,6 @@ public class MockDataGenerator {
 
 
 
-    public static UUID saveRecordBackInTime(RecordEntity entity, DbContext dbContext) {
-        DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
-        DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
-                .setField("service_id", entity.getServiceId())
-                .setField("created_at", entity.getCreated_at())
-                .setField("status", entity.getStatus())
-                .setField("description", "GENERATED MOCK")
-                .setField("logglink", entity.getLogglink())
-                .setField("response_time", entity.getResponsetime())
-                .execute();
-        return result.getId();
-    }
+
 
 }
