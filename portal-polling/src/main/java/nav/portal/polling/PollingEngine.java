@@ -20,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -122,13 +121,9 @@ public class PollingEngine extends Thread {
         //Dersom ny status er forskjellig fra gammel, legges det til en status_diff
         if(latestDiffRecord.isEmpty() || !latestDiffRecord.get().getStatus().equals(newRecord.getStatus())){
             newRecord.setActive(true);
-            recordRepository.saveStatusDiff(newRecord);
+            recordRepository.saveNewStatusDiff(newRecord);
             //Setter den gamle til inaktiv
-            if(latestDiffRecord.isPresent()){
-                RecordEntity oldStatus = latestDiffRecord.get();
-                oldStatus.setActive(false);
-                recordRepository.saveStatusDiff(oldStatus);
-            }
+            latestDiffRecord.ifPresent(recordRepository::saveOldStatusDiff);
         }
         else{
             //Hvis ikke økes teller på status

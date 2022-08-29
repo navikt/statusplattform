@@ -42,7 +42,7 @@ public class RecordRepository {
     }
 
     //UUIDen som settes her skal IKKE generes, men settes fra uid fra orginal record.
-    public UUID saveStatusDiff(RecordEntity entity) {
+    public UUID saveNewStatusDiff(RecordEntity entity) {
         DatabaseSaveResult<UUID> result = recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
@@ -51,6 +51,14 @@ public class RecordRepository {
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
                 .setField("counter", 1) // Når denne metoden brukes, skal det være første gang diff lagres, og counter skal være 1
+                .execute();
+        return result.getId();
+    }
+
+    public UUID saveOldStatusDiff(RecordEntity entity) {
+        DatabaseSaveResult<UUID> result = recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("active", false)
+                .setField("counter", entity.getCounter())
                 .execute();
         return result.getId();
     }
