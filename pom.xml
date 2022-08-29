@@ -14,7 +14,6 @@
         <module>portal-rest-api</module>
         <module>portal-server</module>
         <module>portal-polling</module>
-        <module>portal-jobs</module>
     </modules>
 
 
