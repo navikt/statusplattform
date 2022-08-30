@@ -7,6 +7,7 @@ import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.OpsControllerHelper;
 import no.portal.web.generated.api.OPSmessageDto;
+import org.actioncontroller.PathParam;
 import org.assertj.core.api.Assertions;
 import org.checkerframework.checker.units.qual.A;
 import org.fluentjdbc.DbContext;
@@ -145,5 +146,31 @@ class OpsControllerTest {
         Assertions.assertThat(opsRepository.isEntryDeleted(opsMessageId)).isEqualTo(true);
         
 
+    }
+
+    @Test
+    void getSpecificOpsMessage(){
+        UUID dashbaordId = dashboardRepository.save("A Dashboard");
+
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
+        UUID areaId = areaRepository.save(area);
+        dashboardRepository.settAreasOnDashboard(dashbaordId,areaId);
+
+        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(serviceEntity);
+        serviceEntity.setId(serviceId);
+        areaRepository.addServiceToArea(areaId,serviceId);
+
+        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        opsMessageEntity.setId(opsRepository.save(opsMessageEntity, new ArrayList<>()));
+        OPSmessageDto opSmessageDto = EntityDtoMappers.toOpsMessageDtoShallow(opsMessageEntity);
+        opSmessageDto.setAffectedServices(List.of(EntityDtoMappers.toServiceDtoShallow(serviceEntity)));
+        opsRepository.setServicesOnOpsMessage(opsMessageEntity.getId(), List.of(serviceEntity.getId()));
+        //Act
+        OPSmessageDto retrievedOPSMessageDto = opsController.getSpecificOpsMessage(opsMessageEntity.getId());
+        OpsMessageEntity retrievedOpsMessageEntity = EntityDtoMappers.toOpsMessageEntity(retrievedOPSMessageDto);
+        //Assert
+        Assertions.assertThat(retrievedOpsMessageEntity).isEqualTo(opsMessageEntity);
+        Assertions.assertThat(retrievedOPSMessageDto).isEqualTo(opSmessageDto);
     }
 }
