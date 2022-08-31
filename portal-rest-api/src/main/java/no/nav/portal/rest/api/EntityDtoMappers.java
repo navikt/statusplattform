@@ -70,6 +70,10 @@ public class EntityDtoMappers {
         return dto;
     }
 
+    public static List<OPSmessageDto> toOpsMessageDtoShallow(List<OpsMessageEntity> entities){
+        return entities.stream().map(EntityDtoMappers::toOpsMessageDtoShallow).collect(Collectors.toList());
+    }
+
     public static OPSmessageDto toOpsMessageDtoShallow(OpsMessageEntity entity) {
         OPSmessageDto dto = new OPSmessageDto();
         dto.setId(entity.getId());
@@ -83,8 +87,7 @@ public class EntityDtoMappers {
                 OPSmessageDto.SeverityEnum.fromValue(entity.getSeverity().getDbRepresentation())
                 :null);
         dto.setIsActive(entity.getIsActive());
-        dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());
-        return dto;
+        dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());return dto;
     }
 
     public static OPSmessageDto toOpsMessageDtoDeep(OpsMessageEntity entity, List<ServiceEntity> services) {
