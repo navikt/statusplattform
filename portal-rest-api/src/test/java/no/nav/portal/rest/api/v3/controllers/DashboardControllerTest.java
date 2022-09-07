@@ -104,49 +104,9 @@ class DashboardControllerTest {
         Assertions.assertThat(dashboardRepository.getAllDashboardUUIDsAndNames()).isEmpty();
     }
 
-/*
-    @Test
-    void addAreaToDashboard() {
-        //Arrange
-        String dashboardName = SampleData.getRandomizedDashboardName();
-        UUID dashboard_id = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
-        List<UUID> areas_ids = new ArrayList<>();
-
-
-        areas.forEach(area ->
-        {area.setId(areaRepository.save(area));
-            areas_ids.add(area.getId());
-        });
-
-
-        //Act
-        dashboardController.addAreaToDashboard(dashboard_id,areas_ids);
-        Map.Entry<DashboardEntity,List<AreaWithServices>> dashboardWithAreas = dashboardRepository.retrieveOne(dashboard_id);
-        //Assert
-        //Sjekker at id på dashboard er riktig
-        Assertions.assertThat(dashboardWithAreas.getKey().getId()).isEqualTo(dashboard_id);
-        //Sjekker at dashboard navnet er riktig
-        Assertions.assertThat(dashboardWithAreas.getKey().getName()).isEqualTo(dashboardName);
-        //Sjekke at områdene er blitt lagt til riktig
-        List<AreaEntity> retrievedAreas =  dashboardWithAreas.getValue()
-                .stream()
-                .map(AreaWithServices::getArea)
-                .collect(Collectors.toList());
-        Assertions.assertThat(retrievedAreas).isEqualTo(areas);
-       //Sjekker at ingen av områdene har tjenester knyttet til seg
-       List<List<ServiceEntity>> servicesOnAreas =  dashboardWithAreas.getValue()
-                .stream()
-                .map(AreaWithServices::getServices)
-                .collect(Collectors.toList());
-
-        servicesOnAreas.forEach(list -> Assertions.assertThat(list).isEmpty());
-    }
-
- */
 
     @Test
-    void updateNameOfDashboard() {
+    void updateDashboard() {
         //Arrange
         String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
