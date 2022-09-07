@@ -16,6 +16,7 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 
 import javax.sql.DataSource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 class AreaControllerTest {
 
@@ -26,6 +27,7 @@ class AreaControllerTest {
 
     private final AreaController areaController = new AreaController(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @BeforeEach
@@ -125,7 +127,7 @@ class AreaControllerTest {
         Assertions.assertThat(retrievedBeforeDelete.get(0)).isEqualTo(areaToBeDeleted);*/
     }
 
-    /*
+
     @Test
     void getAreas() {
         //Arrange
@@ -140,9 +142,9 @@ class AreaControllerTest {
         //Assert
         Assertions.assertThat(afterDto.size()).isEqualTo(3);
         Assertions.assertThat(afterDto.size()).isEqualTo(beforeDto.size());
-        Assertions.assertThat(afterDto.containsAll(beforeDto));
+        Assertions.assertThat(afterDto.containsAll(beforeDto)).isTrue();
     }
-    */
+
 
     @Test
     void addServiceToArea() {
