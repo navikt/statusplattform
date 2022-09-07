@@ -1,10 +1,12 @@
 package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.entities.*;
 import nav.portal.core.repositories.*;
+import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.DashboardDto;
 import no.portal.web.generated.api.DashboardNameIdDto;
 
 import no.portal.web.generated.api.DashboardUpdateDto;
+import no.portal.web.generated.api.IdContainerDto;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +27,7 @@ class DashboardControllerTest {
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
     private final DashboardController dashboardController = new DashboardController(dbContext);
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @BeforeEach
     void startConnection() {
@@ -56,25 +59,29 @@ class DashboardControllerTest {
         Assertions.assertThat(retrievedNamesFromStream).containsExactlyInAnyOrderElementsOf(dashboardNames);
     }
 
-    /*
+
     @Test
     void postDashboard() {
         String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
-        List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
-
-
-        dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
-        DashboardDto dashboardDto = dashboardController.getAreas(dashboardId);
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
+        UUID areaId = areaRepository.save(area);
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        areaRepository. addServiceToArea(areaId, serviceId);
+        dashboardRepository.settAreasOnDashboard(dashboardId,areaId);
+        Map.Entry<DashboardEntity, List<AreaWithServices>>dashboardWithAreas = dashboardRepository.retrieveOne(dashboardId);
+        DashboardDto dashboardDto = EntityDtoMappers.toDashboardDtoDeep(dashboardWithAreas);
         //Act
-        UUID afterId = dashboardController.postDashboard(dashboardDto);
+        IdContainerDto idContainerDto = dashboardController.postDashboard(dashboardDto);
         //Assert
-        Map.Entry<DashboardEntity, List<AreaWithServices>>posted = dashboardRepository.retrieveOne(afterId);
+        Map.Entry<DashboardEntity, List<AreaWithServices>>posted = dashboardRepository.retrieveOne(idContainerDto.getId());
         Assertions.assertThat(posted.getKey().getName()).isEqualTo(dashboardName);
-        Assertions.assertThat(posted.getValue().size()).isEqualTo(areaIds.size());
+        Assertions.assertThat(posted.getValue()).isNotEmpty();
+        Assertions.assertThat(posted.getValue().containsAll(dashboardWithAreas.getValue())).isTrue();
     }
-*/
+
     @Test
     void deleteDashboard() {
         //Arrange
