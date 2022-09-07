@@ -103,6 +103,7 @@ class DashboardControllerTest {
         Assertions.assertThat(shouldExist).isEqualTo(dashboardId);
         Assertions.assertThat(dashboardRepository.getAllDashboardUUIDsAndNames()).isEmpty();
     }
+
 /*
     @Test
     void addAreaToDashboard() {
@@ -175,7 +176,7 @@ class DashboardControllerTest {
     }
 
     @Test
-    void getAreas() {
+    void getDashboard() {
         //Arrange
         String dashboardName = SampleData.getRandomizedDashboardName();
         UUID dashboardId = dashboardRepository.save(dashboardName);
