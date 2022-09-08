@@ -100,31 +100,30 @@ class AreaControllerTest {
     @Test
     void deleteArea() {
         //Arrange
-        int NumberOfAreas = 1;
+        int NumberOfAreas = 2;
         List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(NumberOfAreas);
         /*for(AreaEntity area :areas){
             area.setId(areaRepository.save(area));
         }*/
 
         // Alternativ 2 med bruk av for-each loop og lambda
-        areas.forEach(area -> area.setId(areaRepository.save(area)));
-//
-//        // Alternativ 3 med bruk av stream og lambda
-//        List<UUID> areas_ids =  areas.stream()
-//                .map(areaRepository::save)
-//               .collect(Collectors.toList());
+        //areas.forEach(area -> area.setId(areaRepository.save(area)));
+
+        // Alternativ 3 med bruk av stream og lambda
+        List<UUID> areas_ids =  areas.stream()
+                .map(areaRepository::save)
+                .collect(Collectors.toList());
 
         AreaEntity areaToBeDeleted = areas.get(0);
         //Act
         List<AreaEntity> retrievedBeforeDelete = areaRepository.retriveAllShallow();
-        areaController.deleteArea(areaToBeDeleted.getId());
+        areaController.deleteArea(areas_ids.get(0));
         List<AreaEntity> retrievedAreasAfterDelete = areaRepository.retriveAllShallow();
-        retrievedBeforeDelete.removeAll(retrievedAreasAfterDelete);
-
         //Assert
-        /*Assertions.assertThat(areas.isEmpty());
-        Assertions.assertThat(retrievedBeforeDelete.size()).isEqualTo(1);
-        Assertions.assertThat(retrievedBeforeDelete.get(0)).isEqualTo(areaToBeDeleted);*/
+        Assertions.assertThat(areas.size()).isEqualTo(2);
+        Assertions.assertThat(retrievedBeforeDelete.size()).isEqualTo(2);
+        Assertions.assertThat(retrievedAreasAfterDelete.size()).isEqualTo(1);
+        Assertions.assertThat(retrievedAreasAfterDelete).doesNotContain(areaToBeDeleted);
     }
 
 
