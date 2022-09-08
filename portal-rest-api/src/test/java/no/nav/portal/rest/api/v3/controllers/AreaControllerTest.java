@@ -2,6 +2,9 @@ package no.nav.portal.rest.api.v3.controllers;
 
 
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.SubAreaEntity;
+import no.portal.web.generated.api.IdContainerDto;
+import no.portal.web.generated.api.SubAreaDto;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import nav.portal.core.entities.AreaEntity;
@@ -27,6 +30,7 @@ class AreaControllerTest {
 
     private final AreaController areaController = new AreaController(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
@@ -71,11 +75,11 @@ class AreaControllerTest {
         AreaEntity area = SampleData.getRandomizedAreaEntity();
         AreaDto areaDto = EntityDtoMappers.toAreaDtoShallow(area);
         //Act
-        //UUID areaId = areaController.newArea(areaDto);
-        //area.setId(areaId);
-        //AreaEntity retrievedEntity = areaRepository.retrieveOne(areaId).getKey();
+        IdContainerDto areaIdContainerDto = areaController.newArea(areaDto);
+        Map.Entry<AreaEntity, List<ServiceEntity>> retrievedNewArea = areaRepository.retrieveOne(areaIdContainerDto.getId());
         //Assert
-        //Assertions.assertThat(retrievedEntity).isEqualTo(area);
+        Assertions.assertThat(retrievedNewArea.getKey().getName()).isEqualTo(area.getName());
+        Assertions.assertThat(retrievedNewArea.getValue()).isEmpty();
     }
 
     @Test
@@ -179,4 +183,26 @@ class AreaControllerTest {
         Assertions.assertThat(before.getValue()).containsExactly(service);
         Assertions.assertThat(after.getValue()).isEmpty();
     }
+    @Test
+    void getAllSubAreas() {
+        //Arrange
+        SubAreaEntity subArea = SampleData.getRandomizedSubAreaEntity();
+        UUID subAreaId = subAreaRepository.save(subArea);
+        subArea.setId(subAreaId);
+
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(1);
+
+        services.forEach(s ->
+        {
+            s.setId(serviceRepository.save(s));
+            subAreaRepository.addServiceToSubArea(subAreaId, s.getId());
+        });
+
+        //Act
+        List<SubAreaDto> subAreasDtos = areaController.getAllSubAreas();
+        //Assert
+        Assertions.assertThat(subAreasDtos.get(0).getId()).isEqualTo(subAreaId);
+    }
+
+
 }
