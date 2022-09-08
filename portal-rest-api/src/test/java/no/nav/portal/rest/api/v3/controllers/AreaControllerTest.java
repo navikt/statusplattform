@@ -183,6 +183,7 @@ class AreaControllerTest {
         Assertions.assertThat(before.getValue()).containsExactly(service);
         Assertions.assertThat(after.getValue()).isEmpty();
     }
+
     @Test
     void getAllSubAreas() {
         //Arrange
@@ -204,5 +205,17 @@ class AreaControllerTest {
         Assertions.assertThat(subAreasDtos.get(0).getId()).isEqualTo(subAreaId);
     }
 
+    @Test
+    void newSubArea() {
+        //Arrange
+        SubAreaEntity subArea = SampleData.getRandomizedSubAreaEntity();
+        SubAreaDto subAreaDto = EntityDtoMappers.toSubAreaDtoShallow(subArea);
+        //Act
+        IdContainerDto subAreaIdContainerDto = areaController.newSubArea(subAreaDto);
+        Map.Entry<SubAreaEntity, List<ServiceEntity>> retrievedNewSubArea = subAreaRepository.retrieveOne(subAreaIdContainerDto.getId());
+        //Assert
+        Assertions.assertThat(retrievedNewSubArea.getKey().getName()).isEqualTo(subArea.getName());
+        Assertions.assertThat(retrievedNewSubArea.getValue()).isEmpty();
+    }
 
 }
