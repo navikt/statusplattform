@@ -174,6 +174,29 @@ class AreaRepositoryTest {
     }
 
     @Test
+    void addServiceToAreas() {
+        //Arrange
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
+        List<UUID> areaIds = new ArrayList<>();
+        areas.forEach(area -> {
+            area.setId(areaRepository.save(area));
+            areaIds.add(area.getId());
+        });
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        Map<AreaEntity, List<ServiceEntity>> retrievedAreasBefore = areaRepository.retrieveAll();
+        //Act
+        areaRepository.addServiceToAreas(areaIds, serviceId);
+        Map<AreaEntity, List<ServiceEntity>> retrievedAreasAfter = areaRepository.retrieveAll();
+        //Assert
+        Assertions.assertThat(retrievedAreasBefore.keySet()).containsAll(areas);
+        Assertions.assertThat(retrievedAreasAfter.keySet()).containsAll(areas);
+        Assertions.assertThat(retrievedAreasBefore.values()).doesNotContain(List.of(service));
+        Assertions.assertThat(retrievedAreasAfter.values()).contains(Collections.singletonList(service));
+    }
+
+    @Test
     void removeServiceFromArea() {
         //Arrange
         AreaEntity area = SampleData.getRandomizedAreaEntity();
