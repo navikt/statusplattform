@@ -79,6 +79,8 @@ class AreaControllerTest {
         Map.Entry<AreaEntity, List<ServiceEntity>> retrievedNewArea = areaRepository.retrieveOne(areaIdContainerDto.getId());
         //Assert
         Assertions.assertThat(retrievedNewArea.getKey().getName()).isEqualTo(area.getName());
+        Assertions.assertThat(retrievedNewArea.getKey().getDescription()).isEqualTo(area.getDescription());
+        Assertions.assertThat(retrievedNewArea.getKey().getIcon()).isEqualTo(area.getIcon());
         Assertions.assertThat(retrievedNewArea.getValue()).isEmpty();
     }
 
