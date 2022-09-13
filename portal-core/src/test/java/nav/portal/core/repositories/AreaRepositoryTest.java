@@ -2,6 +2,7 @@ package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.SubAreaEntity;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.assertj.core.api.Assertions;
@@ -32,6 +33,7 @@ class AreaRepositoryTest {
     }
 
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @Test
@@ -153,6 +155,22 @@ class AreaRepositoryTest {
        Map.Entry<AreaEntity,List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
        //Assert
        Assertions.assertThat(retrievedArea.getValue()).containsExactly(service);
+    }
+
+    @Test
+    void addSubAreaToArea() {
+        //Arrange
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
+        UUID areaId = areaRepository.save(area);
+
+        SubAreaEntity subArea = SampleData.getRandomizedSubAreaEntity();
+        UUID subAreaId = subAreaRepository.save(subArea);
+        subArea.setId(subAreaId);
+        //Act
+        areaRepository.addSubAreaToArea(areaId, subAreaId);
+        List<SubAreaEntity> retrievedArea = areaRepository.getSubAreasOnArea(areaId);
+        //Assert
+        Assertions.assertThat(retrievedArea.contains(subArea)).isTrue();
     }
 
     @Test
