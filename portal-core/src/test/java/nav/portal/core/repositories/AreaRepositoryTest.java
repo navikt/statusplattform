@@ -217,6 +217,38 @@ class AreaRepositoryTest {
     }
 
     @Test
+    void removeServiceFromAllAreas(){
+        //Arrange
+        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
+        areas.forEach(area -> {
+            area.setId(areaRepository.save(area));
+        });
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(1);
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        ServiceEntity service = services.get(0);
+        UUID serviceToBeDeleted = service.getId();
+
+        areas.forEach(area -> {
+            areaRepository.setServicesOnArea(area.getId(), serviceIds);
+        });
+        Map<AreaEntity, List<ServiceEntity>> retrievedAllAreasServicesBefore  = areaRepository.retrieveAll();
+        //Act
+        areaRepository.removeServiceFromAllAreas(serviceToBeDeleted);
+        Map<AreaEntity, List<ServiceEntity>> retrievedAllAreasServicesAfter  = areaRepository.retrieveAll();
+        //Assert
+        Assertions.assertThat(retrievedAllAreasServicesBefore.keySet()).containsAll(areas);
+        Assertions.assertThat(retrievedAllAreasServicesBefore.values()).contains(services);
+        Assertions.assertThat(retrievedAllAreasServicesBefore.values()).contains(Collections.singletonList(service));
+
+        Assertions.assertThat(retrievedAllAreasServicesAfter.keySet()).containsAll(areas);
+        Assertions.assertThat(retrievedAllAreasServicesAfter.values()).doesNotContain(List.of(service));
+     }
+
+    @Test
     void removeServiceFromArea() {
         //Arrange
         AreaEntity area = SampleData.getRandomizedAreaEntity();
@@ -278,4 +310,7 @@ class AreaRepositoryTest {
         Assertions.assertThat(retrievedAll).containsKey(area);
         Assertions.assertThat(retrievedAll.get(area)).containsExactlyInAnyOrderElementsOf(retrievedServices);
     }
+
+
+
 }
