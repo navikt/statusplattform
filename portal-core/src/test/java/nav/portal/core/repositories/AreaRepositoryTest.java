@@ -311,6 +311,24 @@ class AreaRepositoryTest {
         Assertions.assertThat(retrievedAll.get(area)).containsExactlyInAnyOrderElementsOf(retrievedServices);
     }
 
+     @Test
+    void getSubAreasOnArea() {
+        //Arrange
+        AreaEntity area = SampleData.getRandomizedAreaEntity();
+        UUID areaId = areaRepository.save(area);
+        List<SubAreaEntity> subAreas = SampleData.getRandomLengthListOfSubAreaEntity();
+        List<UUID> subAreaIds = new ArrayList<>();
+        subAreas.forEach(subArea -> {
+            subArea.setId(subAreaRepository.save(subArea));
+            subAreaIds.add(subArea.getId());
+        });
+        areaRepository.addSubAreaToArea(areaId, subAreaIds);
+        //Act
+        List<SubAreaEntity> retrievedSubAreas = areaRepository.getSubAreasOnArea(areaId);
+        //Assert
+        Assertions.assertThat(retrievedSubAreas.size()).isEqualTo(subAreas.size());
+        Assertions.assertThat(retrievedSubAreas.containsAll(subAreas)).isTrue();
+     }
 
 
 }
