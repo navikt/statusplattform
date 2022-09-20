@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class OpsRepositoryTest {
 
@@ -201,6 +201,75 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedOpsMessages).containsAll(opsMessageEntities);
     }
 
+    /*@Test
+    void retrieveAllActive() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
+        List<OpsMessageEntity> opsMessages = SampleData.getNonEmptyListOfOpsMessageEntity(2);
+        opsMessages.get(1).setIsActive(false);
+        List<UUID> serviceIds= new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+
+        });
+
+        opsMessages.forEach(opsMessage -> {
+            opsRepository.save(opsMessage, serviceIds);
+        });
+        List<OpsMessageEntity>opsMessageActive = new ArrayList<>();
+        opsMessageActive.add(opsMessages.get(0));
+        //Act
+        Map<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessagesAndServices
+                = opsRepository.retrieveAllActive();
+        //Assert
+        Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().isEmpty()).isFalse();
+        Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().size()).isEqualTo(1);
+        Assertions.assertThat(retrievedOpsMessagesAndServices.
+                containsKey(opsMessages.get(1))).isFalse();
+        Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()).doesNotContain(opsMessages.get(1));
+        //Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()).
+        //containsAll(opsMessageActive)).isTrue();
+        //Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()
+        //        contains(Collections.singleton(opsMessages.get(0)))).isTrue();
+        //Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().containsAll(opsMessageActive)).isTrue();
+    }*/
+
+
+    @Test
+    void updateOpsMessage() {
+        //Arrange
+        List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+        List<UUID> serviceIds = new ArrayList<>();
+        services.forEach(service -> {
+            service.setId(serviceRepository.save(service));
+            serviceIds.add(service.getId());
+        });
+        String newHeader = "Gone to pot";
+        OpsMessageEntity opsMessage  = SampleData.getRandomOpsMessageEntity();
+        opsMessage.setId(opsRepository.save(opsMessage , serviceIds));
+        UUID opsMessageBeforeUpdateId = opsMessage.getId();
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageBeforeUpdate
+                = opsRepository.retrieveOne(opsMessage.getId());
+        OpsMessageEntity opsMessageAfterUpdate = new OpsMessageEntity()
+                .setId(opsMessageBeforeUpdateId)
+                .setInternalHeader(newHeader)
+                .setInternalText(opsMessage.getInternalText())
+                .setStartTime(opsMessage.getStartTime())
+                .setEndTime(opsMessage.getStartTime())
+                .setSeverity(opsMessage.getSeverity())
+                .setOnlyShowForNavEmployees(opsMessage.getOnlyShowForNavEmployees())
+                .setIsActive(opsMessage.getIsActive());
+        //Act
+        opsRepository.updateOpsMessage(opsMessageAfterUpdate);
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageAfterUpdate
+                = opsRepository.retrieveOne(opsMessage.getId());
+        //Assert
+        Assertions.assertThat(retrievedOpsMessageAfterUpdate.getKey().getExternalHeader())
+                .isNotEqualToIgnoringCase(retrievedOpsMessageBeforeUpdate.getKey().getInternalHeader());
+        Assertions.assertThat(retrievedOpsMessageAfterUpdate.getKey().getInternalHeader()).isEqualTo(newHeader);
+
+    }
 
 
 }
