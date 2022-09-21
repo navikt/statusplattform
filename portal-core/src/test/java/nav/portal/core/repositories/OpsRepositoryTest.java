@@ -233,8 +233,9 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()).doesNotContain(opsMessages.get(1));
         Assertions.assertThat(retrievedFirstOpsMessage.get().getId().equals(opsMessages.get(0).getId())).isTrue();
         Assertions.assertThat(retrievedServiceValues.get().containsAll(retrievedMessagesOnServices.getValue())).isTrue();
+        Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(retrievedMessagesOnServices.getValue().size());
+        Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(3);
     }
-
 
     @Test
     void updateOpsMessage() {
@@ -268,10 +269,9 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedOpsMessageAfterUpdate.getKey().getExternalHeader())
                 .isNotEqualToIgnoringCase(retrievedOpsMessageBeforeUpdate.getKey().getInternalHeader());
         Assertions.assertThat(retrievedOpsMessageAfterUpdate.getKey().getInternalHeader()).isEqualTo(newHeader);
-
     }
 
-    /*@Test
+    @Test
     void isEntryDeleted() {
         //Arrange
         List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntityWithUid(1);
@@ -286,14 +286,16 @@ class OpsRepositoryTest {
         UUID opsMessageToDeleteId = opsMessageToDelete.getId();
         opsMessageExisting.setId(opsRepository.save(opsMessageExisting, serviceIds));
         UUID opsMessageExistingId = opsMessageExisting.getId();
+        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageBeforeDelete
+                = opsRepository.retrieveOne(opsMessageToDeleteId);
         //Act
         opsRepository.deleteOps(opsMessageToDeleteId);
         boolean isDeleted = opsRepository.isEntryDeleted(opsMessageToDeleteId);
         boolean isNotDeleted = opsRepository.isEntryDeleted(opsMessageExistingId);
         //Assert
-
-
-    }*/
-
-
+        Assertions.assertThat(retrievedOpsMessageBeforeDelete.getKey()).isEqualTo(opsMessageToDelete);
+        Assertions.assertThat(retrievedOpsMessageBeforeDelete.getValue()).containsAll(services);
+        Assertions.assertThat(isDeleted).isTrue();
+        Assertions.assertThat(isNotDeleted).isFalse();
+    }
 }
