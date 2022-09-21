@@ -1,9 +1,6 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.AreaWithServices;
-import nav.portal.core.entities.DashboardEntity;
-import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.*;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +19,7 @@ class DashboardRepositoryTest {
     private final DbContext dbContext = new DbContext();
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
+    private final SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private DbContextConnection connection;
 
@@ -47,8 +45,6 @@ class DashboardRepositoryTest {
         //Assert
         Assertions.assertThat(uuid).isNotNull();
     }
-
-
 
     @Test
     void settAreasOnDashboard() {
@@ -230,7 +226,6 @@ class DashboardRepositoryTest {
         servicesOnAreas.forEach(list -> Assertions.assertThat(list).isEmpty());*/
     }
 
-
     @Test
     void deleteAreasFromDashboard() {
         //Arrange
@@ -251,17 +246,4 @@ class DashboardRepositoryTest {
         Assertions.assertThat(result.getValue()).isEmpty();
     }
 
-
-    @Test
-    void deleteDashboard() {
-        //Arrange
-        String dashboardname = SampleData.getRandomizedDashboardName();
-        UUID uuid = dashboardRepository.save(dashboardname);
-        //Act
-        UUID shouldExist = dashboardRepository.uidFromName(dashboardname);
-        dashboardRepository.deleteDashboard(uuid);
-        //Assert
-        Assertions.assertThat(shouldExist).isEqualTo(uuid);
-        Assertions.assertThat(dashboardRepository.getAllDashboardUUIDsAndNames()).isEmpty();
-    }
 }
