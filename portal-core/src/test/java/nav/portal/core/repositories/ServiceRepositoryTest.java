@@ -180,6 +180,46 @@ class ServiceRepositoryTest {
    }
 
    @Test
+   void resetDependenciesOnService() {
+      //Arrange
+      ServiceEntity selectedService = SampleData.getRandomizedServiceEntity();
+      selectedService.setId(serviceRepository.save(selectedService));
+      UUID selectedServiceId = selectedService.getId();
+
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntityWithUid(2);
+      services.forEach(service -> service.setId(serviceRepository.save(service)));
+      UUID dependantServiceId = services.get(0).getId();
+      UUID ServiceChosenServiceIsDependentOnId = services.get(1).getId();
+      serviceRepository.addDependencyToService(ServiceChosenServiceIsDependentOnId, selectedServiceId);//Service chosenService is dependent on
+      serviceRepository.addDependencyToService(selectedServiceId, dependantServiceId);//Chosen service and its dependency
+
+      Map.Entry<ServiceEntity, List<ServiceEntity>> selectedServiceRetrievedDependenciesBefore =
+              serviceRepository.retrieveOneWithDependencies(selectedServiceId);
+
+      Map.Entry<ServiceEntity, List<ServiceEntity>> serviceChosenServiceIsDependentOnRetrievedDependenciesBefore =
+              serviceRepository.retrieveOneWithDependencies(ServiceChosenServiceIsDependentOnId);
+      //Act
+      serviceRepository.resetDependenciesOnService(selectedServiceId);
+      Map.Entry<ServiceEntity, List<ServiceEntity>> selectedServiceRetrievedDependenciesAfter =
+              serviceRepository.retrieveOneWithDependencies(selectedServiceId);
+
+      Map.Entry<ServiceEntity, List<ServiceEntity>> serviceChosenServiceIsDependentOnRetrievedDependenciesAfter =
+              serviceRepository.retrieveOneWithDependencies(ServiceChosenServiceIsDependentOnId);
+      //Assert
+      Assertions.assertThat(selectedServiceRetrievedDependenciesBefore.getKey().getId().equals(selectedServiceId)).isTrue();
+      Assertions.assertThat(selectedServiceRetrievedDependenciesBefore.getValue().isEmpty()).isFalse();
+      Assertions.assertThat(selectedServiceRetrievedDependenciesBefore.getValue().contains(services.get(0))).isTrue();
+      Assertions.assertThat(selectedServiceRetrievedDependenciesAfter.getKey().getId().equals(selectedServiceId)).isTrue();
+      Assertions.assertThat(selectedServiceRetrievedDependenciesAfter.getValue().isEmpty()).isTrue();
+
+      Assertions.assertThat(serviceChosenServiceIsDependentOnRetrievedDependenciesBefore.getKey().getId().equals(ServiceChosenServiceIsDependentOnId)).isTrue();
+      Assertions.assertThat(serviceChosenServiceIsDependentOnRetrievedDependenciesBefore.getValue().isEmpty()).isFalse();
+      Assertions.assertThat(serviceChosenServiceIsDependentOnRetrievedDependenciesBefore.getValue().contains(selectedService)).isTrue();
+      Assertions.assertThat(serviceChosenServiceIsDependentOnRetrievedDependenciesAfter.getKey().getId().equals(ServiceChosenServiceIsDependentOnId)).isTrue();
+      Assertions.assertThat(serviceChosenServiceIsDependentOnRetrievedDependenciesAfter.getValue().isEmpty()).isTrue();
+   }
+
+   @Test
    void removeAllDependenciesFromService() {
       //Arrange
       List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
