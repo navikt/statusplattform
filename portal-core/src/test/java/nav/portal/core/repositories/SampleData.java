@@ -270,11 +270,13 @@ public class SampleData {
     }
 
     public static MaintenanceEntity getRandomizedMaintenanceEntity() {
+        Random random = new Random();
+        int numberOfDays = random.nextInt(2);
         return new MaintenanceEntity()
                 .setCreated_at(ZonedDateTime.now())
                 .setDescription(getRandomFromArray(maintenanceDescriptions))
-                .setStart_time(ZonedDateTime.now().plusDays(2))
-                .setEnd_time(ZonedDateTime.now().plusDays(4));
+                .setStart_time(ZonedDateTime.now().plusDays(numberOfDays))
+                .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
     }
 }
 

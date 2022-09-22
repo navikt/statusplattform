@@ -228,13 +228,12 @@ class OpsRepositoryTest {
         //Assert
         Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().isEmpty()).isFalse();
         Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().size()).isEqualTo(1);
-        Assertions.assertThat(retrievedOpsMessagesAndServices.
-                containsKey(opsMessages.get(1))).isFalse();
+        Assertions.assertThat(retrievedOpsMessagesAndServices.containsKey(opsMessages.get(1))).isFalse();
         Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()).doesNotContain(opsMessages.get(1));
-        Assertions.assertThat(retrievedFirstOpsMessage.get().getId().equals(opsMessages.get(0).getId())).isTrue();
         Assertions.assertThat(retrievedServiceValues.get().containsAll(retrievedMessagesOnServices.getValue())).isTrue();
         Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(retrievedMessagesOnServices.getValue().size());
         Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(3);
+        Assertions.assertThat(retrievedFirstOpsMessage.get().getId()).isEqualTo(opsMessages.get(0).getId());
     }
 
     @Test

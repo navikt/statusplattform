@@ -14,10 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 import static org.assertj.core.api.Assertions.fail;
@@ -73,6 +70,34 @@ class ServiceRepositoryTest {
       //Assert
       Assertions.assertThat(retrievedMaintenance.size()).isEqualTo(1);
       Assertions.assertThat(retrievedMaintenance.get(0).getServiceId().equals(service.getId())).isTrue();
+   }
+
+   @Test
+   void getMaintenanceForService() {
+      //Arrange
+      ServiceEntity service = SampleData.getRandomizedServiceEntity();
+      UUID serviceId = serviceRepository.save(service);
+      service.setId(serviceId);
+
+      MaintenanceEntity maintenance1 = SampleData.getRandomizedMaintenanceEntity();
+      maintenance1.setServiceId(serviceId);
+      MaintenanceEntity maintenance2 = SampleData.getRandomizedMaintenanceEntity();
+      maintenance2.setServiceId(serviceId);
+
+      UUID maintenance1Id = serviceRepository.saveMaintenance(maintenance1);
+      maintenance1.setId(maintenance1Id);
+      UUID maintenance2Id = serviceRepository.saveMaintenance(maintenance2);
+      maintenance2.setId(maintenance2Id);
+      //Act
+      List<MaintenanceEntity> retrievedMaintenance = serviceRepository.getMaintenanceForService(serviceId);
+      //Assert
+      Assertions.assertThat(retrievedMaintenance.size()).isEqualTo(2);
+      Assertions.assertThat(retrievedMaintenance.get(0).getServiceId().equals(service.getId())).isTrue();
+      Assertions.assertThat(retrievedMaintenance.get(1).getServiceId().equals(service.getId())).isTrue();
+      Assertions.assertThat(retrievedMaintenance.get(0).getServiceId()).isEqualTo(maintenance1.getServiceId());
+      Assertions.assertThat(retrievedMaintenance.get(0).getId()).isEqualTo(maintenance1.getId());
+      Assertions.assertThat(retrievedMaintenance.get(1).getServiceId()).isEqualTo(maintenance2.getServiceId());
+      Assertions.assertThat(retrievedMaintenance.get(1).getId()).isEqualTo(maintenance2.getId());
    }
 
    @Test
