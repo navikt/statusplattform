@@ -1,6 +1,8 @@
 package nav.portal.core.repositories;
 
+import nav.portal.core.entities.MaintenanceEntity;
 import nav.portal.core.entities.OpeningHoursEntity;
+import nav.portal.core.entities.OpsMessageEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
@@ -54,6 +56,23 @@ class ServiceRepositoryTest {
       openingHours.setId(openingHours.getId());
       //Assert
       retrievedService.ifPresent(serviceEntity -> Assertions.assertThat(service.getId()).isEqualTo(openingHours.getService_id()));
+   }
+
+   @Test
+   void saveMaintenance() {
+      //Arrange
+      ServiceEntity service = SampleData.getRandomizedServiceEntity();
+      UUID serviceId = serviceRepository.save(service);
+      service.setId(serviceId);
+      MaintenanceEntity maintenance = SampleData.getRandomizedMaintenanceEntity();
+      maintenance.setServiceId(serviceId);
+      //Act
+      UUID maintenanceId = serviceRepository.saveMaintenance(maintenance);
+      maintenance.setId(maintenanceId);
+      List<MaintenanceEntity> retrievedMaintenance = serviceRepository.getMaintenanceForService(serviceId);
+      //Assert
+      Assertions.assertThat(retrievedMaintenance.size()).isEqualTo(1);
+      Assertions.assertThat(retrievedMaintenance.get(0).getServiceId().equals(service.getId())).isTrue();
    }
 
    @Test

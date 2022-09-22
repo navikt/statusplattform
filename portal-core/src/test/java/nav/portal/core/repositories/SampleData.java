@@ -34,6 +34,7 @@ public class SampleData {
     static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
     static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
     static final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK,OpsMessageSeverity.ISSUE,OpsMessageSeverity.NEUTRAL));
+    static final ArrayList<String> maintenanceDescriptions = new ArrayList<>(Arrays.asList("Fixing the trøbbel i tårnet", "Supporting those som går gæli", "Mending the fuglekassa", "Taming memes", "Upkeep av nordavind fra alle kanter"));
 
     public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -266,6 +267,14 @@ public class SampleData {
                 .setDay_of_the_week(new Random().nextInt(7))
                 .setOpening_time((time1.compareTo(time2) < 0) ? time1: time2)//Sets opening time to the earliest time
                 .setClosing_time((time1.compareTo(time2) > 0) ? time1: time2);//Sets the closing time to the latest
+    }
+
+    public static MaintenanceEntity getRandomizedMaintenanceEntity() {
+        return new MaintenanceEntity()
+                .setCreated_at(ZonedDateTime.now())
+                .setDescription(getRandomFromArray(maintenanceDescriptions))
+                .setStart_time(ZonedDateTime.now().plusDays(2))
+                .setEnd_time(ZonedDateTime.now().plusDays(4));
     }
 }
 
