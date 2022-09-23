@@ -292,7 +292,19 @@ class ServiceRepositoryTest {
    }
 
    @Test
-   void retriveAll() {
+   void retrieveAllShallow() {
+      //Arrange
+      List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+      services.forEach(service -> service.setId(serviceRepository.save(service)));
+      //Act
+      List<ServiceEntity> retrievedServices = serviceRepository.retrieveAllShallow();
+      //Assert
+      Assertions.assertThat(retrievedServices.size()).isEqualTo(services.size());
+      Assertions.assertThat(retrievedServices.containsAll(services)).isTrue();
+   }
+
+   @Test
+   void retrieveAllDeep() {
       //Arrange
       List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
       /*for(ServiceEntity service : services){
@@ -306,7 +318,7 @@ class ServiceRepositoryTest {
               serviceRepository.retrieveAllDeep();
       //Assert
       Assertions.assertThat(allRetrieved.size()).isEqualTo(services.size());
-      Assertions.assertThat(allRetrieved.keySet()).containsAll(services);
+      Assertions.assertThat(allRetrieved.keySet().containsAll(services)).isTrue();
    }
 
    @Test
