@@ -247,6 +247,17 @@ public class SampleData {
                 .setStatus(getRandomServiceStatus())
                 .setResponsetime(getRandomResponseTime());
     }
+
+    public static List<RecordEntity> getRandomizedRecordEntitiesForService(ServiceEntity serviceEntity) {
+        List<RecordEntity> records = new ArrayList<>();
+        Random random = new Random();
+        int numberOfRecords = 1 + random.nextInt(12);
+        for (int i = 0; i < numberOfRecords; i++) {
+            records.add(getRandomizedRecordEntityForService(serviceEntity));
+        }
+        return records;
+    }
+
     public static DailyStatusAggregationForServiceEntity getRandomizedDailyStatusAggregationForService(ServiceEntity serviceEntity) {
         return new DailyStatusAggregationForServiceEntity()
                 .setService_id(serviceEntity.getId())

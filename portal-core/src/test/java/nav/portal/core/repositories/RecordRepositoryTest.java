@@ -176,6 +176,21 @@ class RecordRepositoryTest {
     }
 
     @Test
+    void getRecordHistory() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        records.forEach(record -> record.setId(recordRepository.save(record)));
+        //Act
+        List<RecordEntity> retrievedRecords = recordRepository.getRecordHistory(serviceId, records.size());
+        //Assert
+        Assertions.assertThat(retrievedRecords.size()).isEqualTo(records.size());
+        Assertions.assertThat(retrievedRecords).hasSameElementsAs(retrievedRecords);
+    }
+
+    @Test
     void deleteRecordsOlderThen() {
         //Arrange
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
@@ -195,6 +210,4 @@ class RecordRepositoryTest {
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
         Assertions.assertThat(retrievedRecordsAfter).isEmpty();
     }
-
-
 }
