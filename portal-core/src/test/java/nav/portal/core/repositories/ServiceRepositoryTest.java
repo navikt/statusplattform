@@ -15,8 +15,10 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
+import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.fail;
 
 class ServiceRepositoryTest {
@@ -319,6 +321,68 @@ class ServiceRepositoryTest {
       //Assert
       Assertions.assertThat(allRetrieved.size()).isEqualTo(services.size());
       Assertions.assertThat(allRetrieved.keySet().containsAll(services)).isTrue();
+
+   }
+
+   @Test
+   void retrieveAllComponents() {
+      //Arrange
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
+      services.forEach(service -> {
+         service.setType(ServiceType.KOMPONENT);
+         service.setId(serviceRepository.save(service));
+      });
+      //Act
+      Map<ServiceEntity, List<ServiceEntity>> retrievedComponents = serviceRepository.retrieveAllComponents();
+      //Assert
+      Assertions.assertThat(retrievedComponents.containsKey(services.get(0))).isTrue();
+      Assertions.assertThat(retrievedComponents.keySet().size()).isEqualTo(services.size());
+   }
+
+   @Test
+   void retrieveAllServices() {
+      //Arrange
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(5);
+      List <ServiceEntity> komponentTypes = new ArrayList<>();
+      for(int i = 0; i < 2; i++){
+         services.get(i).setType(ServiceType.KOMPONENT);
+         komponentTypes.add(services.get(i));
+      }
+      services.forEach(service -> {
+         service.setId(serviceRepository.save(service));
+      });
+      List <ServiceEntity> serviceTypes = new ArrayList<>();
+      for(int i = 2; i < 5; i++){
+         serviceTypes.add(services.get(i));
+         //Assert
+      }
+      //Act
+      Map<ServiceEntity, List<ServiceEntity>> retrievedServices = serviceRepository.retrieveAllServices();
+      Assertions.assertThat(retrievedServices.keySet().size()).isEqualTo(3);
+      Assertions.assertThat(retrievedServices.keySet().containsAll(serviceTypes)).isTrue();
+      Assertions.assertThat(retrievedServices.keySet()).doesNotContainAnyElementsOf(komponentTypes);
+   }
+
+   @Test
+   void getServicesDependantOnComponent() {
+      //Arrange
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(5);
+      List<UUID> serviceIds = new ArrayList<>();
+      services.forEach(service -> {
+         service.setId(serviceRepository.save(service));
+         serviceIds.add(service.getId());
+      });
+      ServiceEntity komponent = SampleData.getRandomizedServiceEntityWithNameNotInList(services);
+      UUID komponentId = serviceRepository.save(komponent);
+      komponent.setId(komponentId);
+      serviceIds.forEach(serviceId -> {
+         serviceRepository.addDependencyToService(serviceId, komponentId);
+      });
+      //Act
+      List<ServiceEntity> retrievedServicesDependantOnComponent = serviceRepository.getServicesDependantOnComponent(komponentId);
+      //Assert
+      Assertions.assertThat(retrievedServicesDependantOnComponent.containsAll(services)).isTrue();
+      Assertions.assertThat(retrievedServicesDependantOnComponent.size()).isEqualTo(services.size());
    }
 
    @Test
