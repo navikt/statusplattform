@@ -386,6 +386,20 @@ class ServiceRepositoryTest {
    }
 
    @Test
+   void retrieveServicesWithPolling() {
+      //Arrange
+      List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
+      services.forEach(service -> {
+         service.setId(serviceRepository.save(service));
+      });
+      //Act
+      List<ServiceEntity> servicesWithPolling = serviceRepository.retrieveServicesWithPolling();
+      //Assert
+      Assertions.assertThat(servicesWithPolling.size()).isEqualTo(services.size());
+      Assertions.assertThat(servicesWithPolling.containsAll(services)).isTrue();
+   }
+
+   @Test
    void doesEntryExist() {
       //Arrange
       UUID uuid = UUID.randomUUID();
