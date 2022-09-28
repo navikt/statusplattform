@@ -20,6 +20,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 class RecordRepositoryTest {
 
@@ -207,6 +208,32 @@ class RecordRepositoryTest {
         recordRepository.deleteRecordsOlderThen(5);
         //Assert
         List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(5);
+        Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
+        Assertions.assertThat(retrievedRecordsAfter).isEmpty();
+    }
+
+    @Test
+    void deleteRecordsOlderThen48hours(){
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        records.forEach(record -> {
+            int min = 2;
+            int max = 5;
+            ZonedDateTime now = ZonedDateTime.now();
+            int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
+            ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(numberOfDays);
+            record.setCreated_at(fiveDaysBack);
+            record.setServiceId(service.getId());
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+        List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(2);
+        //Act
+        recordRepository.deleteRecordsOlderThen48hours();
+        //Assert
+        List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(2);
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
         Assertions.assertThat(retrievedRecordsAfter).isEmpty();
     }
