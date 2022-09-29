@@ -244,6 +244,7 @@ public class SampleData {
     public static RecordEntity getRandomizedRecordEntityForService(ServiceEntity serviceEntity) {
         return new RecordEntity()
                 .setServiceId(serviceEntity.getId())
+                .setCreated_at(ZonedDateTime.now())
                 .setStatus(getRandomServiceStatus())
                 .setResponsetime(getRandomResponseTime());
     }
