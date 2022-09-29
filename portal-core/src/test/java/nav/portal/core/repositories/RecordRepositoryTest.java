@@ -60,7 +60,7 @@ class RecordRepositoryTest {
      }
 
     @Test
-     void saveNewStatusDiff() {
+    void saveNewStatusDiff() {
          //Arrange
          ServiceEntity service = SampleData.getRandomizedServiceEntity();
          UUID serviceId = serviceRepository.save(service);
@@ -80,7 +80,57 @@ class RecordRepositoryTest {
          Assertions.assertThat(retrievedRecordBefore.isPresent()).isTrue();
          Assertions.assertThat(retrievedRecordDiff.get().getId()).isEqualTo(retrievedRecordBefore.get().getId());
          Assertions.assertThat(retrievedRecordDiff.get().getCounter()).isEqualTo(1);
+    }
+
+    @Test
+    void saveOldStatusDiff() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity record = SampleData.getRandomizedRecordEntityForService(service);
+        record.setServiceId(service.getId());
+        record.setDescription("newly generated");
+        record.setActive(true);
+        record.setId(recordRepository.save(record));
+        UUID recordId = record.getId();
+        UUID newStatusDiffId = recordRepository.saveNewStatusDiff(record);
+        Optional<RecordEntity>retrievedRecordDiffBefore = recordRepository.getLatestRecordDiff(serviceId);
+        //Act
+        UUID oldStatusDiffId = recordRepository.saveOldStatusDiff(retrievedRecordDiffBefore.get());
+        Optional<RecordEntity> retrievedRecordDiffAfter = recordRepository.getLatestRecordDiff(serviceId);
+        //Assert
+        Assertions.assertThat(retrievedRecordDiffBefore.isPresent()).isTrue();
+        Assertions.assertThat(retrievedRecordDiffAfter.isPresent()).isTrue();
+        Assertions.assertThat(retrievedRecordDiffAfter.get().getId()).isEqualTo(retrievedRecordDiffBefore.get().getId());
+        Assertions.assertThat(retrievedRecordDiffBefore.get().getActive()).isTrue();
+        Assertions.assertThat(retrievedRecordDiffAfter.get().getActive()).isFalse();
      }
+
+    @Test
+    void increaseCountOnStatusDiff() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        RecordEntity record = SampleData.getRandomizedRecordEntityForService(service);
+        record.setServiceId(service.getId());
+        record.setDescription("newly generated");
+        record.setActive(true);
+        record.setId(recordRepository.save(record));
+        UUID recordId = record.getId();
+        UUID newStatusDiffId = recordRepository.saveNewStatusDiff(record);
+        Optional<RecordEntity>retrievedRecordDiffBefore = recordRepository.getLatestRecordDiff(serviceId);
+        //Act
+        recordRepository.increaseCountOnStatusDiff(retrievedRecordDiffBefore.get());
+        Optional<RecordEntity> retrievedRecordDiffAfter = recordRepository.getLatestRecordDiff(serviceId);
+        //Arrange
+        Assertions.assertThat(retrievedRecordDiffBefore.isPresent()).isTrue();
+        Assertions.assertThat(retrievedRecordDiffAfter.isPresent()).isTrue();
+        Assertions.assertThat(retrievedRecordDiffAfter.get().getId()).isEqualTo(retrievedRecordDiffBefore.get().getId());
+        Assertions.assertThat(retrievedRecordDiffBefore.get().getCounter()).isEqualTo(1);
+        Assertions.assertThat(retrievedRecordDiffAfter.get().getCounter()).isEqualTo(2);
+    }
 
     @Test
     void getLatestRecord() {
