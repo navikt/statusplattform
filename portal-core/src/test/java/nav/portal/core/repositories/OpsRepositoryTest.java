@@ -221,8 +221,12 @@ class OpsRepositoryTest {
         Map<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessagesAndServices
                 = opsRepository.retrieveAllActive();
         Optional<OpsMessageEntity> retrievedFirstOpsMessage =
-                retrievedOpsMessagesAndServices.keySet().stream().findFirst();
-        Optional<List<ServiceEntity>> retrievedServiceValues = retrievedOpsMessagesAndServices.values().stream().findFirst();
+               retrievedOpsMessagesAndServices.keySet().stream().findFirst();
+
+        Optional<List<ServiceEntity>> retrievedServiceValues = Optional.of(new ArrayList<>());
+        if (retrievedOpsMessagesAndServices.values().stream().findFirst().isPresent()){
+            retrievedServiceValues = retrievedOpsMessagesAndServices.values().stream().findFirst();
+        }
         Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedMessagesOnServices
                 = opsRepository.retrieveOne(opsMessages.get(0).getId());
         //Assert
