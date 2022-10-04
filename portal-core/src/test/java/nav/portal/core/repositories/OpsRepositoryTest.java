@@ -237,7 +237,7 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedServiceValues.get().containsAll(retrievedMessagesOnServices.getValue())).isTrue();
         Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(retrievedMessagesOnServices.getValue().size());
         Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(3);
-        Assertions.assertThat(retrievedFirstOpsMessage.get().getId()).isEqualTo(opsMessages.get(0).getId());
+        Assertions.assertThat(retrievedFirstOpsMessage.orElseThrow().getId()).isEqualTo(opsMessages.get(0).getId());
     }
 
     @Test
