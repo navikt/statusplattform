@@ -330,5 +330,4 @@ class AreaRepositoryTest {
         Assertions.assertThat(retrievedSubAreas.containsAll(subAreas)).isTrue();
      }
 
-
 }
