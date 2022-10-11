@@ -339,7 +339,8 @@ class ServiceControllerTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        MaintenanceDto maintenanceDto = SampleDataDto.getRandomizedMaintenanceDto(serviceId);
+        MaintenanceDto maintenanceDto = SampleDataDto.getRandomizedMaintenanceDto();
+        maintenanceDto.serviceId(serviceId) ;
         //Act
         serviceController.addMaintenance(maintenanceDto);
         //Assert
