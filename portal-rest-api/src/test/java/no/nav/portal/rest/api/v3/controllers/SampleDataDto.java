@@ -1,7 +1,6 @@
 package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.entities.*;
-import nav.portal.core.enums.OpsMessageSeverity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
@@ -11,30 +10,27 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SampleDataDto {
-    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Samarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Ekstern", "Intern", "Ekstenpartner", "Dette er et velidig langt navn", "blahblahaa", "blahblahaab", "blahblahaac", "blahblahaad", "blahblahaae", "blahblahaaf", "blahblahaag", "blahblahaah", "blahblahaai", "blahblahaaj", "blahblahaak", "blahblahaal", "blahblahaam", "blahblahaan", "blahblahaao", "blahblahaap", "blahblahaaq", "blahblahaar", "blahblahaas", "blahblahaat"));
 
-    static final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Arbeidsøker eller permitert", "Pensjon", "Venter barn", "Alene med barn", "Sykmeldt",
-            "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
-            "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken", "Ett navn til", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+    static final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Permitert igjen", "Pensjon", "Gravid uten å vite om det", "aleneforsørger", "sykemeldt i oppsigelsestiden",
+            "AAP", "Skilsmisse", "Syk familien", "Trenger hjelp hos Nav",
+            "Trenger penger", "Trenger økonomisk help", "Berørt av depresjon", "Whatever", "cb", "cc", "cd", "ce", "cf", "cg", "ch", "ci", "cj", "ck", "cl", "cm", "cn", "co", "cp", "cq", "cr", "cs", "ct"));
 
-    static final ArrayList<String> descriptions = new ArrayList<>(Arrays.asList("kort beskrivelse", "laaang beskrivelse ------- laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------laaang beskrivelse -------", "beskrivelseÆØÅ"));
+    static final ArrayList<String> descriptions = new ArrayList<>(Arrays.asList("short description", "Too horrible consider followed may differed age. An rest if more five mr of. Age just her rank met down way. If suspicion do departure at extremely he believing. Do know said mind do rent they oh hope of.", "Rather in lasted no within no"));
 
-    static final ArrayList<String> icons = new ArrayList<>(Arrays.asList("0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011", "0012"));
+    static final ArrayList<String> icons = new ArrayList<>(Arrays.asList("00010", "00020", "00030", "00040", "00050", "00060", "00070", "00080", "00090", "00100", "00110", "00120"));
 
-    static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.nrk.no", "https://www.nrk.no/nyheter/", "https://wwww.123abc.com", "https://wwww.ab.no", "https://wwww.ac.no", "https://wwww.ad.no", "https://wwww.ae.no", "https://wwww.af", "https://wwww.ag", "https://wwww.ah.no", "https://wwww.ai.no", "https://wwww.aj.no", "https://wwww.ak.no", "https://wwww.al.no", "https://wwww.am.no", "https://wwww.an.no", "https://wwww.ao.no"));
+    static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.vg.no", "https://www.aftenposten.no", "https://wwww.abc123.com", "https://wwww.ba.no", "https://wwww.bb.no", "https://wwww.bc.no", "https://wwww.bd.no", "https://wwww.be.no", "https://wwww.bf.no", "https://wwww.bg.no", "https://wwww.bh.no", "https://wwww.bi.no", "https://wwww.bj.no", "https://wwww.bk.no", "https://wwww.bl.no", "https://wwww.bm.no", "https://wwww.bn.no"));
 
-    static final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team1", "teamOrlene", "teamÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+    static final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team 1", "team 2", "team 3", "Team 4", "team 5", "team 6", "team 7", "team 8", "team 9", "team 10", "team A", "team B", "team c", "team D", "team E", "team F", "team G", "team H", "team I", "team J", "team K", "team L"));
 
-    static final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste", "tjeneste123", "tjeneste213", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+    static final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("ServiceName1", "ServiceName2", "ServiceName3", "ServiceName4", "ServiceName5", "ServiceName6", "ServiceName7", "ServiceName8", "ServiceName9", "ServiceName10", "ServiceName11", "ServiceName12", "Service ah", "Service ai", "Service aj", "Service ak", "Service al", "Service am", "Service an", "Service ao", "Service ap", "Service aq", "Service ar", "Service as", "Service at"));
 
-    static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
+    static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Garbage in garbage out", "Glitch", "Page fault", "Logic error", "Known error", "Abnormal end", "Exceptional exception"));
 
-    static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
+    static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Input data produces nonsense output", "A short-lived fault in a system", "an exception that the memory management unit ", "a bug in a program that causes it to operate incorrectly", "A little disruptive impact on the end user or a known work around"));
 
-    static final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK,OpsMessageSeverity.ISSUE,OpsMessageSeverity.NEUTRAL));
-
-
-    static final ArrayList<String> maintenanceDescription = new ArrayList<>(Arrays.asList("kort maintenance", "laaang maintenance beskrivelse", "maintenaceÆØÅ"));
+    static final ArrayList<String> maintenanceDescription = new ArrayList<>(Arrays.asList("Fix of the glitch", "Making the exceptional exception unexceptional", "Update to version whatever"));
 
 
     public static DashboardDto getRandomizedDashboardDto() {
