@@ -1,19 +1,17 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.*;
+import nav.portal.core.enums.OpsMessageSeverity;
+import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
-import no.portal.web.generated.api.DashboardDto;
-import no.portal.web.generated.api.MaintenanceDto;
-import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.ServiceTypeDto;
+import no.portal.web.generated.api.*;
 
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SampleDataDto {
-    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Samarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
     static final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Arbeidsøker eller permitert", "Pensjon", "Venter barn", "Alene med barn", "Sykmeldt",
             "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
@@ -26,7 +24,15 @@ public class SampleDataDto {
     static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.nrk.no", "https://www.nrk.no/nyheter/", "https://wwww.123abc.com", "https://wwww.ab.no", "https://wwww.ac.no", "https://wwww.ad.no", "https://wwww.ae.no", "https://wwww.af", "https://wwww.ag", "https://wwww.ah.no", "https://wwww.ai.no", "https://wwww.aj.no", "https://wwww.ak.no", "https://wwww.al.no", "https://wwww.am.no", "https://wwww.an.no", "https://wwww.ao.no"));
 
     static final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team1", "teamOrlene", "teamÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+
     static final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste", "tjeneste123", "tjeneste213", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+
+    static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
+
+    static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
+
+    static final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK,OpsMessageSeverity.ISSUE,OpsMessageSeverity.NEUTRAL));
+
 
     static final ArrayList<String> maintenanceDescription = new ArrayList<>(Arrays.asList("kort maintenance", "laaang maintenance beskrivelse", "maintenaceÆØÅ"));
 
@@ -36,11 +42,81 @@ public class SampleDataDto {
                 .name(getRandomFromArray(dashboardNames));
     }
 
-    public static AreaEntity getRandomizedAreaEntity() {
-        return new AreaEntity()
-                .setName(getRandomFromArray(areaNames))
-                .setDescription(getRandomFromArray(descriptions))
-                .setIcon(getRandomFromArray(icons));
+    public static AreaDto getRandomizedAreaDto() {
+        return new AreaDto()
+                .name(getRandomFromArray(areaNames))
+                .description(getRandomFromArray(descriptions))
+                .icon(getRandomFromArray(icons));
+    }
+
+    public static AreaDto getRandomizedAreaDtoWithNameNotInList(List<AreaDto> areasDto) {
+        List<String> usedNames = areasDto.stream().map(AreaDto::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = new ArrayList<>(areaNames);
+        possibleNames.removeAll(usedNames);
+        return new AreaDto()
+                .name(getRandomFromArray(possibleNames))
+                .icon(getRandomFromArray(icons))
+                .description(getRandomFromArray(descriptions));
+    }
+
+    public static List<AreaDto> getRandomLengthListOfAreaDto() {
+        Random random = new Random();
+        int numberOfAreasDto = 1 + random.nextInt(12);
+        List<AreaDto> areasDto = new ArrayList<>();
+        for (int i = 0; i <= numberOfAreasDto; i++) {
+            areasDto.add(getRandomizedAreaDtoWithNameNotInList(areasDto));
+        }
+        return areasDto;
+    }
+
+    public static List<AreaDto> getNonEmptyListOfAreaDto(int length) {
+        List<AreaDto> areasDto = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            areasDto.add(getRandomizedAreaDtoWithNameNotInList(areasDto));
+        }
+        return areasDto;
+    }
+
+    public static SubAreaDto getRandomizedSubAreaDto() {
+        return new SubAreaDto()
+                .name(getRandomFromArray(areaNames));
+    }
+
+    public static SubAreaDto getRandomizedSubAreaDtoWithNameNotInList(List<SubAreaDto> subAreasDto) {
+        List<String> usedNames = subAreasDto.stream().map(SubAreaDto::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = new ArrayList<>(areaNames);
+        possibleNames.removeAll(usedNames);
+        return new SubAreaDto()
+                .name(getRandomFromArray(possibleNames));
+    }
+
+    public static List<SubAreaDto> getRandomLengthListOfSubAreaDto() {
+        Random random = new Random();
+        int numberOfSubAreas = random.nextInt(12);
+        List<SubAreaDto> subAreasDto = new ArrayList<>();
+        for (int i = 0; i <= numberOfSubAreas; i++) {
+            subAreasDto.add(getRandomizedSubAreaDtoWithNameNotInList(subAreasDto));
+        }
+        return subAreasDto;
+    }
+
+    public static List<SubAreaDto> getRandomLengthNonEmptyListOfSubAreaDto() {
+        Random random = new Random();
+        int numberOfSubAreasDto = 1 + random.nextInt(12);
+        List<SubAreaDto> subAreasDto = new ArrayList<>();
+        for (int i = 0; i <= numberOfSubAreasDto; i++) {
+            subAreasDto.add(getRandomizedSubAreaDtoWithNameNotInList(subAreasDto));
+        }
+        return subAreasDto;
+    }
+
+    public static List<SubAreaDto> getNonEmptyListOfSubAreaDto(int length) {
+        Random random = new Random();
+        List<SubAreaDto> subAreasDto = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            subAreasDto.add(getRandomizedSubAreaDtoWithNameNotInList(subAreasDto));
+        }
+        return subAreasDto;
     }
 
     public static ServiceDto getRandomizedServiceDto() {
@@ -93,11 +169,48 @@ public class SampleDataDto {
         return serviceDto;
     }
 
+    public static RecordDto getRandomizedRecordDto() {
+        return new RecordDto()
+                .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
+                .status(getRandomStatusDto())
+                .responseTime(getRandomResponseTime());
+    }
+
+    public static RecordDto getRandomizedRecordDtoForService(ServiceDto serviceDto) {
+        return new RecordDto()
+                .serviceId(serviceDto.getId())
+                .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
+                .status(getRandomStatusDto())
+                .responseTime(getRandomResponseTime());
+    }
+
+    public static List<RecordDto> getRandomizedRecordEntitiesForService(ServiceDto serviceDto) {
+        List<RecordDto> recordsDto = new ArrayList<>();
+        Random random = new Random();
+        int numberOfRecords = 1 + random.nextInt(12);
+        for (int i = 0; i < numberOfRecords; i++) {
+            recordsDto.add(getRandomizedRecordDtoForService(serviceDto));
+        }
+        return recordsDto;
+    }
+
     public static MaintenanceDto getRandomizedMaintenanceDto(){
         return new MaintenanceDto()
                 .description(getRandomFromArray(maintenanceDescription))
                 .startTime(OffsetDateTime.now())
                 .endTime(OffsetDateTime.now().plusDays(1));
+    }
+
+    public static OPSmessageDto getRandomOPSMessageDto() {
+        Random random = new Random();
+        return new OPSmessageDto()
+                .internalHeader(getRandomFromArray(headersForOpsMessages))
+                .internalMessage(getRandomFromArray(infoTextForOpsMessages))
+                .startTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()))
+                .endTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()).plusDays(2))
+                .severity(getRandomOpsMessageDtoSeverity())
+                .onlyShowForNavEmployees(random.nextBoolean())
+                .isActive(true);
     }
 
     private static ServiceTypeDto getRandomServiceTypeDto() {
@@ -114,6 +227,29 @@ public class SampleDataDto {
         return array.get(random.nextInt(array.size()));
     }
 
+    private static ServiceStatus getRandomServiceStatus() {
+        Random random = new Random();
+        return ServiceStatus.values()[random.nextInt(ServiceStatus.values().length)];
+    }
 
+    private static StatusDto getRandomStatusDto() {
+        Random random = new Random();
+        return StatusDto.values()[random.nextInt(StatusDto.values().length)];
+    }
+
+    private static Integer getRandomResponseTime() {
+        List<Integer> responseTime = Arrays.asList(10, 20, 30, 100, 1000);
+        Random random = new Random();
+        return responseTime.get(random.nextInt(responseTime.size()));
+    }
+
+    private static ZonedDateTime getZonedDateTimeNowWithOutDecimals(){
+        return ZonedDateTime.of(LocalDate.now(), LocalTime.of(0,0), ZoneId.of("Europe/Paris"));
+    }
+
+    private static OPSmessageDto.SeverityEnum getRandomOpsMessageDtoSeverity() {
+        Random random = new Random();
+        return OPSmessageDto.SeverityEnum.values()[random.nextInt(OPSmessageDto.SeverityEnum.values().length)];
+    }
 
 }
