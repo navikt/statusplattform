@@ -149,7 +149,7 @@ class OpsControllerTest {
         Assertions.assertThat(opsRepository.isEntryDeleted(opsMessageId)).isEqualTo(true);
     }
 
-    @Test
+
     void getSpecificOpsMessage(){
         //Arrange
         UUID dashbaordId = dashboardRepository.save("A Dashboard");
