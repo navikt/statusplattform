@@ -235,7 +235,7 @@ public class ServiceController {
         String host = "login.microsoftonline.com";
         String scope = "api://dev-fss.navdig.statusholder/.default";
         String baseUrl = host+"/"+ tenant+ "/oauth2/v2.0/token HTTP/1.1";
-        String fullUrl = baseUrl + "client_id="+CLIENT_ID+"&scope"+scope+"client_secret="+CLIENT_SECRET+"&grant_type=client_credentials";
+        String fullUrl = baseUrl + "client_id="+CLIENT_ID+"&scope="+scope+"client_secret="+CLIENT_SECRET+"&grant_type=client_credentials";
         logger.info("--------------- fullUrl = :" + fullUrl);
         URL url = new URL(fullUrl);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
