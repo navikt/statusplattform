@@ -5,6 +5,7 @@ import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.ServiceRepository;
+import no.nav.portal.infrastructure.AuthenticationFilter;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.ServiceControllerHelper;
 import no.nav.portal.rest.api.Helpers.Util;
@@ -13,6 +14,8 @@ import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 import org.jsonbuddy.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import javax.json.Json;
@@ -38,6 +41,7 @@ public class ServiceController {
     private String STATUSHOLDER_URL = System.getenv("statusholder_url");
     private String CLIENT_SECRET = System.getenv("AZURE_APP_CLIENT_SECRET");
     private String CLIENT_ID = System.getenv("AZURE_APP_CLIENT_ID");
+    private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
 
 
     public ServiceController(DbContext dbContext) {
@@ -158,6 +162,7 @@ public class ServiceController {
     @JsonBody
     public List<JsonObject> getStatusHolderStatuses() throws IOException  {
         try{
+            logger.info("--------------- Statusholder  endpoint:");
             return getAzureAdToken();
         }
         catch (IOException e){
@@ -219,6 +224,7 @@ public class ServiceController {
     }
 
     private List<JsonObject> getAzureAdToken() throws IOException  {
+        logger.info("--------------- Statusholder  Trying to get azure ad token:");
         HttpURLConnection con = getAzureAdTokenConnection();
         String stringBody = readBody(con);
         return toJson(stringBody);
@@ -230,6 +236,7 @@ public class ServiceController {
         String scope = "api://dev-fss.navdig.statusholder/.default";
         String baseUrl = host+"/"+ tenant+ "/oauth2/v2.0/token HTTP/1.1";
         String fullUrl = baseUrl + "client_id="+CLIENT_ID+"&scope"+scope+"client_secret="+CLIENT_SECRET+"&grant_type=client_credentials";
+        logger.info("--------------- fullUrl = :" + fullUrl);
         URL url = new URL(fullUrl);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
