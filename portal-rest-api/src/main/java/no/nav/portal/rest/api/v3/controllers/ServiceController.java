@@ -36,6 +36,8 @@ public class ServiceController {
     private final ServiceControllerHelper serviceControllerHelper;
     private final ServiceRepository serviceRepository;
     private String STATUSHOLDER_URL = System.getenv("statusholder_url");
+    private String CLIENT_SECRET = System.getenv("AZURE_APP_CLIENT_SECRET");
+    private String CLIENT_ID = System.getenv("AZURE_APP_CLIENT_ID");
 
 
     public ServiceController(DbContext dbContext) {
@@ -156,7 +158,7 @@ public class ServiceController {
     @JsonBody
     public List<JsonObject> getStatusHolderStatuses() throws IOException  {
         try{
-            return getAllStatusesFromStatusholder();
+            return getAzureAdToken();
         }
         catch (IOException e){
             return toJson("'error':'couldNotReadFromStatusholder'");
@@ -214,6 +216,25 @@ public class ServiceController {
         String stringBody = readBody(con);
         List<JsonObject> body = toJson(stringBody);
         return body;
+    }
+
+    private List<JsonObject> getAzureAdToken() throws IOException  {
+        HttpURLConnection con = getAzureAdTokenConnection();
+        String stringBody = readBody(con);
+        return toJson(stringBody);
+    }
+
+    private HttpURLConnection getAzureAdTokenConnection() throws IOException {
+        String tenant = "trygdeetaten.no";
+        String host = "login.microsoftonline.com";
+        String scope = "api://dev-fss.navdig.statusholder/.default";
+        String baseUrl = host+"/"+ tenant+ "/oauth2/v2.0/token HTTP/1.1";
+        String fullUrl = baseUrl + "client_id="+CLIENT_ID+"&scope"+scope+"client_secret="+CLIENT_SECRET+"&grant_type=client_credentials";
+        URL url = new URL(fullUrl);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        con.setRequestMethod("POST");
+        return con;
     }
 
 

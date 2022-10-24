@@ -31,7 +31,17 @@ spec:
         databases:
           - name: navstatus
             envVarPrefix: DB
+  azure:
+    application:
+      enabled: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: statusholder
+          namespace: navdig
+          cluster: dev-fss
     outbound:
-      external:
-        - host: statusholder.dev-fss-pub.nais.io
+      rules:
+        - application: statusholder
+          namespace: navdig
+          cluster: dev-fss
