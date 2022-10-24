@@ -227,6 +227,7 @@ public class ServiceController {
         logger.info("--------------- Statusholder  Trying to get azure ad token:");
         HttpURLConnection con = getAzureAdTokenConnection();
         String stringBody = readBody(con);
+        logger.info("Result : " + stringBody);
         return toJson(stringBody);
     }
 
