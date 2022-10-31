@@ -81,25 +81,20 @@ class DashboardControllerTest {
     @Test
     void deleteDashboard() {
         //Arrange
-        String dashboardname = SampleData.getRandomizedDashboardName();
-        UUID dashboardId = dashboardRepository.save(dashboardname);
-        UUID shouldExist = dashboardRepository.uidFromName(dashboardname);
-        List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
-        List<UUID> areaIds = areas.stream()
-                .map(areaRepository::save)
-                .collect(Collectors.toList());
-        /*List<UUID> areaIds = new ArrayList<>();
-        areas.forEach(area -> {area.setId(areaRepository.save(area));
-            areaIds.add(area.getId());
-        });*/
-        dashboardRepository.settAreasOnDashboard(dashboardId, areaIds);
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto =  areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+        DashboardDto shouldExist = dashboardController.getDashboard(dashboardDto.getId());
         //Act
-        dashboardController.deleteDashboard(dashboardId);
+        dashboardController.deleteDashboard(dashboardDto.getId());
         //Assert
-        Assertions.assertThat(shouldExist).isEqualTo(dashboardId);
-        Assertions.assertThat(dashboardRepository.getAllDashboardUUIDsAndNames()).isEmpty();
+        Assertions.assertThat(shouldExist.getId()).isEqualTo(dashboardIdContainerDto.getId());
+        Assertions.assertThat(dashboardController.getDashboards().isEmpty()).isTrue();
     }
-
 
     @Test
     void updateDashboard() {
