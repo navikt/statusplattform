@@ -149,7 +149,7 @@ class OpsControllerTest {
         Assertions.assertThat(opsRepository.isEntryDeleted(opsMessageId)).isEqualTo(true);
     }
 
-
+    @Test
     void getSpecificOpsMessage(){
         //Arrange
         UUID dashbaordId = dashboardRepository.save("A Dashboard");
@@ -173,7 +173,7 @@ class OpsControllerTest {
         OpsMessageEntity retrievedOpsMessageEntity = EntityDtoMappers.toOpsMessageEntity(retrievedOPSMessageDto);
         //Assert
         Assertions.assertThat(retrievedOpsMessageEntity).isEqualTo(opsMessageEntity);
-       // Assertions.assertThat(retrievedOPSMessageDto).isEqualTo(opSmessageDto);
+        Assertions.assertThat(retrievedOPSMessageDto).isEqualTo(opSmessageDto);
     }
 
     @Test

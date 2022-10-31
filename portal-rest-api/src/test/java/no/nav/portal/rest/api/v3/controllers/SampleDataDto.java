@@ -38,8 +38,20 @@ public class SampleDataDto {
                 .name(getRandomFromArray(dashboardNames));
     }
 
+    public static List<DashboardDto> getDashboardDtos() {
+        Random random = new Random();
+        int numberOfDashboardDtos = 1 + random.nextInt(dashboardNames.size());
+        List<DashboardDto> dashboardDtos = new ArrayList<>();
+        for (int i = 0; i <= numberOfDashboardDtos; i++) {
+            dashboardDtos.add(new DashboardDto() .name(dashboardNames.get(i)));
+        }
+        return dashboardDtos;
+    }
+
+
     public static AreaDto getRandomizedAreaDto() {
         return new AreaDto()
+                .id(UUID.randomUUID())
                 .name(getRandomFromArray(areaNames))
                 .description(getRandomFromArray(descriptions))
                 .icon(getRandomFromArray(icons));
@@ -50,6 +62,7 @@ public class SampleDataDto {
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new AreaDto()
+                .id(UUID.randomUUID())
                 .name(getRandomFromArray(possibleNames))
                 .icon(getRandomFromArray(icons))
                 .description(getRandomFromArray(descriptions));
@@ -75,6 +88,7 @@ public class SampleDataDto {
 
     public static SubAreaDto getRandomizedSubAreaDto() {
         return new SubAreaDto()
+                .id(UUID.randomUUID())
                 .name(getRandomFromArray(areaNames));
     }
 
@@ -83,6 +97,7 @@ public class SampleDataDto {
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new SubAreaDto()
+                .id(UUID.randomUUID())
                 .name(getRandomFromArray(possibleNames));
     }
 
@@ -117,6 +132,7 @@ public class SampleDataDto {
 
     public static ServiceDto getRandomizedServiceDto() {
         return new ServiceDto()
+                .id(UUID.randomUUID())
                 .name(getRandomFromArray(serviceNames))
                 .type(getRandomServiceTypeDto())
                 .team(getRandomFromArray(teamNames))
@@ -129,6 +145,7 @@ public class SampleDataDto {
         ArrayList<String> possibleNames = new ArrayList<>(serviceNames);
         possibleNames.removeAll(usedNames);
         return new ServiceDto()
+                .id(UUID.randomUUID())
                 .name(getRandomFromArray(possibleNames))
                 .type(ServiceTypeDto.TJENESTE)
                 .team(getRandomFromArray(teamNames))
@@ -167,6 +184,7 @@ public class SampleDataDto {
 
     public static RecordDto getRandomizedRecordDto() {
         return new RecordDto()
+                .id(UUID.randomUUID())
                 .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
                 .status(getRandomStatusDto())
                 .responseTime(getRandomResponseTime());
@@ -174,6 +192,7 @@ public class SampleDataDto {
 
     public static RecordDto getRandomizedRecordDtoForService(ServiceDto serviceDto) {
         return new RecordDto()
+                .id(UUID.randomUUID())
                 .serviceId(serviceDto.getId())
                 .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
                 .status(getRandomStatusDto())
@@ -200,6 +219,7 @@ public class SampleDataDto {
     public static OPSmessageDto getRandomOPSMessageDto() {
         Random random = new Random();
         return new OPSmessageDto()
+                .id(UUID.randomUUID())
                 .internalHeader(getRandomFromArray(headersForOpsMessages))
                 .internalMessage(getRandomFromArray(infoTextForOpsMessages))
                 .startTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()))
@@ -247,5 +267,6 @@ public class SampleDataDto {
         Random random = new Random();
         return OPSmessageDto.SeverityEnum.values()[random.nextInt(OPSmessageDto.SeverityEnum.values().length)];
     }
+
 
 }
