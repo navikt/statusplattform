@@ -122,25 +122,19 @@ class DashboardControllerTest {
 
     }
 
-
     @Test
     void getDashboard() {
         //Arrange
-        String dashboardName = SampleData.getRandomizedDashboardName();
-
-        UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
-        /*List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());*/
-        List<UUID> areaIds = new ArrayList<>();
-        areas.forEach(area -> {area.setId(areaRepository.save(area));
-                     areaIds.add(area.getId());
-         });
-        dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto =  areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
         //Act
-        DashboardDto dashboardDto = dashboardController.getDashboard(dashboardId);
-        UUID afterId = dashboardDto.getId();
+        DashboardDto retrievedDashboardDto = dashboardController.getDashboard(dashboardDto.getId());
         //Assert
-        Assertions.assertThat(afterId).isEqualTo(dashboardId);
-
+        Assertions.assertThat(retrievedDashboardDto.getId()).isEqualTo(dashboardDto.getId());
     }
 }
