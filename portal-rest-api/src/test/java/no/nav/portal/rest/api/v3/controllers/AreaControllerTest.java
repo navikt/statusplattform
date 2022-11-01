@@ -4,6 +4,7 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.entities.SubAreaEntity;
 import no.portal.web.generated.api.IdContainerDto;
+import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.SubAreaDto;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -29,6 +30,7 @@ class AreaControllerTest {
     private DbContextConnection connection;
 
     private final AreaController areaController = new AreaController(dbContext);
+    private final ServiceController serviceController = new ServiceController(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
     private final SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
@@ -50,33 +52,36 @@ class AreaControllerTest {
         //Arrange
         List<AreaDto> areaDtos = SampleDataDto.getRandomLengthListOfAreaDto();
         List <UUID> areaDtoIds = new ArrayList<>();
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        serviceDto.setId(savedServiceDto.getId());
         areaDtos.forEach(areaDto -> {
             IdContainerDto areaIdContainerDto  = areaController.newArea(areaDto);
             areaDto.setId(areaIdContainerDto.getId());
+            areaDto.setServices(List.of(serviceDto));
             areaDtoIds.add(areaIdContainerDto.getId());
         });
         //Act
         List<AreaDto> retrievedAreasDtos = areaController.getAllAreas();
         List <UUID> retrievedAreaDtoIds = new ArrayList<>();
-        retrievedAreasDtos.forEach(areaDto -> retrievedAreaDtoIds.add(areaDto.getId()));
+        retrievedAreasDtos.forEach(areaDto ->  retrievedAreaDtoIds.add(areaDto.getId()));
         //Assert
         Assertions.assertThat(retrievedAreasDtos.size()).isEqualTo(areaDtos.size());
         Assertions.assertThat(retrievedAreaDtoIds).containsExactlyInAnyOrderElementsOf(areaDtoIds);
-    }
+     }
 
     @Test
     void newArea() {
         //Arrange
-        AreaEntity area = SampleData.getRandomizedAreaEntity();
-        AreaDto areaDto = EntityDtoMappers.toAreaDtoShallow(area);
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
         //Act
         IdContainerDto areaIdContainerDto = areaController.newArea(areaDto);
-        Map.Entry<AreaEntity, List<ServiceEntity>> retrievedNewArea = areaRepository.retrieveOne(areaIdContainerDto.getId());
+        areaDto.setId(areaIdContainerDto.getId());
+        List<AreaDto> retrievedAreasDtos = areaController.getAllAreas();
         //Assert
-        Assertions.assertThat(retrievedNewArea.getKey().getName()).isEqualTo(area.getName());
-        Assertions.assertThat(retrievedNewArea.getKey().getDescription()).isEqualTo(area.getDescription());
-        Assertions.assertThat(retrievedNewArea.getKey().getIcon()).isEqualTo(area.getIcon());
-        Assertions.assertThat(retrievedNewArea.getValue()).isEmpty();
+        Assertions.assertThat(retrievedAreasDtos).contains(areaDto);
+        Assertions.assertThat(retrievedAreasDtos.size()).isEqualTo(List.of(areaDto).size());
+        Assertions.assertThat(retrievedAreasDtos.get(0).getId()).isEqualTo(areaDto.getId());
     }
 
     @Test
