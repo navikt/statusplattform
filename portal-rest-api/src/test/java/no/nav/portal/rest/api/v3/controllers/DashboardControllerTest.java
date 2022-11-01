@@ -96,35 +96,32 @@ class DashboardControllerTest {
         Assertions.assertThat(dashboardController.getDashboards().isEmpty()).isTrue();
     }
 
+
     @Test
     void updateDashboard() {
         //Arrange
-        String dashboardName = SampleData.getRandomizedDashboardName();
-        UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
-        /*List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());*/
-        List<UUID> areaIds = new ArrayList<>();
-        areas.forEach(area ->
-            {area.setId(areaRepository.save(area));
-            areaIds.add(area.getId());
-            });
-
-        dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
-        DashboardDto dashboardDto = dashboardController.getDashboard(dashboardId);
-
-        String oldName = dashboardDto.getName();
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto =  areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+        DashboardDto retrievedDashboardDtoBefore = dashboardController.getDashboard(dashboardDto.getId());
+        String oldName = retrievedDashboardDtoBefore.getName();
         String newName = "Test";
         dashboardDto.setName(newName);
-        DashboardUpdateDto dashboardUpdateDto = new DashboardUpdateDto().name(newName).areas(areaIds);
+        DashboardUpdateDto dashboardUpdateDto = new DashboardUpdateDto().name(newName).areas(List.of(areaDto.getId()));
         //Act
-        dashboardController.updateDashboard(dashboardId, dashboardUpdateDto);
-        Map.Entry<DashboardEntity, List<AreaWithServices>>aName = dashboardRepository.retrieveOneFromName(newName);
-        String retrievedName = aName.getKey().getName();
+        dashboardController.updateDashboard(dashboardDto.getId(), dashboardUpdateDto);
+        DashboardDto retrievedDashboardDtoAfter = dashboardController.getDashboard(dashboardDto.getId());
+        String retrievedName = retrievedDashboardDtoAfter.getName();
         //Assert
         Assertions.assertThat(retrievedName).isEqualTo(newName);
         Assertions.assertThat(retrievedName).isNotEqualTo(oldName);
 
     }
+
 
     @Test
     void getDashboard() {
