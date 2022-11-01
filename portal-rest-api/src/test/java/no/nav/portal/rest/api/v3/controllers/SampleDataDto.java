@@ -51,7 +51,6 @@ public class SampleDataDto {
 
     public static AreaDto getRandomizedAreaDto() {
         return new AreaDto()
-                .id(UUID.randomUUID())
                 .name(getRandomFromArray(areaNames))
                 .description(getRandomFromArray(descriptions))
                 .icon(getRandomFromArray(icons));
@@ -62,7 +61,6 @@ public class SampleDataDto {
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new AreaDto()
-                .id(UUID.randomUUID())
                 .name(getRandomFromArray(possibleNames))
                 .icon(getRandomFromArray(icons))
                 .description(getRandomFromArray(descriptions));
@@ -88,7 +86,6 @@ public class SampleDataDto {
 
     public static SubAreaDto getRandomizedSubAreaDto() {
         return new SubAreaDto()
-                .id(UUID.randomUUID())
                 .name(getRandomFromArray(areaNames));
     }
 
@@ -97,7 +94,6 @@ public class SampleDataDto {
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new SubAreaDto()
-                .id(UUID.randomUUID())
                 .name(getRandomFromArray(possibleNames));
     }
 
@@ -132,7 +128,6 @@ public class SampleDataDto {
 
     public static ServiceDto getRandomizedServiceDto() {
         return new ServiceDto()
-                .id(UUID.randomUUID())
                 .name(getRandomFromArray(serviceNames))
                 .type(getRandomServiceTypeDto())
                 .team(getRandomFromArray(teamNames))
@@ -145,7 +140,6 @@ public class SampleDataDto {
         ArrayList<String> possibleNames = new ArrayList<>(serviceNames);
         possibleNames.removeAll(usedNames);
         return new ServiceDto()
-                .id(UUID.randomUUID())
                 .name(getRandomFromArray(possibleNames))
                 .type(ServiceTypeDto.TJENESTE)
                 .team(getRandomFromArray(teamNames))

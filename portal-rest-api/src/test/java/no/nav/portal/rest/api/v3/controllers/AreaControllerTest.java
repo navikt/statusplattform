@@ -48,25 +48,20 @@ class AreaControllerTest {
     @Test
     void getAllAreas() {
         //Arrange
-        AreaEntity area = SampleData.getRandomizedAreaEntity();
-        UUID areaId = areaRepository.save(area);
-        area.setId(areaId);
-
-        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
-        /*for(ServiceEntity service : services){
-            service.setId(serviceRepository.save(service));
-            areaRepository.addServiceToArea(areaId, service.getId());
-        }*/
-        services.forEach(s ->
-        {
-            s.setId(serviceRepository.save(s));
-            areaRepository.addServiceToArea(areaId, s.getId());
+        List<AreaDto> areaDtos = SampleDataDto.getRandomLengthListOfAreaDto();
+        List <UUID> areaDtoIds = new ArrayList<>();
+        areaDtos.forEach(areaDto -> {
+            IdContainerDto areaIdContainerDto  = areaController.newArea(areaDto);
+            areaDto.setId(areaIdContainerDto.getId());
+            areaDtoIds.add(areaIdContainerDto.getId());
         });
-
         //Act
-        List<AreaDto> retrievedArea = areaController.getAllAreas();
+        List<AreaDto> retrievedAreasDtos = areaController.getAllAreas();
+        List <UUID> retrievedAreaDtoIds = new ArrayList<>();
+        retrievedAreasDtos.forEach(areaDto -> retrievedAreaDtoIds.add(areaDto.getId()));
         //Assert
-        Assertions.assertThat(retrievedArea.get(0).getId()).isEqualTo(areaId);
+        Assertions.assertThat(retrievedAreasDtos.size()).isEqualTo(areaDtos.size());
+        Assertions.assertThat(retrievedAreaDtoIds).containsExactlyInAnyOrderElementsOf(areaDtoIds);
     }
 
     @Test
