@@ -6,6 +6,7 @@ import nav.portal.core.entities.SubAreaEntity;
 import no.portal.web.generated.api.IdContainerDto;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.SubAreaDto;
+import org.actioncontroller.PathParam;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import nav.portal.core.entities.AreaEntity;
@@ -87,51 +88,53 @@ class AreaControllerTest {
     @Test
     void updateArea() {
         //Arrange
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(2);
-        List<AreaDto> areaDtos = EntityDtoMappers.toAreaDtoShallow(areas);
+        List<AreaDto> areaDtos = SampleDataDto.getNonEmptyListOfAreaDto(2);
 
-        UUID areaId1 = areaRepository.save(areas.get(0));
+        IdContainerDto areaIdContainerDto1 = areaController.newArea(areaDtos.get(0));
+        areaDtos.get(0).setId(areaIdContainerDto1.getId());
 
-        areas.forEach(area -> area.setId(areaId1));
+        IdContainerDto areaIdContainerDto2 = areaController.newArea(areaDtos.get(1));
+        areaDtos.get(1).setId(areaIdContainerDto2.getId());
 
-        AreaEntity before = areaRepository.retrieveOne(areaId1).getKey();
+        List<AreaDto> areaDtosBefore = areaController.getAllAreas();
+
         //Act
-        areaController.updateArea(areaId1, areaDtos.get(1));
+        areaController.updateArea(areaDtos.get(0).getId(), areaDtos.get(1));
+        List<AreaDto> areaDtosAfter = areaController.getAllAreas();
+
         //Assert
-        AreaEntity after = areaRepository.retrieveOne(areaId1).getKey();
-        Assertions.assertThat(after.getId()).isEqualTo(before.getId());
-        Assertions.assertThat(after).isNotEqualTo(before);
+        Assertions.assertThat(areaDtosBefore.get(0).getName()).isNotEqualToIgnoringCase(areaDtosBefore.get(1).getName());
+        Assertions.assertThat(areaDtosAfter.get(0).getName()).isEqualToIgnoringCase(areaDtosAfter.get(1).getName());
+
     }
 
     @Test
     void deleteArea() {
         //Arrange
         int NumberOfAreas = 2;
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(NumberOfAreas);
-        /*for(AreaEntity area :areas){
-            area.setId(areaRepository.save(area));
-        }*/
+        List<AreaDto> areaDtos = SampleDataDto.getNonEmptyListOfAreaDto(NumberOfAreas);
 
-        // Alternativ 2 med bruk av for-each loop og lambda
-        //areas.forEach(area -> area.setId(areaRepository.save(area)));
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        serviceDto.setId(savedServiceDto.getId());
+        areaDtos.forEach(areaDto -> {
+            IdContainerDto areaIdContainerDto  = areaController.newArea(areaDto);
+            areaDto.setId(areaIdContainerDto.getId());
+            areaDto.setServices(List.of(serviceDto));
+        });
+        AreaDto areaToBeDeleted = areaDtos.get(0);
 
-        // Alternativ 3 med bruk av stream og lambda
-        List<UUID> areas_ids =  areas.stream()
-                .map(areaRepository::save)
-                .collect(Collectors.toList());
-
-        AreaEntity areaToBeDeleted = areas.get(0);
         //Act
-        List<AreaEntity> retrievedBeforeDelete = areaRepository.retriveAllShallow();
-        areaController.deleteArea(areas_ids.get(0));
-        List<AreaEntity> retrievedAreasAfterDelete = areaRepository.retriveAllShallow();
+        List<AreaDto> retrievedBeforeDelete = areaController.getAllAreas();
+        areaController.deleteArea(areaDtos.get(0).getId());
+        List<AreaDto> retrievedAreasAfterDelete = areaController.getAllAreas();
+
         //Assert
-        Assertions.assertThat(areas.size()).isEqualTo(2);
+        Assertions.assertThat(areaDtos.size()).isEqualTo(2);
         Assertions.assertThat(retrievedBeforeDelete.size()).isEqualTo(2);
         Assertions.assertThat(retrievedAreasAfterDelete.size()).isEqualTo(1);
         Assertions.assertThat(retrievedAreasAfterDelete).doesNotContain(areaToBeDeleted);
     }
-
 
     @Test
     void getAreas() {
