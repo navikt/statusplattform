@@ -23,11 +23,8 @@ class DashboardControllerTest {
 
     private DbContextConnection connection;
 
-    private final AreaRepository areaRepository = new AreaRepository(dbContext);
     private final AreaController areaController = new AreaController(dbContext);
     private final DashboardController dashboardController = new DashboardController(dbContext);
-    private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
-    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     @BeforeEach
     void startConnection() {

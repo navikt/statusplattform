@@ -3,14 +3,11 @@ package no.nav.portal.rest.api.v3.controllers;
 
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.entities.SubAreaEntity;
-import no.portal.web.generated.api.IdContainerDto;
-import no.portal.web.generated.api.ServiceDto;
-import no.portal.web.generated.api.SubAreaDto;
+import no.portal.web.generated.api.*;
 import org.actioncontroller.PathParam;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import nav.portal.core.entities.AreaEntity;
-import no.portal.web.generated.api.AreaDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +27,7 @@ class AreaControllerTest {
 
     private DbContextConnection connection;
 
+    private final DashboardController dashboardController = new DashboardController(dbContext);
     private final AreaController areaController = new AreaController(dbContext);
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
@@ -139,20 +137,24 @@ class AreaControllerTest {
     @Test
     void getAreas() {
         //Arrange
-        String dashboardName = SampleData.getRandomizedDashboardName();
-        UUID dashboardId = dashboardRepository.save(dashboardName);
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
-        List<UUID> areaIds = areas.stream().map(areaRepository::save).collect(Collectors.toList());
-        List<AreaDto> beforeDto = EntityDtoMappers.toAreaDtoDeep(areaRepository.retrieveAll());
-        dashboardRepository.settAreasOnDashboard(dashboardId,areaIds);
-        //Act
-        List<AreaDto> afterDto = areaController.getAreas(dashboardId);
-        //Assert
-        Assertions.assertThat(afterDto.size()).isEqualTo(3);
-        Assertions.assertThat(afterDto.size()).isEqualTo(beforeDto.size());
-        Assertions.assertThat(afterDto.containsAll(beforeDto)).isTrue();
-    }
+        List<AreaDto> areaDtos = SampleDataDto.getRandomLengthListOfAreaDto();
+        areaDtos.forEach(areaDto -> {
+            IdContainerDto areaIdContainerDto  = areaController.newArea(areaDto);
+            areaDto.setId(areaIdContainerDto.getId());
+        });
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(areaDtos);
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
 
+        List<AreaDto> beforeDtos = areaController.getAllAreas();
+        //Act
+        List<AreaDto> afterDtos = areaController.getAreas(dashboardDto.getId());
+        //Assert
+        Assertions.assertThat(afterDtos.size()).isEqualTo(areaDtos.size());
+        Assertions.assertThat(afterDtos.size()).isEqualTo(beforeDtos.size());
+        Assertions.assertThat(afterDtos.containsAll(beforeDtos)).isTrue();
+    }
 
     @Test
     void addServiceToArea() {
