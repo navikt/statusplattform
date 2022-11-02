@@ -159,6 +159,34 @@ class AreaControllerTest {
     @Test
     void addServiceToArea() {
         //Arrange
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        serviceDto.setId(savedServiceDto.getId());
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        List<AreaDto> beforeDtos = areaController.getAreas(dashboardDto.getId());
+        List<ServiceDto> serviceDtosBefore = beforeDtos.get(0).getServices();
+        //Act
+        areaController.addServiceToArea(areaDto.getId(), serviceDto.getId());
+        //Assert
+        List<AreaDto> afterDtos = areaController.getAreas(dashboardDto.getId());
+        List<ServiceDto> serviceDtosAfter = afterDtos.get(0).getServices();
+        Assertions.assertThat(beforeDtos.get(0).getId()).isEqualTo(afterDtos.get(0).getId());
+        Assertions.assertThat((serviceDtosBefore).isEmpty()).isTrue();
+        Assertions.assertThat(serviceDtosAfter).contains(serviceDto);
+    }
+
+    @Test
+    void addServiceToAreax() {
+        //Arrange
         AreaEntity area = SampleData.getRandomizedAreaEntity();
         UUID areaId = areaRepository.save(area);
 
