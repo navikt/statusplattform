@@ -244,14 +244,35 @@ class AreaControllerTest {
     @Test
     void newSubArea() {
         //Arrange
-        SubAreaEntity subArea = SampleData.getRandomizedSubAreaEntity();
-        SubAreaDto subAreaDto = EntityDtoMappers.toSubAreaDtoShallow(subArea);
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        List <AreaDto> areaDtosBefore = areaController.getAreas(dashboardDto.getId());
+        List <SubAreaDto> subAreaDtosBefore = areaController.getAllSubAreas();
+
         //Act
+        SubAreaDto subAreaDto = SampleDataDto.getRandomizedSubAreaDto();
         IdContainerDto subAreaIdContainerDto = areaController.newSubArea(subAreaDto);
-        Map.Entry<SubAreaEntity, List<ServiceEntity>> retrievedNewSubArea = subAreaRepository.retrieveOne(subAreaIdContainerDto.getId());
+        areaDto.setId(subAreaIdContainerDto.getId());
+
+        List <AreaDto> areaDtosAfter = areaController.getAreas(dashboardDto.getId());
+        List <SubAreaDto> subAreaDtosAfter = areaController.getAllSubAreas();
+
         //Assert
-        Assertions.assertThat(retrievedNewSubArea.getKey().getName()).isEqualTo(subArea.getName());
-        Assertions.assertThat(retrievedNewSubArea.getValue()).isEmpty();
+        Assertions.assertThat(areaDtosAfter.get(0).getId()).isEqualTo(areaDtosBefore.get(0).getId());
+        Assertions.assertThat(areaDtosBefore.isEmpty()).isFalse();
+        Assertions.assertThat(subAreaDtosBefore.isEmpty()).isTrue();
+
+        Assertions.assertThat(areaDtosAfter.isEmpty()).isFalse();
+        Assertions.assertThat(subAreaDtosAfter.isEmpty()).isFalse();
+
     }
+
 
 }
