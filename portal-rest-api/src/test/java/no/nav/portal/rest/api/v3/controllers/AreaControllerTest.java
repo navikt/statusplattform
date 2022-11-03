@@ -185,38 +185,39 @@ class AreaControllerTest {
     }
 
     @Test
-    void addServiceToAreax() {
-        //Arrange
-        AreaEntity area = SampleData.getRandomizedAreaEntity();
-        UUID areaId = areaRepository.save(area);
-
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        //Act
-        areaController.addServiceToArea(areaId, serviceId );
-        Map.Entry<AreaEntity,List<ServiceEntity>> retrievedArea = areaRepository.retrieveOne(areaId);
-        //Assert
-        Assertions.assertThat(retrievedArea.getValue()).containsExactly(service);
-    }
-
-    @Test
     void removeServiceFromArea() {
         //Arrange
-        AreaEntity area = SampleData.getRandomizedAreaEntity();
-        UUID areaId = areaRepository.save(area);
+        List<ServiceDto> serviceDtos = SampleDataDto.getNonEmptyListOfServiceDto(2);
+        serviceDtos.forEach(serviceDto -> {
+            ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+            serviceDto.setId(savedServiceDto.getId());
+        });
 
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        areaController.addServiceToArea(areaId, serviceId);
-        Map.Entry<AreaEntity, List<ServiceEntity>> before = areaRepository.retrieveOne(areaId);
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+
+
+        areaDto.setId(idContainerDto.getId());
+
+        serviceDtos.forEach(serviceDto -> areaController.addServiceToArea(areaDto.getId(), serviceDto.getId()));
+        areaDto.setServices(serviceDtos);
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        List <AreaDto> areaDtoBefore = areaController.getAreas(dashboardDto.getId());
+        List<ServiceDto> serviceDtosBefore = areaDtoBefore.get(0).getServices();
+        ServiceDto toBeDeleted = serviceDtosBefore.get(0);
         //Act
-        areaRepository.removeServiceFromArea(areaId, serviceId);
-        Map.Entry<AreaEntity, List<ServiceEntity>> after = areaRepository.retrieveOne(areaId);
+        areaController.removeServiceFromArea(areaDto.getId(),toBeDeleted.getId());
+        List <AreaDto> areaDtoAfter = areaController.getAreas(dashboardDto.getId());
+        List<ServiceDto> serviceDtosAfter = areaDtoAfter.get(0).getServices();
         //Assert
-        Assertions.assertThat(before.getValue()).containsExactly(service);
-        Assertions.assertThat(after.getValue()).isEmpty();
+        Assertions.assertThat(serviceDtosBefore.size()).isEqualTo(2);
+        Assertions.assertThat(serviceDtosAfter.size()).isEqualTo(1);
+        Assertions.assertThat(serviceDtosBefore).contains(toBeDeleted);
+        Assertions.assertThat(serviceDtosAfter).doesNotContain(toBeDeleted);
     }
 
     @Test
