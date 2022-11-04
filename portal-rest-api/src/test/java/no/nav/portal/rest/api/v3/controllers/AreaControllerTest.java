@@ -223,22 +223,27 @@ class AreaControllerTest {
     @Test
     void getAllSubAreas() {
         //Arrange
-        SubAreaEntity subArea = SampleData.getRandomizedSubAreaEntity();
-        UUID subAreaId = subAreaRepository.save(subArea);
-        subArea.setId(subAreaId);
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
 
-        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(1);
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
 
-        services.forEach(s ->
-        {
-            s.setId(serviceRepository.save(s));
-            subAreaRepository.addServiceToSubArea(subAreaId, s.getId());
+        List<SubAreaDto> subAreaDtos = SampleDataDto.getRandomLengthListOfSubAreaDto();
+        List<SubAreaDto> allSubAreaDtos = new ArrayList<>();
+                subAreaDtos.forEach(subAreaDto -> {
+            IdContainerDto subAreaIdContainerDto = areaController.newSubArea(subAreaDto);
+            subAreaDto.setId(subAreaIdContainerDto.getId());
+            allSubAreaDtos.add(subAreaDto);
         });
 
         //Act
-        List<SubAreaDto> subAreasDtos = areaController.getAllSubAreas();
+        List<SubAreaDto> retrievedSubAreas = areaController.getAllSubAreas();
         //Assert
-        Assertions.assertThat(subAreasDtos.get(0).getId()).isEqualTo(subAreaId);
+        Assertions.assertThat(retrievedSubAreas).containsAll(allSubAreaDtos);
     }
 
     @Test
@@ -253,23 +258,18 @@ class AreaControllerTest {
         IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
         dashboardDto.setId(dashboardIdContainerDto.getId());
 
-        List <AreaDto> areaDtosBefore = areaController.getAreas(dashboardDto.getId());
         List <SubAreaDto> subAreaDtosBefore = areaController.getAllSubAreas();
 
         //Act
         SubAreaDto subAreaDto = SampleDataDto.getRandomizedSubAreaDto();
         IdContainerDto subAreaIdContainerDto = areaController.newSubArea(subAreaDto);
-        areaDto.setId(subAreaIdContainerDto.getId());
+        subAreaDto.setId(subAreaIdContainerDto.getId());
 
-        List <AreaDto> areaDtosAfter = areaController.getAreas(dashboardDto.getId());
         List <SubAreaDto> subAreaDtosAfter = areaController.getAllSubAreas();
 
         //Assert
-        Assertions.assertThat(areaDtosAfter.get(0).getId()).isEqualTo(areaDtosBefore.get(0).getId());
-        Assertions.assertThat(areaDtosBefore.isEmpty()).isFalse();
         Assertions.assertThat(subAreaDtosBefore.isEmpty()).isTrue();
 
-        Assertions.assertThat(areaDtosAfter.isEmpty()).isFalse();
         Assertions.assertThat(subAreaDtosAfter.isEmpty()).isFalse();
 
     }
