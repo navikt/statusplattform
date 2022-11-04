@@ -1,13 +1,12 @@
 package no.nav.portal.rest.api.v3.controllers;
 
 
-import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.entities.SubAreaEntity;
+
 import no.portal.web.generated.api.*;
 import org.actioncontroller.PathParam;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
-import nav.portal.core.entities.AreaEntity;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,10 +29,7 @@ class AreaControllerTest {
     private final DashboardController dashboardController = new DashboardController(dbContext);
     private final AreaController areaController = new AreaController(dbContext);
     private final ServiceController serviceController = new ServiceController(dbContext);
-    private final AreaRepository areaRepository = new AreaRepository(dbContext);
-    private final SubAreaRepository subAreaRepository = new SubAreaRepository(dbContext);
-    private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
-    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
+
 
     @BeforeEach
     void startConnection() {
