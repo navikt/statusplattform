@@ -80,8 +80,8 @@ class RecordControllerTest {
 
         Assertions.assertThat(recordStatusOnServiceBefore).isEmpty();
         Assertions.assertThat(recordStatusOnServiceAfter).isNotEmpty();
-        Assertions.assertThat(recordStatusOnServiceAfter.get(0).getId())
-                .isEqualTo(serviceDto.getRecord().getId());
+        Assertions.assertThat(recordStatusOnServiceAfter.get(0).getServiceId())
+               .isEqualTo(serviceDto.getId());
     }
 
     @Test
