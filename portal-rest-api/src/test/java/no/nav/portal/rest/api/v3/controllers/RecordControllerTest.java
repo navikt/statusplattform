@@ -6,10 +6,8 @@ import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.portal.web.generated.api.RecordDto;
-import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.*;
 
-import no.portal.web.generated.api.StatusDto;
 import org.actioncontroller.PathParam;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
@@ -32,6 +30,8 @@ class RecordControllerTest {
 
     private DbContextConnection connection;
 
+    private final DashboardController dashboardController = new DashboardController(dbContext);
+    private final AreaController areaController = new AreaController(dbContext);
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final RecordController recordController = new RecordController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
@@ -52,19 +52,36 @@ class RecordControllerTest {
     @Test
     void addServiceStatus() {
         //Arrange
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        RecordEntity record = SampleData.getRandomizedRecordEntity();
-        record.setServiceId(service.getId());
-        record.setId(recordRepository.save(record));
-        RecordDto recordDto = EntityDtoMappers.toRecordDto(record);
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        serviceDto.setId(savedServiceDto.getId());
+
+        RecordDto recordDto = SampleDataDto.getRandomizedRecordDto();
+        recordDto.setId(recordDto.getId());
+        recordDto.setServiceId(serviceDto.getId());
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        areaController.addServiceToArea(areaDto.getId(), serviceDto.getId());
+        List<RecordDto> recordStatusOnServiceBefore = recordController.getRecordHistory(serviceDto.getId());
+
         //Act
         recordController.addServiceStatus(recordDto);
+        dashboardController.getDashboard(dashboardDto.getId());
         //Assert
-        ServiceDto serviceDto = serviceController.getService(serviceId);
-        Assertions.assertThat(serviceDto.getRecord().getStatus())
-                .isEqualTo(StatusDto.fromValue(record.getStatus().getDbRepresentation()));
+        List<RecordDto> recordStatusOnServiceAfter = recordController.getRecordHistory(serviceDto.getId());
+
+        Assertions.assertThat(recordStatusOnServiceBefore).isEmpty();
+        Assertions.assertThat(recordStatusOnServiceAfter).isNotEmpty();
+        Assertions.assertThat(recordStatusOnServiceAfter.get(0).getId())
+                .isEqualTo(serviceDto.getRecord().getId());
     }
 
     @Test

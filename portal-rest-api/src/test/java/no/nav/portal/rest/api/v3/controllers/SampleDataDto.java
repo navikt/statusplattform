@@ -178,6 +178,7 @@ public class SampleDataDto {
 
     public static RecordDto getRandomizedRecordDto() {
         return new RecordDto()
+                .id(UUID.randomUUID())
                 .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
                 .status(getRandomStatusDto())
                 .responseTime(getRandomResponseTime());
@@ -185,6 +186,7 @@ public class SampleDataDto {
 
     public static RecordDto getRandomizedRecordDtoForService(ServiceDto serviceDto) {
         return new RecordDto()
+                .id(UUID.randomUUID())
                 .serviceId(serviceDto.getId())
                 .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
                 .status(getRandomStatusDto())
@@ -258,5 +260,4 @@ public class SampleDataDto {
         Random random = new Random();
         return OPSmessageDto.SeverityEnum.values()[random.nextInt(OPSmessageDto.SeverityEnum.values().length)];
     }
-
 }
