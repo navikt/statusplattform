@@ -163,7 +163,7 @@ public class ServiceController {
     public List<JsonObject> getStatusHolderStatuses() throws IOException  {
         try{
             logger.info("--------------- Statusholder  endpoint:");
-            return getAzureAdToken();
+            return getAllStatusesFromStatusholder();
         }
         catch (IOException e){
             return toJson("'error':'couldNotReadFromStatusholder'");
