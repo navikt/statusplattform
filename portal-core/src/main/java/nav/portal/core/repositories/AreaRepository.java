@@ -184,7 +184,7 @@ public class AreaRepository {
                             .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
                     return null;
                 });
-
+        result.values().forEach(serviceList -> serviceList.sort(Comparator.comparing(s -> s.getName().toLowerCase(Locale.ROOT))));
         result.entrySet()
                 .forEach(entry -> entry.setValue(entry.getValue().stream().filter(s -> s.getDeleted().equals(false))
                         .collect(Collectors.toList())));
