@@ -215,6 +215,6 @@ class AreaRepositoryTest {
         List<ServiceEntity>retrievedServices = retrievedArea.setValue(retrievedArea.getValue());
         //Assert
         Assertions.assertThat(retrievedAll).containsKey(area);
-        Assertions.assertThat(retrievedAll).containsValue(retrievedServices);
+        Assertions.assertThat(retrievedAll.get(area)).containsExactlyInAnyOrderElementsOf(retrievedServices);
     }
 }
