@@ -6,8 +6,7 @@ import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.OpsControllerHelper;
-import no.portal.web.generated.api.AreaDto;
-import no.portal.web.generated.api.OPSmessageDto;
+import no.portal.web.generated.api.*;
 import org.actioncontroller.PathParam;
 import org.actioncontroller.json.JsonBody;
 import org.assertj.core.api.Assertions;
@@ -29,6 +28,9 @@ class OpsControllerTest {
     private final DataSource dataSource = TestDataSource.create();
     private final DbContext dbContext = new DbContext();
 
+    private final DashboardController dashboardController = new DashboardController(dbContext);
+    private final AreaController areaController = new AreaController(dbContext);
+    private final ServiceController serviceController = new ServiceController(dbContext);
     private final OpsController opsController = new OpsController(dbContext);
     private final OpsControllerHelper opsControllerHelper = new OpsControllerHelper(dbContext);
     private final DashboardRepository dashboardRepository = new DashboardRepository(dbContext);
@@ -50,9 +52,36 @@ class OpsControllerTest {
         connection.close();
     }
 
-
     @Test
     void createOpsMessage() {
+        //Arrange
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        serviceDto.setId(savedServiceDto.getId());
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        OPSmessageDto opsMessageDto = SampleDataDto.getRandomOPSMessageDto();
+
+        //Act
+        OPSmessageDto createdOpsMessage = opsController.createOpsMessage(opsMessageDto);
+        OPSmessageDto retrievedOpsMessage = opsController.getSpecificOpsMessage(createdOpsMessage.getId());
+
+        //Assert
+        Assertions.assertThat(retrievedOpsMessage).isEqualTo(createdOpsMessage);
+        Assertions.assertThat(createdOpsMessage.getInternalHeader()).isEqualTo(opsMessageDto.getInternalHeader());
+        Assertions.assertThat(createdOpsMessage.getInternalMessage()).isEqualTo(opsMessageDto.getInternalMessage());
+      }
+
+    @Test
+    void createOpsMessagex() {
         //Arrange
         OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
         OPSmessageDto opsMessageDto = EntityDtoMappers.toOpsMessageDtoShallow(opsMessageEntity);
@@ -66,9 +95,7 @@ class OpsControllerTest {
         Assertions.assertThat(retrievedEntity).isEqualTo(opsMessageEntity);
     }
 
-    @Test
-    void createMaintenanceMessage() {
-    }
+
 
     @Test
     void getAllForDashboard() {

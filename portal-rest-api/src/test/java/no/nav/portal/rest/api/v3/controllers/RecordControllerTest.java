@@ -60,70 +60,33 @@ class RecordControllerTest {
         ServiceDto savedServiceDto = serviceController.newService(serviceDto);
         serviceDto.setId(savedServiceDto.getId());
 
-        RecordDto recordDto = SampleDataDto.getRandomizedRecordDto();
-        recordDto.setId(recordDto.getId());
-        recordDto.setServiceId(serviceDto.getId());
-
         DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
         dashboardDto.setAreas(List.of(areaDto));
         IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
         dashboardDto.setId(dashboardIdContainerDto.getId());
 
-        areaController.addServiceToArea(areaDto.getId(), serviceDto.getId());
+        RecordDto recordDto = SampleDataDto.getRandomizedRecordDto();
+        recordDto.setId(recordDto.getId());
+        recordDto.setServiceId(serviceDto.getId());
+
         List<RecordDto> recordStatusOnServiceBefore = recordController.getRecordHistory(serviceDto.getId());
 
         //Act
         recordController.addServiceStatus(recordDto);
+        areaController.addServiceToArea(areaDto.getId(), serviceDto.getId());
         dashboardController.getDashboard(dashboardDto.getId());
+
         //Assert
+        List<AreaDto> retrievedAreas = areaController.getAllAreas();
+        List<ServiceDto>retrievedServices = retrievedAreas.get(0).getServices();
         List<RecordDto> recordStatusOnServiceAfter = recordController.getRecordHistory(serviceDto.getId());
 
         Assertions.assertThat(recordStatusOnServiceBefore).isEmpty();
         Assertions.assertThat(recordStatusOnServiceAfter).isNotEmpty();
         Assertions.assertThat(recordStatusOnServiceAfter.get(0).getServiceId())
-               .isEqualTo(serviceDto.getId());
-    }
-
-    @Test
-    void getAreas() {
-        //Arrange
-        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
-
-        //Lagrer tjenester
-        services.forEach(s -> s.setId(serviceRepository.save(s)));
-
-        Map<UUID, RecordEntity> servicesWithStatus= new HashMap<>();
-
-        //Lager tilfeldig status for hver tjeneste
-        services.forEach(s -> servicesWithStatus.put(s.getId(), SampleData.getRandomizedRecordEntityForService(s)));
-        //Lagrer statusen på tjenesten
-        servicesWithStatus.keySet().forEach(id -> recordRepository.save(servicesWithStatus.get(id)));
-
-
-        //TODO legg in avhengigheter her før mappingen:
-        //serviceRepository.addDependencyToService();
-        //Under bygges forventet dtoer m status og avhengigheter utifra oppsettet over:
-        /*List<ServiceDto> expectedDtos = services.stream()
-                .map(s-> EntityDtoMappers.toServiceDtoDeep(s, Collections.emptyList()))
-                .map(dto -> setStatus(servicesWithStatus, dto))
-                .collect(Collectors.toList());*/
-
-        //TODO Orlene: Legge til avhengigheter og statuser på tjenestene
-        // Først lagre avhengigheter til repository
-        ServiceEntity service = SampleData.getRandomizedServiceEntityWithNameNotInList(services);
-        service.setId(serviceRepository.save(service));
-        UUID serviceId = service.getId();
-        RecordEntity serviceRecord = SampleData.getRandomizedRecordEntityForService(service);
-
-        // Legge til avhengighetene i mappingen, se der det står Collections.emptyList() -> Liste av avhengigheter
-        serviceRepository.addDependencyToService(service, services);
-
-        //recordRepository.save()
-        recordRepository.save(serviceRecord);
-        //Act
-        List<RecordDto> servicesDtos = recordController.getRecordHistory(serviceId);
-        //Assert
-        Assertions.assertThat(servicesDtos).isNotEmpty();
+                .isEqualTo(serviceDto.getId());
+        Assertions.assertThat(retrievedAreas.get(0).getServices().size()).isEqualTo(1);
+        Assertions.assertThat(retrievedServices.get(0).getId()).isEqualTo(serviceDto.getId());
     }
 
     @Test
