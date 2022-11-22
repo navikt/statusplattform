@@ -59,9 +59,15 @@ class OpsControllerTest {
         IdContainerDto idContainerDto = areaController.newArea(areaDto);
         areaDto.setId(idContainerDto.getId());
 
-        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        /*ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
         ServiceDto savedServiceDto = serviceController.newService(serviceDto);
-        serviceDto.setId(savedServiceDto.getId());
+        serviceDto.setId(savedServiceDto.getId());*/
+
+        List<ServiceDto> serviceDtos = SampleDataDto.getRandomLengthListOfServiceDto();
+        serviceDtos.forEach(serviceDto1 -> {
+           ServiceDto savedServiceDto1 = serviceController.newService(serviceDto1);
+           serviceDto1.setId(savedServiceDto1.getId());
+        });
 
         DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
         dashboardDto.setAreas(List.of(areaDto));
@@ -69,33 +75,21 @@ class OpsControllerTest {
         dashboardDto.setId(dashboardIdContainerDto.getId());
 
         OPSmessageDto opsMessageDto = SampleDataDto.getRandomOPSMessageDto();
-
+        opsMessageDto.setAffectedServices(serviceDtos);
+        ///opsMessageDto.setAffectedServices(List.of(serviceDto));
         //Act
         OPSmessageDto createdOpsMessage = opsController.createOpsMessage(opsMessageDto);
         OPSmessageDto retrievedOpsMessage = opsController.getSpecificOpsMessage(createdOpsMessage.getId());
+        List<ServiceDto> affectedServices = opsMessageDto.getAffectedServices();
 
         //Assert
         Assertions.assertThat(retrievedOpsMessage).isEqualTo(createdOpsMessage);
         Assertions.assertThat(createdOpsMessage.getInternalHeader()).isEqualTo(opsMessageDto.getInternalHeader());
         Assertions.assertThat(createdOpsMessage.getInternalMessage()).isEqualTo(opsMessageDto.getInternalMessage());
+        Assertions.assertThat(affectedServices).containsExactlyInAnyOrderElementsOf(serviceDtos);
+        Assertions.assertThat(affectedServices.size()).isEqualTo(serviceDtos.size());
+        //Assertions.assertThat(affectedServices).contains(serviceDto);
       }
-
-    @Test
-    void createOpsMessagex() {
-        //Arrange
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
-        OPSmessageDto opsMessageDto = EntityDtoMappers.toOpsMessageDtoShallow(opsMessageEntity);
-
-        //Act
-        UUID opsMessageId = opsController.createOpsMessage(opsMessageDto).getId();
-        opsMessageEntity.setId(opsMessageId);
-        OpsMessageEntity retrievedEntity = opsRepository.retrieveOne(opsMessageId).getKey();
-
-        //Assert
-        Assertions.assertThat(retrievedEntity).isEqualTo(opsMessageEntity);
-    }
-
-
 
     @Test
     void getAllForDashboard() {
