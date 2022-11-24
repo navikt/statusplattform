@@ -89,49 +89,6 @@ class OpsControllerTest {
       }
 
     @Test
-    void getAllForDashboard() {
-        //Lager dashboard:
-        UUID dashbaordId = dashboardRepository.save("Mitt nye fantastiske dashboard!");
-
-        //Lager område og legger til på dashboard:
-        AreaEntity area = SampleData.getRandomizedAreaEntity();
-        UUID areaId = areaRepository.save(area);
-        dashboardRepository.settAreasOnDashboard(dashbaordId,areaId);
-
-        //Lager tjeneste og legger den på område:
-        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(serviceEntity);
-        serviceEntity.setId(serviceId);
-        areaRepository.addServiceToArea(areaId,serviceId);
-
-
-        //Lager ops Message som IKKE er knyttet til noen tjeneste:
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
-        opsMessageEntity.setId(opsRepository.save(opsMessageEntity, new ArrayList<>()));
-        //Mapper til dto, og setter på tjeneste
-        OPSmessageDto opSmessageDto = EntityDtoMappers.toOpsMessageDtoShallow(opsMessageEntity);
-        opSmessageDto.setAffectedServices(List.of(EntityDtoMappers.toServiceDtoShallow(serviceEntity)));
-
-        //------------------ Act ------------------------------------
-
-        //Henter først alle opsmeldinger på dashboardet. Nå skal ingen meldinger ligge på dashboardet.
-        //EDIT: Endret funksjonalitet: Opsmeldinger som ikke er knyttet til noe dashboard, skal komme opp på alle,
-        List<OPSmessageDto> shouldAlsoContainOne = opsController.getAllForDashboard(dashbaordId);
-        //Kobler opsmeldingen til tjenesten
-        opsRepository.setServicesOnOpsMessage(opsMessageEntity.getId(), List.of(serviceEntity.getId()));
-        //Nå skal opsmeldingen være koblet mot dashboardet via tjenesten:
-        List<OPSmessageDto> shouldContainOne = opsController.getAllForDashboard(dashbaordId);
-
-
-
-        //------------------ Assert ------------------------------------
-        Assertions.assertThat(shouldAlsoContainOne.size()).isEqualTo(1);
-        Assertions.assertThat(shouldContainOne.size()).isEqualTo(1);
-        Assertions.assertThat(shouldContainOne.get(0).getId()).isEqualTo(opSmessageDto.getId());
-
-    }
-
-    @Test
     void getAllOpsMessages() {
         //Arrange
         AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
@@ -175,20 +132,35 @@ class OpsControllerTest {
     @Test
     void deleteOpsMessage() {
         //Arrange
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
-        OPSmessageDto opsMessageDto = EntityDtoMappers.toOpsMessageDtoShallow(opsMessageEntity);
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
 
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        serviceDto.setId(savedServiceDto.getId());
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        List<OPSmessageDto> opsMessageDtos = SampleDataDto.getRandomLengthListOfOPSMessageDto();
+        opsMessageDtos.forEach(dto -> {
+            dto.setAffectedServices(List.of(serviceDto));
+            dto.setId(opsController.createOpsMessage(dto).getId());
+        });
+
+        OPSmessageDto toBeDeleted = opsMessageDtos.get(0);
+        List<OPSmessageDto> retrievedOpsMessagesBefore = opsController.getAllOpsMessages();
         //Act
-        UUID opsMessageId = opsController.createOpsMessage(opsMessageDto).getId();
-        opsMessageEntity.setId(opsMessageId);
-        OpsMessageEntity retrievedEntity = opsRepository.retrieveOne(opsMessageId).getKey();
-        
-        Boolean isEntryDeleted = opsRepository.isEntryDeleted(retrievedEntity.getId());
-        opsController.deleteOpsMessage(retrievedEntity.getId());
-
+        opsController.deleteOpsMessage(opsMessageDtos.get(0).getId());
+        List<OPSmessageDto> retrievedOpsMessagesAfter = opsController.getAllOpsMessages();
         //Assert
-        Assertions.assertThat(isEntryDeleted).isEqualTo(false);
-        Assertions.assertThat(opsRepository.isEntryDeleted(opsMessageId)).isEqualTo(true);
+        Assertions.assertThat(retrievedOpsMessagesBefore.size()).isEqualTo(opsMessageDtos.size());
+        Assertions.assertThat(retrievedOpsMessagesAfter.size()).isLessThan(opsMessageDtos.size());
+        Assertions.assertThat(retrievedOpsMessagesBefore).contains(toBeDeleted);
+        Assertions.assertThat(retrievedOpsMessagesAfter).doesNotContain(toBeDeleted);
     }
 
     @Test
