@@ -193,7 +193,7 @@ public class SampleDataDto {
                 .responseTime(getRandomResponseTime());
     }
 
-    public static List<RecordDto> getRandomizedRecordEntitiesForService(ServiceDto serviceDto) {
+    public static List<RecordDto> getRandomizedRecordDtosForService(ServiceDto serviceDto) {
         List<RecordDto> recordsDto = new ArrayList<>();
         Random random = new Random();
         int numberOfRecords = 1 + random.nextInt(12);
@@ -220,6 +220,35 @@ public class SampleDataDto {
                 .severity(getRandomOpsMessageDtoSeverity())
                 .onlyShowForNavEmployees(random.nextBoolean())
                 .isActive(true);
+    }
+
+    public static OPSmessageDto getRandomizedOPSMessageDtoWithNameNotInList(List<OPSmessageDto> opsMessageDtos) {
+        Random random = new Random();
+        Random randomStartTime = new Random();
+        Random randomEndTime = new Random();
+        int startTime = randomStartTime.nextInt(0, 3) ;// max = 0 min = -3 days
+        int endTime = randomEndTime.nextInt(1,4);
+        List<String> usedHeaders = opsMessageDtos.stream().map(OPSmessageDto::getInternalHeader).collect(Collectors.toList());
+        ArrayList<String> possibleHeaders = new ArrayList<>(headersForOpsMessages);
+        possibleHeaders.removeAll(usedHeaders);
+        return new OPSmessageDto()
+                .internalHeader(getRandomFromArray(possibleHeaders))
+                .internalMessage(getRandomFromArray(infoTextForOpsMessages))
+                .startTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()).minusDays(startTime))
+                .endTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()).plusDays(endTime))
+                .severity(getRandomOpsMessageDtoSeverity())
+                .onlyShowForNavEmployees(random.nextBoolean())
+                .isActive(true);
+    }
+
+    public static List<OPSmessageDto> getRandomLengthListOfOPSMessageDto() {
+        Random random = new Random();
+        int numberOfOpsMessageDto = 1 + random.nextInt(headersForOpsMessages.size());
+        List<OPSmessageDto> opsMessageDtos = new ArrayList<>();
+        for (int i = 0; i <= numberOfOpsMessageDto; i++) {
+            opsMessageDtos.add(getRandomizedOPSMessageDtoWithNameNotInList(opsMessageDtos));
+        }
+        return opsMessageDtos;
     }
 
     private static ServiceTypeDto getRandomServiceTypeDto() {

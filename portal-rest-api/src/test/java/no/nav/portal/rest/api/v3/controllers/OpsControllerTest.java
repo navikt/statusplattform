@@ -18,10 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class OpsControllerTest {
@@ -134,21 +131,45 @@ class OpsControllerTest {
 
     }
 
-    //@Test
-    //TODO FIX
+    @Test
     void getAllOpsMessages() {
         //Arrange
-        List<OpsMessageEntity> opsMessagesEntitiesList = SampleData.getNonEmptyListOfOpsMessageEntity(1);
-        List<OPSmessageDto> opsMessagesDtoList = opsMessagesEntitiesList
-                .stream().map(EntityDtoMappers::toOpsMessageDtoShallow)
-                .collect(Collectors.toList());
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+
+        List<ServiceDto> serviceDtos = SampleDataDto.getRandomLengthListOfServiceDto();
+        serviceDtos.forEach(serviceDto -> {
+            ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+            serviceDto.setId(savedServiceDto.getId());
+        });
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        List<OPSmessageDto> opsMessageDtos = SampleDataDto.getRandomLengthListOfOPSMessageDto();
+        opsMessageDtos.forEach(dto -> {
+            dto.setAffectedServices(serviceDtos);
+            dto.setId(opsController.createOpsMessage(dto).getId());
+        });
 
         //Act
-        opsMessagesDtoList.forEach(dto -> dto.setId(opsController.createOpsMessage(dto).getId()));
+
         List<OPSmessageDto> retrievedOpsMessages = opsController.getAllOpsMessages();
+        List<ServiceDto> retrievedAffectedServicesWithDuplicates = new ArrayList<>();
+        opsMessageDtos.forEach(opsMessageDto ->
+                retrievedAffectedServicesWithDuplicates.addAll(opsMessageDto.getAffectedServices()));
+
+        List<ServiceDto> retrievedAffectedServices = new ArrayList<>(
+                new HashSet<>(retrievedAffectedServicesWithDuplicates));
 
         //Assert
-        Assertions.assertThat(opsMessagesDtoList).containsExactlyInAnyOrderElementsOf(retrievedOpsMessages);
+        Assertions.assertThat(retrievedAffectedServices).containsExactlyInAnyOrderElementsOf(serviceDtos);
+        Assertions.assertThat(retrievedAffectedServices.size()).isEqualTo(serviceDtos.size());
+        Assertions.assertThat(retrievedOpsMessages.size()).isEqualTo(opsMessageDtos.size());
+        Assertions.assertThat(retrievedOpsMessages).containsExactlyInAnyOrderElementsOf(opsMessageDtos);
     }
 
     @Test
