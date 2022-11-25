@@ -267,6 +267,73 @@ class ServiceControllerTest {
         Assertions.assertThat(serviceRepository.retrieve(UUIDComponentWithDependecies)).isNotEmpty();
     }
 
+    void testOfAccessTokenRequestWithNimbus() throws URISyntaxException, IOException, ParseException {
+        AccessTokenHelper accessTokenHelper = new AccessTokenHelper();
+        accessTokenHelper.getAccessTokenForStatusholder();
+    }
+
+
+
+    @Test
+    void temp() {
+        try{
+            AzureAdM2Mhelper mhelper = new AzureAdM2Mhelper();
+            mhelper.getBearerToken();
+            HttpURLConnection con = testWithStatusholder();
+            String body = readBody(con);
+            System.out.println(body);
+
+
+        }
+        catch (IOException e){
+            System.out.println("error");
+
+        };
+    }
+
+    private HttpURLConnection testWithStatusholder() throws IOException {
+        URL url = new URL("http://localhost:8080/test");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        AzureAdM2Mhelper mhelper = new AzureAdM2Mhelper();
+        con.setRequestProperty("Authorization", mhelper.getBearerToken());
+
+//        Map<String, String> parameters = new HashMap<>();
+//        parameters.put("client_id", CLIENT_ID);
+//
+//
+//        con.setDoOutput(true);
+//        DataOutputStream out = new DataOutputStream(con.getOutputStream());
+//        out.writeBytes(getParamsString(parameters));
+//        out.flush();
+//        out.close();
+
+        return con;
+    }
+
+    private static String readBody(HttpURLConnection con) throws IOException {
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        return content.toString();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    @Test
 //    //TODO SE på denne

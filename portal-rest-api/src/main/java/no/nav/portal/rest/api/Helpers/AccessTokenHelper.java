@@ -34,16 +34,6 @@ public class AccessTokenHelper {
     public AccessToken getAccessTokenForStatusholder() throws URISyntaxException, IOException, ParseException {
 
         AuthorizationGrant clientGrant = new ClientCredentialsGrant();
-        /**
-
-        // The credentials to authenticate the client at the token endpoint
-        ClientID clientID = new ClientID("123");
-        Secret clientSecret = new Secret("secret");
-        ClientAuthentication clientAuth = new ClientSecretBasic(clientID, clientSecret);
-
-        // The request scope for the token (may be optional)
-        Scope scope = new Scope("read", "write");
-        **/
         // The token endpoint
         URI tokenEndpoint =  new URI("https://login.microsoftonline.com/"+TENANT+"/oauth2/v2.0/token");
 

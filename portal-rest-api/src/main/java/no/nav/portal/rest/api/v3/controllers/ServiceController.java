@@ -1,12 +1,9 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-
-import nav.portal.core.entities.RecordEntity;
-import nav.portal.core.entities.ServiceEntity;
-import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.ServiceRepository;
-import no.nav.portal.infrastructure.AuthenticationFilter;
+
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.nav.portal.rest.api.Helpers.AzureAdM2Mhelper;
 import no.nav.portal.rest.api.Helpers.ServiceControllerHelper;
 import no.nav.portal.rest.api.Helpers.Util;
 import no.portal.web.generated.api.*;
@@ -19,18 +16,14 @@ import org.slf4j.LoggerFactory;
 
 
 import javax.json.Json;
+
 import javax.json.JsonArray;
 import javax.json.JsonReader;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -39,8 +32,6 @@ public class ServiceController {
     private final ServiceControllerHelper serviceControllerHelper;
     private final ServiceRepository serviceRepository;
     private String STATUSHOLDER_URL = System.getenv("statusholder_url");
-    private String CLIENT_SECRET = System.getenv("AZURE_APP_CLIENT_SECRET");
-    private String CLIENT_ID = System.getenv("AZURE_APP_CLIENT_ID");
     private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
 
 
@@ -182,6 +173,18 @@ public class ServiceController {
         }
 
     }
+    @POST("/Statusholder/TestAzureM2M")
+    public String testAzureM2M() throws IOException{
+        AzureAdM2Mhelper azureAdM2Mhelper = new AzureAdM2Mhelper();
+
+        URL url = new URL(STATUSHOLDER_URL+"/test");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestProperty ("Authorization", azureAdM2Mhelper.getBearerToken());
+        con.setRequestMethod("GET");
+        return readBody(con);
+
+
+    }
 
 
     private static List<JsonObject> toJson(String str){
@@ -223,28 +226,6 @@ public class ServiceController {
         return body;
     }
 
-    private List<JsonObject> getAzureAdToken() throws IOException  {
-        logger.info("--------------- Statusholder  Trying to get azure ad token:");
-        HttpURLConnection con = getAzureAdTokenConnection();
-        String stringBody = readBody(con);
-        logger.info("Result : " + stringBody);
-        return toJson(stringBody);
-    }
-
-    private HttpURLConnection getAzureAdTokenConnection() throws IOException {
-        String tenant = "trygdeetaten.no";
-        String host = "login.microsoftonline.com";
-        String scope = "api://dev-fss.navdig.statusholder/.default";
-        String baseUrl = host+"/"+ tenant+ "/oauth2/v2.0/token HTTP/1.1";
-        String fullUrl = baseUrl + "client_id="+CLIENT_ID+"&scope="+scope+"client_secret="+CLIENT_SECRET+"&grant_type=client_credentials";
-        logger.info("--------------- fullUrl = :" + fullUrl);
-        URL url = new URL(fullUrl);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        con.setRequestMethod("POST");
-        return con;
-    }
-
 
 
 
@@ -273,7 +254,7 @@ public class ServiceController {
 
 
 
-        URL url = new URL(STATUSHOLDER_URL);
+        URL url = new URL(STATUSHOLDER_URL+ "/status/");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Accept", "application/json");

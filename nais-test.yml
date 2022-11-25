@@ -10,7 +10,11 @@ spec:
     - name: FRONTEND_LOCATION
       value: https://status.dev.nav.no
     - name: statusholder_url
-      value: https://statusholder.dev-fss-pub.nais.io/status/
+      value: https://statusholder.dev-fss-pub.nais.io
+    - name: TENANT
+      value: trygdeetaten.no
+    - name: ENV
+      value: dev
   envFrom:
     - secret: swagger-api-konfig
   replicas:

@@ -793,6 +793,29 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /Statusholder/TestAzureM2M:
+    post:
+      tags:
+        - Statusholder
+      summary: Test av azure ad
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
   /Alert/test:
     get:
       tags:

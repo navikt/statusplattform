@@ -192,7 +192,7 @@ public class PollingEngine extends Thread {
         String urlString;
         switch (serviceEntity.getPolling_url()){
             case MOCK: urlString = MOCK_URL + serviceEntity.getId(); break;
-            case STATUSHOLDER: urlString = STATUSHOLDER_URL + serviceEntity.getId();break;
+            case STATUSHOLDER: urlString = STATUSHOLDER_URL+"/status/" + serviceEntity.getId();break;
             default: urlString = serviceEntity.getPolling_url();
         }
         URL url = new URL(urlString);

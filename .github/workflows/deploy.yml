@@ -23,7 +23,7 @@ jobs:
   deploy-test:
     name: Deploy application to test env
     needs: build-and-run-tests
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/Oauth2Client'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
