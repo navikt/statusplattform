@@ -193,24 +193,36 @@ class OpsControllerTest {
     @Test
     void updateSpecificOpsMessage(){
         //Arrange
-        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(serviceEntity);
-        serviceEntity.setId(serviceId);
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto = areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
 
-        List<OpsMessageEntity> opsMessages = SampleData.getNonEmptyListOfOpsMessageEntity(2);
-        List<OPSmessageDto> opsMessageDtos = EntityDtoMappers.toOpsMessageDtoShallow(opsMessages);
-        UUID opsMessageId0 = opsController.createOpsMessage(opsMessageDtos.get(0)).getId();
-        UUID opsMessageId1 = opsController.createOpsMessage(opsMessageDtos.get(1)).getId();
-        opsMessages.get(0).setId(opsMessageId0);
-        opsMessages.get(1).setId(opsMessageId1);
-        opsMessageDtos.get(0).setAffectedServices(List.of(EntityDtoMappers.toServiceDtoShallow(serviceEntity)));
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        serviceDto.setId(savedServiceDto.getId());
 
-        Map.Entry<OpsMessageEntity, List<ServiceEntity>> before = opsRepository.retrieveOne(opsMessageId0);
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+
+        List<OPSmessageDto> opsMessageDtos = SampleDataDto.getNonEmptyListOfOpsMessageDto(2);
+        List<OPSmessageDto> createdOpsMessageDtos = new ArrayList<>();
+
+        opsMessageDtos.forEach(opsMessageDto -> {
+            opsMessageDto.setAffectedServices(List.of(serviceDto));
+            createdOpsMessageDtos.add(opsController.createOpsMessage(opsMessageDto));
+        });
+
+        OPSmessageDto opsMessageBefore = opsController.getSpecificOpsMessage(createdOpsMessageDtos.get(0).getId());
+        OPSmessageDto updatedOpsMessage = createdOpsMessageDtos.get(1);
         //Act
-        opsController.updateSpecificOpsMessage(opsMessageId0 , opsMessageDtos.get(1));
-        Map.Entry<OpsMessageEntity, List<ServiceEntity>> after = opsRepository.retrieveOne(opsMessageId0);
+        OPSmessageDto opsMessageAfter =
+                opsController.updateSpecificOpsMessage(createdOpsMessageDtos.get(0).getId(), updatedOpsMessage);
         //Assert
-        Assertions.assertThat(after.getKey().getId()).isEqualTo(opsMessageId0);
-        Assertions.assertThat(after.getKey()).isNotEqualTo(before.getKey());
+        Assertions.assertThat(opsMessageBefore.getInternalHeader()).isNotEqualToIgnoringCase(opsMessageAfter.getInternalHeader());
+        Assertions.assertThat(opsMessageAfter.getInternalHeader()).isEqualToIgnoringCase(updatedOpsMessage.getInternalHeader());
     }
+
+
 }

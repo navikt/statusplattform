@@ -35,8 +35,6 @@ class RecordControllerTest {
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final RecordController recordController = new RecordController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
-    private final RecordRepository recordRepository = new RecordRepository(dbContext);
-
 
     @BeforeEach
     void startConnection() {

@@ -251,6 +251,14 @@ public class SampleDataDto {
         return opsMessageDtos;
     }
 
+    public static List<OPSmessageDto> getNonEmptyListOfOpsMessageDto(int length) {
+        List<OPSmessageDto> opsMessageDtos = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            opsMessageDtos.add(getRandomizedOPSMessageDtoWithNameNotInList(opsMessageDtos));
+        }
+        return opsMessageDtos;
+    }
+
     private static ServiceTypeDto getRandomServiceTypeDto() {
         Random random = new Random();
         return ServiceTypeDto.values()[random.nextInt(ServiceType.values().length)];
