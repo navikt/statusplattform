@@ -1,22 +1,37 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+
+import com.nimbusds.oauth2.sdk.ParseException;
 import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.nav.portal.rest.api.Helpers.AccessTokenHelper;
 import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.ServiceDto;
 import no.portal.web.generated.api.MaintenanceDto;
 
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
+
+
 import org.junit.jupiter.api.AfterEach;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
+import javax.json.Json;
+import javax.json.JsonReader;
+import javax.json.JsonObject;
+
 import javax.sql.DataSource;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -274,29 +289,13 @@ class ServiceControllerTest {
 
 
 
-    @Test
-    void temp() {
-        try{
-            AzureAdM2Mhelper mhelper = new AzureAdM2Mhelper();
-            mhelper.getBearerToken();
-            HttpURLConnection con = testWithStatusholder();
-            String body = readBody(con);
-            System.out.println(body);
 
-
-        }
-        catch (IOException e){
-            System.out.println("error");
-
-        };
-    }
 
     private HttpURLConnection testWithStatusholder() throws IOException {
         URL url = new URL("http://localhost:8080/test");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
-        AzureAdM2Mhelper mhelper = new AzureAdM2Mhelper();
-        con.setRequestProperty("Authorization", mhelper.getBearerToken());
+
 
 //        Map<String, String> parameters = new HashMap<>();
 //        parameters.put("client_id", CLIENT_ID);

@@ -3,7 +3,6 @@ package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.repositories.ServiceRepository;
 
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.nav.portal.rest.api.Helpers.AzureAdM2Mhelper;
 import no.nav.portal.rest.api.Helpers.ServiceControllerHelper;
 import no.nav.portal.rest.api.Helpers.Util;
 import no.portal.web.generated.api.*;
@@ -173,18 +172,7 @@ public class ServiceController {
         }
 
     }
-    @POST("/Statusholder/TestAzureM2M")
-    public String testAzureM2M() throws IOException{
-        AzureAdM2Mhelper azureAdM2Mhelper = new AzureAdM2Mhelper();
 
-        URL url = new URL(STATUSHOLDER_URL+"/test");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestProperty ("Authorization", azureAdM2Mhelper.getBearerToken());
-        con.setRequestMethod("GET");
-        return readBody(con);
-
-
-    }
 
 
     private static List<JsonObject> toJson(String str){
