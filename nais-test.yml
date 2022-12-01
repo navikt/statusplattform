@@ -39,6 +39,11 @@ spec:
     application:
       tenant: nav.no
       enabled: true
+      tenant: nav.no
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
   accessPolicy:
     inbound:
       rules:
