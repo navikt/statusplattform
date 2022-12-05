@@ -176,7 +176,7 @@ class OpsControllerTest {
         Assertions.assertThat(retrievedOPSMessageDto).isEqualTo(toBeRetrieved);
     }
 
-    @Test
+    //@Test
     void updateSpecificOpsMessage(){
         //Arrange
         AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
