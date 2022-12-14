@@ -41,21 +41,6 @@ class ServiceRepositoryTest {
 
    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
-   @Test
-   void saveOpeningHours() {
-      //Arrange
-      ServiceEntity service = SampleData.getRandomizedServiceEntity();
-      UUID serviceId = serviceRepository.save(service);
-      service.setId(serviceId);
-      OpeningHoursEntity openingHours = SampleData.getRandomizedOpeningTime();
-      openingHours.setService_id(serviceId);
-      Optional<ServiceEntity> retrievedService = serviceRepository.retrieve(serviceId);
-      //Act
-      serviceRepository.saveOpeningHours(openingHours);
-      openingHours.setId(openingHours.getId());
-      //Assert
-      retrievedService.ifPresent(serviceEntity -> Assertions.assertThat(service.getId()).isEqualTo(openingHours.getService_id()));
-   }
 
    @Test
    void saveMaintenance() {
