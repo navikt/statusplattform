@@ -239,5 +239,5 @@ class OpsControllerTest {
         Assertions.assertThat(retrievedOpsMessages).containsExactlyInAnyOrderElementsOf(opsMessageDtos);
     }
 
-*/
 }
+*/
