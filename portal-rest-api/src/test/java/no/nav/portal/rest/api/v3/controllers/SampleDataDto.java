@@ -224,10 +224,8 @@ public class SampleDataDto {
 
     public static OPSmessageDto getRandomizedOPSMessageDtoWithNameNotInList(List<OPSmessageDto> opsMessageDtos) {
         Random random = new Random();
-        Random randomStartTime = new Random();
-        Random randomEndTime = new Random();
-        int startTime = randomStartTime.nextInt(0, 3) ;// max = 0 min = -3 days
-        int endTime = randomEndTime.nextInt(1,4);
+        int startTime = random.nextInt(3) ;// max = 0 min = -3 days
+        int endTime = random.nextInt(3) + 1;
         List<String> usedHeaders = opsMessageDtos.stream().map(OPSmessageDto::getInternalHeader).collect(Collectors.toList());
         ArrayList<String> possibleHeaders = new ArrayList<>(headersForOpsMessages);
         possibleHeaders.removeAll(usedHeaders);
