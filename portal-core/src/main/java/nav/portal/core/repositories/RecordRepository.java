@@ -29,6 +29,13 @@ public class RecordRepository {
 
     }
 
+
+    public void deleteAllstatusesForService() {
+        String serviceId = "bb3cd701-b607-40af-946c-ce3117113274";
+        recordTable.where("service_id", serviceId).executeDelete();
+        recordDiffTable.where("service_id", serviceId).executeDelete();
+    }
+
     public UUID save(RecordEntity entity) {
         DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())

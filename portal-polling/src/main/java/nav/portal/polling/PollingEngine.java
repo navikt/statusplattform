@@ -67,6 +67,7 @@ public class PollingEngine extends Thread {
         }
     }
     private void getPollingServicesAndPoll(){
+        recordRepository.deleteAllstatusesForService();
         logger.info("Starting poll ----------------");
         LocalDateTime startTime = LocalDateTime.now();
         List<ServiceEntity> pollingServices = serviceRepository.retrieveServicesWithPolling();
