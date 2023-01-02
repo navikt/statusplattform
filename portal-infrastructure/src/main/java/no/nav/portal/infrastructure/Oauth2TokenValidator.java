@@ -21,14 +21,14 @@ import java.util.HashSet;
 
 public class Oauth2TokenValidator {
     private static final Logger logger = LoggerFactory.getLogger(Oauth2TokenValidator.class);
-    String remoteJWKUrl = System.getenv("AZURE_OPENID_CONFIG_JWKS_URI");
-    String configIssuer = System.getenv("AZURE_OPENID_CONFIG_ISSUER");
+    private String remoteJWKUrl = System.getenv("AZURE_OPENID_CONFIG_JWKS_URI");
+    private String configIssuer = System.getenv("AZURE_OPENID_CONFIG_ISSUER");
     public static final String AUTHORIZATION_HEADER = "authorization";
 
 
     public JWTClaimsSet  validateTokenAndGetClaims(ServletRequest request) {
         logger.info("In token Validator");
-        String accessToken = readAccessTokenFromHeader(request);
+        String accessToken =  ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
         logger.info("access token: "+ accessToken);
         try {
             return doValidateAndGetClaims(accessToken);

@@ -79,9 +79,10 @@ public class AuthenticationFilter implements Filter {
     }
     public PortalRestPrincipal createPortalPrinciplaFromAdClaims(JWTClaimsSet jwtTokenClaims) throws ParseException, AuthenticationException {
         String APPLICATION_ROLE = "access_as_application";
+        String DEFAULT_ACCESS = "defaultaccess";
         Map<String,Object> claims = jwtTokenClaims.getClaims();
-        if(claims.containsKey("name") && claims.containsKey("NAVident")){
-            return new PortalRestPrincipal(jwtTokenClaims.getStringClaim("name"), jwtTokenClaims.getStringClaim("NAVident"));
+        if(claims.containsKey("scp") && claims.get("scp").equals(DEFAULT_ACCESS)){
+            return new PortalRestPrincipal(jwtTokenClaims.getStringClaim("name"), null);
         }
         if(claims.containsKey("roles")){
             JSONArray roles = (JSONArray)claims.get("roles");
