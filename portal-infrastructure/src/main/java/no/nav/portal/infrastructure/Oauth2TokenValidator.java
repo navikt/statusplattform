@@ -1,5 +1,6 @@
 package no.nav.portal.infrastructure;
 
+import com.google.gson.Gson;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.source.*;
 import com.nimbusds.jose.proc.*;
@@ -28,14 +29,13 @@ public class Oauth2TokenValidator {
 
     public JWTClaimsSet  validateTokenAndGetClaims(ServletRequest request) {
         logger.info("In token Validator");
-        String accessToken =  ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
+        String accessToken =  readAccessTokenFromHeader(request);
         logger.info("access token: "+ accessToken);
         try {
             return doValidateAndGetClaims(accessToken);
         } catch (Exception e) {
             return null;
         }
-
     }
 
     public JWTClaimsSet doValidateAndGetClaims(String accessToken) throws BadJOSEException, ParseException, JOSEException, MalformedURLException {
@@ -80,18 +80,16 @@ public class Oauth2TokenValidator {
         return jwtProcessor.process(accessToken, ctx);
     }
 
-    public String readAccessTokenFromHeader(ServletRequest request){
-        String BEARER ="Bearer ";
+    private String readAccessTokenFromHeader(ServletRequest request){
 
-       // String accessToken =
-        //        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSJ9.eyJhdWQiOiI2YTdlNjhiMC04ODZiLTRiZDItOGU5YS0yYTU4ZTU5YzE2MzIiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOTY2YWM1NzItZjViNy00YmJlLWFhODgtYzc2NDE5YzBmODUxL3YyLjAiLCJpYXQiOjE2NjkyODcwNzksIm5iZiI6MTY2OTI4NzA3OSwiZXhwIjoxNjY5MjkwOTc5LCJhaW8iOiJFMlpnWU5CZXIyTi83T0E5ejhCNUQxb2x6cjZiQ3dBPSIsImF6cCI6ImQ4Zjg2ZWY5LTE3MWQtNGRiZC04MjA5LWRhODg4YWU0NTcyNCIsImF6cGFjciI6IjEiLCJvaWQiOiIwMzU4YTMyNC0zYzM3LTQyMTgtOTgzNy1kYmQzMDc0MzIyOWIiLCJyaCI6IjAuQVVjQWNzVnFscmYxdmt1cWlNZGtHY0Q0VWJCb2ZtcHJpTkpManBvcVdPV2NGakpIQUFBLiIsInJvbGVzIjpbImFjY2Vzc19hc19hcHBsaWNhdGlvbiJdLCJzdWIiOiIwMzU4YTMyNC0zYzM3LTQyMTgtOTgzNy1kYmQzMDc0MzIyOWIiLCJ0aWQiOiI5NjZhYzU3Mi1mNWI3LTRiYmUtYWE4OC1jNzY0MTljMGY4NTEiLCJ1dGkiOiJtWGlGXzQxQnNFZTI5bjE0SS1YTEFBIiwidmVyIjoiMi4wIn0.o3VteE2f0vGpEsUDZRjYEADFRJ6ugXBo9BQ934Bgc4ct4msecYXNK9HEFm7CAZeRdP5rN0HB6GE3PRV3Msd6CetayvMJFx0_IeDZOKUcPK9klzTAzXp3Yq482ojCtie52BZmK7cb0uVgg2vzE29BMRVmbZrr3eahGZ-OHh2kU0jV6v5LPgkbMYTXic7ZxjaYr4vr40hCiUtpt9Ym3VUpfULPwbaZJfXxVoz3PaOb5h1XAAsd8VJtzyL1nWanLq9XlaOlBQrqXLkmulpZoOmiexY9pKhyUGKkhs-GDEwM3LqXkW6BQYUD_hMiEgfI3enmdRUXB40DRL-AM3ofhKjMNg";
-        String bearerToken = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
-
-        if (bearerToken == null || bearerToken.isEmpty() ||!bearerToken.startsWith("Bearer ")) {
+        String oboTokenString = ((HttpServletRequest) request).getHeader(AUTHORIZATION_HEADER);
+        if (oboTokenString == null || oboTokenString.isEmpty()) {
             return null;
         }
-        //Removes "Bearer " from token
-        return  bearerToken.substring(BEARER.length());
+        Gson g = new Gson();
+        OBOtoken oboToken = g.fromJson(oboTokenString,OBOtoken.class);
+
+        return oboToken.getAccess_token();
 
     }
 }
