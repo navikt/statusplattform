@@ -24,7 +24,7 @@ jobs:
 
   deploy-test:
     name: Deploy application to test env
-    needs: build-and-run-tests
+    needs: build
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
 
   deploy-prod:
     name: Deploy application to prod
-    needs: build-and-run-tests
+    needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
