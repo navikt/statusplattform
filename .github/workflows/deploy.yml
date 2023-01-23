@@ -13,14 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build and publish Docker image
-        with:
-          submodules: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo ${GITHUB_TOKEN} | docker login ghcr.io --username ${GITHUB_REPOSITORY} --password-stdin
           docker build --tag ${docker_image} .
           docker push ${docker_image}
+        with:
+          submodules: true
 
   deploy-test:
     name: Deploy application to test env
