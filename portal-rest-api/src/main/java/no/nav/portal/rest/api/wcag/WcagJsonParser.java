@@ -1,11 +1,14 @@
 package no.nav.portal.rest.api.wcag;
 
+import no.nav.portal.infrastructure.AuthenticationFilter;
 import no.portal.web.generated.api.KravMapEntryDto;
 import no.portal.web.generated.api.WcagKravDto;
 import no.portal.web.generated.api.WcagResultDto;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.io.IOException;
@@ -18,21 +21,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class WcagJsonParser {
+    private static final Logger logger = LoggerFactory.getLogger(WcagJsonParser.class);
 
-
-    public static String readSampleFile(){
-
-        try{
-            String currentDir = "C:/src/portal-digitale-tjenester/portal-rest-api/src/main/java/no/nav/portal/rest/api/wcag";
-            Path filePath = Path.of(currentDir+"/wcagsample.json");
-            String content = Files.readString(filePath);
-            return content;
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
-        return "";
-    }
 
     public static List<String> getAllKravs(){
         List<WcagResultDto> resultDtos = readAllReports();
@@ -166,6 +156,7 @@ public class WcagJsonParser {
             path += "/portal-rest-api";
         }
         path+= "/src/main/resources/rapporter";
+        logger.info(path);
         return path;
     }
 
