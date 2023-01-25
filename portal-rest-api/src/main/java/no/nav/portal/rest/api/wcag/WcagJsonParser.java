@@ -151,6 +151,9 @@ public class WcagJsonParser {
 
     private static String getPathToReports(){
         String path = System.getProperty("user.dir");
+        if(path.contains("adevguide")){
+            return "/rapporter";
+        }
         if (!path.contains("portal-rest-api")
         ) {
             path += "/portal-rest-api";

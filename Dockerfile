@@ -21,7 +21,7 @@ EXPOSE 3005
 
 #RUN dir #Added
 
-COPY uu-rapporter/ uu-rapporter/
+COPY rapporter/ rapporter/
 
 
 COPY --from=maven portal-server/target/portal-server-0.1-SNAPSHOT.jar ./portal-server.jar
