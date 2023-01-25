@@ -31,7 +31,8 @@ public class PortalRestApi extends ClasspathWebAppContext {
                 new ServiceController(dbContext),
                 new RecordController(dbContext),
                 new OpsController(dbContext),
-                new UserController()
+                new UserController(),
+                new WcagController()
         ))), "/*");
 
         addFilter(new FilterHolder( new AuthenticationFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));

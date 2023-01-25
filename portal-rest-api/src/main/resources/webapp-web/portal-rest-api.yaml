@@ -1123,6 +1123,60 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
+  /Wcag/Tjeneste:
+    get:
+      tags:
+        - WCAG
+      summary: Hent alle Tjenester med tilhørende wcagkrav
+      operationId: wcagtjeneste
+      description: Hent alle Tjenester med tilhørende wcagkrav
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Wcag/Krav:
+    get:
+      tags:
+        - WCAG
+      summary: Hent alle krav med tilhørende tjenester
+      operationId: wcagkrav
+      description: Hent alle krav med tilhørende tjenester
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KravMapEntry'
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
 components:
@@ -1500,6 +1554,37 @@ components:
           items:
             type: string
             format: uuid
+    KravMapEntry:
+      properties:
+        navn:
+          type: string
+        subject:
+          type: array
+          items:
+            $ref: '#/components/schemas/WcagKrav'
+    WcagKrav:
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+        result:
+          type: string
+        date:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+
+    WcagResult:
+      properties:
+        name:
+          type: string
+        summary:
+          type: string
+        krav:
+          type: array
+          items:
+            $ref: '#/components/schemas/WcagKrav'
       required:
         - areas
     NavUser:
