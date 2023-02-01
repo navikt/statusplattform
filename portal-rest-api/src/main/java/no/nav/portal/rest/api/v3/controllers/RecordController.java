@@ -66,7 +66,10 @@ public class RecordController {
     @GET("/Alert")
     @JsonBody
     public AlertDto getAlert(){
-        return currentAlert;
+        if(currentAlert != null){
+            return currentAlert;
+        }
+        return new AlertDto();
     }
 
 
