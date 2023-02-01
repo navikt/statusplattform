@@ -816,7 +816,7 @@ paths:
           description: Not Found
           content: { }
 
-  /Alert/test:
+  /Alert:
     get:
       tags:
         - Record

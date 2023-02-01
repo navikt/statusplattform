@@ -32,7 +32,7 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        logger.info("Request to api with :" + ((HttpServletRequest) request).getRequestURI() );
+        logger.info("Request to api with uri: " + ((HttpServletRequest) request).getRequestURI() + "and method: "+ ((HttpServletRequest) request).getMethod());
         if(validateSwaggerAuthentication(request)){
             chain.doFilter(request, response);
             MDC.clear();
