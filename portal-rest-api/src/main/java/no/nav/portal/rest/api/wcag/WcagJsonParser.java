@@ -69,45 +69,41 @@ public class WcagJsonParser {
         return result;
     }
 
+
+
     public static List<KravMapEntryDto> getAllKravsMapDto(){
-        List<WcagResultDto> resultDtos = readAllReports();
-        ArrayList<String> alleKrav = new ArrayList<>();
-        resultDtos.forEach(result -> {
-            result.getKrav().forEach(krav -> {
-                if(!alleKrav.contains(krav.getId())){
-                    alleKrav.add(krav.getId());
+        List<WcagResultDto> allReports = readAllReports();
+        ArrayList<String> allCreterias = new ArrayList<>();
+        allReports.forEach(report -> {
+            report.getKrav().forEach(krav -> {
+                if(!allCreterias.contains(krav.getId())){
+                    allCreterias.add(krav.getId());
                 }
             });
         });
-        HashMap<String, ArrayList<WcagKravDto>> result = new HashMap<>();
-        alleKrav.forEach(kravId -> {
-            result.put(kravId, new ArrayList<>());
-            resultDtos.forEach(resultDto -> {
+        ArrayList<String> allCreteriasSorted = (ArrayList<String>) allCreterias.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+        ArrayList<KravMapEntryDto> result = new ArrayList<>();
+        allCreteriasSorted.forEach(kravId -> {
+            ArrayList<WcagKravDto> listOfServicesWithCriteria = new ArrayList<>();
+            allReports.forEach(resultDto -> {
                 List<WcagKravDto> matching = resultDto.getKrav().stream().filter(krav -> krav.getId().equals(kravId)).collect(Collectors.toList());
                 if(matching.size() > 0){
                     matching.forEach(resultOfKrav -> {
-                                if(!resultOfKrav.getSubject().equals(resultDto.getName())){
-                                    resultOfKrav.setSubject(resultDto.getName()+", " + resultOfKrav.getSubject());
+                                if (!resultOfKrav.getSubject().equals(resultDto.getName())) {
+                                    resultOfKrav.setSubject(resultDto.getName() + ", " + resultOfKrav.getSubject());
                                 }
-                                result.get(kravId).add(resultOfKrav);
-
-                            }
-
-                    );
+                                listOfServicesWithCriteria.add(resultOfKrav);
+                            });
                 }
             });
+            KravMapEntryDto dto = new KravMapEntryDto();
+            dto.setNavn(kravId);
+            dto.setSubject(listOfServicesWithCriteria);
+            result.add(dto);
 
         });
-        List<KravMapEntryDto> dtos = new ArrayList<>();
-        result.forEach((key,value) ->{
-                    KravMapEntryDto dto = new KravMapEntryDto();
-                    dto.setNavn(key);
-                    dto.setSubject(value);
-                    dtos.add(dto);
 
-                }
-        );
-        return dtos;
+        return result;
     }
 
 
@@ -118,6 +114,11 @@ public class WcagJsonParser {
                 .map(WcagJsonParser::parseResult)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+        wcagResultDtos.forEach(
+                dto ->
+                    dto.setKrav(dto.getKrav().stream().sorted(Comparator.comparing(WcagKravDto::getId)).collect(Collectors.toList()))
+
+        );
         return wcagResultDtos;
     }
 
