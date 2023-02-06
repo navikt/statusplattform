@@ -216,7 +216,9 @@ public class WcagJsonParser {
                         WcagKravDto wcagKrav = new WcagKravDto();
                         JSONObject auditSample = new JSONObject(a.toString());
                         JSONObject test = auditSample.getJSONObject("test");
-                        wcagKrav.setId(test.getString("id"));
+                        wcagKrav.setId(
+                                CriteriaMap.mapToReadAble(test.getString("id"))
+                        );
                         wcagKrav.setDate(OffsetDateTime.parse(test.getString("date")));
 
                         JSONObject outcome = auditSample.getJSONObject("result").getJSONObject("outcome");
