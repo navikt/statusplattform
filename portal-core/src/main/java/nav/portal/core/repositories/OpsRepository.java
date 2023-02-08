@@ -111,7 +111,7 @@ public class OpsRepository {
                 });
             });
         });
-        List<OpsMessageEntity> result = retrieveAllForServices(serviceIds).keySet().stream().toList();
+        ArrayList<OpsMessageEntity> result = new ArrayList<>(retrieveAllForServices(serviceIds).keySet());
 
         Map<OpsMessageEntity,List<ServiceEntity>> allActive = retrieveAllActive();
 
