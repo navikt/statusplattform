@@ -1556,9 +1556,9 @@ components:
             format: uuid
     KravMapEntry:
       properties:
-        navn:
+        criteriaName:
           type: string
-        subject:
+        services:
           type: array
           items:
             $ref: '#/components/schemas/WcagKrav'
@@ -1577,11 +1577,11 @@ components:
 
     WcagResult:
       properties:
-        name:
+        serviceName:
           type: string
         summary:
           type: string
-        krav:
+        criterias:
           type: array
           items:
             $ref: '#/components/schemas/WcagKrav'

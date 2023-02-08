@@ -28,7 +28,7 @@ public class WcagJsonParser {
         List<WcagResultDto> resultDtos = readAllReports();
         ArrayList<String> alleKrav = new ArrayList<>();
         resultDtos.forEach(result -> {
-            result.getKrav().forEach(krav -> {
+            result.getCriterias().forEach(krav -> {
                 if(!alleKrav.contains(krav.getId())){
                     alleKrav.add(krav.getId());
                 }
@@ -41,7 +41,7 @@ public class WcagJsonParser {
         List<WcagResultDto> resultDtos = readAllReports();
         ArrayList<String> alleKrav = new ArrayList<>();
         resultDtos.forEach(result -> {
-            result.getKrav().forEach(krav -> {
+            result.getCriterias().forEach(krav -> {
                 if(!alleKrav.contains(krav.getId())){
                     alleKrav.add(krav.getId());
                 }
@@ -51,13 +51,13 @@ public class WcagJsonParser {
         alleKrav.forEach(kravId -> {
             result.put(kravId, new ArrayList<>());
             resultDtos.forEach(resultDto -> {
-                List<WcagKravDto> matching = resultDto.getKrav().stream().filter(krav -> krav.getId().equals(kravId)).collect(Collectors.toList());
+                List<WcagKravDto> matching = resultDto.getCriterias().stream().filter(krav -> krav.getId().equals(kravId)).collect(Collectors.toList());
                 if(matching.size()== 1) {
                    result.get(kravId).add(matching.get(0).getSubject());
                 }
                 if(matching.size() > 1){
                     matching.forEach(resultOfKrav -> {
-                                    result.get(kravId).add(resultDto.getName() +", " + resultOfKrav.getSubject());
+                                    result.get(kravId).add(resultDto.getServiceName() +", " + resultOfKrav.getSubject());
 
                             }
 
@@ -73,32 +73,33 @@ public class WcagJsonParser {
 
     public static List<KravMapEntryDto> getAllKravsMapDto(){
         List<WcagResultDto> allReports = readAllReports();
-        ArrayList<String> allCreterias = new ArrayList<>();
-        allReports.forEach(report -> {
-            report.getKrav().forEach(krav -> {
-                if(!allCreterias.contains(krav.getId())){
-                    allCreterias.add(krav.getId());
-                }
-            });
-        });
-        ArrayList<String> allCreteriasSorted = (ArrayList<String>) allCreterias.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+//        ArrayList<String> allCreterias = new ArrayList<>();
+//        allReports.forEach(report -> {
+//            report.getKrav().forEach(krav -> {
+//                if(!allCreterias.contains(krav.getId())){
+//                    allCreterias.add(krav.getId());
+//                }
+//            });
+//        });
+//        ArrayList<String> allCreteriasSorted = (ArrayList<String>) allCreterias.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+        List<String> allCreteriasSorted = CriteriaMap.readAbleMap.values().stream().toList();
         ArrayList<KravMapEntryDto> result = new ArrayList<>();
         allCreteriasSorted.forEach(kravId -> {
             ArrayList<WcagKravDto> listOfServicesWithCriteria = new ArrayList<>();
-            allReports.forEach(resultDto -> {
-                List<WcagKravDto> matching = resultDto.getKrav().stream().filter(krav -> krav.getId().equals(kravId)).collect(Collectors.toList());
+            allReports.forEach(report -> {
+                List<WcagKravDto> matching = report.getCriterias().stream().filter(krav -> krav.getId().equals(kravId)).collect(Collectors.toList());
                 if(matching.size() > 0){
                     matching.forEach(resultOfKrav -> {
-                                if (!resultOfKrav.getSubject().equals(resultDto.getName())) {
-                                    resultOfKrav.setSubject(resultDto.getName() + ", " + resultOfKrav.getSubject());
+                                if (!resultOfKrav.getSubject().equals(report.getServiceName())) {
+                                    resultOfKrav.setSubject(report.getServiceName() + ", " + resultOfKrav.getSubject());
                                 }
                                 listOfServicesWithCriteria.add(resultOfKrav);
                             });
                 }
             });
             KravMapEntryDto dto = new KravMapEntryDto();
-            dto.setNavn(kravId);
-            dto.setSubject(listOfServicesWithCriteria);
+            dto.setCriteriaName(kravId);
+            dto.setServices(listOfServicesWithCriteria);
             result.add(dto);
 
         });
@@ -116,7 +117,7 @@ public class WcagJsonParser {
                 .collect(Collectors.toList());
         wcagResultDtos.forEach(
                 dto ->
-                    dto.setKrav(dto.getKrav().stream().sorted(Comparator.comparing(WcagKravDto::getId)).collect(Collectors.toList()))
+                    dto.setCriterias(dto.getCriterias().stream().sorted(Comparator.comparing(WcagKravDto::getId)).collect(Collectors.toList()))
 
         );
         return wcagResultDtos;
@@ -176,9 +177,9 @@ public class WcagJsonParser {
             return null;
         }
         String name = getNameOfServiceTested(object);
-        wcagResultDto.setName(name);
+        wcagResultDto.setServiceName(name);
         List<WcagKravDto> kravArrayList = WcagJsonParser.getKrav(object);
-        wcagResultDto.setKrav(kravArrayList);
+        wcagResultDto.setCriterias(kravArrayList);
         String summary = getSummary(object);
         wcagResultDto.setSummary(summary);
         return wcagResultDto;
