@@ -54,6 +54,7 @@ public class OpsControllerHelper {
     public void deleteOps(UUID id) {
         opsRepository.deleteOps(id);
     }
+
     public List<OPSmessageDto> getOpsMessagesForDashboard(DashboardDto dashboardDto){
         ArrayList<UUID> servicesOnDashboard = new ArrayList<>();
 
@@ -65,6 +66,7 @@ public class OpsControllerHelper {
                         }
                 )
         );
+        //Adding opsmessages without services
         Map<OpsMessageEntity, List<ServiceEntity>> allActive = opsRepository.retrieveAllActive();
         List<OPSmessageDto> result = new ArrayList<>();
         allActive.forEach((k,v) ->{
@@ -72,15 +74,11 @@ public class OpsControllerHelper {
                 result.add(EntityDtoMappers.toOpsMessageDtoShallow(k));
             }
         } );
-        result.addAll(opsRepository.retrieveAllForServices(servicesOnDashboard)
-                .stream().map(EntityDtoMappers::toOpsMessageDtoShallow)
-                .collect(Collectors.toList()));
+        //Adding opssmessages with service on dashboard
+        Map<OpsMessageEntity, List<ServiceEntity>> messagesForServices = opsRepository.retrieveAllForServices(servicesOnDashboard);
+        messagesForServices.forEach((opsMessage, services) ->
+                result.add(EntityDtoMappers.toOpsMessageDtoDeep(opsMessage,services)));
+
         return  result;
-    }
-    public List<OPSmessageDto> getAllForDashboard(UUID dashboard_id) {
-        List<OpsMessageEntity> opsMessageEntities = opsRepository.getAllForDashboard(dashboard_id);
-        return opsMessageEntities.stream()
-                .map(EntityDtoMappers::toOpsMessageDtoShallow)
-                .collect(Collectors.toList());
     }
 }

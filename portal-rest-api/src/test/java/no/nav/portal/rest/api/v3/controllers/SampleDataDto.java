@@ -150,7 +150,7 @@ public class SampleDataDto {
 
     public static List<ServiceDto> getRandomLengthListOfServiceDto() {
         Random random = new Random();
-        int numberOfAreas = random.nextInt(12);
+        int numberOfAreas = 1+ random.nextInt(12);
         List<ServiceDto> serviceDtos = new ArrayList<>();
         for (int i = 0; i < numberOfAreas; i++) {
             serviceDtos.add(getRandomizedServiceDtoWithNameNotInList(serviceDtos));

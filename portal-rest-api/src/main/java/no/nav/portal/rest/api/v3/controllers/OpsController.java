@@ -53,9 +53,4 @@ public class OpsController {
         opsControllerHelper.deleteOps(ops_id);
     }
 
-    @GET("/OpsMessage/Dashboard/:Dashboard_id")
-    @JsonBody
-    public List<OPSmessageDto> getAllForDashboard(@PathParam("Dashboard_id") UUID dashboard_id ) {
-        return opsControllerHelper.getAllForDashboard(dashboard_id);
-    }
 }

@@ -111,7 +111,7 @@ public class OpsRepository {
                 });
             });
         });
-        List<OpsMessageEntity> result = retrieveAllForServices(serviceIds);
+        List<OpsMessageEntity> result = retrieveAllForServices(serviceIds).keySet().stream().toList();
 
         Map<OpsMessageEntity,List<ServiceEntity>> allActive = retrieveAllActive();
 
@@ -146,26 +146,29 @@ public class OpsRepository {
                 });
         return result;
     }
-
-    public List<OpsMessageEntity> retrieveAllForServices(List<UUID> serviceIds) {
+    public Map<OpsMessageEntity, List<ServiceEntity>> retrieveAllForServices(List<UUID> serviceIds) {
         DbContextTableAlias ops = opsMessageTable.alias("ops");
         DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
+        DbContextTableAlias service = serviceTable.alias("service");
 
-        ArrayList<OpsMessageEntity> result = new ArrayList<>();
+        Map<OpsMessageEntity, List<ServiceEntity>> result = new HashMap<>();
         ops
                 .where("deleted",Boolean.FALSE)
-                .where("is_active", Boolean.TRUE)
                 .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
+                .leftJoin(o2s.column("service_id"), service.column("id"))
                 .whereIn("o2s.service_id", serviceIds)
                 .list(row -> {
-                    OpsMessageEntity msg = toOps(row);
-                   if(!result.contains(msg)){
-                       result.add(msg);
-                   }
+                    List<ServiceEntity> serviceList = result
+                            .computeIfAbsent(toOps(row.table(ops)), ignored -> new ArrayList<>());
+
+                    DatabaseRow serivceRow = row.table(service);
+                    Optional.ofNullable(row.getUUID("service_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
                     return null;
                 });
         return result;
     }
+
 
     public Map<OpsMessageEntity, List<ServiceEntity>> retrieveAllActive() {
         DbContextTableAlias ops = opsMessageTable.alias("ops");

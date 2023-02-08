@@ -195,10 +195,10 @@ class OpsRepositoryTest {
         }
 
         //Act
-        List<OpsMessageEntity>retrievedOpsMessages = opsRepository.retrieveAllForServices(serviceIds);
+        Map<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessages = opsRepository.retrieveAllForServices(serviceIds);
         //Assert
         Assertions.assertThat(retrievedOpsMessages.size()).isEqualTo(1);
-        Assertions.assertThat(retrievedOpsMessages).containsAll(opsMessageEntities);
+        Assertions.assertThat(retrievedOpsMessages.keySet()).containsAll(opsMessageEntities);
     }
 
     @Test

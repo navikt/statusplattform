@@ -25,6 +25,8 @@ class DashboardControllerTest {
 
     private final AreaController areaController = new AreaController(dbContext);
     private final DashboardController dashboardController = new DashboardController(dbContext);
+    private final ServiceController serviceController = new ServiceController(dbContext);
+    private final OpsController opsController = new OpsController(dbContext);
 
     @BeforeEach
     void startConnection() {
@@ -122,10 +124,25 @@ class DashboardControllerTest {
     @Test
     void getDashboard() {
         //Arrange
-        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
         AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
         IdContainerDto idContainerDto =  areaController.newArea(areaDto);
         areaDto.setId(idContainerDto.getId());
+
+
+        List<ServiceDto> serviceDtos = SampleDataDto.getRandomLengthListOfServiceDto();
+        serviceDtos.forEach(serviceDto -> {
+            ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+            serviceDto.setId(savedServiceDto.getId());
+        });
+        serviceDtos.forEach(serviceDto -> areaController.addServiceToArea(areaDto.getId(), serviceDto.getId()));
+
+        List<ServiceDto> affectedServices = List.of(serviceDtos.get(0));
+        OPSmessageDto opsMessageDto = SampleDataDto.getRandomOPSMessageDto();
+        opsMessageDto.setAffectedServices(affectedServices);
+        opsMessageDto.setId(opsController.createOpsMessage(opsMessageDto).getId());
+
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
         dashboardDto.setAreas(List.of(areaDto));
         IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
         dashboardDto.setId(dashboardIdContainerDto.getId());
@@ -133,5 +150,6 @@ class DashboardControllerTest {
         DashboardDto retrievedDashboardDto = dashboardController.getDashboard(dashboardDto.getId());
         //Assert
         Assertions.assertThat(retrievedDashboardDto.getId()).isEqualTo(dashboardDto.getId());
+        Assertions.assertThat(retrievedDashboardDto.getOpsMessages().get(0).getAffectedServices()).isEqualTo(affectedServices);
     }
 }
