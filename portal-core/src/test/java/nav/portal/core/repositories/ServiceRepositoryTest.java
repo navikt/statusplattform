@@ -169,11 +169,12 @@ class ServiceRepositoryTest {
    @Test
    void resetDependenciesOnService() {
       //Arrange
-      ServiceEntity selectedService = SampleData.getRandomizedServiceEntity();
+      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntityWithUid(3);
+      ServiceEntity selectedService = services.get(0);
+      services = services.subList(1,3);
       selectedService.setId(serviceRepository.save(selectedService));
       UUID selectedServiceId = selectedService.getId();
 
-      List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntityWithUid(2);
       services.forEach(service -> service.setId(serviceRepository.save(service)));
       UUID dependantServiceId = services.get(0).getId();
       UUID ServiceChosenServiceIsDependentOnId = services.get(1).getId();
