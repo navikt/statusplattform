@@ -6,8 +6,6 @@ import com.nimbusds.jose.jwk.source.*;
 import com.nimbusds.jose.proc.*;
 import com.nimbusds.jwt.*;
 import com.nimbusds.jwt.proc.*;
-import no.nav.security.token.support.core.jwt.JwtToken;
-import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
