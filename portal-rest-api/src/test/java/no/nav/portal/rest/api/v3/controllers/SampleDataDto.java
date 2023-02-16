@@ -40,7 +40,7 @@ public class SampleDataDto {
 
     public static List<DashboardDto> getDashboardDtos() {
         Random random = new Random();
-        int numberOfDashboardDtos = random.nextInt(1, dashboardNames.size());
+        int numberOfDashboardDtos = 1+ random.nextInt( dashboardNames.size()-1);
         List<DashboardDto> dashboardDtos = new ArrayList<>();
         for (int i = 0; i <= numberOfDashboardDtos; i++) {
             dashboardDtos.add(new DashboardDto() .name(dashboardNames.get(i)));
