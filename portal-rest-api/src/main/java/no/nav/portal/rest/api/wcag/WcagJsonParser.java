@@ -120,7 +120,7 @@ public class WcagJsonParser {
                     dto.setCriterias(dto.getCriterias().stream().sorted(Comparator.comparing(WcagKravDto::getId)).collect(Collectors.toList()))
 
         );
-        return wcagResultDtos.stream().sorted(Comparator.comparing(WcagResultDto::getServiceName)).collect(Collectors.toList());
+        return wcagResultDtos.stream().sorted(Comparator.comparing(r -> r.getServiceName().toLowerCase(Locale.ROOT))).collect(Collectors.toList());
     }
 
     public static List<String>  readAllFiles() {
