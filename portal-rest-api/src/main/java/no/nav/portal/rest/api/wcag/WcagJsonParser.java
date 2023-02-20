@@ -73,16 +73,7 @@ public class WcagJsonParser {
 
     public static List<KravMapEntryDto> getAllKravsMapDto(){
         List<WcagResultDto> allReports = readAllReports();
-//        ArrayList<String> allCreterias = new ArrayList<>();
-//        allReports.forEach(report -> {
-//            report.getKrav().forEach(krav -> {
-//                if(!allCreterias.contains(krav.getId())){
-//                    allCreterias.add(krav.getId());
-//                }
-//            });
-//        });
-//        ArrayList<String> allCreteriasSorted = (ArrayList<String>) allCreterias.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
-        List<String> allCreteriasSorted = CriteriaMap.readAbleMap.values().stream().toList();
+        List<String> allCreteriasSorted = CriteriaMap.orderedCriterias;
         ArrayList<KravMapEntryDto> result = new ArrayList<>();
         allCreteriasSorted.forEach(kravId -> {
             ArrayList<WcagKravDto> listOfServicesWithCriteria = new ArrayList<>();

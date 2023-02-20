@@ -1,10 +1,14 @@
 package no.nav.portal.rest.api.wcag;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class CriteriaMap {
 
     static HashMap<String,String> readAbleMap = new HashMap<>();
+    static List<String> orderedCriterias = new ArrayList<>();
     static {
         readAbleMap.put("WCAG21:non-text-content","1.1.1: Non-text Content");
 
@@ -97,8 +101,37 @@ public class CriteriaMap {
         readAbleMap.put("WCAG21:parsing","4.1.1: Parsing");
         readAbleMap.put("WCAG21:name-role-value","4.1.2: Name, Role, Value");
         readAbleMap.put("WCAG21:status-messages","4.1.3: Status Messages");
+        orderedCriterias = getSortedCriterias();
     }
     public static String mapToReadAble(String criteriaId){
         return readAbleMap.getOrDefault(criteriaId, criteriaId);
     }
+
+
+    private static List<String> getSortedCriterias(){
+        return readAbleMap.values().stream().sorted(new SortCriteria()).toList();
+
+    }
+    private static class SortCriteria implements Comparator<String> {
+
+        // Method
+        // Sorting in ascending order of roll number
+        public int compare(String a, String b)
+        {
+            return calcValue(a)-calcValue(b);
+        }
+        private boolean hasDoubleDigit(String s){
+            try{
+                Integer.valueOf(s.substring(4,6));
+                return true;
+            }
+            catch (NumberFormatException e){
+                return false;
+            }
+        }
+        private int calcValue(String a){
+            return   hasDoubleDigit(a)? Integer.parseInt(a.substring(0,1))*1000+Integer.parseInt(a.substring(2,3))*100+Integer.parseInt(a.substring(4,6)):Integer.parseInt(a.substring(0,1))*1000+Integer.parseInt(a.substring(2,3))*100+Integer.parseInt(a.substring(4,5));
+        }
+    }
+
 }
