@@ -49,7 +49,7 @@ spec:
         - application: statusholder
           namespace: navdig
           cluster: dev-fss
-       -  application: promstatusproxy
+        - application: promstatusproxy
           namespace: navdig
           cluster: dev-gcp
         - application: portal
