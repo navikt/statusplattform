@@ -148,6 +148,21 @@ class OpsControllerTest {
     }
 
     @Test
+    void getSpecificOpsMessageSimple(){
+        //Arrange
+
+
+        OPSmessageDto opsMessageDto = SampleDataDto.getRandomOPSMessageDto();
+
+        opsMessageDto.setId(opsController.createOpsMessage(opsMessageDto).getId());
+
+        //Act
+        OPSmessageDto retrievedOPSMessageDto = opsController.getSpecificOpsMessage(opsMessageDto.getId());
+        //Assert
+        Assertions.assertThat(retrievedOPSMessageDto).isEqualTo(opsMessageDto);
+    }
+
+    @Test
     void getSpecificOpsMessage(){
         //Arrange
         AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();

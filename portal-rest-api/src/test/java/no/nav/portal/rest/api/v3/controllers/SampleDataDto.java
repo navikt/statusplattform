@@ -6,6 +6,7 @@ import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -179,7 +180,7 @@ public class SampleDataDto {
     public static RecordDto getRandomizedRecordDto() {
         return new RecordDto()
                 .id(UUID.randomUUID())
-                .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
+                .timestamp(offsetNow())
                 .status(getRandomStatusDto())
                 .responseTime(getRandomResponseTime());
     }
@@ -188,7 +189,7 @@ public class SampleDataDto {
         return new RecordDto()
                 .id(UUID.randomUUID())
                 .serviceId(serviceDto.getId())
-                .timestamp(OffsetDateTime.from(ZonedDateTime.now()))
+                .timestamp(offsetNow())
                 .status(getRandomStatusDto())
                 .responseTime(getRandomResponseTime());
     }
@@ -215,8 +216,8 @@ public class SampleDataDto {
         return new OPSmessageDto()
                 .internalHeader(getRandomFromArray(headersForOpsMessages))
                 .internalMessage(getRandomFromArray(infoTextForOpsMessages))
-                .startTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()))
-                .endTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()).plusDays(2))
+                .startTime(offsetNow())
+                .endTime(offsetNow().plusDays(2))
                 .severity(getRandomOpsMessageDtoSeverity())
                 .onlyShowForNavEmployees(random.nextBoolean())
                 .isActive(true);
@@ -232,8 +233,8 @@ public class SampleDataDto {
         return new OPSmessageDto()
                 .internalHeader(getRandomFromArray(possibleHeaders))
                 .internalMessage(getRandomFromArray(infoTextForOpsMessages))
-                .startTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()).minusDays(startTime))
-                .endTime(OffsetDateTime.from(getZonedDateTimeNowWithOutDecimals()).plusDays(endTime))
+                .startTime(offsetNow().minusDays(startTime))
+                .endTime(offsetNow().plusDays(endTime))
                 .severity(getRandomOpsMessageDtoSeverity())
                 .onlyShowForNavEmployees(random.nextBoolean())
                 .isActive(true);
@@ -287,8 +288,8 @@ public class SampleDataDto {
         return responseTime.get(random.nextInt(responseTime.size()));
     }
 
-    private static ZonedDateTime getZonedDateTimeNowWithOutDecimals(){
-        return ZonedDateTime.of(LocalDate.now(), LocalTime.of(0,0), ZoneId.of("Europe/Paris"));
+    private static OffsetDateTime offsetNow(){
+        return OffsetDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     }
 
     private static OPSmessageDto.SeverityEnum getRandomOpsMessageDtoSeverity() {
