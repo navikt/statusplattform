@@ -242,7 +242,7 @@ public class SampleDataDto {
 
     public static List<OPSmessageDto> getRandomLengthListOfOPSMessageDto() {
         Random random = new Random();
-        int numberOfOpsMessageDto = 1 + random.nextInt(headersForOpsMessages.size());
+        int numberOfOpsMessageDto = 1 + random.nextInt(headersForOpsMessages.size()-1);
         List<OPSmessageDto> opsMessageDtos = new ArrayList<>();
         for (int i = 0; i <= numberOfOpsMessageDto; i++) {
             opsMessageDtos.add(getRandomizedOPSMessageDtoWithNameNotInList(opsMessageDtos));
