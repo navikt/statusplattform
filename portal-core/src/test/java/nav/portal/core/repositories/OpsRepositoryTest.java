@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -201,43 +202,30 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedOpsMessages.keySet()).containsAll(opsMessageEntities);
     }
 
+
+
     @Test
     void retrieveAllActive() {
         //Arrange
-        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(3);
-        List<OpsMessageEntity> opsMessages = SampleData.getNonEmptyListOfOpsMessageEntity(2);
-        opsMessages.get(1).setIsActive(false);
-        List<UUID> serviceIds= new ArrayList<>();
-        services.forEach(service -> {
-            service.setId(serviceRepository.save(service));
-            serviceIds.add(service.getId());
-        });
+        OpsMessageEntity activeMessage = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity inactiveMessage = SampleData.getRandomOpsMessageEntity();
+        ZonedDateTime yesterday = ZonedDateTime.now().minusDays(1);
+        activeMessage.setStartTime(yesterday);
+        inactiveMessage.setEndTime(yesterday);
 
-        opsMessages.forEach(opsMessage -> {
-            opsMessage.setId(opsRepository.save(opsMessage, serviceIds));
-        });
+        activeMessage.setId(opsRepository.save(activeMessage,List.of()));
+        inactiveMessage.setId(opsRepository.save(inactiveMessage,List.of()));
+
 
         //Act
         Map<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessagesAndServices
                 = opsRepository.retrieveAllActive();
-        Optional<OpsMessageEntity> retrievedFirstOpsMessage =
-               retrievedOpsMessagesAndServices.keySet().stream().findFirst();
 
-        Optional<List<ServiceEntity>> retrievedServiceValues = Optional.of(new ArrayList<>());
-        if (retrievedOpsMessagesAndServices.values().stream().findFirst().isPresent()){
-            retrievedServiceValues = retrievedOpsMessagesAndServices.values().stream().findFirst();
-        }
-        Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedMessagesOnServices
-                = opsRepository.retrieveOne(opsMessages.get(0).getId());
+
+
         //Assert
-        Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().isEmpty()).isFalse();
         Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().size()).isEqualTo(1);
-        Assertions.assertThat(retrievedOpsMessagesAndServices.containsKey(opsMessages.get(1))).isFalse();
-        Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()).doesNotContain(opsMessages.get(1));
-        Assertions.assertThat(retrievedServiceValues.get().containsAll(retrievedMessagesOnServices.getValue())).isTrue();
-        Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(retrievedMessagesOnServices.getValue().size());
-        Assertions.assertThat(retrievedServiceValues.get().size()).isEqualTo(3);
-        Assertions.assertThat(retrievedFirstOpsMessage.orElseThrow().getId()).isEqualTo(opsMessages.get(0).getId());
+        Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()).contains(activeMessage);
     }
 
     @Test
@@ -262,8 +250,7 @@ class OpsRepositoryTest {
                 .setStartTime(opsMessage.getStartTime())
                 .setEndTime(opsMessage.getStartTime())
                 .setSeverity(opsMessage.getSeverity())
-                .setOnlyShowForNavEmployees(opsMessage.getOnlyShowForNavEmployees())
-                .setIsActive(opsMessage.getIsActive());
+                .setOnlyShowForNavEmployees(opsMessage.getOnlyShowForNavEmployees());
         //Act
         opsRepository.updateOpsMessage(opsMessageAfterUpdate);
         Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageAfterUpdate

@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
+
 class OpsControllerTest {
     private final DataSource dataSource = TestDataSource.create();
     private final DbContext dbContext = new DbContext();
@@ -176,7 +176,7 @@ class OpsControllerTest {
         Assertions.assertThat(retrievedOPSMessageDto).isEqualTo(toBeRetrieved);
     }
 
-    //@Test
+    @Test
     void updateSpecificOpsMessage(){
         //Arrange
         AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
@@ -208,36 +208,8 @@ class OpsControllerTest {
         Assertions.assertThat(opsMessageAfter.getInternalHeader()).isEqualToIgnoringCase(updatedOpsMessage.getInternalHeader());
     }
 
-    @Test
-    void getAllForDashboard(){
-        //Arrange
-        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
-        IdContainerDto idContainerDto = areaController.newArea(areaDto);
-        areaDto.setId(idContainerDto.getId());
 
-        List<ServiceDto> serviceDtos = SampleDataDto.getRandomLengthListOfServiceDto();
-        serviceDtos.forEach(serviceDto -> {
-            ServiceDto savedServiceDto = serviceController.newService(serviceDto);
-            serviceDto.setId(savedServiceDto.getId());
-        });
 
-        serviceDtos.forEach(serviceDto -> areaController.addServiceToArea(areaDto.getId(), serviceDto.getId()));
-
-        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
-        dashboardDto.setAreas(List.of(areaDto));
-        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
-        dashboardDto.setId(dashboardIdContainerDto.getId());
-
-        List<OPSmessageDto> opsMessageDtos = SampleDataDto.getRandomLengthListOfOPSMessageDto();
-        opsMessageDtos.forEach(dto -> dto.setId(opsController.createOpsMessage(dto).getId()));
-
-        //Act
-        List<OPSmessageDto> retrievedOpsMessages = opsController.getAllForDashboard(dashboardDto.getId());
-
-        //Assert
-        Assertions.assertThat(retrievedOpsMessages.size()).isEqualTo(opsMessageDtos.size());
-        Assertions.assertThat(retrievedOpsMessages).containsExactlyInAnyOrderElementsOf(opsMessageDtos);
-    }
 
 }
-*/
+

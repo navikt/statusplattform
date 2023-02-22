@@ -8,6 +8,8 @@ import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,7 +38,6 @@ public class OpsRepository {
                 .setField("intern_text", entity.getInternalText())
                 .setField("extern_header", entity.getExternalHeader())
                 .setField("extern_text", entity.getExternalText())
-                .setField("is_active", entity.getIsActive())
                 .setField("only_show_for_nav_employees", entity.getOnlyShowForNavEmployees())
                 .setField("start_time", entity.getStartTime())
                 .setField("end_time", entity.getEndTime())
@@ -174,11 +175,13 @@ public class OpsRepository {
         DbContextTableAlias ops = opsMessageTable.alias("ops");
         DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
         DbContextTableAlias service = serviceTable.alias("service");
+        ZonedDateTime today = ZonedDateTime.now();
 
         Map<OpsMessageEntity, List<ServiceEntity>> result = new HashMap<>();
         ops
                 .where("deleted",Boolean.FALSE)
-                .where("is_active", Boolean.TRUE)
+                .whereExpression("start_time <= ?", today )
+                .whereExpression("end_time >= ?", today)
                 .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
                 .leftJoin(o2s.column("service_id"), service.column("id"))
                 .list(row -> {
@@ -203,7 +206,6 @@ public class OpsRepository {
                     .setInternalText(row.getString("intern_text"))
                     .setExternalHeader(row.getString("extern_header"))
                     .setExternalText(row.getString("extern_text"))
-                    .setIsActive(row.getBoolean("is_active"))
                     .setOnlyShowForNavEmployees(row.getBoolean("only_show_for_nav_employees"))
                     .setStartTime(row.getZonedDateTime("start_time"))
                     .setEndTime(row.getZonedDateTime("end_time"))
@@ -222,7 +224,6 @@ public class OpsRepository {
                 .setField("extern_header", opsMessageEntity.getExternalHeader())
                 .setField("extern_text", opsMessageEntity.getExternalText())
                 .setField("only_show_for_nav_employees", opsMessageEntity.getOnlyShowForNavEmployees())
-                .setField("is_active", opsMessageEntity.getIsActive())
                 .setField("start_time", opsMessageEntity.getStartTime())
                 .setField("end_time", opsMessageEntity.getEndTime())
                 .setField("severity", opsMessageEntity.getSeverity())

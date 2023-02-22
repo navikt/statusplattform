@@ -14,7 +14,6 @@ public class OpsMessageEntity {
     private String internalText;
     private String externalHeader;
     private String externalText;
-    private boolean isActive;
     private boolean onlyShowForNavEmployees;
     private ZonedDateTime startTime;
     private ZonedDateTime endTime;
@@ -44,14 +43,6 @@ public class OpsMessageEntity {
         return this;
     }
 
-    public boolean getIsActive() {
-        return isActive;
-    }
-
-    public OpsMessageEntity setIsActive(boolean active) {
-        isActive = active;
-        return this;
-    }
 
     public UUID getId() {
         return id;
@@ -138,11 +129,11 @@ public class OpsMessageEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OpsMessageEntity that = (OpsMessageEntity) o;
-        return isActive == that.isActive && onlyShowForNavEmployees == that.onlyShowForNavEmployees && Objects.equals(id, that.id) && Objects.equals(internalHeader, that.internalHeader) && Objects.equals(internalText, that.internalText) && Objects.equals(externalHeader, that.externalHeader) && Objects.equals(externalText, that.externalText);
+        return  onlyShowForNavEmployees == that.onlyShowForNavEmployees && Objects.equals(id, that.id) && Objects.equals(internalHeader, that.internalHeader) && Objects.equals(internalText, that.internalText) && Objects.equals(externalHeader, that.externalHeader) && Objects.equals(externalText, that.externalText);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, internalHeader, internalText, externalHeader, externalText, isActive, onlyShowForNavEmployees);
+        return Objects.hash(id, internalHeader, internalText, externalHeader, externalText, onlyShowForNavEmployees);
     }
 }

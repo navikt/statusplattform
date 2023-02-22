@@ -53,14 +53,13 @@ public class SampleData {
                 .setInternalHeader(getRandomFromArray(headersForOpsMessages))
                 .setInternalText(getRandomFromArray(infoTextForOpsMessages))
                 .setStartTime(getZonedDateTimeNowWithOutDecimals())
-                .setEndTime(getZonedDateTimeNowWithOutDecimals().plusDays(2))
+                .setEndTime(getZonedDateTimeNowWithOutDecimals().plusDays(14))
                 .setSeverity(getRandomOpsMessageSeverity())
-                .setOnlyShowForNavEmployees(random.nextBoolean())
-                .setIsActive(true);
+                .setOnlyShowForNavEmployees(random.nextBoolean());
     }
 
     private static ZonedDateTime getZonedDateTimeNowWithOutDecimals(){
-        return ZonedDateTime.of(LocalDate.now(),LocalTime.of(0,0),ZoneId.of("Europe/Paris"));
+        return ZonedDateTime.of(LocalDate.now(),LocalTime.of(0,0),ZoneId.of("Europe/Oslo"));
     }
 
     public static List<OpsMessageEntity> getNonEmptyListOfOpsMessageEntity(int numberOfOpsMessages) {
