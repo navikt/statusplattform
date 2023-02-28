@@ -86,7 +86,8 @@ public class EntityDtoMappers {
         dto.setSeverity(entity.getSeverity() != null?
                 OPSmessageDto.SeverityEnum.fromValue(entity.getSeverity().getDbRepresentation())
                 :null);
-        boolean isActive = entity.getStartTime().isBefore(ZonedDateTime.now()) && entity.getEndTime().isAfter(ZonedDateTime.now());
+        boolean isActive = entity.getStartTime() != null && entity.getEndTime() != null &&
+                entity.getStartTime().isBefore(ZonedDateTime.now()) && entity.getEndTime().isAfter(ZonedDateTime.now());
         dto.setIsActive(isActive);
         dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());return dto;
     }
