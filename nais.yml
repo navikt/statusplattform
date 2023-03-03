@@ -38,6 +38,11 @@ spec:
           - name: navstatus
             envVarPrefix: DB
   accessPolicy:
+    inbound:
+      rules:
+        - application: portal
+          namespace: navdig
+          cluster: prod-gcp
     outbound:
       external:
         - host: statusholder.prod-fss-pub.nais.io
