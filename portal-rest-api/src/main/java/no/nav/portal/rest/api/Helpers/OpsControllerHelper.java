@@ -75,7 +75,7 @@ public class OpsControllerHelper {
             }
         } );
         //Adding opssmessages with service on dashboard
-        Map<OpsMessageEntity, List<ServiceEntity>> messagesForServices = opsRepository.retrieveAllForServices(servicesOnDashboard);
+        Map<OpsMessageEntity, List<ServiceEntity>> messagesForServices = opsRepository.retrieveAllActiveForServices(servicesOnDashboard);
         messagesForServices.forEach((opsMessage, services) ->
                 result.add(EntityDtoMappers.toOpsMessageDtoDeep(opsMessage,services)));
 

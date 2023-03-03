@@ -147,6 +147,32 @@ public class OpsRepository {
                 });
         return result;
     }
+    public Map<OpsMessageEntity, List<ServiceEntity>> retrieveAllActiveForServices(List<UUID> serviceIds) {
+        DbContextTableAlias ops = opsMessageTable.alias("ops");
+        DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
+        DbContextTableAlias service = serviceTable.alias("service");
+        ZonedDateTime today = ZonedDateTime.now();
+
+        Map<OpsMessageEntity, List<ServiceEntity>> result = new HashMap<>();
+        ops
+                .where("deleted",Boolean.FALSE)
+                .whereExpression("start_time <= ?", today )
+                .whereExpression("end_time >= ?", today)
+                .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
+                .leftJoin(o2s.column("service_id"), service.column("id"))
+                .whereIn("o2s.service_id", serviceIds)
+                .list(row -> {
+                    List<ServiceEntity> serviceList = result
+                            .computeIfAbsent(toOps(row.table(ops)), ignored -> new ArrayList<>());
+
+                    DatabaseRow serivceRow = row.table(service);
+                    Optional.ofNullable(row.getUUID("service_id"))
+                            .ifPresent(serviceId -> serviceList.add(ServiceRepository.toService(serivceRow)));
+                    return null;
+                });
+        return result;
+    }
+
     public Map<OpsMessageEntity, List<ServiceEntity>> retrieveAllForServices(List<UUID> serviceIds) {
         DbContextTableAlias ops = opsMessageTable.alias("ops");
         DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
