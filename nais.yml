@@ -39,6 +39,7 @@ spec:
             envVarPrefix: DB
   azure:
     application:
+      allowAllUsers: true
       tenant: nav.no
       enabled: true
       claims:
