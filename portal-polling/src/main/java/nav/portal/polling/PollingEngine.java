@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PollingEngine extends Thread {
 
@@ -67,7 +68,6 @@ public class PollingEngine extends Thread {
         }
     }
     private void getPollingServicesAndPoll(){
-        recordRepository.deleteAllstatusesForService();
         logger.info("Starting poll ----------------");
         LocalDateTime startTime = LocalDateTime.now();
         List<ServiceEntity> pollingServices = serviceRepository.retrieveServicesWithPolling();
