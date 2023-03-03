@@ -37,6 +37,14 @@ spec:
         databases:
           - name: navstatus
             envVarPrefix: DB
+  azure:
+    application:
+      tenant: nav.no
+      enabled: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
   accessPolicy:
     inbound:
       rules:
