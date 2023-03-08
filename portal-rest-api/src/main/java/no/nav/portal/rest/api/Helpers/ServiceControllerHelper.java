@@ -18,6 +18,7 @@ public class ServiceControllerHelper {
     ServiceRepository serviceRepository;
     RecordRepository recordRepository;
     AreaRepository areaRepository;
+
     Comparator<ServiceDto> serviceDtoComparator
             = Comparator.comparing(a -> a.getName().toLowerCase());
 
@@ -36,12 +37,30 @@ public class ServiceControllerHelper {
         result.forEach(this::settStatusOnService);
         return result.stream().sorted(Comparator.comparing(ServiceDto::getName)).collect(Collectors.toList());
     }
+
+    public List<ServiceDto> getAllComponentsShallow() {
+        List<ServiceEntity> services = serviceRepository.retrieveAllComponentsShallow();
+        List<ServiceDto> result = services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList();
+        return result.stream()
+                .sorted(serviceDtoComparator)
+                .collect(Collectors.toList());
+    }
+
     public List<ServiceDto> getAllComponents() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllComponents();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).toList();
         result.forEach(componentDto -> componentDto.setServicesDependentOnThisComponent(getServicesDependantOnComponent(componentDto.getId())));
         //TODO status skal hentes i dbspørringer, ikke slik som dette:
         result.forEach(this::settStatusOnService);
+        return result.stream()
+                .sorted(serviceDtoComparator)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<ServiceDto> getAllServicesShallow() {
+        List<ServiceEntity> services = serviceRepository.retrieveAllServicesShallow();
+        List<ServiceDto> result = services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList();
         return result.stream()
                 .sorted(serviceDtoComparator)
                 .collect(Collectors.toList());

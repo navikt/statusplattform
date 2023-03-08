@@ -196,11 +196,6 @@ public class AreaRepository {
 
         DbContextTableAlias sa = subAreaTable.alias("sa");
         DbContextTableAlias a2sa = areaSubAreaTable.alias("a2sa");
-        /*
-        sa.where("area_id", areaID)
-                .leftJoin(sa.column("id"),a2sa.column("sub_area_id"))
-                .list(row -> subareasOnArea.add(SubAreaRepository.toSubArea(row.table(sa))));
-        */
 
         a2sa.where("area_id", areaID)
                 .leftJoin(a2sa.column("sub_area_id"),sa.column("id"))

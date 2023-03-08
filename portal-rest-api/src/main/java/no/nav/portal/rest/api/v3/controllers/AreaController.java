@@ -29,6 +29,13 @@ public class AreaController {
    }
 
 
+   @GET("/Areas/Minimal")
+   @JsonBody
+   public List<AreaDto> getAllAreasMinimal() {
+      return areaControllerHelper.getAllAreasShallow();
+
+   }
+
    @GET("/Areas")
    @JsonBody
    public List<AreaDto> getAllAreas() {

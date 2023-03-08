@@ -162,8 +162,8 @@ public class ServiceRepository {
 
     public  List<ServiceEntity> retrieveAllShallow() {
         return  serviceTable.where("deleted",Boolean.FALSE).list(ServiceRepository::toService);
-
     }
+
 
     public Map<ServiceEntity, List<ServiceEntity>> retrieveAllDeep() {
         DbContextTableAlias s2s = service_serviceTable.alias("s2s");
@@ -192,9 +192,22 @@ public class ServiceRepository {
     public Map<ServiceEntity, List<ServiceEntity>> retrieveAllComponents() {
         return retrieveAllWithType(ServiceType.KOMPONENT);
     }
+    public  List<ServiceEntity> retrieveAllComponentsShallow() {
+        return  serviceTable.where("deleted",Boolean.FALSE)
+                .where("service.type", ServiceType.KOMPONENT.getDbRepresentation())
+                .list(ServiceRepository::toService);
+    }
+
+
 
     public Map<ServiceEntity, List<ServiceEntity>> retrieveAllServices() {
         return retrieveAllWithType(ServiceType.TJENESTE);
+    }
+
+    public  List<ServiceEntity> retrieveAllServicesShallow() {
+        return  serviceTable.where("deleted",Boolean.FALSE)
+                .where("service.type", ServiceType.TJENESTE.getDbRepresentation())
+                .list(ServiceRepository::toService);
     }
 
     private Map<ServiceEntity, List<ServiceEntity>> retrieveAllWithType(ServiceType serviceType) {

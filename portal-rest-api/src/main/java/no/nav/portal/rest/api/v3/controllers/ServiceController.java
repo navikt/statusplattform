@@ -39,6 +39,18 @@ public class ServiceController {
         this.serviceRepository = new ServiceRepository(dbContext);
     }
 
+    @GET("/Services/Minimal")
+    @JsonBody
+    public  List<ServiceDto> getServicesMinimal() {
+        return serviceControllerHelper.getAllServicesShallow();
+    }
+
+    @GET("/Components/Minimal")
+    @JsonBody
+    public  List<ServiceDto> getComponentsMinimal() {
+        return serviceControllerHelper.getAllComponentsShallow();
+    }
+
     @GET("/Services")
     @JsonBody
     public  List<ServiceDto> getServices() {

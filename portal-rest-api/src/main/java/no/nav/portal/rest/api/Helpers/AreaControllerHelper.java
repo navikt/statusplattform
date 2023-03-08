@@ -20,13 +20,23 @@ public class AreaControllerHelper {
     private final DashboardRepository dashboardRepository;
     private final ServiceRepository serviceRepository;
     private final RecordRepository recordRepository;
-
+    Comparator<AreaDto> areaNameComparator
+            = Comparator.comparing(a -> a.getName().toLowerCase());
 
     public AreaControllerHelper(DbContext dbContext) {
         this.areaRepository = new AreaRepository(dbContext);
         this.dashboardRepository = new DashboardRepository(dbContext);
         this.serviceRepository = new ServiceRepository(dbContext);
         this.recordRepository = new RecordRepository(dbContext);
+    }
+
+
+    public List<AreaDto> getAllAreasShallow(){
+        List<AreaDto> result = areaRepository.retriveAllShallow()
+                .stream().map(EntityDtoMappers::toAreaDtoShallow)
+                .collect(Collectors.toList());
+        return result.stream().sorted(areaNameComparator)
+                .collect(Collectors.toList());
     }
 
 
@@ -42,8 +52,7 @@ public class AreaControllerHelper {
             result.add(areaDto);
                 }
         );
-        Comparator<AreaDto> areaNameComparator
-                = Comparator.comparing(a -> a.getName().toLowerCase());
+
         return result.stream().sorted(areaNameComparator)
                 .collect(Collectors.toList());
     }
