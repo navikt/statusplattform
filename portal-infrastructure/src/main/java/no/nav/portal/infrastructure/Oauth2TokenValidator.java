@@ -26,9 +26,7 @@ public class Oauth2TokenValidator {
 
 
     public JWTClaimsSet  validateTokenAndGetClaims(ServletRequest request) {
-        logger.info("In token Validator");
         String accessToken =  readAccessTokenFromHeader(request);
-        logger.info("access token: "+ accessToken);
         try {
             return doValidateAndGetClaims(accessToken);
         } catch (Exception e) {
