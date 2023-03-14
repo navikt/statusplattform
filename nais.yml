@@ -54,7 +54,7 @@ spec:
           cluster: prod-gcp
         - application: statuspoll
           namespace: navdig
-          cluster: dev-gcp
+          cluster: prod-gcp
     outbound:
       external:
         - host: statusholder.prod-fss-pub.nais.io
