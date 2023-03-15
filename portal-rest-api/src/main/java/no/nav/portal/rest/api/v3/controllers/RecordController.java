@@ -4,6 +4,7 @@ import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
+import no.nav.portal.rest.api.Helpers.RecordControllerHelper;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.GET;
 import org.actioncontroller.HttpRequestException;
@@ -21,9 +22,11 @@ import java.util.UUID;
 public class RecordController {
     private static final Logger logger = LoggerFactory.getLogger(RecordController.class);
     private RecordRepository recordRepository;
+    private RecordControllerHelper recordControllerHelper;
     private AlertDto currentAlert;
 
     public RecordController(DbContext dbContext) {
+        this.recordControllerHelper = new RecordControllerHelper(dbContext);
         this.recordRepository = new RecordRepository(dbContext);
     }
 
@@ -42,6 +45,13 @@ public class RecordController {
                 .setLogglink(recordDto.getLogLink())
                 .setResponsetime(42);//TODO se her
         recordRepository.save(entity);
+    }
+
+    @POST("/UpdateRecords")
+    public  void updateRecords(@JsonBody List<RecordDto> recordDtos){
+        //Endpoint used by poller job, see https://github.com/navikt/statusportal-gcp-poll.git
+        recordControllerHelper.updateRecords(recordDtos);
+        recordControllerHelper.deleteRecordsOlderThan48Hours();
     }
 
     @GET("/ServiceStatus/:Service_id")

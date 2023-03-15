@@ -22,7 +22,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PollingEngine extends Thread {
 
@@ -134,7 +133,7 @@ public class PollingEngine extends Thread {
         recordRepository.save(newRecord);
 
         //Sletter records som er eldre enn 48 timer:
-        recordRepository.deleteRecordsOlderThen48hours();
+        recordRepository.deleteRecordsOlderThan48hours();
     }
 
     private PolledServiceStatus mapToPolledServiceStatus(JsonObject jsonObject){

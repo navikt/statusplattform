@@ -232,7 +232,7 @@ public class RecordRepository {
 
     }
 
-    public void deleteRecordsOlderThen48hours() {
+    public void deleteRecordsOlderThan48hours() {
         recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusHours(48))
                 .executeDelete();
     }

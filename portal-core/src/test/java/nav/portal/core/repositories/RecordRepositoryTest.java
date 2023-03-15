@@ -15,8 +15,6 @@ import javax.sql.DataSource;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 import java.util.UUID;
@@ -307,7 +305,7 @@ class RecordRepositoryTest {
         });
         List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(2);
         //Act
-        recordRepository.deleteRecordsOlderThen48hours();
+        recordRepository.deleteRecordsOlderThan48hours();
         //Assert
         List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(2);
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
