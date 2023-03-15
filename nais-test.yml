@@ -25,7 +25,7 @@ spec:
   image: {{ image }}
   port: 3005
   ingresses:
-    - https://status-api.dev.nav.no
+    - https://status-api.intern.dev.nav.no
   gcp:
     sqlInstances:
       - name: navstatus
