@@ -59,6 +59,9 @@ spec:
         - application: statuspoll
           namespace: navdig
           cluster: dev-gcp
+        - application: servicemock
+          namespace: navdig
+          cluster: dev-gcp
     outbound:
       rules:
         - application: statusholder
