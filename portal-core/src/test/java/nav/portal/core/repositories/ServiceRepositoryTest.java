@@ -1,8 +1,6 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.MaintenanceEntity;
-import nav.portal.core.entities.OpeningHoursEntity;
-import nav.portal.core.entities.OpsMessageEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
@@ -15,10 +13,8 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
-import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.fail;
 
 class ServiceRepositoryTest {
@@ -285,7 +281,7 @@ class ServiceRepositoryTest {
       List<ServiceEntity> services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
       services.forEach(service -> service.setId(serviceRepository.save(service)));
       //Act
-      List<ServiceEntity> retrievedServices = serviceRepository.retrieveAllShallow();
+      List<ServiceEntity> retrievedServices = serviceRepository.retrieveAllServicesAndComponentsShallow();
       //Assert
       Assertions.assertThat(retrievedServices.size()).isEqualTo(services.size());
       Assertions.assertThat(retrievedServices.containsAll(services)).isTrue();

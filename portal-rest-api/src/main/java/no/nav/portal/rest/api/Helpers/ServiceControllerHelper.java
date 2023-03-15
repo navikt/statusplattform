@@ -239,5 +239,12 @@ public class ServiceControllerHelper {
 
 
         }
+
+    public List<ServiceDto> getPollingServices() {
+        List<ServiceEntity> services = serviceRepository.retrieveAllServicesAndComponentsShallow();
+        services = services.stream().filter(s -> s.getPolling_url() != null && !s.getPolling_url().equals("")).collect(Collectors.toList());
+        return services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList();
+
+    }
 }
 

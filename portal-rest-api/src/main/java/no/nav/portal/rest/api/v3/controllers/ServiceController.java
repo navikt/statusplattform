@@ -39,6 +39,13 @@ public class ServiceController {
         this.serviceRepository = new ServiceRepository(dbContext);
     }
 
+
+    @GET("/Services/PollingServices")
+    @JsonBody
+    public  List<ServiceDto> getPollingServices() {
+        return serviceControllerHelper.getPollingServices();
+    }
+
     @GET("/Services/Minimal")
     @JsonBody
     public  List<ServiceDto> getServicesMinimal() {

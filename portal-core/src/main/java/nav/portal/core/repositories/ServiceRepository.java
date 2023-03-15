@@ -160,7 +160,7 @@ public class ServiceRepository {
                 .orElseThrow(() -> new HttpRequestException("Not found: Service with id " + service_id));
     }
 
-    public  List<ServiceEntity> retrieveAllShallow() {
+    public  List<ServiceEntity> retrieveAllServicesAndComponentsShallow() {
         return  serviceTable.where("deleted",Boolean.FALSE).list(ServiceRepository::toService);
     }
 
