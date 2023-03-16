@@ -20,8 +20,7 @@ spec:
     - name: ENV
       value: prod
   replicas:
-    min: 1
-    max: 1
+    min: 2
   secureLogs:
     enabled: true
   image: {{ image }}
