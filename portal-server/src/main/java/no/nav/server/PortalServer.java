@@ -25,6 +25,7 @@ public class PortalServer {
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
     private String frontEndLocation;
     private final PortalPoller portalPoller = new PortalPoller();
+    private final String ENV = System.getenv("ENV");
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
     private boolean isLocalHost;
 
@@ -85,7 +86,10 @@ public class PortalServer {
 
     public void start() throws Exception {
         server.start();
-//        portalPoller.start();
+        if(ENV.equals("prod")){
+            logger.info("Starting polling");
+            portalPoller.start();
+        }
         connector.start();
         logger.warn("Started on {}", getURI());
     }
