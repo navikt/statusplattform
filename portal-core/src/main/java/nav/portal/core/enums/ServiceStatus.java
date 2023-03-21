@@ -6,7 +6,8 @@ import java.util.stream.Stream;
 public enum ServiceStatus implements DbEnum {
     OK("OK"),
     DOWN("DOWN"),
-    ISSUE("ISSUE");
+    ISSUE("ISSUE"),
+    UNKNOWN("UNKNOWN");
 
     private String dbRepresentation;
 
