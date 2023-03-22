@@ -18,6 +18,7 @@ public class ServiceControllerHelper {
     ServiceRepository serviceRepository;
     RecordRepository recordRepository;
     AreaRepository areaRepository;
+    RecordControllerHelper recordControllerHelper;
 
     Comparator<ServiceDto> serviceDtoComparator
             = Comparator.comparing(a -> a.getName().toLowerCase());
@@ -26,6 +27,7 @@ public class ServiceControllerHelper {
         this.areaRepository = new AreaRepository(context);
         this.serviceRepository = new ServiceRepository(context);
         this.recordRepository = new RecordRepository(context);
+        this.recordControllerHelper = new RecordControllerHelper(context);
     }
 
 
@@ -114,7 +116,14 @@ public class ServiceControllerHelper {
         areaRepository.addServiceToAreas(areasCointainingService,service.getId());
 
         ServiceDto result = EntityDtoMappers.toServiceDtoDeep(service, dependencies);
-        result.setRecord(new RecordDto());
+
+        RecordDto recordDto = new RecordDto();
+        if(serviceDto.getPollingUrl() == null || serviceDto.getPollingUrl().equals("")){
+            recordDto.setServiceId(service.getId());
+            recordDto.setStatus(StatusDto.UNKNOWN);
+            recordControllerHelper.updateRecordForService(recordDto);
+        }
+        result.setRecord(recordDto);
 
         return result;
     }
@@ -135,6 +144,13 @@ public class ServiceControllerHelper {
                         .collect(Collectors.toList()));
         //Dersom service er av type komponent kan tjenester ha avhengighet til denne
         serviceDto.getServicesDependentOnThisComponent().forEach(s -> serviceRepository.addDependencyToService(s.getId(),serviceDto.getId()));
+
+        if(serviceDto.getPollingUrl() == null || serviceDto.getPollingUrl().equals("")){
+            RecordDto recordDto = new RecordDto();
+            recordDto.setServiceId(serviceDto.getId());
+            recordDto.setStatus(StatusDto.UNKNOWN);
+            recordControllerHelper.updateRecordForService(recordDto);
+        }
 
 
     }

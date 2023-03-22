@@ -27,7 +27,7 @@ public class RecordControllerHelper {
     }
 
 
-    private void updateRecordForService(RecordDto recordDto){
+    public void updateRecordForService(RecordDto recordDto){
 
         Optional<RecordEntity> latestDiffRecord = recordRepository.getLatestRecordDiff(recordDto.getServiceId());
         RecordEntity newRecord = mapToRecordEntity(recordDto);
