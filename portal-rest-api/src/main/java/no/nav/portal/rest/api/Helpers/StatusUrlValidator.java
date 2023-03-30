@@ -3,6 +3,8 @@ package no.nav.portal.rest.api.Helpers;
 import no.portal.web.generated.api.ServiceDto;
 import org.actioncontroller.HttpRequestException;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -15,6 +17,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class StatusUrlValidator {
+
+    private static final Logger logger = LoggerFactory.getLogger(StatusUrlValidator.class);
 
     private static final  String STATUSHOLDER = "STATUSHOLDER";
     private static final String STATUSHOLDER_URL = System.getenv("statusholder_url");
@@ -53,26 +57,35 @@ public class StatusUrlValidator {
     }
     public static Boolean checkIfEndpointRespondsGcp(ServiceDto serviceDto){
         try {
+            logger.info("check gcp 1");
             HttpURLConnection connection = getConnectionToGcpEndpoint(serviceDto);
-
+            logger.info("check gcp 2");
             String bodyString = readBody(connection);
+            logger.info("check gcp 3");
             connection.disconnect();
+            logger.info("check gcp 4");
             JsonObject jsonObject = toJson(bodyString);
+            logger.info("check gcp 5");
             return checkForStatus(jsonObject);
 
         }
         catch (IOException e){
+            logger.info(e.toString());
             return false;
         }
     }
 
     public static Boolean checkIfEndpointRespondsOnPrem(ServiceDto serviceDto){
         try {
+            logger.info("check onprem 1");
             HttpURLConnection connection = getConnectionToOnpremEndpoint(serviceDto);
-
+            logger.info("check onprem 2");
             String bodyString = readBody(connection);
+            logger.info("check onprem 3");
             connection.disconnect();
+            logger.info("check onprem 4");
             JsonObject jsonObject = toJson(bodyString);
+            logger.info("check onprem 5");
             return checkForStatus(jsonObject);
 
         }

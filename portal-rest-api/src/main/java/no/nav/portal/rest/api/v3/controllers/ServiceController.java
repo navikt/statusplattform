@@ -95,8 +95,13 @@ public class ServiceController {
     @JsonBody
     public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
         if(!isTest){
+            try{
             boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
             logger.info("Url: "+serviceDto.getPollingUrl()+" Is on Prem = "+ isOnPrem);
+            }
+            catch (Exception e){
+                logger.info(e.getMessage());
+            }
         }
         if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
             return serviceControllerHelper.saveNewService(serviceDto);
