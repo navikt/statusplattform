@@ -67,3 +67,6 @@ spec:
         - application: statusholder
           namespace: navdig
           cluster: dev-fss
+        - application: servicemock
+          namespace: navdig
+          cluster: dev-gcp
