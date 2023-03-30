@@ -28,7 +28,7 @@ class OpsControllerTest {
 
     private final DashboardController dashboardController = new DashboardController(dbContext);
     private final AreaController areaController = new AreaController(dbContext);
-    private final ServiceController serviceController = new ServiceController(dbContext);
+    private final ServiceController serviceController = new ServiceController(dbContext,true);
     private final OpsController opsController = new OpsController(dbContext);
 
     private DbContextConnection connection;

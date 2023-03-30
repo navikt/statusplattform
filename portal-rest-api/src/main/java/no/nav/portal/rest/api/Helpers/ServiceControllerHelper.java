@@ -11,6 +11,7 @@ import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
 import java.time.Month;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -121,6 +122,7 @@ public class ServiceControllerHelper {
         if(serviceDto.getPollingUrl() == null || serviceDto.getPollingUrl().equals("")){
             recordDto.setServiceId(service.getId());
             recordDto.setStatus(StatusDto.UNKNOWN);
+            recordDto.setTimestamp(OffsetDateTime.now());
             recordControllerHelper.updateRecordForService(recordDto);
         }
         result.setRecord(recordDto);

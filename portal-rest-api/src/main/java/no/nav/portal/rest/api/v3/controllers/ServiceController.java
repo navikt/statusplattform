@@ -33,11 +33,12 @@ public class ServiceController {
     private final ServiceRepository serviceRepository;
     private String STATUSHOLDER_URL = System.getenv("statusholder_url");
     private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
+    private boolean isTest;
 
-
-    public ServiceController(DbContext dbContext) {
+    public ServiceController(DbContext dbContext, boolean isTest) {
         this.serviceControllerHelper = new ServiceControllerHelper(dbContext);
         this.serviceRepository = new ServiceRepository(dbContext);
+        this.isTest = isTest;
     }
 
 
@@ -93,8 +94,10 @@ public class ServiceController {
     @POST("/Service")
     @JsonBody
     public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
-        boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
-        logger.info("Url: "+serviceDto.getPollingUrl()+" Is on Prem = "+ isOnPrem);
+        if(!isTest){
+            boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
+            logger.info("Url: "+serviceDto.getPollingUrl()+" Is on Prem = "+ isOnPrem);
+        }
         if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
             return serviceControllerHelper.saveNewService(serviceDto);
 

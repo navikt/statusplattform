@@ -22,16 +22,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import javax.json.Json;
-import javax.json.JsonReader;
-import javax.json.JsonObject;
-
 import javax.sql.DataSource;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,7 +40,7 @@ class ServiceControllerTest {
 
     private DbContextConnection connection;
     private final AreaRepository areaRepository = new AreaRepository(dbContext);
-    private final ServiceController serviceController = new ServiceController(dbContext);
+    private final ServiceController serviceController = new ServiceController(dbContext, true);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private final RecordRepository recordRepository = new RecordRepository(dbContext);
 

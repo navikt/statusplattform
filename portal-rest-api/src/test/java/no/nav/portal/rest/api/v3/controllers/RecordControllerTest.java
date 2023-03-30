@@ -32,7 +32,7 @@ class RecordControllerTest {
 
     private final DashboardController dashboardController = new DashboardController(dbContext);
     private final AreaController areaController = new AreaController(dbContext);
-    private final ServiceController serviceController = new ServiceController(dbContext);
+    private final ServiceController serviceController = new ServiceController(dbContext, true);
     private final RecordController recordController = new RecordController(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
@@ -79,10 +79,11 @@ class RecordControllerTest {
         List<ServiceDto>retrievedServices = retrievedAreas.get(0).getServices();
         List<RecordDto> recordStatusOnServiceAfter = recordController.getRecordHistory(serviceDto.getId());
 
-        Assertions.assertThat(recordStatusOnServiceBefore).isEmpty();
-        Assertions.assertThat(recordStatusOnServiceAfter).isNotEmpty();
-        Assertions.assertThat(recordStatusOnServiceAfter.get(0).getServiceId())
-                .isEqualTo(serviceDto.getId());
+        Assertions.assertThat(recordStatusOnServiceBefore.size()).isEqualTo(1);
+        Assertions.assertThat(recordStatusOnServiceBefore.get(0).getStatus()).isEqualTo(StatusDto.UNKNOWN);
+
+        Assertions.assertThat(recordStatusOnServiceAfter.size()).isEqualTo(2);
+        Assertions.assertThat(recordStatusOnServiceAfter.get(1).getServiceId()).isEqualTo(serviceDto.getId());
         Assertions.assertThat(retrievedAreas.get(0).getServices().size()).isEqualTo(1);
         Assertions.assertThat(retrievedServices.get(0).getId()).isEqualTo(serviceDto.getId());
     }
