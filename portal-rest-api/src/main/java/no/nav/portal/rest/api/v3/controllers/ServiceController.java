@@ -4,6 +4,7 @@ import nav.portal.core.repositories.ServiceRepository;
 
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.ServiceControllerHelper;
+import no.nav.portal.rest.api.Helpers.StatusUrlValidator;
 import no.nav.portal.rest.api.Helpers.Util;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.*;
@@ -92,7 +93,9 @@ public class ServiceController {
     @POST("/Service")
     @JsonBody
     public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
-        if(Util.validateUrl(serviceDto.getPollingUrl())){
+        boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
+        logger.info("Url: "+serviceDto.getPollingUrl()+" Is on Prem = "+ isOnPrem);
+        if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
             return serviceControllerHelper.saveNewService(serviceDto);
 
         }
@@ -102,7 +105,7 @@ public class ServiceController {
     @PUT("/Service/:Service_id")
     @JsonBody
     public void updateService(@PathParam("Service_id") UUID service_id, @JsonBody ServiceDto serviceDto) {
-        if(Util.validateUrl(serviceDto.getPollingUrl())){
+        if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
             serviceDto.setId(service_id);
             serviceControllerHelper.updateService(serviceDto);
             return;
