@@ -38,12 +38,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav</groupId>
-            <artifactId>portal-polling</artifactId>
-            <version>0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.200</version>
