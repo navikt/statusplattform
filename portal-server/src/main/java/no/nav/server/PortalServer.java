@@ -2,7 +2,6 @@ package no.nav.server;
 
 
 import no.nav.portal.infrastructure.RedirectHandler;
-import nav.portal.polling.PortalPoller;
 import no.nav.portal.rest.api.PortalRestApi;
 import no.nav.portal.rest.api.SwaggerDocumentation;
 import org.actioncontroller.config.ConfigObserver;
@@ -24,7 +23,6 @@ public class PortalServer {
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
     private String frontEndLocation;
-    private final PortalPoller portalPoller = new PortalPoller();
     private final String ENV = System.getenv("ENV");
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
     private boolean isLocalHost;
@@ -67,7 +65,6 @@ public class PortalServer {
     }
 
     private void setDataSource(DataSource dataSource) {
-        portalPoller.setDataSource(dataSource);
         portalRestApi.setDataSource(dataSource);
     }
 
