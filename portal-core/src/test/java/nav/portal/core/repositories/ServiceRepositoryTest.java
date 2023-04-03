@@ -375,7 +375,7 @@ class ServiceRepositoryTest {
          service.setId(serviceRepository.save(service));
       });
       //Act
-      List<ServiceEntity> servicesWithPolling = serviceRepository.retrieveServicesWithPolling();
+      List<ServiceEntity> servicesWithPolling = serviceRepository.retrieveServicesWithPollingGcp();
       //Assert
       Assertions.assertThat(servicesWithPolling.size()).isEqualTo(services.size());
       Assertions.assertThat(servicesWithPolling.containsAll(services)).isTrue();

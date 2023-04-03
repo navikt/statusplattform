@@ -84,9 +84,7 @@ public class StatusUrlValidator {
             logger.info("check onprem 3");
             connection.disconnect();
             logger.info("check onprem 4");
-            JsonObject jsonObject = toJson(bodyString);
-            logger.info("check onprem 5");
-            return checkForStatus(jsonObject);
+            return Boolean.parseBoolean(bodyString);
 
         }
         catch (IOException e){

@@ -48,6 +48,12 @@ public class ServiceController {
         return serviceControllerHelper.getPollingServices();
     }
 
+    @GET("/Services/PollingServicesOnPrem")
+    @JsonBody
+    public  List<ServiceDto> getPollingServicesOnPrem() {
+        return serviceControllerHelper.retrieveServicesWithPollingOnPrem();
+    }
+
     @GET("/Services/Minimal")
     @JsonBody
     public  List<ServiceDto> getServicesMinimal() {
@@ -97,7 +103,7 @@ public class ServiceController {
         if(!isTest){
             try{
             boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
-            logger.info("Url: "+serviceDto.getPollingUrl()+" Is on Prem = "+ isOnPrem);
+            serviceDto.setPollingOnPrem(isOnPrem);
             }
             catch (Exception e){
                 logger.info(e.getMessage());
@@ -269,8 +275,6 @@ public class ServiceController {
 
     private HttpURLConnection putToStatusholderConnection(UUID id, String status) throws IOException {
         //Logikken under må bort på et tidspunkt. Dette er for polling av mock data.
-
-
 
         URL url = new URL(STATUSHOLDER_URL+ "/status/");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();

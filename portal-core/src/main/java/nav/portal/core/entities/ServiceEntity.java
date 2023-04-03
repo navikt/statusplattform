@@ -12,6 +12,7 @@ public class ServiceEntity {
     private String team;
     private String monitorlink;
     private String polling_url;
+    private Boolean pollingOnPrem;
     private Boolean isDeleted;
     private Boolean statusNotFromTeam;
 
@@ -88,6 +89,15 @@ public class ServiceEntity {
 
     public ServiceEntity setPolling_url(String polling_url) {
         this.polling_url = polling_url;
+        return this;
+    }
+
+    public Boolean getPollingOnPrem() {
+        return pollingOnPrem;
+    }
+
+    public ServiceEntity setPollingOnPrem(Boolean pollingOnPrem) {
+        this.pollingOnPrem = pollingOnPrem;
         return this;
     }
 

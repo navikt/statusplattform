@@ -88,6 +88,7 @@ public class ServiceRepository {
                 .setField("team", service.getTeam())
                 .setField("monitorlink", service.getMonitorlink())
                 .setField("polling_url", service.getPolling_url()== null? null:service.getPolling_url())
+                .setField("polling_on_prem", service.getPollingOnPrem())
                 .setField("status_not_from_team", service.getStatusNotFromTeam())
                 .execute();
     }
@@ -246,8 +247,16 @@ public class ServiceRepository {
                 .stream(ServiceRepository::toService).collect(Collectors.toList());
     }
 
-    public List<ServiceEntity> retrieveServicesWithPolling() {
+    public List<ServiceEntity> retrieveServicesWithPollingGcp() {
         return serviceTable.query().whereExpression("polling_url is not null")
+                .where("polling_on_prem", false)
+                .where("deleted", false)
+                .stream(ServiceRepository::toService).collect(Collectors.toList());
+    }
+
+    public List<ServiceEntity> retrieveServicesWithPollingOnPrem() {
+        return serviceTable.query().whereExpression("polling_url is not null")
+                .where("polling_on_prem", true)
                 .where("deleted", false)
                 .stream(ServiceRepository::toService).collect(Collectors.toList());
     }
@@ -294,6 +303,7 @@ public class ServiceRepository {
                     .setType(ServiceType.fromDb(row.getString("type")))
                     .setMonitorlink(row.getString("monitorlink"))
                     .setPolling_url(row.getString("polling_url"))
+                    .setPollingOnPrem(row.getBoolean("polling_on_prem"))
                     .setDeleted(row.getBoolean("deleted"))
                     .setStatusNotFromTeam(row.getBoolean("status_not_from_team"));
         } catch (SQLException e) {

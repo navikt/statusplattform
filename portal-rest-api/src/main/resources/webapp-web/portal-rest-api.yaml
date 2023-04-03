@@ -1311,6 +1311,10 @@ components:
           type: string
         pollingUrl:
           type: string
+        polling_on_prem:
+          type: boolean
+          readOnly: true
+
         record:
           readOnly: true
           $ref: '#/components/schemas/Record'
