@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/portal-core/portal-core.iml" filepath="$PROJECT_DIR$/portal-core/portal-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/portal-digitale-tjenester.iml" filepath="$PROJECT_DIR$/.idea/portal-digitale-tjenester.iml" />
       <module fileurl="file://$PROJECT_DIR$/portal-infrastructure/portal-infrastructure.iml" filepath="$PROJECT_DIR$/portal-infrastructure/portal-infrastructure.iml" />
-      <module fileurl="file://$PROJECT_DIR$/portal-polling/portal-polling.iml" filepath="$PROJECT_DIR$/portal-polling/portal-polling.iml" />
       <module fileurl="file://$PROJECT_DIR$/portal-rest-api/portal-rest-api.iml" filepath="$PROJECT_DIR$/portal-rest-api/portal-rest-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/portal-server/portal-server.iml" filepath="$PROJECT_DIR$/portal-server/portal-server.iml" />
     </modules>

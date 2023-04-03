@@ -86,10 +86,6 @@ public class PortalServer {
 
     public void start() throws Exception {
         server.start();
-//        if(ENV.equals("prod")){
-//            logger.info("Starting polling");
-//            portalPoller.start();
-//        }
         connector.start();
         logger.warn("Started on {}", getURI());
     }
