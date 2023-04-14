@@ -62,9 +62,9 @@ spec:
         - application: servicemock
           namespace: navdig
           cluster: dev-gcp
-         - application: onpremstatuspoll
-           namespace: navdig
-           cluster: dev-fss
+        - application: onpremstatuspoll
+          namespace: navdig
+          cluster: dev-fss
     outbound:
       rules:
         - application: statusholder
