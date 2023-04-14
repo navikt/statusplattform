@@ -103,6 +103,7 @@ public class ServiceController {
         if(!isTest){
             try{
             boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
+            logger.info("isOnprem = " + isOnPrem);
             serviceDto.setPollingOnPrem(isOnPrem);
             }
             catch (Exception e){
@@ -110,6 +111,7 @@ public class ServiceController {
             }
         }
         if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
+            logger.info("isOnprem = " + serviceDto.getPollingOnPrem());
             return serviceControllerHelper.saveNewService(serviceDto);
 
         }
