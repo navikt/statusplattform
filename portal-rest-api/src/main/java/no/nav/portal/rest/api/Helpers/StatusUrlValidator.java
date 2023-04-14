@@ -84,6 +84,7 @@ public class StatusUrlValidator {
             logger.info("check onprem 3");
             connection.disconnect();
             logger.info("check onprem 4");
+            logger.info("bodystring:  " + bodyString);
             return Boolean.parseBoolean(bodyString);
 
         }
