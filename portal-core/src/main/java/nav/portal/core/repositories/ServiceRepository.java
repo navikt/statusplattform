@@ -250,7 +250,6 @@ public class ServiceRepository {
 
     public List<ServiceEntity> retrieveServicesWithPollingGcp() {
         return serviceTable.query().whereExpression("polling_url is not null")
-                .where("polling_on_prem", false)
                 .where("deleted", false)
                 .stream(ServiceRepository::toService).collect(Collectors.toList());
     }

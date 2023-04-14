@@ -260,6 +260,8 @@ public class ServiceControllerHelper {
 
     public List<ServiceDto> getPollingServices() {
         List<ServiceEntity> services = serviceRepository.retrieveServicesWithPollingGcp();
+        //If polling is onprem, updated status is on statusholder
+        services.forEach(s -> {if(s.getPollingOnPrem()) s.setPolling_url("STATUSHOLDER");});
         services = services.stream().filter(s -> s.getPolling_url() != null && !s.getPolling_url().equals("")).collect(Collectors.toList());
         return services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList();
     }
