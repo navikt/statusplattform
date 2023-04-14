@@ -60,6 +60,7 @@ public class ServiceRepository {
                 .setField("monitorlink", service.getMonitorlink())
                 .setField("polling_url", service.getPolling_url())
                 .setField("status_not_from_team", service.getStatusNotFromTeam())
+                .setField("polling_on_prem", service.getPollingOnPrem())
                 .execute()
                 .getId();
     }
