@@ -188,11 +188,7 @@ public class ServiceController {
     @JsonBody
     public List<JsonObject> getStatusHolderStatuses() throws IOException  {
         try{
-            logger.info("--------------- Statusholder  endpoint:");
-            List<JsonObject> result = getAllStatusesFromStatusholder();
-            result.forEach(s -> logger.info(s.toString()));
-
-            return result;
+            return getAllStatusesFromStatusholder();
         }
         catch (IOException e){
             return toJson("'error':'couldNotReadFromStatusholder'");
