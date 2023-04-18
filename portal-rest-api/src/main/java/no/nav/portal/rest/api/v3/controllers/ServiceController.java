@@ -258,7 +258,7 @@ public class ServiceController {
 
 
     private HttpURLConnection getAllStatusesFromStatusholderConnection() throws IOException {
-        URL url = new URL(STATUSHOLDER_URL);
+        URL url = new URL(STATUSHOLDER_URL+"/status");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         return con;
