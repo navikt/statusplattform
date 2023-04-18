@@ -103,15 +103,13 @@ public class ServiceController {
         if(!isTest){
             try{
             boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
-            logger.info("isOnprem = " + isOnPrem);
             serviceDto.setPollingOnPrem(isOnPrem);
             }
             catch (Exception e){
-                logger.info(e.getMessage());
+                logger.error(e.getMessage());
             }
         }
         if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
-            logger.info("isOnprem = " + serviceDto.getPollingOnPrem());
             return serviceControllerHelper.saveNewService(serviceDto);
 
         }
@@ -191,7 +189,10 @@ public class ServiceController {
     public List<JsonObject> getStatusHolderStatuses() throws IOException  {
         try{
             logger.info("--------------- Statusholder  endpoint:");
-            return getAllStatusesFromStatusholder();
+            List<JsonObject> result = getAllStatusesFromStatusholder();
+            result.forEach(s -> logger.info(s.toString()));
+
+            return result;
         }
         catch (IOException e){
             return toJson("'error':'couldNotReadFromStatusholder'");
@@ -243,6 +244,7 @@ public class ServiceController {
         in.close();
         return content.toString();
     }
+
 
 
     private List<JsonObject> getAllStatusesFromStatusholder() throws IOException  {

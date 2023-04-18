@@ -57,35 +57,24 @@ public class StatusUrlValidator {
     }
     public static Boolean checkIfEndpointRespondsGcp(ServiceDto serviceDto){
         try {
-            logger.info("check gcp 1");
             HttpURLConnection connection = getConnectionToGcpEndpoint(serviceDto);
-            logger.info("check gcp 2");
             String bodyString = readBody(connection);
-            logger.info("check gcp 3");
             connection.disconnect();
-            logger.info("check gcp 4");
             JsonObject jsonObject = toJson(bodyString);
-            logger.info("check gcp 5");
             return checkForStatus(jsonObject);
 
         }
         catch (IOException e){
-            logger.info(e.toString());
+            logger.error(e.toString());
             return false;
         }
     }
 
     public static Boolean checkIfEndpointRespondsOnPrem(ServiceDto serviceDto){
         try {
-            logger.info("check onprem 1");
             HttpURLConnection connection = getConnectionToOnpremEndpoint(serviceDto);
-            logger.info("check onprem 2");
             String bodyString = readBody(connection);
-            logger.info("check onprem 3");
             connection.disconnect();
-            logger.info("check onprem 4");
-            logger.info("bodystring:  " + bodyString);
-            logger.info("parsed:  " + Boolean.parseBoolean(bodyString));
             return Boolean.parseBoolean(bodyString);
 
         }

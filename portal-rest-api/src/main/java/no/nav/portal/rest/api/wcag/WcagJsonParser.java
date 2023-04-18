@@ -153,7 +153,6 @@ public class WcagJsonParser {
             path += "/portal-rest-api";
         }
         path+= "/src/main/resources/rapporter";
-        logger.info(path);
         return path;
     }
 
