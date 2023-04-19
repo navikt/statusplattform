@@ -150,6 +150,7 @@ public class ServiceControllerHelper {
         if(serviceDto.getPollingUrl() == null || serviceDto.getPollingUrl().equals("")){
             RecordDto recordDto = new RecordDto();
             recordDto.setServiceId(serviceDto.getId());
+            recordDto.setTimestamp(OffsetDateTime.now());
             recordDto.setStatus(StatusDto.UNKNOWN);
             recordControllerHelper.updateRecordForService(recordDto);
         }
