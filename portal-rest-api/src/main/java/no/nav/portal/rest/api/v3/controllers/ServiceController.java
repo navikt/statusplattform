@@ -102,8 +102,8 @@ public class ServiceController {
     public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
         if(!isTest){
             try{
-            boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
-            serviceDto.setPollingOnPrem(isOnPrem);
+                boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
+                serviceDto.setPollingOnPrem(isOnPrem);
             }
             catch (Exception e){
                 logger.error(e.getMessage());
@@ -119,6 +119,15 @@ public class ServiceController {
     @PUT("/Service/:Service_id")
     @JsonBody
     public void updateService(@PathParam("Service_id") UUID service_id, @JsonBody ServiceDto serviceDto) {
+        if(!isTest){
+            try{
+                boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
+                serviceDto.setPollingOnPrem(isOnPrem);
+            }
+            catch (Exception e){
+                logger.error(e.getMessage());
+            }
+        }
         if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
             serviceDto.setId(service_id);
             serviceControllerHelper.updateService(serviceDto);
