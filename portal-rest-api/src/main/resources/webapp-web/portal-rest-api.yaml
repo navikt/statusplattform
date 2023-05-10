@@ -496,8 +496,7 @@ paths:
       tags:
         - Service
       summary: Hent alle tjenester uten avhengigheter
-      operationId: getServices
-      description:
+      operationId: getServicesMinimal
       responses:
         '200':
           description: OK
@@ -522,8 +521,7 @@ paths:
       tags:
         - Service
       summary: Hent alle tjenester uten avhengigheter
-      operationId: getServices
-      description:
+      operationId: getComponentsMinimal
       responses:
         '200':
           description: OK
