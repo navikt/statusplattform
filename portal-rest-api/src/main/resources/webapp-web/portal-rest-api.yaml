@@ -491,6 +491,58 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
+  /Services/Minimal:
+    get:
+      tags:
+        - Service
+      summary: Hent alle tjenester uten avhengigheter
+      operationId: getServices
+      description:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Components/Minimal:
+    get:
+      tags:
+        - Service
+      summary: Hent alle tjenester uten avhengigheter
+      operationId: getServices
+      description:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /Service:
     post:
       tags:
