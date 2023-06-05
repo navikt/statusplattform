@@ -1,5 +1,6 @@
 package no.nav.portal.rest.api.Helpers;
 
+import no.portal.web.generated.api.RecordDto;
 import no.portal.web.generated.api.ServiceDto;
 import org.actioncontroller.HttpRequestException;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -37,9 +38,6 @@ public class StatusUrlValidator {
         else {
             throw new HttpRequestException("PollingUrl not responding: "+ serviceDto.getPollingUrl());
         }
-
-
-
     }
 
     public static Boolean validateUrl(String pollingUrl){
@@ -55,40 +53,50 @@ public class StatusUrlValidator {
         }
 
     }
-    public static Boolean checkIfEndpointRespondsGcp(ServiceDto serviceDto){
+
+    private static Boolean checkIfEndpointRespondsGcp(ServiceDto serviceDto){
+        if(serviceDto.getPollingUrl().equals(STATUSHOLDER)) {
+            return true;
+        }
+        JsonObject jsonObject = getEndpointRespondFromGcp(serviceDto.getPollingUrl());
+        return checkForStatus(jsonObject);
+    }
+
+    private static JsonObject getEndpointRespondFromGcp(String urlString){
         try {
-            HttpURLConnection connection = getConnectionToGcpEndpoint(serviceDto);
+            HttpURLConnection connection = getConnectionEndpoint(urlString);
             String bodyString = readBody(connection);
             connection.disconnect();
-            JsonObject jsonObject = toJson(bodyString);
-            return checkForStatus(jsonObject);
-
+            return toJson(bodyString);
         }
         catch (IOException e){
-            logger.error(e.toString());
-            return false;
+            return null;
         }
     }
 
-    public static Boolean checkIfEndpointRespondsOnPrem(ServiceDto serviceDto){
+    private static boolean checkIfEndpointRespondsOnPrem(ServiceDto serviceDto){
+        return checkForStatus(getEndpointRespondFromOnePrem(serviceDto.getPollingUrl()));
+    }
+    private static JsonObject getEndpointRespondFromOnePrem(String urlString){
         try {
-            HttpURLConnection connection = getConnectionToOnpremEndpoint(serviceDto);
+            HttpURLConnection connection = getConnectionToOnpremEndpoint(urlString);
             String bodyString = readBody(connection);
             connection.disconnect();
-            return Boolean.parseBoolean(bodyString);
+            return toJson(bodyString);
 
         }
         catch (IOException e){
-            return false;
+            return null;
         }
     }
 
 
 
 
-    private static HttpURLConnection getConnectionToOnpremEndpoint(ServiceDto serviceDto) throws IOException {
-        String urlString = STATUSHOLDER_ENDPOINTCECK + serviceDto.getPollingUrl();
-        return getConnectionEndpoint(urlString);
+
+    private static HttpURLConnection getConnectionToOnpremEndpoint(String endUrl) throws IOException {
+        String fullUrlString = STATUSHOLDER_ENDPOINTCECK + endUrl;
+        return getConnectionEndpoint(fullUrlString);
     }
 
     private static HttpURLConnection getConnectionToGcpEndpoint(ServiceDto serviceDto) throws IOException {
@@ -129,6 +137,9 @@ public class StatusUrlValidator {
     }
 
     private static Boolean checkForStatus(JsonObject jsonRecord){
+        if(jsonRecord == null) {
+            return false;
+        }
         return jsonRecord.getString("status") != null && !jsonRecord.getString("status").equals("");
 
     }
