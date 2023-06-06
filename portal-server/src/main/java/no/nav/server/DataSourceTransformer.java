@@ -27,23 +27,19 @@ public class DataSourceTransformer {
         int count = 0;
         int maxTries = 10;
         HikariDataSource dataSource;
-        return null;}
-//        while(true) {
-//            try {
-//                dataSource = new HikariDataSource(new HikariConfig(properties));
-//                break;
-//            } catch (Exception e) {
-//                if (++count == maxTries) {
-//                    throw e;
-//                };
-//            }
-//        }
-//
-//
-//
-//        Flyway.configure().dataSource(dataSource).load().migrate();
-//        return dataSource;
-//    }
+        while(true) {
+            try {
+                dataSource = new HikariDataSource(new HikariConfig(properties));
+                break;
+            } catch (Exception e) {
+                if (++count == maxTries) {
+                    throw e;
+                };
+            }
+        }
+        Flyway.configure().dataSource(dataSource).load().migrate();
+        return dataSource;
+    }
 
 
 
