@@ -97,6 +97,13 @@ public class ServiceController {
         return serviceControllerHelper.getServiceHistoryForTwelveMonths(service_id, 12);
     }
 
+    /*TODO
+    @GET("/Service/:PollingUrl")
+    @JsonBody
+    public RecordDto testPollingUrl(@PathParam("PollingUrl") String pollingUrl) {
+        return StatusUrlValidator.getPollingRespons(pollingUrl);
+    }
+*/
     @POST("/Service")
     @JsonBody
     public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
@@ -115,6 +122,7 @@ public class ServiceController {
         }
         throw new HttpRequestException("Polling not valid: "+ serviceDto.getPollingUrl());
     }
+
 
     @PUT("/Service/:Service_id")
     @JsonBody
