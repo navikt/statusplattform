@@ -18,6 +18,7 @@ public class ServiceRepository {
     private final DbContextTable service_maintenanceTable;
     private final DbContextTable serviceHistoryTable;
     private final DbContextTable service_openingHoursTable;
+    private final DbContextTable serviceOHgroupTable;
 
 
     public ServiceRepository(DbContext dbContext) {
@@ -26,22 +27,7 @@ public class ServiceRepository {
         service_serviceTable = dbContext.table("service_service");
         service_maintenanceTable = dbContext.table("service_maintenance");
         service_openingHoursTable = dbContext.table("service_opening_hours");
-    }
-
-
-    public void saveOpeningHours(List<OpeningHoursEntity> openingHoursEntities){
-            openingHoursEntities.forEach(this::saveOpeningHours);
-    }
-
-    public void saveOpeningHours(OpeningHoursEntity openingHoursEntity){
-        service_openingHoursTable.newSaveBuilderWithUUID("id", openingHoursEntity.getId())
-                .setField("service_id", openingHoursEntity.getService_id())
-                .setField("day_of_the_week", openingHoursEntity.getDay_of_the_week())
-                .setField("opening_time", openingHoursEntity.getOpening_time())
-                .setField("closing_time", openingHoursEntity.getClosing_time())
-                .execute()
-                .getId();
-
+        serviceOHgroupTable = dbContext.table("service_oh_group");
     }
 
 
@@ -277,6 +263,19 @@ public class ServiceRepository {
                 .update()
                 .setField("deleted", Boolean.TRUE)
                 .execute();
+    }
+
+    public void addOpeningHoursToService(UUID serviceId, UUID groupId) {
+        serviceOHgroupTable.insert()
+                .setField("service_id", serviceId)
+                .setField("oh_group_id", groupId)
+                .execute();
+    }
+
+    public void removeOpeningHoursFromService(UUID serviceId, UUID groupId) {
+        serviceOHgroupTable.where("service_id", serviceId)
+                .where("oh_group_id", groupId)
+                .executeDelete();
     }
 
     static DailyStatusAggregationForServiceEntity toDailyStatusAggregationForServiceEntity(DatabaseRow row) {

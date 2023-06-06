@@ -1,6 +1,5 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.*;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
@@ -33,6 +32,13 @@ public class SampleDataDto {
 
     static final ArrayList<String> maintenanceDescription = new ArrayList<>(Arrays.asList("Fix of the glitch", "Making the exceptional exception unexceptional", "Update to version whatever"));
 
+    static final Map<String, String> namesAndRules = Map.of(
+            "Christmas day", "24.12.???? ? 1-5 09:00-14:00",
+            "National day","17.05.???? ? ? 00:00-00:00",
+            "LastDayOfTheMonth","??.??.???? L ? 07:00-18:00",
+            "Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00",
+            "Normal work days", "??.??.???? ? 1-5 07:30-17:00"
+    );
 
     public static DashboardDto getRandomizedDashboardDto() {
         return new DashboardDto()
@@ -256,6 +262,63 @@ public class SampleDataDto {
             opsMessageDtos.add(getRandomizedOPSMessageDtoWithNameNotInList(opsMessageDtos));
         }
         return opsMessageDtos;
+    }
+
+    public static OHRuleDto getRandomizedOHRuleDto() {
+        String randomKey = getRandomFromKey(new ArrayList<>(namesAndRules.keySet()));
+        return new OHRuleDto()
+                .name(randomKey)
+                .rule(namesAndRules.get(randomKey));
+    }
+
+    public static List<OHRuleDto> getRulesDto() {
+        Random random = new Random();
+        int numberOfRulesDtos = 1+ random.nextInt( namesAndRules.size()-1);
+        List<String>names = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> oHRuleDtos = new ArrayList<>();
+        for (int i = 0; i <= numberOfRulesDtos; i++) {
+            oHRuleDtos.add(new OHRuleDto()
+                    .name(names.get(i))
+                    .rule(namesAndRules.get(names.get(i))));
+        }
+        return oHRuleDtos;
+    }
+
+    public static List<OHRuleDto> getNonEmptyListOfOHRuleDto(int length) {
+        List<OHRuleDto> oHRulesDto = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            oHRulesDto.add(getRandomizedOHRuleDtoWithNameNotInList(oHRulesDto));
+        }
+        return oHRulesDto;
+    }
+
+    public static OHRuleDto getRandomizedOHRuleDtoWithNameNotInList(List<OHRuleDto> oHRulesDto) {
+        List<String> usedNames = oHRulesDto.stream().map(OHRuleDto::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = new ArrayList<>(namesAndRules.keySet());
+        possibleNames.removeAll(usedNames);
+        String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
+        return new OHRuleDto()
+                .name(randomKey)
+                .rule(namesAndRules.get(randomKey));
+    }
+
+    public static List<OHRuleDto> getRandomLengthListOfOHRuleDto() {
+        Random random = new Random();
+        int numberOfOHRulesDto = 1 + random.nextInt(4);
+        List<OHRuleDto> oHRulesDto = new ArrayList<>();
+        for (int i = 0; i <= numberOfOHRulesDto; i++) {
+            oHRulesDto.add(getRandomizedOHRuleDtoWithNameNotInList(oHRulesDto));
+        }
+        return oHRulesDto;
+    }
+
+    private static String getRandomFromKey(List<String> namesAndRulesKeys) {
+        if (namesAndRulesKeys.size() == 0) {
+            //Hit skal man ikke komme
+            return null;
+        }
+        Random random = new Random();
+        return namesAndRulesKeys.get(random.nextInt(namesAndRulesKeys.size()));
     }
 
     private static ServiceTypeDto getRandomServiceTypeDto() {

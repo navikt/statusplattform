@@ -1280,6 +1280,325 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
+  /OpeningHours/Rule:
+    post:
+      tags:
+        - OpeningHours
+      summary: Legg til regel
+      description: Opprett en ny tjeneste. Merk at type er predefinert og strengt, se endepunkt /Services/Types for en liste over mulige verdier.
+      requestBody:
+        description: Legg til en ny tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHRule'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    put:
+      tags:
+        - OpeningHours
+      summary: Rediger tjeneste
+      description: Rediger tjenesteparametre
+      requestBody:
+        description: Oppdaterte verdier for tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHRule'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /OpeningHours/Rules:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpenstidsregler.
+      description: henter alle åpenstidsregler
+      operationId: getRules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OHRule'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /OpeningHours/rule/{Rule_id}:
+    delete:
+      tags:
+        - OpeningHours
+      summary: Slett åpenstidsregel
+      description: Fjerner en åpenstidsregel
+      parameters:
+        - name: Rule_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpenstidsregel.
+      description: henter et åpenstidsregel
+      operationId: getRule
+      parameters:
+        - name: Rule_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OHRule'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /OpeningHours/Group:
+    post:
+      tags:
+        - OpeningHours
+      summary: Legg til regelgruppe
+      description: Opprett en ny tjeneste for innlegging av  åpenstidsregler
+      requestBody:
+        description: Legg til en ny tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHGroupThin'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    put:
+      tags:
+        - OpeningHours
+      summary: Rediger regelgruppe
+      description: Rediger regelgruppeparametre
+      requestBody:
+        description: Oppdaterte verdier for regelgruppe
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHGroupThin'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /OpeningHours/Group/{Service_id}:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpenstidsgruppe som har tjeneste med id
+      description: Hent åpenstidsgruppe som har tjeneste med id
+      operationId: GetOHGroupContainingService
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OHGroup'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /OpeningHours/group/{Group_id}:
+    delete:
+      tags:
+        - OpeningHours
+      summary: Slett åpenstidsgruppe
+      description: Fjerner en åpenstidsgruppe
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpenstidsgruppe.
+      description: henter et åpenstidsgruppe
+      operationId: getGroup
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OHGroup'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+
+  /OpeningHours/{Group_id}/{Service_id}:
+    put:
+      tags:
+        - OpeningHours
+      summary: Legg  åpenstidsgruppe til en tjeneste
+      description: Legg inn uid for åpenstidsgruppe og tjenesten som skal legges til det.
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '201':
+          description: Updated
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+    delete:
+      tags:
+        - OpeningHours
+      summary: Fjern åpenstidsgruppe fra tjeneste fra område
+      description: Legg inn uid for åpenstidsgruppe og tjenesten som skal fjernes.
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
 components:
@@ -1706,6 +2025,58 @@ components:
         name:
           type: string
           example: "Ola Norman"
+    OHGroupThin:
+      title: OHGroupThin
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "[uuid,uuid, uuid]"
+        rules:
+          type: array
+          items:
+            type: string
+            format: uuid
+    OHtype:
+      type: string
+      enum:
+        - RULE
+        - GROUP
+    OHBasic:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "Helligdag 17.mai"
+        type:
+          $ref: '#/components/schemas/OHtype'
+    OHGroup:
+      allOf:
+        - $ref: '#/components/schemas/OHBasic'
+        - type: object
+          properties:
+            rules:
+              type: array
+              items:
+                $ref: '#/components/schemas/OHBasic'
+    OHRule:
+      allOf:
+        - $ref: '#/components/schemas/OHBasic'
+        - type: object
+          properties:
+            rule:
+              type: string
+              example: "24.12.???? ? 1-5 09:00-14:00"
+
+
   securitySchemes:
     ApiKeyAuth: # arbitrary name for the security scheme
       type: apiKey

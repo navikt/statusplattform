@@ -109,6 +109,7 @@ public class ServiceControllerHelper {
         //Dersom ny tjeneste er av type komponent, kan andre tjenester være avhengig av denne:
         serviceDto.getServicesDependentOnThisComponent().forEach(s -> serviceRepository.addDependencyToService(s.getId(),service.getId()));
 
+
         //Adding service to areas:
         List<UUID> areasCointainingService = serviceDto.getAreasContainingThisService().stream().map(AreaDto::getId).collect(Collectors.toList());
         areaRepository.addServiceToAreas(areasCointainingService,service.getId());
@@ -154,6 +155,9 @@ public class ServiceControllerHelper {
 
 
     }
+
+
+
 
     public void deleteService(UUID service_id){
         areaRepository.removeServiceFromAllAreas(service_id);

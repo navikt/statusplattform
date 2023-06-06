@@ -149,7 +149,6 @@ class RecordRepositoryTest {
         Assertions.assertThat(retrievedRecord.get()).isEqualTo(record);
     }
 
-
     @Test
     void getServiceHistoryForNumberOfDays() {
         //Arrange
@@ -282,6 +281,65 @@ class RecordRepositoryTest {
         recordRepository.deleteRecordsOlderThen(5);
         //Assert
         List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(5);
+        Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
+        Assertions.assertThat(retrievedRecordsAfter).isEmpty();
+    }
+
+    @Test
+    void getAllRecordsFromYesterday(){
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        records.forEach(record -> {
+            int min = 1;
+            int max = 5;
+            ZonedDateTime now = ZonedDateTime.now();
+            int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
+            ZonedDateTime daysBack = now.minusHours(now.getHour()).minusDays(numberOfDays);
+            record.setCreated_at(daysBack);
+            record.setServiceId(service.getId());
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+        List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(1);
+        List<RecordEntity> retrievedRecordsOneDayBack = new ArrayList<>();
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime oneDaysBack = now.minusHours(now.getHour()).minusDays(1);
+        retrievedRecordsBefore.forEach(recordEntity -> {
+            if (recordEntity.getCreated_at().equals(oneDaysBack)){
+                retrievedRecordsOneDayBack.add(recordEntity);
+            }
+        });
+        //Act
+        List<RecordEntity> retrievedRecordsAfter = recordRepository.getAllRecordsFromYesterday();
+        //Assert
+        Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
+        Assertions.assertThat(retrievedRecordsAfter).containsAll(retrievedRecordsOneDayBack);
+    }
+
+    @Test
+    void deleteRecords(){
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        records.forEach(record -> {
+            int min = 2;
+            int max = 10;
+            ZonedDateTime now = ZonedDateTime.now();
+            int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
+            ZonedDateTime daysBack = now.minusHours(now.getHour()).minusDays(numberOfDays);
+            record.setCreated_at(daysBack);
+            record.setServiceId(service.getId());
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+        List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(2);
+        //Act
+        recordRepository.deleteRecords(retrievedRecordsBefore);
+        //Assert
+        List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(2);
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
         Assertions.assertThat(retrievedRecordsAfter).isEmpty();
     }

@@ -31,6 +31,7 @@ public class PortalRestApi extends ClasspathWebAppContext {
                 new ServiceController(dbContext, false),
                 new RecordController(dbContext),
                 new OpsController(dbContext),
+                new OpeningHoursController(dbContext),
                 new UserController(),
                 new WcagController()
         ))), "/*");

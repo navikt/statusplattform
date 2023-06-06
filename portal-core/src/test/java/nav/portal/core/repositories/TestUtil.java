@@ -56,6 +56,19 @@ public class TestUtil {
         DbContextTable dashboardTable = dbContext.table("dashboard");
         dashboardTable.whereExpression("id is NOT null").executeDelete();
 
+        DbContextTable ohRuleTable = dbContext.table("oh_rule");
+        ohRuleTable.whereExpression("id is NOT null").executeDelete();
+
+        DbContextTable ohGroup = dbContext.table("oh_group");
+        ohGroup.whereExpression("id is NOT null").executeDelete();
+
+//        DbContextTable ohGroupRule = dbContext.table("oh_group_rule");
+//        ohGroupRule.whereExpression("group_id is NOT null").executeDelete();
+//
+//        DbContextTable ohGroupGroup = dbContext.table("oh_group_group");
+//        ohGroupGroup.whereExpression("group_id is NOT null").executeDelete();
+
+
     }
 
 
