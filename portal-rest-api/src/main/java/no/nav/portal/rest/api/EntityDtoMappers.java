@@ -322,7 +322,7 @@ public class EntityDtoMappers {
 
         ArrayList<OHBasicDto> rules = new ArrayList<>();
         group.getRules().forEach(rule ->{
-            if(rule.getRuleType().equals(RuleType.RULE_GROUP)){
+            if(rule.getRuleType().equals(RuleType.GROUP)){
                 rules.add(toOpeningHoursGroupDto((OpeningHoursGroup)rule));
             }
             else {

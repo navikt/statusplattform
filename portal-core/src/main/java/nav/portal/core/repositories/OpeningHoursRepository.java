@@ -110,7 +110,7 @@ public class OpeningHoursRepository {
     private ArrayList<OpeningHoursGroup> getAllSubGroups(OpeningHoursGroup group){
             ArrayList<OpeningHoursGroup> subgroupsDirectlyUnderGroup = (ArrayList<OpeningHoursGroup>) group.getRules()
                     .stream()
-                    .filter(rule -> rule.getRuleType().equals(RuleType.RULE_GROUP))
+                    .filter(rule -> rule.getRuleType().equals(RuleType.GROUP))
                     .map(r -> (OpeningHoursGroup) r )
                     .collect(Collectors.toList());
             ArrayList<OpeningHoursGroup> result = new ArrayList<>(subgroupsDirectlyUnderGroup);

@@ -22,7 +22,7 @@ public class OpeningHoursGroup implements OpeningHoursRule {
 
     @Override
     public RuleType getRuleType() {
-        return RuleType.RULE_GROUP;
+        return RuleType.GROUP;
     }
     @Override
     public UUID getId() {
