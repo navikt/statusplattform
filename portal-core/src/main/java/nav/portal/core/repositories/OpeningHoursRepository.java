@@ -169,12 +169,23 @@ public class OpeningHoursRepository {
                 .executeDelete();
     }
 
+    /*public Optional<OpeningHoursGroup> getOHGroupForService(UUID service_id) {
+        DbContextTableAlias groupAlias = ohGroupTable.alias("group");
+        DbContextTableAlias s2g = serviceOHgroupTable.alias("s2g");
+        Optional<OpeningHoursGroupEntity>openingHoursGroupEntity = groupAlias.
+                leftJoin(groupAlias.column("id"), s2g.column("group_id"))
+                .where("s2g.service_id",service_id)
+                .singleObject(OpeningHoursRepository::toOpeningHoursGroupEntity);
+
+        return retrieveOneGroup(openingHoursGroupEntity.get().getId());
+    }*/
+
+
     public Optional<OpeningHoursGroup> getOHGroupForService(UUID service_id) {
         DbContextTableAlias groupAlias = ohGroupTable.alias("group");
         DbContextTableAlias s2g = serviceOHgroupTable.alias("s2g");
         Optional<OpeningHoursGroupEntity>openingHoursGroupEntity = groupAlias.
                 leftJoin(groupAlias.column("id"), s2g.column("group_id"))
-                .orderBy(groupAlias.column("name"))
                 .where("s2g.service_id",service_id)
                 .singleObject(OpeningHoursRepository::toOpeningHoursGroupEntity);
 

@@ -1,5 +1,6 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.enums.RuleType;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 import no.portal.web.generated.api.*;
@@ -39,6 +40,8 @@ public class SampleDataDto {
             "Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00",
             "Normal work days", "??.??.???? ? 1-5 07:30-17:00"
     );
+
+    static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("National Holidays", "Collaborative maintenance, local maintenance", "Early closing"));
 
     public static DashboardDto getRandomizedDashboardDto() {
         return new DashboardDto()
@@ -268,6 +271,7 @@ public class SampleDataDto {
         String randomKey = getRandomFromKey(new ArrayList<>(namesAndRules.keySet()));
         return new OHRuleDto()
                 .name(randomKey)
+                .type(OHtypeDto.RULE)
                 .rule(namesAndRules.get(randomKey));
     }
 
@@ -279,6 +283,7 @@ public class SampleDataDto {
         for (int i = 0; i <= numberOfRulesDtos; i++) {
             oHRuleDtos.add(new OHRuleDto()
                     .name(names.get(i))
+                    .type(OHtypeDto.RULE)
                     .rule(namesAndRules.get(names.get(i))));
         }
         return oHRuleDtos;
@@ -299,6 +304,7 @@ public class SampleDataDto {
         String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
         return new OHRuleDto()
                 .name(randomKey)
+                .type(OHtypeDto.RULE)
                 .rule(namesAndRules.get(randomKey));
     }
 
@@ -310,6 +316,57 @@ public class SampleDataDto {
             oHRulesDto.add(getRandomizedOHRuleDtoWithNameNotInList(oHRulesDto));
         }
         return oHRulesDto;
+    }
+
+    public static OHGroupThinDto getBasicGroupThinDto() {
+        return new OHGroupThinDto()
+                .name("Basic")
+                .rules(Collections.EMPTY_LIST);
+    }
+
+    public static OHGroupThinDto getRandomizedOHGroupThinDto() {
+        return new OHGroupThinDto()
+                .name(getRandomFromArray(groupDescription))
+                .rules(Collections.EMPTY_LIST);
+    }
+
+    public static List<OHGroupThinDto> getGroupsThinDto() {
+        Random random = new Random();
+        int numberOfGroupsThinDtos = 1+ random.nextInt( groupDescription.size()-1);
+        List<OHGroupThinDto> oHGroupThinDtos = new ArrayList<>();
+        for (int i = 0; i <= numberOfGroupsThinDtos; i++) {
+            oHGroupThinDtos.add(new OHGroupThinDto()
+                    .name(groupDescription.get(i))
+                    .rules(Collections.EMPTY_LIST));
+        }
+        return oHGroupThinDtos;
+    }
+
+    public static OHGroupThinDto getRandomizedGroupThinDtoWithNameNotInList(List<OHGroupThinDto> oHGroupThinDtos) {
+        List<String> usedNames = oHGroupThinDtos.stream().map(OHGroupThinDto::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = new ArrayList<>(groupDescription);
+        possibleNames.removeAll(usedNames);
+        return new OHGroupThinDto()
+                .name(getRandomFromArray(possibleNames))
+                .rules(Collections.EMPTY_LIST);
+    }
+
+    public static List<OHGroupThinDto> getRandomLengthListOfOHGroupThinDto() {
+        Random random = new Random();
+        int numberOfGroupsThinDto = 1 + random.nextInt(3);
+        List<OHGroupThinDto> groupsThinDto = new ArrayList<>();
+        for (int i = 0; i <= numberOfGroupsThinDto; i++) {
+            groupsThinDto.add(getRandomizedGroupThinDtoWithNameNotInList(groupsThinDto));
+        }
+        return groupsThinDto;
+    }
+
+    public static List<OHGroupThinDto> getNonEmptyListOfOHGroupThinDto(int length) {
+        List<OHGroupThinDto> groupsThinDto = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            groupsThinDto.add(getRandomizedGroupThinDtoWithNameNotInList(groupsThinDto));
+        }
+        return groupsThinDto;
     }
 
     private static String getRandomFromKey(List<String> namesAndRulesKeys) {
