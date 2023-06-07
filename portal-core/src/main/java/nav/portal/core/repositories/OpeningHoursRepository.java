@@ -66,7 +66,7 @@ public class OpeningHoursRepository {
         return true;
     }
 
-    public UUID saveGroup(OpeningHoursGroup group) {
+    public UUID saveGroup(OpeningHoursGroupEntity group) {
         //Sjekk på navn
         if(ohGroupTable.where("name",group.getName()).getCount()>0) {
             throw new HttpRequestException("Åpningstidsgruppe med navn: "+ group.getName() +" finnes allerede");
@@ -77,22 +77,25 @@ public class OpeningHoursRepository {
         DatabaseSaveResult<UUID> result = ohGroupTable
                 .newSaveBuilderWithUUID("id", group.getId())
                 .setField("name",group.getName())
-                .setField("rule_group_ids",group.getRules().stream().map(OpeningHoursRule::getId).map(String::valueOf).collect(Collectors.toList()))
+                .setField("rule_group_ids",group.getRules())
                 .execute();
 
 
         return result.getId();
     }
 
-    public void updateGroup(OpeningHoursGroup group) {
+    public void updateGroup(OpeningHoursGroupEntity group) {
+        if(containsCircularGroupDependency(group)){
+            throw new HttpRequestException("Åpningsgruppe inneholder sirkuler avhengighet");
+        }
         ohGroupTable.where("id", group.getId())
                 .update()
                 .setField("name",group.getName())
-                .setField("rule_group_ids",group.getRules().stream().map(OpeningHoursRule::getId).map(String::valueOf).collect(Collectors.toList()))
+                .setField("rule_group_ids",group.getRules())
                 .execute();
     }
 
-    private boolean containsCircularGroupDependency(OpeningHoursGroup group){
+    private boolean containsCircularGroupDependency(OpeningHoursGroupEntity group){
             UUID groupId = group.getId();
             List<OpeningHoursGroup> subGroups = getAllSubGroups(group);
             List<UUID> subGroupsIds = subGroups.stream().map(OpeningHoursGroup::getId).collect(Collectors.toList());
@@ -107,16 +110,45 @@ public class OpeningHoursRepository {
             return false;
     }
 
-    private ArrayList<OpeningHoursGroup> getAllSubGroups(OpeningHoursGroup group){
+    private boolean containsCircularGroupDependency(OpeningHoursGroup group){
+        UUID groupId = group.getId();
+        List<OpeningHoursGroup> subGroups = getAllSubGroups(group);
+        List<UUID> subGroupsIds = subGroups.stream().map(OpeningHoursGroup::getId).collect(Collectors.toList());
+        if(subGroupsIds.contains(groupId)){
+            return true;
+        }
+        for(OpeningHoursGroup subGroup : subGroups){
+            if(containsCircularGroupDependency(subGroup)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private ArrayList<OpeningHoursGroup> getAllSubGroups(OpeningHoursGroupEntity group){
             ArrayList<OpeningHoursGroup> subgroupsDirectlyUnderGroup = (ArrayList<OpeningHoursGroup>) group.getRules()
                     .stream()
-                    .filter(rule -> rule.getRuleType().equals(RuleType.GROUP))
-                    .map(r -> (OpeningHoursGroup) r )
+                    .map(this::retriveGroupOrRule)
+                    .filter(rule -> rule.isPresent() && rule.get().getRuleType().equals(RuleType.GROUP))
+                    .map(r -> (OpeningHoursGroup) r.get() )
                     .collect(Collectors.toList());
             ArrayList<OpeningHoursGroup> result = new ArrayList<>(subgroupsDirectlyUnderGroup);
 
             subgroupsDirectlyUnderGroup.forEach(g -> result.addAll(getAllSubGroups(g)));
             return result;
+    }
+
+    private ArrayList<OpeningHoursGroup> getAllSubGroups(OpeningHoursGroup group){
+        ArrayList<OpeningHoursGroup> subgroupsDirectlyUnderGroup = (ArrayList<OpeningHoursGroup>) group.getRules()
+                .stream()
+                .filter(rule -> rule.getRuleType().equals(RuleType.GROUP))
+                .map(r -> (OpeningHoursGroup) r )
+                .collect(Collectors.toList());
+        ArrayList<OpeningHoursGroup> result = new ArrayList<>(subgroupsDirectlyUnderGroup);
+
+        subgroupsDirectlyUnderGroup.forEach(g -> result.addAll(getAllSubGroups(g)));
+        return result;
     }
 
     public Optional<OpeningHoursGroup> retrieveOneGroup(UUID group_id) {
