@@ -10,6 +10,9 @@ public class OpeningHoursGroupEntity {
     private String name;
     private List<UUID> rules;
 
+    public OpeningHoursGroupEntity() {
+    }
+
     public OpeningHoursGroupEntity(UUID id, String name, List<UUID> rules) {
         this.id = id;
         this.name = name;

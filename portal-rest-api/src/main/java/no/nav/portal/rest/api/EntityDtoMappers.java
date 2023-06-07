@@ -295,12 +295,11 @@ public class EntityDtoMappers {
         return entities.stream().map(EntityDtoMappers::toOpeningHoursRuleDto).collect(Collectors.toList());
     }
 
-    public static OpeningHoursGroup toOpeningHoursGroup(OHGroupThinDto oHGroupThinDto) {
-        List<OpeningHoursRule>rules = new ArrayList<>();
-        oHGroupThinDto.getRules().forEach(rule->{
-            rules.add(openingHoursRepository.retriveRule(rule).get());
-        });
-        return new OpeningHoursGroup(oHGroupThinDto.getId(),oHGroupThinDto.getName(), rules);
+    public static OpeningHoursGroupEntity toOpeningHoursGroup(OHGroupThinDto oHGroupThinDto) {
+        return new OpeningHoursGroupEntity()
+                .setId(oHGroupThinDto.getId())
+                .setName(oHGroupThinDto.getName())
+                .setRules(oHGroupThinDto.getRules());
     }
 
     public static OHGroupThinDto toOpeningHoursGroupThinDto(Optional<OpeningHoursGroup> group) {

@@ -2,6 +2,7 @@ package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.OpeningHoursGroup;
+import nav.portal.core.entities.OpeningHoursGroupEntity;
 import nav.portal.core.entities.OpeningHoursRule;
 import nav.portal.core.entities.OpeningHoursRuleEntity;
 import org.fluentjdbc.DbContext;
@@ -92,7 +93,7 @@ class OpeningHoursRepositoryTest {
         OpeningHoursRuleEntity rule = SampleData.getRandomizedOpeningRule();
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
-        OpeningHoursGroup group = new OpeningHoursGroup().setName("Ny gruppe").setRules(List.of(rule));
+        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
         //Act
         UUID group_id = openingHoursRepository.saveGroup(group);
         group.setId(group_id);
@@ -141,7 +142,7 @@ class OpeningHoursRepositoryTest {
         OpeningHoursRuleEntity rule = SampleData.getRandomizedOpeningRule();
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
-        OpeningHoursGroup group = new OpeningHoursGroup().setName("Ny gruppe").setRules(List.of(rule));
+        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
         UUID group_id = openingHoursRepository.saveGroup(group);
         group.setId(group_id);
         Optional<OpeningHoursGroup> retrievedGroupBefore = openingHoursRepository.retrieveOneGroup(group_id);
@@ -159,7 +160,7 @@ class OpeningHoursRepositoryTest {
         OpeningHoursRuleEntity rule = SampleData.getRandomizedOpeningRule();
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
-        OpeningHoursGroup group = new OpeningHoursGroup().setName("Ny gruppe").setRules(List.of(rule));
+        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
         UUID group_id = openingHoursRepository.saveGroup(group);
         //Act
         Optional<OpeningHoursGroup> retrievedGroup = openingHoursRepository.retrieveOneGroup(group_id);
@@ -193,17 +194,17 @@ class OpeningHoursRepositoryTest {
         rule5.setId(rule5_id);
         rule6.setId(rule6_id);
         //g3
-        OpeningHoursGroup group3 = new OpeningHoursGroup().setName("Gruppe3").setRules(List.of(rule2,rule3));
+        OpeningHoursGroupEntity group3 = new OpeningHoursGroupEntity().setName("Gruppe3").setRules(List.of(rule2_id,rule3_id));
         group3.setId(openingHoursRepository.saveGroup(group3));
         //g4
-        OpeningHoursGroup group4 = new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule4,rule5));
+        OpeningHoursGroupEntity group4 = new OpeningHoursGroupEntity().setName("Gruppe4").setRules(List.of(rule4_id,rule5_id));
         group4.setId(openingHoursRepository.saveGroup(group4));
         //g2
-        OpeningHoursGroup group2 = new OpeningHoursGroup().setName("Gruppe2").setRules(List.of(group3,group4));
+        OpeningHoursGroupEntity group2 = new OpeningHoursGroupEntity().setName("Gruppe2").setRules(List.of(group3.getId(),group4.getId()));
         group2.setId(openingHoursRepository.saveGroup(group2));
 
         //g1
-        OpeningHoursGroup group1 = new OpeningHoursGroup().setName("Gruppe1").setRules(List.of(rule1,group2,rule6));
+        OpeningHoursGroupEntity group1 = new OpeningHoursGroupEntity().setName("Gruppe1").setRules(List.of(rule1_id,group2.getId(),rule6_id));
         group1.setId(openingHoursRepository.saveGroup(group1));
 
         //Act

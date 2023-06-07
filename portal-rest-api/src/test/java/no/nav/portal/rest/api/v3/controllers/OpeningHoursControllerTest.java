@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class OpeningHoursControllerTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -90,6 +91,7 @@ public class OpeningHoursControllerTest {
 
     @Test
     void getRule() {
+        //Arrange
         List<OHRuleDto> oHRulesDto = SampleDataDto.getRulesDto();
         List<OHRuleDto>savedOHRulesDto = new ArrayList<>();
         oHRulesDto.forEach(oHRuleDto -> {
@@ -127,12 +129,29 @@ public class OpeningHoursControllerTest {
         //Act
         OHGroupDto retrievedOHGroupThinDto = openingHoursController.getGroup(savedOHGroupThinDto.getId());
         //Assert
-
+        Assertions.assertThat(retrievedOHGroupThinDto.getName().equals(savedOHGroupThinDto.getName()));
     }
 
+    @Test
+    void addAGroupToGroup(){
+        //Arrange
+        List<OHGroupThinDto> oHGroupsThinDto= SampleDataDto.getNonEmptyListOfOHGroupThinDto(2);
+        OHGroupThinDto oHGroupThinDto1 = openingHoursController.newGroup(oHGroupsThinDto.get(0));
+        OHGroupThinDto oHGroupThinDto2 = openingHoursController.newGroup( oHGroupsThinDto.get(1));
+        oHGroupThinDto1.setId(oHGroupThinDto1.getId());
+        oHGroupThinDto2.setId(oHGroupThinDto2.getId());
+        //Act
+        List<UUID>rules = oHGroupThinDto1.getRules();
+        if (rules.size()==0){
+           rules = new ArrayList<>();
+        }
+        rules.add(oHGroupThinDto2.getId());
+        oHGroupThinDto1.setRules(rules);
+        openingHoursController.updateGroup(oHGroupThinDto1);
 
-
-
+        //Assert
+        //Assertions.assertThat(retrievedAfter.size()).isEqualTo(1);*/
+    }
 
 
 }
