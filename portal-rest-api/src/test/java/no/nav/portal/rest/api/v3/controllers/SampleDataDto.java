@@ -271,7 +271,6 @@ public class SampleDataDto {
         String randomKey = getRandomFromKey(new ArrayList<>(namesAndRules.keySet()));
         return new OHRuleDto()
                 .name(randomKey)
-                .type(OHtypeDto.RULE)
                 .rule(namesAndRules.get(randomKey));
     }
 
@@ -283,7 +282,6 @@ public class SampleDataDto {
         for (int i = 0; i <= numberOfRulesDtos; i++) {
             oHRuleDtos.add(new OHRuleDto()
                     .name(names.get(i))
-                    .type(OHtypeDto.RULE)
                     .rule(namesAndRules.get(names.get(i))));
         }
         return oHRuleDtos;
@@ -304,7 +302,6 @@ public class SampleDataDto {
         String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
         return new OHRuleDto()
                 .name(randomKey)
-                .type(OHtypeDto.RULE)
                 .rule(namesAndRules.get(randomKey));
     }
 

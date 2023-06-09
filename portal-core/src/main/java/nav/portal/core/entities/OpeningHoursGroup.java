@@ -29,14 +29,16 @@ public class OpeningHoursGroup implements OpeningHoursRule {
         return id;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
     public OpeningHoursGroup setId(UUID id) {
         this.id = id;
         return this;
     }
 
-    public String getName() {
-        return name;
-    }
+
 
     public OpeningHoursGroup setName(String name) {
         this.name = name;

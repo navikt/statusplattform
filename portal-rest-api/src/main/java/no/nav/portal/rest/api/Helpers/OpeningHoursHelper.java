@@ -84,6 +84,13 @@ public class OpeningHoursHelper {
                 .orElseThrow(() -> new IllegalArgumentException("Not found: The Group's Service with id "+ service_id)));
     }
 
+    public List<OHGroupDto> getAllGroups() {
+        return openingHoursRepository.getAllGroups()
+                .stream()
+                .map(EntityDtoMappers::toOpeningHoursGroupDto)
+                .collect(Collectors.toList());
+    }
+
     /*public OHGroupDto getOHGroupForService(UUID service_id){
         return openingHoursRepository.getOHGroupForService(service_id).stream().
                 map(EntityDtoMappers::toAreaDtoShallow).collect(Collectors.toList());

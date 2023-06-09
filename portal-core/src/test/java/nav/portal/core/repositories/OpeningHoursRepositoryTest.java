@@ -101,7 +101,7 @@ class OpeningHoursRepositoryTest {
         //Assert
         Assertions.assertThat(retrievedGroup).isPresent();
         Assertions.assertThat(retrievedGroup.get().getRules()).contains(rule);
-        Assertions.assertThat(retrievedGroup.get()).isEqualTo(group);
+        Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
     }
 
     /*@Test

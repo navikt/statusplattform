@@ -77,6 +77,12 @@ public class OpeningHoursController {
         openingHoursHelper.updateGroup(oHGroupThinDto);
     }
 
+    @GET("/OpeningHours/Group")
+    @JsonBody
+    public List<OHGroupDto> getGroups() {
+        return openingHoursHelper.getAllGroups();
+    }
+
     @DELETE("/OpeningHours/Group/:Group_id")
     @JsonBody
     public void deleteGroup(@PathParam("Group_id") UUID group_id){

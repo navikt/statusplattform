@@ -6,8 +6,8 @@ import java.util.UUID;
 
 public interface OpeningHoursRule {
 
+     String getName();
      RuleType getRuleType();
-
      UUID getId();
 
 }

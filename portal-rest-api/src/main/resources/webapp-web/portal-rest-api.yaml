@@ -1431,6 +1431,31 @@ paths:
         '404':
           description: Not Found
           content: { }
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpenstidsregler.
+      description: henter alle åpenstidsgrupper
+      operationId: getAllGroups
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OHGroup'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
     put:
       tags:
         - OpeningHours
@@ -2035,18 +2060,14 @@ components:
           readOnly: true
         name:
           type: string
-          example: "[uuid,uuid, uuid]"
+          example: "Min åpningstidsgruppe"
         rules:
           type: array
           items:
             type: string
             format: uuid
-    OHtype:
-      type: string
-      enum:
-        - RULE
-        - GROUP
-    OHBasic:
+            example: ["uuid","uuid", "uuid"]
+    OHGroup:
       type: object
       properties:
         id:
@@ -2056,25 +2077,26 @@ components:
         name:
           type: string
           example: "Helligdag 17.mai"
-        type:
-          $ref: '#/components/schemas/OHtype'
-    OHGroup:
-      allOf:
-        - $ref: '#/components/schemas/OHBasic'
-        - type: object
-          properties:
-            rules:
-              type: array
-              items:
-                $ref: '#/components/schemas/OHBasic'
+        rule:
+          type: string
+          example: "24.12.???? ? 1-5 09:00-14:00"
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/OHGroup'
     OHRule:
-      allOf:
-        - $ref: '#/components/schemas/OHBasic'
-        - type: object
-          properties:
-            rule:
-              type: string
-              example: "24.12.???? ? 1-5 09:00-14:00"
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "Helligdag 17.mai"
+        rule:
+          type: string
+          example: "24.12.???? ? 1-5 09:00-14:00"
 
 
   securitySchemes:

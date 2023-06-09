@@ -74,10 +74,11 @@ public class OpeningHoursRepository {
         if(containsCircularGroupDependency(group)){
             throw new HttpRequestException("Åpningsgruppe inneholder sirkuler avhengighet");
         }
+        List<String> ids = group.getRules().stream().map(String::valueOf).collect(Collectors.toList());
         DatabaseSaveResult<UUID> result = ohGroupTable
                 .newSaveBuilderWithUUID("id", group.getId())
                 .setField("name",group.getName())
-                .setField("rule_group_ids",group.getRules())
+                .setField("rule_group_ids",ids.isEmpty()? null:ids)
                 .execute();
 
 
@@ -91,7 +92,7 @@ public class OpeningHoursRepository {
         ohGroupTable.where("id", group.getId())
                 .update()
                 .setField("name",group.getName())
-                .setField("rule_group_ids",group.getRules())
+                .setField("rule_group_ids",group.getRules().stream().map(String::valueOf).collect(Collectors.toList()))
                 .execute();
     }
 
@@ -187,6 +188,23 @@ public class OpeningHoursRepository {
     public List<OpeningHoursRuleEntity> getAllOpeningHoursRules(){
         return ohRuleTable.orderedBy("name").stream(OpeningHoursRepository::toOpeningRule).collect(Collectors.toList());
     }
+    public List<OpeningHoursGroup> getAllGroups() {
+            return  ohGroupTable.orderedBy("name")
+                    .stream(OpeningHoursRepository::toOpeningHoursGroupEntity)
+                    .map(this::getGroupFromEntity)
+                    .collect(Collectors.toList());
+
+    }
+
+    private OpeningHoursGroup getGroupFromEntity(OpeningHoursGroupEntity entity){
+            return new OpeningHoursGroup()
+                    .setId(entity.getId())
+                    .setName(entity.getName())
+                    .setRules(entity.getRules()
+                            .stream().map(uuid -> retriveGroupOrRule(uuid)
+                                    .orElseThrow(() -> new IllegalArgumentException("Not found: opening hours rule with id " + uuid)))
+                            .collect(Collectors.toList()));
+    }
 
     public void addOpeningHoursToService(UUID groupId, UUID serviceId) {
         serviceOHgroupTable.insert()
@@ -236,11 +254,13 @@ public class OpeningHoursRepository {
 
     static OpeningHoursGroupEntity toOpeningHoursGroupEntity(DatabaseRow row){
         try {
+            List<UUID> ruleIDs =  row.getStringList("rule_group_ids")!=null?
+                    row.getStringList("rule_group_ids").stream()
+                    .map(UUID::fromString)
+                    .collect(Collectors.toList()): Collections.EMPTY_LIST;
             return new OpeningHoursGroupEntity(row.getUUID("id"),
                     row.getString("name"),
-                    row.getStringList("rule_group_ids").stream()
-                            .map(UUID::fromString)
-                            .collect(Collectors.toList()));
+                    ruleIDs);
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }
@@ -248,4 +268,4 @@ public class OpeningHoursRepository {
 
 
 
-    }
+}
