@@ -105,7 +105,7 @@ class AreaRepositoryTest {
                 new AreaEntity(areaBeforeUpdate.getId()
                 ,updatedAreaName
                 ,areaBeforeUpdate.getDescription()
-                ,areaBeforeUpdate.getIcon());
+                ,areaBeforeUpdate.getContains_components());
 
         //Act
         areaRepository.updateArea(areaAfterUpdate);

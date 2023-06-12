@@ -44,7 +44,7 @@ public class SampleData {
         return new AreaEntity()
                 .setName(getRandomFromArray(areaNames))
                 .setDescription(getRandomFromArray(descriptions))
-                .setIcon(getRandomFromArray(icons));
+                .setContains_components(false);
     }
 
     public static OpsMessageEntity getRandomOpsMessageEntity() {
@@ -77,7 +77,7 @@ public class SampleData {
         return new AreaEntity()
                 .setName(getRandomFromArray(possibleNames))
                 .setDescription(getRandomFromArray(descriptions))
-                .setIcon(getRandomFromArray(icons));
+                .setContains_components(false);
     }
 
     public static List<AreaEntity> getRandomLengthListOfAreaEntity() {

@@ -9,18 +9,18 @@ public class AreaEntity {
     private UUID id;
     private String name;
     private String description;
-    private String icon;
+    private Boolean contains_components;
 
 
     public AreaEntity() {
     }
 
     //TODO Lage enum av icon:
-    public AreaEntity(UUID id, String name, String description, String icon) {
+    public AreaEntity(UUID id, String name, String description, Boolean contains_components) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.icon = icon;
+        this.contains_components = contains_components;
     }
 
     public UUID getId() {
@@ -33,10 +33,6 @@ public class AreaEntity {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getIcon() {
-        return icon;
     }
 
     public AreaEntity setId(UUID id) {
@@ -54,8 +50,13 @@ public class AreaEntity {
         return this;
     }
 
-    public AreaEntity setIcon(String icon) {
-        this.icon = icon;
+
+    public Boolean getContains_components() {
+        return contains_components;
+    }
+
+    public AreaEntity setContains_components(Boolean contains_components) {
+        this.contains_components = contains_components;
         return this;
     }
 
@@ -64,11 +65,11 @@ public class AreaEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AreaEntity that = (AreaEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(icon, that.icon);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(contains_components, that.contains_components);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, icon);
+        return Objects.hash(id, name, description, contains_components);
     }
 }

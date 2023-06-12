@@ -1,7 +1,6 @@
 package nav.portal.core.repositories;
 
 import nav.portal.core.entities.AreaEntity;
-import nav.portal.core.entities.AreaWithServices;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.entities.SubAreaEntity;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
@@ -45,7 +44,7 @@ public class AreaRepository {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
                 .setField("description", entity.getDescription())
-                .setField("icon", entity.getIcon())
+                .setField("contains_components", entity.getContains_components())
                 .execute();
         return result.getId();
     }
@@ -53,16 +52,16 @@ public class AreaRepository {
         DatabaseSaveResult<UUID> result = areaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("name",entity.getName())
                 .setField("description", entity.getDescription())
-                .setField("icon", entity.getIcon())
+                .setField("contains_components", entity.getContains_components())
                 .execute();
         return result.getSaveStatus();
     }
 
-    public void updateArea(AreaEntity areaEntity) {
-        areaTable.where("id", areaEntity.getId()).update()
-                .setFieldIfPresent("name", areaEntity.getName())
-                .setField("description", areaEntity.getDescription())
-                .setField("icon", areaEntity.getIcon())
+    public void updateArea(AreaEntity entity) {
+        areaTable.where("id", entity.getId()).update()
+                .setFieldIfPresent("name", entity.getName())
+                .setField("description", entity.getDescription())
+                .setField("contains_components", entity.getContains_components())
                 .execute();
     }
 
@@ -163,8 +162,18 @@ public class AreaRepository {
     }
 
     public List<AreaEntity> retriveAllShallow(){
-        return areaTable.orderedBy("name").stream(AreaRepository::toArea).collect(Collectors.toList());
+        return areaTable.orderedBy("name")
+                .stream(AreaRepository::toArea)
+                .collect(Collectors.toList());
     }
+
+    public List<AreaEntity> retriveAllWithComponentsShallow(){
+        return areaTable.orderedBy("name")
+                .where("contains_components",true)
+                .stream(AreaRepository::toArea)
+                .collect(Collectors.toList());
+    }
+
     public Map<AreaEntity, List<ServiceEntity>> retrieveAll() {
         DbContextTableAlias areaAlias = areaTable.alias("area");
         DbContextTableAlias a2s = areaServiceTable.alias("a2s");
@@ -211,7 +220,7 @@ public class AreaRepository {
             return new AreaEntity(row.getUUID("id"),
                     row.getString("name"),
                     row.getString("description"),
-                    row.getString("icon"));
+                    row.getBoolean("contains_components"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }

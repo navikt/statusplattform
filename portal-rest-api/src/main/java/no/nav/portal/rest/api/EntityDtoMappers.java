@@ -47,7 +47,7 @@ public class EntityDtoMappers {
         entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
-        entity.setIcon(dto.getIcon());
+        entity.setContains_components(dto.getContainsComponents());
         return entity;
     }
 
@@ -153,7 +153,7 @@ public class EntityDtoMappers {
         dto.setId(area.getId());
         dto.setName(area.getName());
         dto.setDescription(area.getDescription());
-        dto.setIcon(area.getIcon());
+        dto.setContainsComponents(area.getContains_components());
         dto.setServices(
                 services.stream()
                         .map(EntityDtoMappers::toServiceDtoShallow)
@@ -165,12 +165,11 @@ public class EntityDtoMappers {
         return entities.stream().map(EntityDtoMappers::toAreaDtoShallow).collect(Collectors.toList());
     }
     public static AreaDto toAreaDtoShallow(AreaEntity area){
-        AreaDto dto = new AreaDto();
-        dto.setId(area.getId());
-        dto.setName(area.getName());
-        dto.setDescription(area.getDescription());
-        dto.setIcon(area.getIcon());
-
+        AreaDto dto = new AreaDto()
+                .id(area.getId())
+                .name(area.getName())
+                .description(area.getDescription())
+                .containsComponents(area.getContains_components());
         return dto;
     }
 

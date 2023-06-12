@@ -229,6 +229,59 @@ paths:
         '404':
           description: Not Found
           content: { }
+
+  /Areas/Minimal:
+    get:
+      tags:
+        - Area
+      summary: Alle områder uten underliggende tjenster
+      operationId: AreasMinimal
+      description: Henter alle områder uten underliggende tjenester
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Areas/WithComponents/Minimal:
+    get:
+      tags:
+        - Area
+      summary: Alle "komponent" områder
+      operationId: AreasWithComponentsMinimal
+      description: Henter alle områder uten underliggende tjenester
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
   /SubAreas:
     get:
       tags:
@@ -1280,8 +1333,9 @@ components:
           readOnly: true
         description:
           type: string
-        icon:
-          type: string
+        contains_components:
+          type: boolean
+          default: false
         services:
           type: array
           readOnly: true

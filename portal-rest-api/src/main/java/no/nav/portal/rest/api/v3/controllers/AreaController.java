@@ -33,8 +33,14 @@ public class AreaController {
    @JsonBody
    public List<AreaDto> getAllAreasMinimal() {
       return areaControllerHelper.getAllAreasShallow();
-
    }
+
+   @GET("/Areas/WithComponents/Minimal")
+   @JsonBody
+   public List<AreaDto> getAllAreasWithComponentsMinimal() {
+      return areaControllerHelper.getAllAreasWithComponentsShallow();
+   }
+
 
    @GET("/Areas")
    @JsonBody
@@ -47,16 +53,14 @@ public class AreaController {
    @JsonBody
    public IdContainerDto newArea(@JsonBody AreaDto areaDto) {
       UUID uuid = areaControllerHelper.newArea(areaDto).getId();
-      areaRepository.setServicesOnArea(uuid,
-              areaDto.getServices().stream().map(
-                      ServiceDto::getId).collect(Collectors.toList()));
       return new IdContainerDto().id(uuid);
    }
 
    @PUT("/Area/:Area_id")
    @JsonBody
    public void updateArea(@PathParam("Area_id") UUID area_id, @JsonBody AreaDto areaDto ) {
-      areaControllerHelper.updateArea(area_id, areaDto);
+      areaDto.setId(area_id);
+      areaControllerHelper.updateArea(areaDto);
    }
 
    @DELETE("/Area/:Area_id")

@@ -1,7 +1,6 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
-import nav.portal.core.entities.OpeningHoursEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.RecordRepository;
@@ -110,8 +109,6 @@ public class ServiceControllerHelper {
         //Dersom ny tjeneste er av type komponent, kan andre tjenester være avhengig av denne:
         serviceDto.getServicesDependentOnThisComponent().forEach(s -> serviceRepository.addDependencyToService(s.getId(),service.getId()));
 
-        serviceRepository.saveOpeningHours(mapToOpeningHoursEntity(serviceDto.getServiceOpeningHours()));
-
         //Adding service to areas:
         List<UUID> areasCointainingService = serviceDto.getAreasContainingThisService().stream().map(AreaDto::getId).collect(Collectors.toList());
         areaRepository.addServiceToAreas(areasCointainingService,service.getId());
@@ -156,21 +153,6 @@ public class ServiceControllerHelper {
         }
 
 
-    }
-
-
-    private static List<OpeningHoursEntity> mapToOpeningHoursEntity(ServiceOpeningHoursDto serviceOpeningHoursDto){
-        if (serviceOpeningHoursDto == null){
-            return new ArrayList<>();
-        }
-        return serviceOpeningHoursDto.getDailyOpeningHours()
-                .stream()
-                .map(ServiceControllerHelper::mapOneDayToOpeningHoursEntity)
-                .collect(Collectors.toList());
-    }
-
-    private static OpeningHoursEntity mapOneDayToOpeningHoursEntity(ServiceOpeningHoursDayEntryDto serviceOpeningHoursDayEntryDto){
-        return new OpeningHoursEntity();
     }
 
     public void deleteService(UUID service_id){

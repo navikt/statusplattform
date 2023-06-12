@@ -54,7 +54,7 @@ public class SampleDataDto {
         return new AreaDto()
                 .name(getRandomFromArray(areaNames))
                 .description(getRandomFromArray(descriptions))
-                .icon(getRandomFromArray(icons));
+                .containsComponents(false);
     }
 
     public static AreaDto getRandomizedAreaDtoWithNameNotInList(List<AreaDto> areasDto) {
@@ -63,7 +63,7 @@ public class SampleDataDto {
         possibleNames.removeAll(usedNames);
         return new AreaDto()
                 .name(getRandomFromArray(possibleNames))
-                .icon(getRandomFromArray(icons))
+                .containsComponents(false)
                 .description(getRandomFromArray(descriptions));
     }
 
@@ -130,7 +130,7 @@ public class SampleDataDto {
     public static ServiceDto getRandomizedServiceDto() {
         return new ServiceDto()
                 .name(getRandomFromArray(serviceNames))
-                .type(getRandomServiceTypeDto())
+                .type(ServiceTypeDto.TJENESTE)
                 .team(getRandomFromArray(teamNames))
                 .statusNotFromTeam(Boolean.FALSE)
                 .monitorlink(getRandomFromArray(urlStrings));

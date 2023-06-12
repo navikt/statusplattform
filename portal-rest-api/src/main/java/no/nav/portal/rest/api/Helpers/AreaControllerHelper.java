@@ -9,7 +9,9 @@ import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.AreaDto;
 import no.portal.web.generated.api.ServiceDto;
+import no.portal.web.generated.api.ServiceTypeDto;
 import no.portal.web.generated.api.SubAreaDto;
+import org.actioncontroller.HttpRequestException;
 import org.fluentjdbc.DbContext;
 
 import java.util.*;
@@ -39,6 +41,14 @@ public class AreaControllerHelper {
                 .collect(Collectors.toList());
     }
 
+    public List<AreaDto> getAllAreasWithComponentsShallow(){
+        List<AreaDto> result = areaRepository.retriveAllWithComponentsShallow()
+                .stream().map(EntityDtoMappers::toAreaDtoShallow)
+                .collect(Collectors.toList());
+        return result.stream().sorted(areaNameComparator)
+                .collect(Collectors.toList());
+    }
+
 
     public List<AreaDto> getAllAreas(){
         List<AreaDto> result = new ArrayList<>();
@@ -59,22 +69,35 @@ public class AreaControllerHelper {
 
 
     public AreaDto newArea(AreaDto areaDto){
+        boolean containsComponent = areaDto.getServices().stream().anyMatch(s -> s.getType().equals(ServiceTypeDto.KOMPONENT));
+        if(!areaDto.getContainsComponents() && containsComponent){
+            throw new HttpRequestException("Kan ikke legge til komponent i område som ikke skal ha komponenter ");
+        }
         UUID uuid = areaRepository.save(EntityDtoMappers.toAreaEntity(areaDto));
+
+
+        areaRepository.setServicesOnArea(uuid,
+                areaDto.getServices().stream().map(
+                        ServiceDto::getId).collect(Collectors.toList()));
+
         Map.Entry<AreaEntity, List<ServiceEntity>> area = areaRepository.retrieveOne(uuid);
         return EntityDtoMappers.toAreaDtoDeep(area.getKey(), area.getValue());
     }
 
-    public AreaDto updateArea(UUID areaId, AreaDto areaDto){
+    public AreaDto updateArea(AreaDto areaDto){
+        boolean containsComponent = areaDto.getServices().stream().anyMatch(s -> s.getType().equals(ServiceTypeDto.KOMPONENT));
+        if(!areaDto.getContainsComponents() && containsComponent){
+            throw new HttpRequestException("Kan ikke legge til komponent i område som ikke skal ha komponenter ");
+        }
         //update services
-        areaRepository.setServicesOnArea(areaId,areaDto.getServices().stream()
+        areaRepository.setServicesOnArea(areaDto.getId(),areaDto.getServices().stream()
                 .map(ServiceDto::getId).collect(Collectors.toList()));
-        areaRepository.addSubAreaToArea(areaId,areaDto.getSubAreas().stream()
+        //update sub areas
+        areaRepository.addSubAreaToArea(areaDto.getId(),areaDto.getSubAreas().stream()
                 .map(SubAreaDto::getId).collect(Collectors.toList()));
 
-        //update sub areas
-        areaDto.setId((areaId));
         areaRepository.updateArea(EntityDtoMappers.toAreaEntity(areaDto));
-        Map.Entry<AreaEntity,List<ServiceEntity>> area = areaRepository.retrieveOne(areaId);
+        Map.Entry<AreaEntity,List<ServiceEntity>> area = areaRepository.retrieveOne(areaDto.getId());
 
         return EntityDtoMappers.toAreaDtoDeep(area.getKey(),area.getValue());
     }
