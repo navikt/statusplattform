@@ -133,25 +133,50 @@ public class OpeningHoursControllerTest {
     }
 
     @Test
-    void addAGroupToGroup(){
+    void addAGroupToGroup() {
         //Arrange
-        List<OHGroupThinDto> oHGroupsThinDto= SampleDataDto.getNonEmptyListOfOHGroupThinDto(2);
+        List<OHGroupThinDto> oHGroupsThinDto = SampleDataDto.getNonEmptyListOfOHGroupThinDto(2);
         OHGroupThinDto oHGroupThinDto1 = openingHoursController.newGroup(oHGroupsThinDto.get(0));
-        OHGroupThinDto oHGroupThinDto2 = openingHoursController.newGroup( oHGroupsThinDto.get(1));
+        OHGroupThinDto oHGroupThinDto2 = openingHoursController.newGroup(oHGroupsThinDto.get(1));
         oHGroupThinDto1.setId(oHGroupThinDto1.getId());
         oHGroupThinDto2.setId(oHGroupThinDto2.getId());
+        OHGroupDto retrievedBefore = openingHoursController.getGroup(oHGroupThinDto1.getId());
+        List<OHGroupDto> retrievedRulesBefore = retrievedBefore.getRules();
         //Act
-        List<UUID>rules = oHGroupThinDto1.getRules();
-        if (rules.size()==0){
-           rules = new ArrayList<>();
+        List<UUID> rules = oHGroupThinDto1.getRules();
+        if (rules.size() == 0) {
+            rules = new ArrayList<>();
         }
         rules.add(oHGroupThinDto2.getId());
         oHGroupThinDto1.setRules(rules);
         openingHoursController.updateGroup(oHGroupThinDto1);
-
+        OHGroupDto retrievedAfter = openingHoursController.getGroup(oHGroupThinDto1.getId());
+        List<OHGroupDto> retrievedRulesAfter = retrievedAfter.getRules();
+        OHGroupDto retrievedAddedGroup = retrievedRulesAfter.get(0);
         //Assert
-        //Assertions.assertThat(retrievedAfter.size()).isEqualTo(1);*/
+        Assertions.assertThat(retrievedRulesBefore).isEmpty();
+        Assertions.assertThat(retrievedRulesAfter.size()).isEqualTo(1);
+        Assertions.assertThat(retrievedBefore.getId()).isEqualTo(retrievedAfter.getId());
+        Assertions.assertThat(retrievedAddedGroup.getId()).isEqualTo(oHGroupThinDto2.getId());
     }
 
+    @Test
+    void addGroupToService() {
+        //Arrange
+        /*Create service*/
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
+        serviceDto.setId(serviceDto.getId());
+        UUID serviceDtoID = serviceDto.getId();
+        /*Create group*/
+        OHGroupThinDto oHGroupThinDto = SampleDataDto.getBasicGroupThinDto();
+        OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
+        savedOHGroupThinDto.setId(savedOHGroupThinDto.getId());
+        //Act
+        openingHoursController.setOpeningHoursToService(oHGroupThinDto.getId(),serviceDto.getId());
+        OHGroupDto retrievedGroup = openingHoursController.getOHGroupForService(serviceDto.getId());
+        //Assert|
+        //Assertions.assertThat(retrievedGroup.getId()).isEqualTo(savedOHGroupThinDto.getId());
+    }
 
 }

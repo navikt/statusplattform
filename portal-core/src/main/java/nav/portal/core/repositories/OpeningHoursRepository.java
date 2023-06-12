@@ -206,16 +206,17 @@ public class OpeningHoursRepository {
                             .collect(Collectors.toList()));
     }
 
-    public void addOpeningHoursToService(UUID groupId, UUID serviceId) {
+    public void setOpeningHoursToService(UUID groupId, UUID serviceId) {
+        serviceOHgroupTable.where("service_id", serviceId)
+                .executeDelete();
         serviceOHgroupTable.insert()
                 .setField("service_id", serviceId)
                 .setField("oh_group_id", groupId)
                 .execute();
     }
 
-    public void removeOpeningHoursFromService(UUID groupId, UUID serviceId) {
+    public void removeOpeningHoursFromService(UUID serviceId) {
         serviceOHgroupTable.where("service_id", serviceId)
-                .where("oh_group_id", groupId)
                 .executeDelete();
     }
 

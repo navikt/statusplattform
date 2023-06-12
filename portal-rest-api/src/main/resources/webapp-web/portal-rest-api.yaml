@@ -1601,12 +1601,6 @@ paths:
       summary: Fjern åpenstidsgruppe fra tjeneste fra område
       description: Legg inn uid for åpenstidsgruppe og tjenesten som skal fjernes.
       parameters:
-        - name: Group_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
         - name: Service_id
           in: path
           required: true

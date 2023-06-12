@@ -4,8 +4,6 @@ import nav.portal.core.repositories.OpeningHoursRepository;
 import nav.portal.core.repositories.ServiceRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.nav.portal.rest.api.Helpers.OpeningHoursHelper;
-import no.nav.portal.rest.api.Helpers.ServiceControllerHelper;
-import no.nav.portal.rest.api.Helpers.Util;
 import no.portal.web.generated.api.*;
 
 import org.actioncontroller.*;
@@ -97,14 +95,14 @@ public class OpeningHoursController {
 
     @PUT("/OpeningHours/:Group_id/:Service_id")
     @JsonBody
-    public void addOpeningHoursToService(@PathParam("Group_id") UUID group_id, @PathParam("Service_id") UUID service_id) {
-        openingHoursRepository.addOpeningHoursToService(group_id, service_id);
+    public void setOpeningHoursToService(@PathParam("Group_id") UUID group_id, @PathParam("Service_id") UUID service_id) {
+        openingHoursRepository.setOpeningHoursToService(group_id, service_id);
     }
 
-    @DELETE("/OpeningHours/:Group_id/:Service_id")
+    @DELETE("/OpeningHours/:Service_id")
     @JsonBody
-    public void removeOpeningHoursFromService(@PathParam("Group_id") UUID group_id, @PathParam("Service_id") UUID service_id) {
-        openingHoursRepository.removeOpeningHoursFromService(group_id, service_id);
+    public void removeOpeningHoursFromService( @PathParam("Service_id") UUID service_id) {
+        openingHoursRepository.removeOpeningHoursFromService(service_id);
     }
 
     @GET("/OpeningHours/:Service_id")
