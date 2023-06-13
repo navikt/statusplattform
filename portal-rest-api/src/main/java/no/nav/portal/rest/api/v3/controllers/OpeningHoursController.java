@@ -99,13 +99,13 @@ public class OpeningHoursController {
         openingHoursRepository.setOpeningHoursToService(group_id, service_id);
     }
 
-    @DELETE("/OpeningHours/:Service_id")
+    @DELETE("/OpeningHours/Service/:Service_id")
     @JsonBody
     public void removeOpeningHoursFromService( @PathParam("Service_id") UUID service_id) {
         openingHoursRepository.removeOpeningHoursFromService(service_id);
     }
 
-    @GET("/OpeningHours/:Service_id")
+    @GET("/OpeningHours/Service/:Service_id")
     @JsonBody
     public OHGroupDto getOHGroupForService(@PathParam("Service_id") UUID service_id) {
         return openingHoursHelper.getOHGroupForService(service_id);

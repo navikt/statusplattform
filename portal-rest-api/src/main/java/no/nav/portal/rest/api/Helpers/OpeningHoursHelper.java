@@ -1,9 +1,6 @@
 package no.nav.portal.rest.api.Helpers;
 
-import nav.portal.core.entities.OpeningHoursGroup;
-import nav.portal.core.entities.OpeningHoursRule;
-import nav.portal.core.entities.OpeningHoursRuleEntity;
-import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.entities.*;
 import nav.portal.core.openingHours.OpeningHoursValidator;
 import nav.portal.core.repositories.OpeningHoursRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
@@ -80,8 +77,8 @@ public class OpeningHoursHelper {
 
 
     public OHGroupDto getOHGroupForService(UUID service_id){
-        return EntityDtoMappers.toOpeningHoursGroupDto(openingHoursRepository.getOHGroupForService(service_id)
-                .orElseThrow(() -> new IllegalArgumentException("Not found: The Group's Service with id "+ service_id)));
+        return openingHoursRepository.getOHGroupForService(service_id).map(EntityDtoMappers::toOpeningHoursGroupDto)
+                .orElseThrow(() -> new IllegalArgumentException("Not found: The Group's Service with id "+ service_id));
     }
 
     public List<OHGroupDto> getAllGroups() {

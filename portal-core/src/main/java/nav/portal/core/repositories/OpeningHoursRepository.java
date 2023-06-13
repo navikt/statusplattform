@@ -20,13 +20,11 @@ public class OpeningHoursRepository {
 
         private final DbContextTable ohRuleTable;
         private final DbContextTable ohGroupTable;
-        private final DbContextTable service_openingHoursTable;
         private final DbContextTable serviceOHgroupTable;
 
         public OpeningHoursRepository(DbContext dbContext) {
             ohRuleTable = dbContext.table("oh_rule");
             ohGroupTable = dbContext.table("oh_group");
-            service_openingHoursTable = dbContext.table("service_opening_hours");
             serviceOHgroupTable = dbContext.table("service_oh_group");
         }
 
@@ -211,7 +209,7 @@ public class OpeningHoursRepository {
                 .executeDelete();
         serviceOHgroupTable.insert()
                 .setField("service_id", serviceId)
-                .setField("oh_group_id", groupId)
+                .setField("group_id", groupId)
                 .execute();
     }
 
@@ -220,27 +218,15 @@ public class OpeningHoursRepository {
                 .executeDelete();
     }
 
-    /*public Optional<OpeningHoursGroup> getOHGroupForService(UUID service_id) {
-        DbContextTableAlias groupAlias = ohGroupTable.alias("group");
-        DbContextTableAlias s2g = serviceOHgroupTable.alias("s2g");
-        Optional<OpeningHoursGroupEntity>openingHoursGroupEntity = groupAlias.
-                leftJoin(groupAlias.column("id"), s2g.column("group_id"))
-                .where("s2g.service_id",service_id)
-                .singleObject(OpeningHoursRepository::toOpeningHoursGroupEntity);
-
-        return retrieveOneGroup(openingHoursGroupEntity.get().getId());
-    }*/
-
-
     public Optional<OpeningHoursGroup> getOHGroupForService(UUID service_id) {
-        DbContextTableAlias groupAlias = ohGroupTable.alias("group");
+        DbContextTableAlias g = ohGroupTable.alias("g");
         DbContextTableAlias s2g = serviceOHgroupTable.alias("s2g");
-        Optional<OpeningHoursGroupEntity>openingHoursGroupEntity = groupAlias.
-                leftJoin(groupAlias.column("id"), s2g.column("group_id"))
-                .where("s2g.service_id",service_id)
-                .singleObject(OpeningHoursRepository::toOpeningHoursGroupEntity);
 
-        return retrieveOneGroup(openingHoursGroupEntity.get().getId());
+        Optional<OpeningHoursGroupEntity> entity = s2g.where("service_id", service_id)
+                .leftJoin(s2g.column("group_id"),g.column("id"))
+                .singleObject(r -> toOpeningHoursGroupEntity(r.table(g)));
+        return entity.isEmpty()? Optional.empty(): Optional.of(getGroupFromEntity(entity.get()));
+
     }
 
     static OpeningHoursRuleEntity toOpeningRule(DatabaseRow row){

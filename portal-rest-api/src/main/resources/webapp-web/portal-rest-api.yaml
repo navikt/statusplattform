@@ -1355,7 +1355,7 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
-  /OpeningHours/rule/{Rule_id}:
+  /OpeningHours/Rule/{Rule_id}:
     delete:
       tags:
         - OpeningHours
@@ -1480,11 +1480,11 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /OpeningHours/Group/{Service_id}:
+  /OpeningHours/Group/{Group_id}:
     get:
       tags:
         - OpeningHours
-      summary: Hent åpenstidsgruppe som har tjeneste med id
+      summary: Hent åpenstidsgruppe med id
       description: Hent åpenstidsgruppe som har tjeneste med id
       operationId: GetOHGroupContainingService
       parameters:
@@ -1511,7 +1511,6 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
-  /OpeningHours/group/{Group_id}:
     delete:
       tags:
         - OpeningHours
@@ -1532,36 +1531,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-    get:
-      tags:
-        - OpeningHours
-      summary: Hent åpenstidsgruppe.
-      description: henter et åpenstidsgruppe
-      operationId: getGroup
-      parameters:
-        - name: Group_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OHGroup'
-        '401':
-          description: Unauthorized
-          content: {}
-        '403':
-          description: Forbidden
-          content: {}
-        '404':
-          description: Not Found
-          content: {}
-      deprecated: false
 
   /OpeningHours/{Group_id}/{Service_id}:
     put:
@@ -1594,6 +1563,37 @@ paths:
         '404':
           description: Not Found
           content: {}
+      deprecated: false
+  /OpeningHours/Service/{Service_id}:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpenstidsgruppe for tjeneste
+      description: henter et åpenstidsgruppe
+      operationId: getGroupForService
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OHGroup'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
       deprecated: false
     delete:
       tags:

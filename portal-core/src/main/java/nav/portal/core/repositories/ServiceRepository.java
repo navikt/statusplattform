@@ -268,13 +268,13 @@ public class ServiceRepository {
     public void addOpeningHoursToService(UUID serviceId, UUID groupId) {
         serviceOHgroupTable.insert()
                 .setField("service_id", serviceId)
-                .setField("oh_group_id", groupId)
+                .setField("group_id", groupId)
                 .execute();
     }
 
     public void removeOpeningHoursFromService(UUID serviceId, UUID groupId) {
         serviceOHgroupTable.where("service_id", serviceId)
-                .where("oh_group_id", groupId)
+                .where("group_id", groupId)
                 .executeDelete();
     }
 
