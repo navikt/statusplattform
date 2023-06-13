@@ -5,12 +5,9 @@ import nav.portal.core.openingHours.OpeningHoursValidator;
 import nav.portal.core.repositories.OpeningHoursRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
-import org.actioncontroller.HttpNotFoundException;
 import org.fluentjdbc.DbContext;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,7 +35,7 @@ public class OpeningHoursHelper {
     }
 
     public void deleteRule(UUID rule_id) {
-        openingHoursRepository.deleteOpeninghours(rule_id);
+        openingHoursRepository.deleteOpeningHoursRule(rule_id);
     }
 
     public OHRuleDto getRule(UUID rule_id) {

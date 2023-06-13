@@ -1,9 +1,7 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.OpeningHoursGroup;
 import nav.portal.core.entities.OpeningHoursGroupEntity;
-import nav.portal.core.entities.OpeningHoursRule;
 import nav.portal.core.entities.OpeningHoursRuleEntity;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.assertj.core.api.Assertions;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -79,7 +76,7 @@ class OpeningHoursRepositoryTest {
         ruleToBeDeleted.setId(openingHoursRepository.save(ruleToBeDeleted));
         Optional<OpeningHoursRuleEntity> beforeDelete = openingHoursRepository.retriveRule(ruleToBeDeleted.getId());
         //Act
-        boolean isDeleted = openingHoursRepository.deleteOpeninghours(ruleToBeDeleted.getId());
+        boolean isDeleted = openingHoursRepository.deleteOpeningHoursRule(ruleToBeDeleted.getId());
         Optional<OpeningHoursRuleEntity> afterDelete = openingHoursRepository.retriveRule(ruleToBeDeleted.getId());
         //Assert
         Assertions.assertThat(beforeDelete).contains(ruleToBeDeleted);

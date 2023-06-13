@@ -179,4 +179,37 @@ public class OpeningHoursControllerTest {
         //Assertions.assertThat(retrievedGroup.getId()).isEqualTo(savedOHGroupThinDto.getId());
     }
 
+
+    @Test
+    void deleteGroup() {
+        //Arrange
+        List<OHGroupThinDto> oHGroupsThinDto = SampleDataDto.getNonEmptyListOfOHGroupThinDto(2);
+        OHGroupThinDto oHGroupThinDto1 = openingHoursController.newGroup(oHGroupsThinDto.get(0));
+        OHGroupThinDto oHGroupThinDto2 = openingHoursController.newGroup(oHGroupsThinDto.get(1));
+        oHGroupThinDto1.setId(oHGroupThinDto1.getId());
+        oHGroupThinDto2.setId(oHGroupThinDto2.getId());
+        OHGroupDto retrievedBefore = openingHoursController.getGroup(oHGroupThinDto1.getId());
+        List<OHGroupDto> retrievedRulesBefore = retrievedBefore.getRules();
+        //Act
+        List<UUID> rules = oHGroupThinDto1.getRules();
+        if (rules.size() == 0) {
+            rules = new ArrayList<>();
+        }
+        rules.add(oHGroupThinDto2.getId());
+        oHGroupThinDto1.setRules(rules);
+        openingHoursController.updateGroup(oHGroupThinDto1);
+        OHGroupDto retrievedAfter = openingHoursController.getGroup(oHGroupThinDto1.getId());
+        List<OHGroupDto> retrievedRulesAfter = retrievedAfter.getRules();
+        OHGroupDto retrievedAddedGroup = retrievedRulesAfter.get(0);
+        //Assert
+        Assertions.assertThat(retrievedRulesBefore).isEmpty();
+        Assertions.assertThat(retrievedRulesAfter.size()).isEqualTo(1);
+        Assertions.assertThat(retrievedBefore.getId()).isEqualTo(retrievedAfter.getId());
+        Assertions.assertThat(retrievedAddedGroup.getId()).isEqualTo(oHGroupThinDto2.getId());
+
+        //ACT
+        openingHoursController.deleteGroup(oHGroupThinDto2.getId());
+
+        List<OHGroupDto> groupDtos = openingHoursController.getGroups();
+    }
 }

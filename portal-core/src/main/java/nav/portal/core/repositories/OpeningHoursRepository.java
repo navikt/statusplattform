@@ -48,20 +48,39 @@ public class OpeningHoursRepository {
                     .execute();
         }
 
-        public boolean deleteOpeninghours(UUID openingHoursId){
+        public boolean deleteOpeningHoursRule(UUID openingHoursId){
             if(ohRuleTable.where("id",openingHoursId).singleObject(OpeningHoursRepository::toOpeningRule).isEmpty()){
                 return false;
             }
+            deleteGroupOrRuleFromAllGroups(openingHoursId);
             ohRuleTable.where("id", openingHoursId).executeDelete();
             return true;
         }
 
-    public boolean deleteOpeninghourGroup(UUID openingHoursGroupId){
-        if(ohGroupTable.where("id",openingHoursGroupId).singleObject(OpeningHoursRepository::toOpeningHoursGroupEntity).isEmpty()){
+    public boolean deleteOpeninghourGroup(UUID groupId){
+        if(ohGroupTable.where("id",groupId).singleObject(OpeningHoursRepository::toOpeningHoursGroupEntity).isEmpty()){
             return false;
         }
-        ohGroupTable.where("id", openingHoursGroupId).executeDelete();
+        deleteGroupOrRuleFromAllGroups(groupId);
+        serviceOHgroupTable.where("group_id", groupId).executeDelete();
+        ohGroupTable.where("id", groupId).executeDelete();
         return true;
+    }
+    private void deleteGroupOrRuleFromAllGroups(UUID id){
+            List<OpeningHoursGroupEntity> allGroups = ohGroupTable.orderedBy("name")
+                    .stream(OpeningHoursRepository::toOpeningHoursGroupEntity)
+                    .collect(Collectors.toList());
+            allGroups.forEach(group -> {
+                        group.getRules().remove(id);
+                        ohGroupTable
+                                .newSaveBuilderWithUUID("id", group.getId())
+                                .setField("name", group.getName())
+                                .setField("rule_group_ids",group.getRules())
+                                .execute();
+                    }
+                    );
+
+
     }
 
     public UUID saveGroup(OpeningHoursGroupEntity group) {
