@@ -247,7 +247,6 @@ public class OpeningHoursRepository {
                 .leftJoin(s2g.column("group_id"),g.column("id"))
                 .singleObject(r -> toOpeningHoursGroupEntity(r.table(g)));
         return entity.isEmpty()? Optional.empty(): Optional.of(getGroupFromEntity(entity.get()));
-
     }
 
     static OpeningHoursRuleEntity toOpeningRule(DatabaseRow row){
