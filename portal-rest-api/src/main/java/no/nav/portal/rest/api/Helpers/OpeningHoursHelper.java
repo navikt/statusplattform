@@ -94,7 +94,7 @@ public class OpeningHoursHelper {
         List<Integer> dateParts = Arrays.stream(date.split("\\."))
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
-        LocalDate ld =  LocalDate.of(dateParts.get(0),dateParts.get(1),dateParts.get(2));
+        LocalDate ld =  LocalDate.of(dateParts.get(2),dateParts.get(1),dateParts.get(0));
         Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(service_id);
         return OpeningHoursParser.getOpeninghours(ld,group.get());
     }
