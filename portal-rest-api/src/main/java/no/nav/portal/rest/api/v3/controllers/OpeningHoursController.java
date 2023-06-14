@@ -10,6 +10,7 @@ import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -110,5 +111,12 @@ public class OpeningHoursController {
     public OHGroupDto getOHGroupForService(@PathParam("Service_id") UUID service_id) {
         return openingHoursHelper.getOHGroupForService(service_id);
     }
+
+    @GET("/OpeningHours/Service/:Service_id/:Date")
+    @JsonBody
+    public String getOpeningHoursForServiceOnDate(@PathParam("Service_id") UUID service_id, @PathParam("Date") String date) {
+        return openingHoursHelper.getOpeningHoursForServiceOnDate(service_id,date);
+    }
+
 
 }

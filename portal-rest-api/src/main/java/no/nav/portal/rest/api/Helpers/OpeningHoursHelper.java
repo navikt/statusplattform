@@ -1,13 +1,18 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.*;
+import nav.portal.core.openingHours.OpeningHoursParser;
 import nav.portal.core.openingHours.OpeningHoursValidator;
 import nav.portal.core.repositories.OpeningHoursRepository;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
+import java.time.LocalDate;
+import java.time.temporal.TemporalUnit;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -85,8 +90,13 @@ public class OpeningHoursHelper {
                 .collect(Collectors.toList());
     }
 
-    /*public OHGroupDto getOHGroupForService(UUID service_id){
-        return openingHoursRepository.getOHGroupForService(service_id).stream().
-                map(EntityDtoMappers::toAreaDtoShallow).collect(Collectors.toList());
-    }*/
+    public String getOpeningHoursForServiceOnDate(UUID service_id, String date) {
+        List<Integer> dateParts = Arrays.stream(date.split("\\."))
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+        LocalDate ld =  LocalDate.of(dateParts.get(0),dateParts.get(1),dateParts.get(2));
+        Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(service_id);
+        return OpeningHoursParser.getOpeninghours(ld,group.get());
+    }
+
 }

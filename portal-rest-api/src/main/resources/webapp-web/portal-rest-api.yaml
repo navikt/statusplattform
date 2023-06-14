@@ -1615,7 +1615,46 @@ paths:
           content: { }
         '404':
           description: Not Found
-          content: { }
+          content: {}
+  /OpeningHours/Service/{Service_id}/{Date}:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpningstid for tjeneste på dato
+      description: Hent åpenstidsgruppe som har tjeneste med id
+      operationId: getOhForServiceOnDate
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Date
+          in: path
+          required: true
+          schema:
+            type: string
+            description: yyyy.mm.dd
+            example: 2023.06.14
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 07:00-20:00
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
