@@ -75,7 +75,9 @@ public class OpeningHoursRepository {
                         ohGroupTable
                                 .newSaveBuilderWithUUID("id", group.getId())
                                 .setField("name", group.getName())
-                                .setField("rule_group_ids",group.getRules())
+                                .setField("rule_group_ids",group.getRules()
+                                        .stream().map(UUID::toString)
+                                        .collect(Collectors.toList()))
                                 .execute();
                     }
                     );
