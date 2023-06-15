@@ -118,5 +118,11 @@ public class OpeningHoursController {
         return openingHoursHelper.getOpeningHoursForServiceOnDate(service_id,date);
     }
 
+    @GET("/OpeningHours/Group/:Group_id/:Date")
+    @JsonBody
+    public String getOpeningHoursForGroupOnDate(@PathParam("Group_id") UUID group_id, @PathParam("Date") String date) {
+        return openingHoursHelper.getOpeningHoursForGroupOnDate(group_id,date);
+    }
+
 
 }
