@@ -27,11 +27,11 @@ public class HealthCheck {
     @JsonBody
     public String getDashboards() {
         boolean dbConnectionStatus = !areaRepository.retriveAllShallow().isEmpty();
-        ZonedDateTime lastUpdateGcp = recordRepository.getLatestGcpPollTime();
-        ZonedDateTime lastUpdateFss = recordRepository.getLatestFssPollTime();
+        ZonedDateTime lastUpdateGcp = recordRepository.getLatestGcpPollTime().plusHours(2).truncatedTo(ChronoUnit.SECONDS);
+        ZonedDateTime lastUpdateFss = recordRepository.getLatestFssPollTime().plusHours(2).truncatedTo(ChronoUnit.SECONDS);
         return "Status: OK, " +
-                "LastGcpPoll: " + OffsetDateTime.of(lastUpdateGcp.toLocalDateTime(),lastUpdateGcp.getOffset()).truncatedTo(ChronoUnit.SECONDS) +
-                ", LastFssPoll: " + OffsetDateTime.of(lastUpdateFss.toLocalDateTime(),lastUpdateFss.getOffset()).truncatedTo(ChronoUnit.SECONDS) +
+                "LastGcpPoll: " + lastUpdateGcp +
+                ", LastFssPoll: " + lastUpdateFss +
                 ", DbStatus: "+dbConnectionStatus;
     }
 
