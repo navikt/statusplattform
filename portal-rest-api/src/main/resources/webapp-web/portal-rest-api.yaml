@@ -1694,6 +1694,31 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
+  /isAlive:
+    get:
+      tags:
+        - Health
+      summary: Sjekk tilstanden på applikasjon
+      description: Sjekk tilstand på applikasjon
+      operationId: healthCheck
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------

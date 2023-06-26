@@ -3,7 +3,6 @@ package no.nav.portal.rest.api;
 import no.nav.portal.infrastructure.*;
 import no.nav.portal.rest.api.v3.controllers.*;
 import org.actioncontroller.servlet.ApiServlet;
-import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.fluentjdbc.DbContext;
@@ -20,6 +19,7 @@ public class PortalRestApi extends ClasspathWebAppContext {
     private final ApiFilter filter;
     private final CORSFilter corsFilter;
 
+
     public PortalRestApi(String context) {
         super(context, "/webapp-web");
         corsFilter = new CORSFilter();
@@ -32,6 +32,7 @@ public class PortalRestApi extends ClasspathWebAppContext {
                 new RecordController(dbContext),
                 new OpsController(dbContext),
                 new OpeningHoursController(dbContext),
+                new HealthCheck(dbContext),
                 new UserController(),
                 new WcagController()
         ))), "/*");

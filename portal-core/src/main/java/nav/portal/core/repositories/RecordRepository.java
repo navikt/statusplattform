@@ -2,6 +2,7 @@ package nav.portal.core.repositories;
 
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
@@ -20,20 +21,15 @@ public class RecordRepository {
     private final DbContextTable recordTable;
     private final DbContextTable recordDiffTable;
     private final DbContextTable aggregatedStatusTable;
+    private final DbContextTable serviceTable;
 
 
     public RecordRepository(DbContext dbContext) {
+        serviceTable = dbContext.table(new DatabaseTableWithTimestamps("service"));
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
         aggregatedStatusTable = dbContext.table(new DatabaseTableWithTimestamps("daily_status_aggregation_service"));
         recordDiffTable = dbContext.table(new DatabaseTableWithTimestamps("service_status_delta"));
 
-    }
-
-
-    public void deleteAllstatusesForService() {
-        String serviceId = "bb3cd701-b607-40af-946c-ce3117113274";
-        recordTable.where("service_id", serviceId).executeDelete();
-        recordDiffTable.where("service_id", serviceId).executeDelete();
     }
 
     public UUID save(RecordEntity entity) {
@@ -169,6 +165,26 @@ public class RecordRepository {
                 .whereExpression("created_at >= ?", yesterdayMidnight)
                 .list(RecordRepository::toRecord);
     }
+    public ZonedDateTime getLatestGcpPollTime(){
+        Optional<ServiceEntity> optionalServiceEntity = serviceTable.where("polling_on_prem", false)
+                .whereExpression("polling_url is NOT null").stream(ServiceRepository::toService).findFirst();
+        if(optionalServiceEntity.isPresent()){
+            Optional<RecordEntity> latest = getLatestRecord(optionalServiceEntity.get().getId());
+            return latest.map(RecordEntity::getCreated_at).orElse(null);
+        }
+        return null;
+    }
+
+    public ZonedDateTime getLatestFssPollTime(){
+        Optional<ServiceEntity> optionalServiceEntity = serviceTable.where("polling_on_prem", true)
+                .whereExpression("polling_url is NOT null").stream(ServiceRepository::toService).findFirst();
+        if(optionalServiceEntity.isPresent()){
+            Optional<RecordEntity> latest = getLatestRecord(optionalServiceEntity.get().getId());
+            return latest.map(RecordEntity::getCreated_at).orElse(null);
+        }
+        return null;
+    }
+
     public List<RecordEntity> getRecordsOlderThan(int daysOld){
         return recordTable
                 .whereExpression("created_at <= ?", ZonedDateTime.now().minusDays(daysOld))
@@ -200,6 +216,7 @@ public class RecordRepository {
     }
 
 
+
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
         Integer counter;
         Boolean active;
@@ -222,8 +239,6 @@ public class RecordRepository {
                     .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
                     .setCreated_at(row.getZonedDateTime("created_at"))
                     .setResponsetime(row.getInt("response_time"));
-
-
     }
 
     public void deleteRecords(List<RecordEntity> records) {
