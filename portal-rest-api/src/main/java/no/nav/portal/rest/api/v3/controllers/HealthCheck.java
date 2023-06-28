@@ -7,6 +7,7 @@ import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 
@@ -25,8 +26,10 @@ public class HealthCheck {
     @JsonBody
     public String isAlive() {
         boolean dbConnectionStatus = !areaRepository.retriveAllShallow().isEmpty();
-        LocalDateTime lastUpdateGcp = recordRepository.getLatestGcpPollTime().plusHours(2).truncatedTo(ChronoUnit.SECONDS).toLocalDateTime();
-        LocalDateTime lastUpdateFss = recordRepository.getLatestFssPollTime().plusHours(2).truncatedTo(ChronoUnit.SECONDS).toLocalDateTime();
+        ZonedDateTime zonedGcp = recordRepository.getLatestGcpPollTime();
+        ZonedDateTime zonedFss = recordRepository.getLatestFssPollTime();
+        LocalDateTime lastUpdateGcp = zonedGcp!=null? zonedGcp.plusHours(2).truncatedTo(ChronoUnit.SECONDS).toLocalDateTime() :null;
+        LocalDateTime lastUpdateFss = zonedFss!= null? zonedFss.plusHours(2).truncatedTo(ChronoUnit.SECONDS).toLocalDateTime(): null;
         return "Status: OK, " +
                 "LastGcpPoll: " + lastUpdateGcp +
                 ", LastFssPoll: " + lastUpdateFss +
