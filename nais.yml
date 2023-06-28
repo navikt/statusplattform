@@ -57,6 +57,9 @@ spec:
         - application: promstatusproxy
           namespace: navdig
           cluster: prod-gcp
+        - application: onpremstatuspoll
+          namespace: navdig
+          cluster: prod-fss
     outbound:
       external:
         - host: statusholder.prod-fss-pub.nais.io
