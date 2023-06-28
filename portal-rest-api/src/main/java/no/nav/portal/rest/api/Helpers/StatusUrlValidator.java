@@ -29,15 +29,10 @@ public class StatusUrlValidator {
         //Throws error if url not valid, or if url not responding
         //Returns false if endpoint is on gcp, returns true if endpoint onprem
         validateUrl(serviceDto.getPollingUrl());
-        if(checkIfEndpointRespondsGcp(serviceDto)){
-            return false;
-        }
         if(checkIfEndpointRespondsOnPrem(serviceDto)){
             return true;
         }
-        else {
-            throw new HttpRequestException("PollingUrl not responding: "+ serviceDto.getPollingUrl());
-        }
+        return false;
     }
 
     public static Boolean validateUrl(String pollingUrl){
