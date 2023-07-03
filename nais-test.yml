@@ -47,9 +47,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: statusholder
-          namespace: navdig
-          cluster: dev-fss
         - application: promstatusproxy
           namespace: navdig
           cluster: dev-gcp
@@ -57,9 +54,6 @@ spec:
           namespace: navdig
           cluster: dev-gcp
         - application: statuspoll
-          namespace: navdig
-          cluster: dev-gcp
-        - application: servicemock
           namespace: navdig
           cluster: dev-gcp
         - application: onpremstatuspoll
