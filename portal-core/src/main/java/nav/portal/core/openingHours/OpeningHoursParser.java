@@ -148,7 +148,7 @@ public class OpeningHoursParser {
                 }
             }
         }
-        System.out.println("Did not match month rule: "+ dayInMonthRule+ " date: "+ dateTimeEntry.toLocalDate().toString() );
+        //System.out.println("Did not match month rule: "+ dayInMonthRule+ " date: "+ dateTimeEntry.toLocalDate().toString() );
         return false;
     }
 
@@ -187,12 +187,12 @@ public class OpeningHoursParser {
     private static boolean isRuleApplicableForOpeningTimes(LocalDateTime dateTimeEntry, String timeRule){
         //checks for hh:mm-hh:mm
         if (timeRule.equals ("00:00-00:00")){
-            System.out.println("always closed");
+            //System.out.println("always closed");
             return false;
         }
 
         if (timeRule.equals ("00:00-23:59")){
-            System.out.println("open around the clock");
+            //System.out.println("open around the clock");
             return true;
         }
 
