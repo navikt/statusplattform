@@ -1,6 +1,5 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.HelpTextEntity;
 import nav.portal.core.enums.RuleType;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
@@ -35,13 +34,45 @@ public class SampleDataDto {
 
     static final ArrayList<String> maintenanceDescription = new ArrayList<>(Arrays.asList("Fix of the glitch", "Making the exceptional exception unexceptional", "Update to version whatever"));
 
-    static final Map<String, String> namesAndRules = Map.of(
-            "Christmas day", "24.12.???? ? 1-5 09:00-14:00",
-            "National day","17.05.???? ? ? 00:00-00:00",
-            "LastDayOfTheMonth","??.??.???? L ? 07:00-18:00",
-            "Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00",
-            "Normal work days", "??.??.???? ? 1-5 07:30-17:00"
-    );
+    static final Map<String, String> namesAndRules =  Map.ofEntries(
+            Map.entry("Christmas day", "24.12.???? ? ? 00:00-00:00"),
+            Map.entry("Boxing Day", "24.12.???? ? ? 00:00-00:00"),
+            Map.entry("Good Friday", "07.04.2023 ? ? 00:00-00:00"),
+            Map.entry("Easter Monday", "10.04.2023 ? ? 00:00-00:00"),
+            Map.entry("May day","01.05.???? ? ? 00:00-00:00"),
+            Map.entry("National day","17.05.???? ? ? 00:00-00:00"),
+            Map.entry("Kristihimmelfartsdag","18.05.2023 ? ? 00:00-00:00"),
+            Map.entry("Annen pinse dag","29.05.2023 ? ? 00:00-00:00"),
+            Map.entry("Early Closing Winter","19.01.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Spring","13.04.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Summer","20.07.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Autumn","19.10.2023 ? ? 07:00-15:00"),
+            Map.entry("LastDayOfTheMonth","??.??.???? L ? 07:00-18:00"),
+            Map.entry("Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00"),
+            Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
+
+    static final Map<String, String> holidayRules =  Map.ofEntries(
+            Map.entry("Good Friday", "07.04.2023 ? ? 00:00-00:00"),
+            Map.entry("Easter Monday", "10.04.2023 ? ? 00:00-00:00"),
+            Map.entry("May day","01.05.???? ? ? 00:00-00:00"),
+            Map.entry("National day","17.05.???? ? ? 00:00-00:00"),
+            Map.entry("Kristihimmelfartsdag","18.05.2023 ? ? 00:00-00:00"),
+            Map.entry("Annen pinse dag","29.05.2023 ? ? 00:00-00:00"),
+            Map.entry("Christmas day", "24.12.???? ? ? 00:00-00:00"),
+            Map.entry("Boxing Day", "25.12.???? ? ? 00:00-00:00"));
+
+    static final Map<String, String> earlyClosingRules =  Map.ofEntries(
+            Map.entry("Early Closing Winter","19.01.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Spring","13.04.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Summer","20.07.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Autumn","19.10.2023 ? ? 07:00-15:00"),
+            Map.entry("Open Saturday","05.08.2023 ? 6 10:00-15:00"));
+
+    static final Map<String, String> collaborativeMaintenanceRules =  Map.ofEntries(
+            Map.entry("LastDayOfTheMonth","??.??.???? L ? 07:00-18:00"));
+
+    static final Map<String, String> localMaintenanceRules =  Map.ofEntries(
+            Map.entry("local maintenance", "??.??.???? 1-5,15-20 ? 07:00-16:00"));
 
     static final ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
             "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
@@ -54,6 +85,11 @@ public class SampleDataDto {
 
 
     static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("National Holidays", "Collaborative maintenance, local maintenance", "Early closing"));
+    static final Map<String, String> baseRules =  Map.ofEntries(
+            Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
+
+
+    static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
 
     public static DashboardDto getRandomizedDashboardDto() {
         return new DashboardDto()
@@ -294,7 +330,7 @@ public class SampleDataDto {
                 .rule(namesAndRules.get(randomKey));
     }
 
-    public static List<OHRuleDto> getRulesDto() {
+    public static List<OHRuleDto> getRandomRulesDto() {
         Random random = new Random();
         int numberOfRulesDtos = 1+ random.nextInt( namesAndRules.size()-1);
         List<String>names = new ArrayList<>(namesAndRules.keySet());
@@ -303,6 +339,58 @@ public class SampleDataDto {
             oHRuleDtos.add(new OHRuleDto()
                     .name(names.get(i))
                     .rule(namesAndRules.get(names.get(i))));
+        }
+        return oHRuleDtos;
+    }
+
+    public static List<OHRuleDto> getRulesDto() {
+        List<String>names = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> oHRuleDtos = new ArrayList<>();
+        for (int i = 0; i < namesAndRules.size(); i++) {
+            oHRuleDtos.add(new OHRuleDto()
+                    .name(names.get(i))
+                    .rule(namesAndRules.get(names.get(i))));
+        }
+        return oHRuleDtos;
+    }
+
+    public static List<OHRuleDto> getOrderedRules() {
+        LinkedHashMap<String, String> orderedNamesAndRules = new LinkedHashMap<>();
+
+        orderedNamesAndRules.put("Christmas day", "24.12.???? ? 1-5 09:00-14:00");
+        orderedNamesAndRules.put("National day", "17.05.???? ? ? 00:00-00:00");
+        orderedNamesAndRules.put("LastDayOfTheMonth", "??.??.???? L ? 07:00-18:00");
+        orderedNamesAndRules.put("Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00");
+        orderedNamesAndRules.put("Normal work days", "??.??.???? ? 1-5 07:30-17:00");
+
+        List<String> names = new ArrayList<>(orderedNamesAndRules.keySet());
+        List<OHRuleDto> oHRuleDtos = new ArrayList<>();
+        for (int i = 0; i < orderedNamesAndRules.size(); i++) {
+            oHRuleDtos.add(new OHRuleDto()
+                    .name(names.get(i))
+                    .rule(orderedNamesAndRules.get(names.get(i))));
+        }
+        return oHRuleDtos;
+    }
+
+    public static List<List<OHRuleDto>> getListOfRules () {
+        List<List<OHRuleDto>> listOfOrderedRules = new ArrayList<>();
+        listOfOrderedRules.add(getOrderedRules(new LinkedHashMap<>(baseRules)));
+        listOfOrderedRules.add(getOrderedRules(new LinkedHashMap<>(localMaintenanceRules)));
+        listOfOrderedRules.add(getOrderedRules(new LinkedHashMap<>(collaborativeMaintenanceRules)));
+        listOfOrderedRules.add(getOrderedRules(new LinkedHashMap<>(earlyClosingRules)));
+        listOfOrderedRules.add(getOrderedRules(new LinkedHashMap<>(holidayRules)));
+        return listOfOrderedRules;
+    }
+
+    private static List<OHRuleDto> getOrderedRules(LinkedHashMap<String, String> orderedNamesAndRules) {
+
+        List<String> names = new ArrayList<>(orderedNamesAndRules.keySet());
+        List<OHRuleDto> oHRuleDtos = new ArrayList<>();
+        for (int i = 0; i < orderedNamesAndRules.size(); i++) {
+            oHRuleDtos.add(new OHRuleDto()
+                    .name(names.get(i))
+                    .rule(orderedNamesAndRules.get(names.get(i))));
         }
         return oHRuleDtos;
     }
@@ -423,6 +511,16 @@ public class SampleDataDto {
                 getRandomNumberOfHelpTextDtosOfKomponentType().stream())
                 .collect(Collectors.toList());
         return result;
+    }
+
+    public static List<OHGroupThinDto> getListOfOHGroupThinDto() {
+        List<OHGroupThinDto> oHGroupThinDtos = new ArrayList<>();
+        for (String s : groupDescription) {
+            oHGroupThinDtos.add(new OHGroupThinDto()
+                    .name(s)
+                    .rules(Collections.EMPTY_LIST));
+        }
+        return oHGroupThinDtos;
     }
 
     private static String getRandomFromKey(List<String> namesAndRulesKeys) {

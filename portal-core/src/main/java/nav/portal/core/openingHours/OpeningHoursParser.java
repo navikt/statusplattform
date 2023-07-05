@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import nav.portal.core.enums.RuleType;
 
 public class OpeningHoursParser {
 
@@ -84,6 +83,7 @@ public class OpeningHoursParser {
 
 
     public static String getOpeninghours(LocalDate dateEntry, String rule) {
+//        "00:00-00:00"LocalDateTime
         LocalDateTime dateTimeEntry = LocalDateTime.of(dateEntry, LocalTime.of(0,0));
         String[] ruleParts = rule.split("[\s]");
 
@@ -187,6 +187,7 @@ public class OpeningHoursParser {
                 }
             }
         }
+        System.out.println("Did not match month rule: "+ dayInMonthRule+ " date: "+ dateTimeEntry.toLocalDate().toString() );
         return false;
     }
 
