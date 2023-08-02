@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.assertj.core.api.Assertions;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -104,22 +105,24 @@ class OpeningHoursRepositoryTest {
         Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
     }
 
-    /*@Test
+    @Test
     void updateGroup() {
         //Arrange
-        String updatedOpeningHoursName = "Any other group";
-        OpeningHoursRuleEntity rule = SampleData.getRandomizedOpeningRule();
-        UUID rule_id = openingHoursRepository.save(rule);
-        rule.setId(rule_id);
-        OpeningHoursGroup group = new OpeningHoursGroup().setName("Ny gruppe").setRules(List.of(rule));
-        UUID group_id = openingHoursRepository.saveGroup(group);
-        group.setId(group_id);
-        Optional<OpeningHoursGroup> retrievedGroupBefore = openingHoursRepository.retrieveOneGroup(group_id);
-        group.setName(updatedOpeningHoursName);
+        List<OpeningHoursGroupEntity>openingHoursGroupEntities = SampleData.getNonEmptyListOfOpeningHoursGroupEntities(2);
+        List<OpeningHoursGroupEntity>groupEntities = new ArrayList<>();
+        openingHoursGroupEntities.forEach(openingHoursGroupEntity -> {
+            groupEntities.add(openingHoursGroupEntity.setId(openingHoursRepository.saveGroup(openingHoursGroupEntity)));
+        });
+        List<OpeningHoursGroup>retrievedGroupsBefore = openingHoursRepository.getAllGroups();
         //Act
-        openingHoursRepository.update(group);
+        groupEntities.get(0).setName(groupEntities.get(1).getName());
+        openingHoursRepository.updateGroup(groupEntities.get(0));
+        List<OpeningHoursGroup>retrievedGroupsAfter = openingHoursRepository.getAllGroups();
         //Assert
-    }*/
+        Assertions.assertThat(retrievedGroupsBefore.get(0).getName()).isNotEqualTo(retrievedGroupsBefore.get(1).getName());
+        Assertions.assertThat(retrievedGroupsAfter.get(0).getName()).isEqualTo(retrievedGroupsAfter.get(1).getName());
+    }
+
 
     @Test
     void retrieveRule() {
