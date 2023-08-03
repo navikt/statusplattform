@@ -525,7 +525,7 @@ public class SampleData {
                 .setRules(Collections.EMPTY_LIST);
     }
 
-    public static List<OpeningHoursGroupEntity> getOpeningHoursGroupEntity() {
+    public static List<OpeningHoursGroupEntity> getOpeningHoursGroupEntities() {
         Random random = new Random();
         int numberOfGroupEntities = 1+ random.nextInt( groupDescription.size()-1);
         List<OpeningHoursGroupEntity> openingHoursGroupEntities = new ArrayList<>();

@@ -140,6 +140,48 @@ class OpeningHoursRepositoryTest {
     }
 
     @Test
+    void getAllOpeningHoursRules(){
+        //Arrange
+        List<OpeningHoursRuleEntity> rules = SampleData.getRandomLengthListOfOHRuleEntity();
+        List<UUID>rulesId = new ArrayList<>();
+        rules.forEach(rule -> {
+            rule.setId(openingHoursRepository.save(rule));
+            rulesId.add(rule.getId());
+        });
+        List<OpeningHoursRuleEntity> retrievedRulesBefore = new ArrayList<>();
+        rulesId.forEach(ruleId ->{
+            Optional<OpeningHoursRuleEntity> before = openingHoursRepository.retriveRule(ruleId);
+            retrievedRulesBefore.add(before.get());
+        });
+        //Act
+        List<OpeningHoursRuleEntity> retrievedRulesAfter = openingHoursRepository.getAllOpeningHoursRules();
+        //Assert
+        Assertions.assertThat(retrievedRulesAfter).containsAll(retrievedRulesBefore);
+        Assertions.assertThat(retrievedRulesAfter.size()).isEqualTo(retrievedRulesBefore.size());
+    }
+
+    @Test
+    void getAllOpeningHoursGroups(){
+        //Arrange
+        List<OpeningHoursGroupEntity>groups= SampleData.getRandomLengthListOfOpeningHoursGroupEntities();
+        List<UUID>groupsId = new ArrayList<>();
+        groups.forEach(group -> {
+            group.setId(openingHoursRepository.saveGroup(group));
+            groupsId.add(group.getId());
+        });
+        List<OpeningHoursGroup> retrievedGroupsBefore = new ArrayList<>();
+        groupsId.forEach(groupId ->{
+            Optional<OpeningHoursGroup> before = openingHoursRepository.retrieveOneGroup(groupId);
+            retrievedGroupsBefore.add(before.get());
+        });
+        //Act
+        List<OpeningHoursGroup> retrievedGroupsAfter = openingHoursRepository.getAllGroups();
+        //Assert
+        Assertions.assertThat(retrievedGroupsAfter).containsAll(retrievedGroupsBefore);
+        Assertions.assertThat(retrievedGroupsAfter.size()).isEqualTo(retrievedGroupsBefore.size());
+    }
+
+    @Test
     void deleteOpeninghourGroup() {
         //Arrange
         OpeningHoursRuleEntity rule = SampleData.getRandomizedOpeningRule();
