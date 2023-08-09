@@ -49,6 +49,7 @@ public class RecordControllerHelper {
         recordRepository.save(newRecord);
     }
     private RecordEntity mapToRecordEntity(RecordDto recordDto) {
+        RecordSource source = recordDto.getSource()== null? RecordSource.UNKNOWN: RecordSource.valueOf(recordDto.getSource().getValue());
         return new RecordEntity()
                 .setServiceId(recordDto.getServiceId())
                 .setStatus(ServiceStatus.valueOf(recordDto.getStatus().getValue()))
@@ -56,7 +57,7 @@ public class RecordControllerHelper {
                 .setLogglink(recordDto.getLogLink())
                 .setCreated_at(recordDto.getTimestamp().toZonedDateTime())
                 .setResponsetime(recordDto.getResponseTime())
-                .setRecordSource(RecordSource.valueOf(recordDto.getSource().getValue()));
+                .setRecordSource(source);
     }
 
 
