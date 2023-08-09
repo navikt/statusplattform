@@ -2,6 +2,7 @@ package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.RecordDeltaEntity;
 import nav.portal.core.entities.RecordEntity;
+import nav.portal.core.enums.RecordSource;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
 import no.portal.web.generated.api.RecordDto;
@@ -54,7 +55,8 @@ public class RecordControllerHelper {
                 .setDescription(recordDto.getDescription())
                 .setLogglink(recordDto.getLogLink())
                 .setCreated_at(recordDto.getTimestamp().toZonedDateTime())
-                .setResponsetime(recordDto.getResponseTime());
+                .setResponsetime(recordDto.getResponseTime())
+                .setRecordSource(RecordSource.valueOf(recordDto.getSource().getValue()));
     }
 
 
