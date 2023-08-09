@@ -1,6 +1,7 @@
 package nav.portal.core.entities;
 
 
+import nav.portal.core.enums.RecordSource;
 import nav.portal.core.enums.ServiceStatus;
 
 import java.time.ZonedDateTime;
@@ -18,6 +19,7 @@ public class RecordEntity {
     private Integer responsetime;
     private Integer counter;
     private Boolean active;
+    private RecordSource recordSource;
 
 
 
@@ -90,6 +92,14 @@ public class RecordEntity {
         return this;
     }
 
+    public RecordSource getRecordSource() {
+        return recordSource;
+    }
+
+    public RecordEntity setRecordSource(RecordSource recordSource) {
+        this.recordSource = recordSource;
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {

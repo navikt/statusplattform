@@ -3,6 +3,7 @@ package nav.portal.core.repositories;
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.enums.RecordSource;
 import nav.portal.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
@@ -39,6 +40,7 @@ public class RecordRepository {
                 .setField("description", entity.getDescription())
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
+                .setField("source", entity.getRecordSource())
                 .execute();
 
         return result.getId();
@@ -238,7 +240,8 @@ public class RecordRepository {
                     .setLogglink(row.getString("logglink"))
                     .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
                     .setCreated_at(row.getZonedDateTime("created_at"))
-                    .setResponsetime(row.getInt("response_time"));
+                    .setResponsetime(row.getInt("response_time"))
+                    .setRecordSource(RecordSource.fromDb(row.getString("source")).orElse(RecordSource.UNKNOWN));
     }
 
     public void deleteRecords(List<RecordEntity> records) {

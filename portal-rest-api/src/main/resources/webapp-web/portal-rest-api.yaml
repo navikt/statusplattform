@@ -1886,6 +1886,8 @@ components:
           format: uuid
         status:
           $ref: '#/components/schemas/Status'
+        source:
+          $ref: '#/components/schemas/RecordSource'
         description:
           type: string
         logLink:
@@ -2054,6 +2056,13 @@ components:
         - ISSUE
         - DOWN
         - UNKNOWN
+    RecordSource:
+      type: string
+      enum:
+        - UNKNOWN
+        - GCP_POLL
+        - ONPREM_POLL
+        - PROMETHEUS
     ServiceType:
       type: string
       enum:

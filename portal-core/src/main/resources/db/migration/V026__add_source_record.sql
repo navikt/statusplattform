@@ -1,0 +1,2 @@
+ALTER TABLE service_status
+     ADD COLUMN source VARCHAR(20) DEFAULT 'UNKNOWN' NOT NULL;
