@@ -192,9 +192,6 @@ public class ServiceControllerHelper {
         return maintenanceDto;
     }
 
-    public ServiceHistoryDto getServiceHistoryForTwelveMonths(UUID serviceID, int number_of_months) {
-        return mapToHistoryDto(recordRepository.getServiceHistoryForNumberOfMonths(serviceID, number_of_months));
-    }
 
     private ServiceHistoryDto mapToHistoryDto(List<DailyStatusAggregationForServiceEntity> aggregationList) {
         ServiceHistoryDto result = new ServiceHistoryDto();

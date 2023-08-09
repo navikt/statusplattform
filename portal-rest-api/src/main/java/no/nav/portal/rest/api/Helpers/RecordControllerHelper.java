@@ -1,5 +1,6 @@
 package no.nav.portal.rest.api.Helpers;
 
+import nav.portal.core.entities.RecordDeltaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.repositories.RecordRepository;
@@ -29,7 +30,7 @@ public class RecordControllerHelper {
 
     public void updateRecordForService(RecordDto recordDto){
 
-        Optional<RecordEntity> latestDiffRecord = recordRepository.getLatestRecordDiff(recordDto.getServiceId());
+        Optional<RecordDeltaEntity> latestDiffRecord = recordRepository.getLatestRecordDiff(recordDto.getServiceId());
         RecordEntity newRecord = mapToRecordEntity(recordDto);
 
         //Dersom ny status er forskjellig fra gammel, legges det til en status_diff

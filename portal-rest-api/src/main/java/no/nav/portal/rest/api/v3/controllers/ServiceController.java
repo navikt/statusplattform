@@ -91,11 +91,6 @@ public class ServiceController {
         return serviceControllerHelper.retrieveOneService(service_id);
     }
 
-    @GET("/Service/HistoryAggregated/:Service_id")
-    @JsonBody
-    public ServiceHistoryDto getServiceHistoryTwelveMonthsBack(@PathParam("Service_id") UUID service_id) {
-        return serviceControllerHelper.getServiceHistoryForTwelveMonths(service_id, 12);
-    }
 
     /*TODO
     @GET("/Service/:PollingUrl")

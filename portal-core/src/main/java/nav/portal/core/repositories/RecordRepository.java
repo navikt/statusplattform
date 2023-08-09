@@ -1,6 +1,6 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
+import nav.portal.core.entities.RecordDeltaEntity;
 import nav.portal.core.entities.RecordEntity;
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.RecordSource;
@@ -13,34 +13,32 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RecordRepository {
     private final DbContextTable recordTable;
-    private final DbContextTable recordDiffTable;
-    private final DbContextTable aggregatedStatusTable;
+    private final DbContextTable recordDeltaTable;
     private final DbContextTable serviceTable;
 
 
     public RecordRepository(DbContext dbContext) {
         serviceTable = dbContext.table(new DatabaseTableWithTimestamps("service"));
         recordTable = dbContext.table(new DatabaseTableWithTimestamps("service_status"));
-        aggregatedStatusTable = dbContext.table(new DatabaseTableWithTimestamps("daily_status_aggregation_service"));
-        recordDiffTable = dbContext.table(new DatabaseTableWithTimestamps("service_status_delta"));
+        recordDeltaTable = dbContext.table(new DatabaseTableWithTimestamps("service_status_delta"));
 
     }
 
     public UUID save(RecordEntity entity) {
+        RecordSource source = entity.getRecordSource() != null? entity.getRecordSource(): RecordSource.UNKNOWN;
         DatabaseSaveResult<UUID> result = recordTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
                 .setField("description", entity.getDescription())
                 .setField("logglink", entity.getLogglink())
                 .setField("response_time", entity.getResponsetime())
-                .setField("source", entity.getRecordSource())
+                .setField("source", source)
                 .execute();
 
         return result.getId();
@@ -48,79 +46,46 @@ public class RecordRepository {
 
     //UUIDen som settes her skal IKKE generes, men settes fra uid fra orginal record.
     public UUID saveNewStatusDiff(RecordEntity entity) {
-        DatabaseSaveResult<UUID> result = recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
+        DatabaseSaveResult<UUID> result = recordDeltaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("service_id", entity.getServiceId())
                 .setField("status", entity.getStatus())
-                .setField("description", entity.getDescription())
                 .setField("active", entity.getActive())
-                .setField("logglink", entity.getLogglink())
-                .setField("response_time", entity.getResponsetime())
                 .setField("counter", 1) // Når denne metoden brukes, skal det være første gang diff lagres, og counter skal være 1
                 .execute();
         return result.getId();
     }
 
-    public UUID saveOldStatusDiff(RecordEntity entity) {
-        DatabaseSaveResult<UUID> result = recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
+    public UUID saveOldStatusDiff(RecordDeltaEntity entity) {
+        DatabaseSaveResult<UUID> result = recordDeltaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("active", false)
                 .setField("counter", entity.getCounter())
                 .execute();
         return result.getId();
     }
 
-    public void increaseCountOnStatusDiff(RecordEntity entity) {
-        recordDiffTable.newSaveBuilderWithUUID("id", entity.getId())
+    public void increaseCountOnStatusDiff(RecordDeltaEntity entity) {
+        recordDeltaTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("counter", entity.getCounter() + 1)
                 .execute();
 
     }
-    public Optional<RecordEntity> getLatestRecordDiff(UUID serviceId) {
-        return recordDiffTable.where("service_id", serviceId)
+
+    public Optional<RecordDeltaEntity> getLatestRecordDiff(UUID serviceId) {
+        return recordDeltaTable.where("service_id", serviceId)
                 .orderBy("created_at DESC")
                 .limit(1)
-                .singleObject(RecordRepository::toRecord);
+                .singleObject(RecordRepository::toRecordDelta);
     }
 
-    public Optional<RecordEntity> getLatestRecordDiffBeforeDate(UUID serviceId, LocalDate date) {
-        return recordDiffTable.where("service_id", serviceId)
+    public Optional<RecordDeltaEntity> getLatestRecordDiffBeforeDate(UUID serviceId, LocalDate date) {
+        return recordDeltaTable.where("service_id", serviceId)
                 .whereExpression("created_at <= ?", LocalDateTime.of(date, LocalTime.of(0,0)))
                 .orderBy("created_at DESC")
                 .limit(1)
-                .singleObject(RecordRepository::toRecord);
-    }
-
-    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfDays(int number_of_days, UUID serviceId) {
-        return aggregatedStatusTable.where("service_id", serviceId)
-                .whereExpression("aggregation_date >= ?", LocalDate.now().minusDays(number_of_days))
-                .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
+                .singleObject(RecordRepository::toRecordDelta);
     }
 
 
-    public Optional<DailyStatusAggregationForServiceEntity> getServiceHistoryForServiceByDate(UUID serviceId, LocalDate date) {
-        return aggregatedStatusTable.where("service_id", serviceId)
-                .whereExpression("aggregation_date = ?", date)
-                .singleObject(ServiceRepository::toDailyStatusAggregationForServiceEntity);
-    }
-
-    public List<DailyStatusAggregationForServiceEntity> getServiceHistoryForNumberOfMonths(UUID serviceId, int number_of_months) {
-        return aggregatedStatusTable.where("service_id", serviceId)
-                .whereExpression("aggregation_date >= ?", LocalDate.now().minusMonths(number_of_months))
-                .list(ServiceRepository::toDailyStatusAggregationForServiceEntity);
-    }
-
-
-
-    public UUID saveAggregatedRecords(DailyStatusAggregationForServiceEntity entity) {
-        DatabaseSaveResult<UUID> result = aggregatedStatusTable.newSaveBuilderWithUUID("id", entity.getId())
-                .setField("service_id", entity.getService_id())
-                .setField("number_of_status_ok", entity.getNumber_of_status_ok())
-                .setField("number_of_status_issue", entity.getNumber_of_status_issue())
-                .setField("number_of_status_down", entity.getNumber_of_status_down())
-                .setField("aggregation_date", entity.getAggregation_date())
-                .execute();
-
-        return result.getId();
-    }
 
     public Optional<RecordEntity> getLatestRecord(UUID serviceId) {
         return recordTable.where("service_id", serviceId)
@@ -220,28 +185,26 @@ public class RecordRepository {
 
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
-        Integer counter;
-        Boolean active;
-        try{
-            counter = row.getInt("counter");
-            active = row.getBoolean("active");
-
-        }
-        catch (IllegalArgumentException e){
-            counter = null;
-            active = false;
-        }
         return new RecordEntity()
                     .setId(row.getUUID("id"))
                     .setServiceId(row.getUUID("service_id"))
                     .setDescription(row.getString("description"))
-                    .setCounter(counter)
-                    .setActive(active)
                     .setLogglink(row.getString("logglink"))
                     .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
                     .setCreated_at(row.getZonedDateTime("created_at"))
                     .setResponsetime(row.getInt("response_time"))
                     .setRecordSource(RecordSource.fromDb(row.getString("source")).orElse(RecordSource.UNKNOWN));
+    }
+
+
+    private static RecordDeltaEntity toRecordDelta(DatabaseRow row) throws SQLException {
+        return new RecordDeltaEntity()
+                .setId(row.getUUID("id"))
+                .setServiceId(row.getUUID("service_id"))
+                .setCounter(row.getInt("counter"))
+                .setActive(row.getBoolean("active"))
+                .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
+                .setCreated_at(row.getZonedDateTime("created_at"));
     }
 
     public void deleteRecords(List<RecordEntity> records) {
