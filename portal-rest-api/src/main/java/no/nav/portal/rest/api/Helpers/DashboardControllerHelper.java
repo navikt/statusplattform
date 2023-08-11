@@ -89,7 +89,12 @@ public class DashboardControllerHelper {
     }
 
     private void settStatusOnService(ServiceDto service){
-        if(recordRepository.getActiveRecordDelta(service.getId()).isPresent()){
+        if(recordRepository.getLatestRecord(service.getId()).isPresent()){
+            service.setRecord(
+                    EntityDtoMappers.toRecordDto(recordRepository.getLatestRecord(service.getId()).get())
+            );
+        }
+        else if(recordRepository.getActiveRecordDelta(service.getId()).isPresent()){
             service.setRecord(
                     EntityDtoMappers.toRecordDtoFromRecordDelta(recordRepository.getActiveRecordDelta(service.getId()).get())
                     );
