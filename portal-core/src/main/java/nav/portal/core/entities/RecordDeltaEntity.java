@@ -13,10 +13,20 @@ public class RecordDeltaEntity {
     private ZonedDateTime created_at;
     private Integer counter;
     private Boolean active;
+    private ZonedDateTime updated_at;
 
 
 
     public RecordDeltaEntity() {
+    }
+
+    public ZonedDateTime getUpdated_at() {
+        return updated_at;
+    }
+
+    public RecordDeltaEntity setUpdated_at(ZonedDateTime updated_at) {
+        this.updated_at = updated_at;
+        return this;
     }
 
     public Boolean getActive() {

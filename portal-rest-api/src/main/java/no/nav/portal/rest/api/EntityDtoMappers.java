@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import nav.portal.core.repositories.OpeningHoursRepository;
@@ -245,6 +246,16 @@ public class EntityDtoMappers {
         dto.setLogLink(recordEntity.getLogglink());
         ZonedDateTime entityTime = recordEntity.getCreated_at();
         dto.setResponseTime(recordEntity.getResponsetime());
+        dto.setTimestamp(OffsetDateTime.of(entityTime.toLocalDateTime(),entityTime.getOffset()));
+        return dto;
+    }
+
+    public static RecordDto toRecordDtoFromRecordDelta(RecordDeltaEntity recordDeltaEntity){
+        RecordDto dto = new RecordDto();
+        dto.setId(recordDeltaEntity.getId());
+        dto.serviceId(recordDeltaEntity.getServiceId());
+        dto.setStatus(StatusDto.fromValue(recordDeltaEntity.getStatus().getDbRepresentation()));
+        ZonedDateTime entityTime = recordDeltaEntity.getUpdated_at().truncatedTo(ChronoUnit.SECONDS);
         dto.setTimestamp(OffsetDateTime.of(entityTime.toLocalDateTime(),entityTime.getOffset()));
         return dto;
     }

@@ -85,6 +85,12 @@ public class RecordRepository {
                 .singleObject(RecordRepository::toRecordDelta);
     }
 
+    public Optional<RecordDeltaEntity> getActiveRecordDelta(UUID serviceId){
+        return recordDeltaTable.where("service_id", serviceId)
+                .where("active",true)
+                .singleObject(RecordRepository::toRecordDelta);
+    }
+
 
 
     public Optional<RecordEntity> getLatestRecord(UUID serviceId) {
@@ -204,6 +210,7 @@ public class RecordRepository {
                 .setCounter(row.getInt("counter"))
                 .setActive(row.getBoolean("active"))
                 .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
+                .setUpdated_at(row.getZonedDateTime("updated_at"))
                 .setCreated_at(row.getZonedDateTime("created_at"));
     }
 
