@@ -6,7 +6,8 @@ public enum RecordSource implements DbEnum{
     UNKNOWN("UNKNOWN"),
     GCP_POLL("GCP_POLL"),
     ONPREM_POLL("ONPREM_POLL"),
-    PROMETHEUS("PROMETHEUS");
+    PROMETHEUS("PROMETHEUS"),
+    OBM("OBM");
 
     private String dbRepresentation;
 

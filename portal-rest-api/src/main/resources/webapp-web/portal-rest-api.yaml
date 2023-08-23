@@ -2063,6 +2063,7 @@ components:
         - GCP_POLL
         - ONPREM_POLL
         - PROMETHEUS
+        - OBM
     ServiceType:
       type: string
       enum:
