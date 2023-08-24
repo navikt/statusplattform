@@ -151,7 +151,7 @@ public class OpeningHoursControllerTest {
             savedGroupsId.add(group.getId());
         });
         basicGroup.setRules(savedGroupsId);
-        openingHoursController.updateGroup(basicGroup);
+        openingHoursController.updateGroup(basicGroup.getId(),basicGroup);
         List<OHGroupDto> retrievedGroupsBefore = openingHoursController.getGroups();
         List<UUID> retrievedGroupsUUIDBefore = new ArrayList<>();
         retrievedGroupsBefore.forEach(retrievedGroupBefore ->retrievedGroupsUUIDBefore.add(retrievedGroupBefore.getId()));
@@ -182,7 +182,7 @@ public class OpeningHoursControllerTest {
         }
         rules.add(oHGroupThinDto2.getId());
         oHGroupThinDto1.setRules(rules);
-        openingHoursController.updateGroup(oHGroupThinDto1);
+        openingHoursController.updateGroup(oHGroupThinDto1.getId(),oHGroupThinDto1);
         OHGroupDto retrievedAfter = openingHoursController.getGroup(oHGroupThinDto1.getId());
         List<OHGroupDto> retrievedRulesAfter = retrievedAfter.getRules();
         OHGroupDto retrievedAddedGroup = retrievedRulesAfter.get(0);

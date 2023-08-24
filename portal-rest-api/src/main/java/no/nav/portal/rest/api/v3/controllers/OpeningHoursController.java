@@ -36,9 +36,10 @@ public class OpeningHoursController {
         return openingHoursHelper.saveNewRule(oHRuleDto);
     }
 
-    @PUT("/OpeningHours/Rule")
+    @PUT("/OpeningHours/Rule/:Rule_id")
     @JsonBody
-    public void updateRule(@JsonBody OHRuleDto oHRuleDto) {
+    public void updateRule(@PathParam("Rule_id") UUID rule_id, @JsonBody OHRuleDto oHRuleDto) {
+        oHRuleDto.setId(rule_id);
         if(!openingHoursHelper.isValidRule(oHRuleDto)){
             throw new HttpRequestException("Rule not valid: "+ oHRuleDto.getRule());
         }
@@ -70,9 +71,10 @@ public class OpeningHoursController {
         return openingHoursHelper.saveGroup(oHGroupThinDto);
     }
 
-    @PUT("/OpeningHours/Group")
+    @PUT("/OpeningHours/Group/:Group_id")
     @JsonBody
-    public void updateGroup(@JsonBody OHGroupThinDto oHGroupThinDto) {
+    public void updateGroup(@PathParam("Group_id") UUID group_id, @JsonBody OHGroupThinDto oHGroupThinDto) {
+        oHGroupThinDto.setId(group_id);
         openingHoursHelper.updateGroup(oHGroupThinDto);
     }
 
