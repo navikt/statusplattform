@@ -1305,31 +1305,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /OpeningHours/Rule/{Rule_id}:
-    put:
-      tags:
-        - OpeningHours
-      summary: Rediger åpenstidsregel
-      description: Rediger åpenstidsregel
-      requestBody:
-        description: Oppdaterte verdier for åpenstidsregel
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OHRule'
-          text/plain:
-            schema:
-              type: string
-      responses:
-        '201':
-          description: Updated
-        '403':
-          description: Forbidden
-          content: { }
-        '404':
-          description: Not Found
-          content: { }
   /OpeningHours/Rules:
     get:
       tags:
@@ -1357,6 +1332,30 @@ paths:
           content: { }
       deprecated: false
   /OpeningHours/Rule/{Rule_id}:
+    put:
+      tags:
+        - OpeningHours
+      summary: Rediger åpenstidsregel
+      description: Rediger åpenstidsregel
+      requestBody:
+        description: Oppdaterte verdier for åpenstidsregel
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHRule'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
     delete:
       tags:
         - OpeningHours
@@ -1482,7 +1481,6 @@ paths:
         '404':
           description: Not Found
           content: { }
-  /OpeningHours/Group/{Group_id}:
     get:
       tags:
         - OpeningHours
