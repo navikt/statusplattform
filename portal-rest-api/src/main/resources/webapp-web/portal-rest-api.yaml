@@ -1284,10 +1284,10 @@ paths:
     post:
       tags:
         - OpeningHours
-      summary: Legg til regel
-      description: Opprett en ny tjeneste. Merk at type er predefinert og strengt, se endepunkt /Services/Types for en liste over mulige verdier.
+      summary: Legg til åpenstidsregel
+      description: Opprett en ny åpenstidsregel.
       requestBody:
-        description: Legg til en ny tjeneste
+        description: Legg til en ny åpenstidsregel
         required: true
         content:
           application/json:
@@ -1305,13 +1305,14 @@ paths:
         '404':
           description: Not Found
           content: { }
+  /OpeningHours/Rule/{Rule_id}:
     put:
       tags:
         - OpeningHours
-      summary: Rediger tjeneste
-      description: Rediger tjenesteparametre
+      summary: Rediger åpenstidsregel
+      description: Rediger åpenstidsregel
       requestBody:
-        description: Oppdaterte verdier for tjeneste
+        description: Oppdaterte verdier for åpenstidsregel
         required: true
         content:
           application/json:
@@ -1333,7 +1334,7 @@ paths:
     get:
       tags:
         - OpeningHours
-      summary: Hent alle regler
+      summary: Hent alle åpenstidsregler
       description: henter alle åpenstidsregler
       operationId: getRules
       responses:
@@ -1359,7 +1360,7 @@ paths:
     delete:
       tags:
         - OpeningHours
-      summary: Slett regel
+      summary: Slett åpenstidsregel
       description: Fjerner en åpenstidsregel
       parameters:
         - name: Rule_id
@@ -1410,10 +1411,10 @@ paths:
     post:
       tags:
         - OpeningHours
-      summary: Legg til gruppe
-      description: Opprett en ny tjeneste for innlegging av  åpenstidsregler
+      summary: Legg til åpenstidsgruppe
+      description: Opprett en ny åpenstidsgruppe for innlegging av  åpenstidsregler
       requestBody:
-        description: Legg til en ny tjeneste
+        description: Legg til en ny åpenstidsgruppe
         required: true
         content:
           application/json:
@@ -1434,7 +1435,7 @@ paths:
     get:
       tags:
         - OpeningHours
-      summary: Hent alle grupper
+      summary: Hent alle åpenstidsgrupper
       description: henter alle åpenstidsgrupper
       operationId: getAllGroups
       responses:
@@ -1456,13 +1457,14 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
+  /OpeningHours/Group/{Group_id}:
     put:
       tags:
         - OpeningHours
-      summary: Rediger gruppe
-      description: Rediger regelgruppeparametre
+      summary: Rediger åpenstidsgruppe
+      description: Rediger åpenstidsgruppeparametre
       requestBody:
-        description: Oppdaterte verdier for regelgruppe
+        description: Oppdaterte verdier for åpenstidsgruppe
         required: true
         content:
           application/json:
@@ -1484,9 +1486,9 @@ paths:
     get:
       tags:
         - OpeningHours
-      summary: Hent gruppe med id
-      description: Hent åpenstidsgruppe som har tjeneste med id
-      operationId: GetOHGroupContainingService
+      summary: Hent åpenstidsgruppe med id
+      description: Hent åpenstidsgruppe med id
+      operationId: GetOHGroupMedId
       parameters:
         - name: Group_id
           in: path
@@ -1514,8 +1516,8 @@ paths:
     delete:
       tags:
         - OpeningHours
-      summary: Slett gruppe med id
-      description: Fjerner en åpenstidsgruppe
+      summary: Slett åpenstidsgruppe med id
+      description: Fjerner en åpenstidsgruppe med id
       parameters:
         - name: Group_id
           in: path
@@ -1536,8 +1538,8 @@ paths:
     put:
       tags:
         - OpeningHours
-      summary: Legg  gruppe til en tjeneste
-      description: Legg inn uid for åpenstidsgruppe og tjenesten som skal legges til det.
+      summary: Legg åpenstidsgruppe til en tjeneste
+      description: Legg inn uid for åpenstidsgruppe til en tjeneste
       parameters:
         - name: Group_id
           in: path
@@ -1568,8 +1570,8 @@ paths:
     get:
       tags:
         - OpeningHours
-      summary: Hent gruppe for tjeneste
-      description: henter et åpenstidsgruppe
+      summary: Hent en åpenstidsgruppe for en tjeneste
+      description: hent åpenstidsgruppe for en tjeneste
       operationId: getGroupForService
       parameters:
         - name: Service_id
@@ -1598,8 +1600,8 @@ paths:
     delete:
       tags:
         - OpeningHours
-      summary: Fjern gruppe fra tjeneste fra tjeneste
-      description: Legg inn uid for åpenstidsgruppe og tjenesten som skal fjernes.
+      summary: Fjern åpenstidsgruppe fra tjeneste med id
+      description: Fjern åpenstidsgruppe fra tjeneste med id
       parameters:
         - name: Service_id
           in: path
@@ -1620,8 +1622,8 @@ paths:
     get:
       tags:
         - OpeningHours
-      summary: Hent åpningstid for tjeneste på dato
-      description: Hent åpenstidsgruppe som har tjeneste med id
+      summary: Hent åpningstid for en tjeneste
+      description: Hent åpningstid for en tjeneste
       operationId: getOhForServiceOnDate
       parameters:
         - name: Service_id
@@ -1659,8 +1661,8 @@ paths:
     get:
       tags:
         - OpeningHours
-      summary: Hent åpningstid for gruppe på dato
-      description: Hent åpenstidsgruppe som har tjeneste med id
+      summary: Hent åpningstid for en gruppe på en dato
+      description:  Hent åpningstid for en gruppe på en dato
       operationId: getOhForGroupOnDate
       parameters:
         - name: Group_id
