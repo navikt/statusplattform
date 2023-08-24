@@ -1337,6 +1337,12 @@ paths:
         - OpeningHours
       summary: Rediger åpenstidsregel
       description: Rediger åpenstidsregel
+      parameters:
+        - name: Rule_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         description: Oppdaterte verdier for åpenstidsregel
         required: true
@@ -1462,6 +1468,13 @@ paths:
         - OpeningHours
       summary: Rediger åpenstidsgruppe
       description: Rediger åpenstidsgruppeparametre
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       requestBody:
         description: Oppdaterte verdier for åpenstidsgruppe
         required: true
@@ -1472,6 +1485,7 @@ paths:
           text/plain:
             schema:
               type: string
+
       responses:
         '201':
           description: Updated
