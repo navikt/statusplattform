@@ -55,12 +55,13 @@ public class RecordRepository {
         return result.getId();
     }
 
-    public UUID saveOldStatusDiff(RecordDeltaEntity entity) {
-        DatabaseSaveResult<UUID> result = recordDeltaTable.newSaveBuilderWithUUID("id", entity.getId())
+    public void setOldStatusDiffInactive(RecordDeltaEntity entity) {
+
+        recordDeltaTable.where("service_id", entity.getServiceId())
+                .where("active",true).update()
                 .setField("active", false)
-                .setField("counter", entity.getCounter())
                 .execute();
-        return result.getId();
+
     }
 
     public void increaseCountOnStatusDiff(RecordDeltaEntity entity) {

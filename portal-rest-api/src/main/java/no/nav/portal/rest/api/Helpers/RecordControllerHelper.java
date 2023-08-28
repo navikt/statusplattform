@@ -39,7 +39,7 @@ public class RecordControllerHelper {
             newRecord.setActive(true);
             recordRepository.saveNewStatusDiff(newRecord);
             //Setter den gamle til inaktiv
-            latestDiffRecord.ifPresent(recordRepository::saveOldStatusDiff);
+            latestDiffRecord.ifPresent(recordRepository::setOldStatusDiffInactive);
         }
         else{
             //Hvis ikke økes teller på status
