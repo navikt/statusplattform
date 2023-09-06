@@ -33,12 +33,10 @@ public class ServiceController {
     private final ServiceRepository serviceRepository;
     private String STATUSHOLDER_URL = System.getenv("statusholder_url");
     private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
-    private boolean isTest;
 
-    public ServiceController(DbContext dbContext, boolean isTest) {
+    public ServiceController(DbContext dbContext) {
         this.serviceControllerHelper = new ServiceControllerHelper(dbContext);
         this.serviceRepository = new ServiceRepository(dbContext);
-        this.isTest = isTest;
     }
 
 
@@ -91,26 +89,9 @@ public class ServiceController {
         return serviceControllerHelper.retrieveOneService(service_id);
     }
 
-
-    /*TODO
-    @GET("/Service/:PollingUrl")
-    @JsonBody
-    public RecordDto testPollingUrl(@PathParam("PollingUrl") String pollingUrl) {
-        return StatusUrlValidator.getPollingRespons(pollingUrl);
-    }
-*/
     @POST("/Service")
     @JsonBody
     public ServiceDto newService(@JsonBody ServiceDto serviceDto) {
-        if(!isTest){
-            try{
-                boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
-                serviceDto.setPollingOnPrem(isOnPrem);
-            }
-            catch (Exception e){
-                logger.error(e.getMessage());
-            }
-        }
         if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
             return serviceControllerHelper.saveNewService(serviceDto);
 
@@ -122,15 +103,6 @@ public class ServiceController {
     @PUT("/Service/:Service_id")
     @JsonBody
     public void updateService(@PathParam("Service_id") UUID service_id, @JsonBody ServiceDto serviceDto) {
-        if(!isTest){
-            try{
-                boolean isOnPrem = StatusUrlValidator.validateAndIsOnPrem(serviceDto);
-                serviceDto.setPollingOnPrem(isOnPrem);
-            }
-            catch (Exception e){
-                logger.error(e.getMessage());
-            }
-        }
         if(StatusUrlValidator.validateUrl(serviceDto.getPollingUrl())){
             serviceDto.setId(service_id);
             serviceControllerHelper.updateService(serviceDto);

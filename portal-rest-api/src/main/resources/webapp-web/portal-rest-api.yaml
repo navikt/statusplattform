@@ -1870,7 +1870,7 @@ components:
           type: string
         pollingUrl:
           type: string
-        polling_on_prem:
+        pollingOnPrem:
           type: boolean
           readOnly: true
 

@@ -27,7 +27,7 @@ public class OpeningHoursControllerTest {
     private DbContextConnection connection;
 
     private final OpeningHoursController openingHoursController = new OpeningHoursController(dbContext);
-    private final ServiceController serviceController = new ServiceController(dbContext,true);
+    private final ServiceController serviceController = new ServiceController(dbContext);
 
     @BeforeEach
     void startConnection() {

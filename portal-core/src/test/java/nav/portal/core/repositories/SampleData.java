@@ -174,7 +174,8 @@ public class SampleData {
                 .setType(getRandomServiceType())
                 .setTeam(getRandomFromArray(teamNames))
                 .setStatusNotFromTeam(Boolean.FALSE)
-                .setMonitorlink(getRandomFromArray(urlStrings));
+                .setMonitorlink(getRandomFromArray(urlStrings))
+                .setPollingOnPrem(false);
     }
 
     public static ServiceEntity getRandomizedServiceEntityWithNameNotInList(List<ServiceEntity> services) {
@@ -187,7 +188,8 @@ public class SampleData {
                 .setTeam(getRandomFromArray(teamNames))
                 .setPolling_url(getRandomFromArray(urlStrings))
                 .setStatusNotFromTeam(Boolean.FALSE)
-                .setMonitorlink(getRandomFromArray(urlStrings));
+                .setMonitorlink(getRandomFromArray(urlStrings))
+                .setPollingOnPrem(false);
     }
 
     public static List<ServiceEntity> getRandomLengthListOfServiceEntity() {

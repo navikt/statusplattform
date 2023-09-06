@@ -25,7 +25,7 @@ class DashboardControllerTest {
 
     private final AreaController areaController = new AreaController(dbContext);
     private final DashboardController dashboardController = new DashboardController(dbContext);
-    private final ServiceController serviceController = new ServiceController(dbContext, true);
+    private final ServiceController serviceController = new ServiceController(dbContext);
     private final OpsController opsController = new OpsController(dbContext);
 
     @BeforeEach
