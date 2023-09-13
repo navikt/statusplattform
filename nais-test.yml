@@ -15,6 +15,8 @@ spec:
       value: trygdeetaten.no
     - name: ENV
       value: dev
+    - name: teamkatalogApiUrl
+      value: https://teamkatalog-api.dev-fss-pub.nais.io
   envFrom:
     - secret: swagger-api-konfig
   replicas:
@@ -67,3 +69,5 @@ spec:
         - application: servicemock
           namespace: navdig
           cluster: dev-gcp
+      external:
+        - host: teamkatalog-api.dev-fss-pub.nais.io

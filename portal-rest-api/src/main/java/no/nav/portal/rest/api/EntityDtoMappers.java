@@ -6,6 +6,7 @@ import nav.portal.core.enums.RuleType;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
 import nav.portal.core.repositories.OpeningHoursRepository;
+import no.nav.portal.rest.api.TeamKatalogIntegrasjon.TeamKatalogKlient;
 import no.portal.web.generated.api.*;
 
 
@@ -20,6 +21,7 @@ import nav.portal.core.repositories.OpeningHoursRepository;
 
 public class EntityDtoMappers {
     private static OpeningHoursRepository openingHoursRepository;
+    private static Map<UUID,String> teamIdTeamKatalog = TeamKatalogKlient.getTeams();
 
     public static StatusDto toStatusDto(RecordEntity recordEntity){
         return StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation());
@@ -68,11 +70,15 @@ public class EntityDtoMappers {
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setType(ServiceTypeDto.fromValue(entity.getType().getDbRepresentation()));
-        dto.setTeam(entity.getTeam());
+        dto.setTeam(mapTeamNavnTeamKatalog(entity.getTeam()));
         dto.setPollingUrl(entity.getPolling_url());
         dto.setMonitorlink(entity.getMonitorlink());
         dto.setStatusNotFromTeam(entity.getStatusNotFromTeam());
         return dto;
+    }
+
+    private static String mapTeamNavnTeamKatalog(String teamId){
+        return teamIdTeamKatalog.getOrDefault(UUID.fromString(teamId),teamId);
     }
 
     public static List<OPSmessageDto> toOpsMessageDtoShallow(List<OpsMessageEntity> entities){
@@ -131,13 +137,13 @@ public class EntityDtoMappers {
 
     public static ServiceDto toServiceDtoDeep(Map.Entry<ServiceEntity,List<ServiceEntity>> entry){
         ServiceEntity service = entry.getKey();
-        List<ServiceEntity> serviceDependencies = entry.getValue().stream().filter(s -> s.getType().equals(ServiceType.TJENESTE)).collect(Collectors.toList());
-        List<ServiceEntity> componentDependencies = entry.getValue().stream().filter(s -> s.getType().equals(ServiceType.KOMPONENT)).collect(Collectors.toList());
+        List<ServiceEntity> serviceDependencies = entry.getValue().stream().filter(s -> s.getType().equals(ServiceType.TJENESTE)).toList();
+        List<ServiceEntity> componentDependencies = entry.getValue().stream().filter(s -> s.getType().equals(ServiceType.KOMPONENT)).toList();
         ServiceDto dto = new ServiceDto();
         dto.setId(service.getId());
         dto.setName(service.getName());
         dto.setType(ServiceTypeDto.fromValue(service.getType().getDbRepresentation()));
-        dto.setTeam(service.getTeam());
+        dto.setTeam(mapTeamNavnTeamKatalog(service.getTeam()));
         dto.setMonitorlink(service.getMonitorlink());
         dto.pollingUrl(service.getPolling_url());
         dto.setStatusNotFromTeam(service.getStatusNotFromTeam());
