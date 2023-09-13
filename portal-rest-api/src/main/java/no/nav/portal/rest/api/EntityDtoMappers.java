@@ -78,7 +78,14 @@ public class EntityDtoMappers {
     }
 
     private static String mapTeamNavnTeamKatalog(String teamId){
-        return teamIdTeamKatalog.getOrDefault(UUID.fromString(teamId),teamId);
+        UUID uuid;
+        try{
+            uuid = UUID.fromString(teamId);
+        }
+        catch (Exception e){
+            return teamId;
+        }
+        return teamIdTeamKatalog.getOrDefault(uuid,teamId);
     }
 
     public static List<OPSmessageDto> toOpsMessageDtoShallow(List<OpsMessageEntity> entities){
