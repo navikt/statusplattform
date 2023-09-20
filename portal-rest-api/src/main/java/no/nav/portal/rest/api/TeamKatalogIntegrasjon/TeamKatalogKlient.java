@@ -43,6 +43,7 @@ public class TeamKatalogKlient {
     }
 
     private static void getTeamsFromTeamkatalog() {
+        logger.info("In teamkatalog klient");
         HttpURLConnection connection;
         try {
             connection = getApiConnection();
@@ -60,7 +61,8 @@ public class TeamKatalogKlient {
             teamIdName.forEach((k,v) -> logger.info("id: "+ k + ", name: "+ v));
         }
         catch (Exception e){
-            logger.debug(e.getMessage());
+            logger.info("Error reaching team api");
+            logger.info(e.getMessage());
 
         }
         lastUpdate = LocalDate.now();
