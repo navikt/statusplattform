@@ -97,6 +97,10 @@ public class EntityDtoMappers {
         catch (Exception e){
             return teamId;
         }
+        if(teamIdTeamKatalog.get(uuid) == null){
+            TeamKatalogKlient.updateTeams();
+            teamIdTeamKatalog = TeamKatalogKlient.getTeams();
+        }
         return teamIdTeamKatalog.getOrDefault(uuid,teamId);
     }
 
