@@ -21,6 +21,7 @@ public class TeamKatalogKlient {
     private static String teamkatalogApiUrl = System.getenv("teamkatalogApiUrl") + "/team?status=ACTIVE%2CPLANNED%2CINACTIVE";
     static Map<UUID,String> teamIdName = new HashMap<>();
     private static LocalDate lastUpdate;
+    private static Boolean shouldUpdate = true;
 
 
     static {
@@ -29,9 +30,10 @@ public class TeamKatalogKlient {
 
 
     public static Map<UUID,String> getTeams(){
-        if(teamIdName.isEmpty() || LocalDate.now().isAfter(lastUpdate)){
+        if(teamIdName.isEmpty() || LocalDate.now().isAfter(lastUpdate)|| shouldUpdate){
             getTeamsFromTeamkatalog();
         }
+        shouldUpdate = !shouldUpdate;
         return teamIdName;
     }
 
