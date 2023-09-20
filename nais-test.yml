@@ -16,7 +16,7 @@ spec:
     - name: ENV
       value: dev
     - name: teamkatalogApiUrl
-      value: https://teamkatalog-api.dev-fss-pub.nais.io
+      value: http://team-catalog-backend.org.svc.cluster.local
   envFrom:
     - secret: swagger-api-konfig
   replicas:
@@ -69,5 +69,6 @@ spec:
         - application: servicemock
           namespace: navdig
           cluster: dev-gcp
-      external:
-        - host: teamkatalog-api.dev-fss-pub.nais.io
+        - application: team-catalog-backend
+          namespace: org
+          cluster: dev-gcp
