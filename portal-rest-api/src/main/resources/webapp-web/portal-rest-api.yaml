@@ -1844,6 +1844,10 @@ components:
           $ref: '#/components/schemas/ServiceType'
         team:
           type: string
+        teamId:
+          type: string
+          format: uuid
+          readOnly: true
         serviceDependencies:
           type: array
           example: "[Liste av service objekter]"

@@ -71,12 +71,24 @@ public class EntityDtoMappers {
         dto.setName(entity.getName());
         dto.setType(ServiceTypeDto.fromValue(entity.getType().getDbRepresentation()));
         dto.setTeam(mapTeamNavnTeamKatalog(entity.getTeam()));
+        dto.setTeamId(getTeamUidIfPresent(entity.getTeam()));
         dto.setPollingUrl(entity.getPolling_url());
         dto.setMonitorlink(entity.getMonitorlink());
         dto.setStatusNotFromTeam(entity.getStatusNotFromTeam());
         return dto;
     }
 
+    private static UUID getTeamUidIfPresent(String teamId){
+        UUID uuid = null;
+        try{
+            uuid = UUID.fromString(teamId);
+        }
+        catch (Exception ignored){
+
+        }
+        return uuid;
+
+    }
     private static String mapTeamNavnTeamKatalog(String teamId){
         UUID uuid;
         try{
@@ -151,6 +163,7 @@ public class EntityDtoMappers {
         dto.setName(service.getName());
         dto.setType(ServiceTypeDto.fromValue(service.getType().getDbRepresentation()));
         dto.setTeam(mapTeamNavnTeamKatalog(service.getTeam()));
+        dto.setTeamId(getTeamUidIfPresent(service.getTeam()));
         dto.setMonitorlink(service.getMonitorlink());
         dto.pollingUrl(service.getPolling_url());
         dto.setStatusNotFromTeam(service.getStatusNotFromTeam());
