@@ -54,6 +54,8 @@ public class TeamKatalogKlient {
                 UUID uuid = UUID.fromString((String) team.get("id"));
                 teamIdName.put(uuid, name);
             });
+            logger.info("succesfully loaded teams for teamkatalog");
+            teamIdName.forEach((k,v) -> logger.info("id: "+ k + ", name: "+ v));
         }
         catch (Exception e){
             logger.debug(e.getMessage());
