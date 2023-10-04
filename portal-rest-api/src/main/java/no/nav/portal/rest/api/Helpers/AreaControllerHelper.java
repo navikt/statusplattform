@@ -70,7 +70,7 @@ public class AreaControllerHelper {
 
     public AreaDto newArea(AreaDto areaDto){
         boolean containsComponent = areaDto.getServices().stream().anyMatch(s -> s.getType().equals(ServiceTypeDto.KOMPONENT));
-        if((areaDto.getContainsComponents() != null  || !areaDto.getContainsComponents())&& containsComponent){
+        if((areaDto.getContainsComponents() == null  || !areaDto.getContainsComponents())&& containsComponent){
             throw new HttpRequestException("Kan ikke legge til komponent i område som ikke skal ha komponenter ");
         }
         UUID uuid = areaRepository.save(EntityDtoMappers.toAreaEntity(areaDto));
@@ -86,7 +86,7 @@ public class AreaControllerHelper {
 
     public AreaDto updateArea(AreaDto areaDto){
         boolean containsComponent = areaDto.getServices().stream().anyMatch(s -> s.getType().equals(ServiceTypeDto.KOMPONENT));
-        if((areaDto.getContainsComponents() != null  || !areaDto.getContainsComponents()) && containsComponent){
+        if((areaDto.getContainsComponents() == null  || !areaDto.getContainsComponents()) && containsComponent){
             throw new HttpRequestException("Kan ikke legge til komponent i område som ikke skal ha komponenter ");
         }
         //update services
