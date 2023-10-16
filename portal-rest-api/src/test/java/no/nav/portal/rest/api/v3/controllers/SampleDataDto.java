@@ -142,6 +142,7 @@ public class SampleDataDto {
                 .type(ServiceTypeDto.TJENESTE)
                 .team(getRandomFromArray(teamNames))
                 .statusNotFromTeam(Boolean.FALSE)
+                .pollingOnPrem(Boolean.FALSE)
                 .monitorlink(getRandomFromArray(urlStrings));
     }
 
@@ -155,6 +156,7 @@ public class SampleDataDto {
                 .team(getRandomFromArray(teamNames))
                 .pollingUrl(getRandomFromArray(urlStrings))
                 .statusNotFromTeam(Boolean.FALSE)
+                .pollingOnPrem(Boolean.FALSE)
                 .monitorlink(getRandomFromArray(urlStrings));
     }
 
