@@ -169,6 +169,7 @@ public class EntityDtoMappers {
         dto.setTeam(mapTeamNavnTeamKatalog(service.getTeam()));
         dto.setTeamId(getTeamUidIfPresent(service.getTeam()));
         dto.setMonitorlink(service.getMonitorlink());
+        dto.setPollingOnPrem(service.getPollingOnPrem());
         dto.pollingUrl(service.getPolling_url());
         dto.setStatusNotFromTeam(service.getStatusNotFromTeam());
         dto.serviceDependencies(serviceDependencies.stream().map(EntityDtoMappers::toServiceDtoShallow).collect(Collectors.toList()));
