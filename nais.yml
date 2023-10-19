@@ -62,9 +62,8 @@ spec:
         - application: onpremstatuspoll
           namespace: navdig
           cluster: prod-fss
+    outbound:
+      rules:
         - application: team-catalog-backend
           namespace: org
-          cluster: prod-gcp
-    outbound:
-      external:
-        - host: statusholder.prod-fss-pub.nais.io
+          cluster: dev-gcp
