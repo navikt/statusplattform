@@ -36,6 +36,7 @@ public class SampleData {
 
     static final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
 
+    static final ArrayList<Long> numbers =  new ArrayList<Long>(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L));
 
     public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -296,7 +297,6 @@ public class SampleData {
     }
 
 
-
     public static MaintenanceEntity getRandomizedMaintenanceEntity() {
         Random random = new Random();
         int numberOfDays = random.nextInt(2);
@@ -305,6 +305,22 @@ public class SampleData {
                 .setDescription(getRandomFromArray(maintenanceDescriptions))
                 .setStart_time(ZonedDateTime.now().plusDays(numberOfDays))
                 .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
+    }
+
+    public static HelpTextEntity getRandomizedHelpTextEntity() {
+        return new HelpTextEntity()
+                .setNr(getRandomFromLongArray(numbers))
+                .setType(getRandomServiceType())
+                .setContent(getRandomFromArray());
+    }
+
+    private static Long getRandomFromLongArray(ArrayList<Long> array) {
+        if (array.size() == 0) {
+            //Hit skal man ikke komme
+            return null;
+        }
+        Random random = new Random();
+        return array.get(random.nextInt(array.size()));
     }
 }
 
