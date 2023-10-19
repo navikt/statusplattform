@@ -17,6 +17,8 @@ spec:
       value: https://status-api.nav.no
     - name: TENANT
       value: nav.no
+    - name: teamkatalogApiUrl
+      value: http://team-catalog-backend.org.svc.cluster.local
     - name: ENV
       value: prod
   replicas:
@@ -60,6 +62,9 @@ spec:
         - application: onpremstatuspoll
           namespace: navdig
           cluster: prod-fss
+        - application: team-catalog-backend
+          namespace: org
+          cluster: prod-gcp
     outbound:
       external:
         - host: statusholder.prod-fss-pub.nais.io
