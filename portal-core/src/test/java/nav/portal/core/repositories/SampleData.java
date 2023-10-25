@@ -345,9 +345,9 @@ public class SampleData {
         return helpTexts;
     }
 
-    public static List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length, int numberOfComponents) {
+    public static List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length) {
         List<HelpTextEntity> helpTexts = new ArrayList<>();
-        for (int i = length; i < numberOfComponents; i++) {
+        for (int i = 0; i < length; i++) {
             helpTexts.add(new HelpTextEntity()
                     .setNr(i+1)
                     .setType(ServiceType.KOMPONENT)
