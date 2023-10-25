@@ -359,8 +359,7 @@ public class SampleData {
     public static List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes(int number) {
         Random random = new Random();
         int numberOfServices = random.nextInt(5) + 1;
-        //int numberOfComponents = random.nextInt(5) + 1;*/
-        int numberOfComponents = random.nextInt(5) + number + 1;
+        int numberOfComponents = random.nextInt(5) + 1;
         return Stream.of(
                 getHelpTextEntityWithServiceType(numberOfServices),
                 getHelpTextEntityWithKomponentType(number, numberOfComponents))
