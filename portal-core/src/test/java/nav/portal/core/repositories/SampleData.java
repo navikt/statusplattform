@@ -362,7 +362,7 @@ public class SampleData {
         int numberOfComponents = random.nextInt(5) + 1;
         return Stream.of(
                 getHelpTextEntityWithServiceType(numberOfServices),
-                getHelpTextEntityWithKomponentType(number, numberOfComponents))
+                getHelpTextEntityWithKomponentType(numberOfComponents))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
