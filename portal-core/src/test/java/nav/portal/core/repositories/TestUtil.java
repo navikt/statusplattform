@@ -65,8 +65,8 @@ public class TestUtil {
         DbContextTable serviceTable = dbContext.table("service");
         serviceTable.whereExpression("id is NOT null").executeDelete();
 
-
-
+        DbContextTable help_textTable = dbContext.table("help_text");
+        help_textTable.whereExpression(" number is NOT null").executeDelete();
 
     }
 

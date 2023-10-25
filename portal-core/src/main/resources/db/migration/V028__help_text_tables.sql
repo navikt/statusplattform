@@ -1,8 +1,8 @@
 
 CREATE TABLE help_text
 (
-    number       INT NUMERIC,
+    number       INT NOT NULL,
     type         VARCHAR(20)  NOT NULL,
     content text NULL,
-    PRIMARY KEY (service_id)
+    PRIMARY KEY (number, type)
 );

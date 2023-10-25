@@ -5,15 +5,15 @@ import nav.portal.core.enums.ServiceType;
 import java.util.Objects;
 
 public class HelpTextEntity {
-    private long nr; // nr represents number
+    private int nr; // nr represents number
     private ServiceType type;
     private String content;
 
-    public long getNr() {
+    public int getNr() {
         return nr;
     }
 
-    public HelpTextEntity setNr(long nr) {
+    public HelpTextEntity setNr(int nr) {
         this.nr = nr;
         return this;
     }
@@ -39,8 +39,7 @@ public class HelpTextEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof HelpTextEntity)) return false;
-        HelpTextEntity that = (HelpTextEntity) o;
+        if (!(o instanceof HelpTextEntity that)) return false;
         return getNr() == that.getNr() && getType() == that.getType() && Objects.equals(getContent(), that.getContent());
     }
 

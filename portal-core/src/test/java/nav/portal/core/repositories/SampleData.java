@@ -8,6 +8,7 @@ import nav.portal.core.enums.ServiceType;
 import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class SampleData {
@@ -36,7 +37,17 @@ public class SampleData {
 
     static final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
 
-    static final ArrayList<Long> numbers =  new ArrayList<Long>(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L));
+    static final ArrayList<Integer> numbers =  new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
+
+    static final ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
+            "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
+            "Navnet på tjenesten slik den omtales ut mot brukerne av tjenesten",
+            "Navnet på team slik det er skrevet i Teamkatalogen",
+            "Link til et eventuelt dashboard eller monitor med mer detaljert informasjon. Eksempelvis Grafana dashboard",
+            "URL til statusendepunkt som Statusplattformen skal polle for status",
+            "Her kan man legge inn andre komponenter det er avhengigheter til. Informasjon om status på disse vil da vises i komponentbildet. Velg i liste og klikk Legg til for hver komponent.",
+            "Her legger man inn tjenester hvor komponeten skal vises. Velg i liste og klikk Legg til for hver tjeneste."));
+
 
     public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -311,16 +322,55 @@ public class SampleData {
         return new HelpTextEntity()
                 .setNr(getRandomFromLongArray(numbers))
                 .setType(getRandomServiceType())
-                .setContent(getRandomFromArray());
+                .setContent(getRandomFromArray(helpTextDescriptions));
     }
 
-    private static Long getRandomFromLongArray(ArrayList<Long> array) {
+    private static int getRandomFromLongArray(ArrayList<Integer> array) {
         if (array.size() == 0) {
             //Hit skal man ikke komme
-            return null;
+            return 0;
         }
         Random random = new Random();
         return array.get(random.nextInt(array.size()));
     }
+
+    public static List<HelpTextEntity> getHelpTextEntityWithServiceType(int length) {
+        List<HelpTextEntity> helpTexts = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            helpTexts.add(new HelpTextEntity()
+                    .setNr(i+1)
+                    .setType(ServiceType.TJENESTE)
+                    .setContent(getRandomFromArray(helpTextDescriptions)));
+        }
+        return helpTexts;
+    }
+
+    public static List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length, int numberOfComponents) {
+        List<HelpTextEntity> helpTexts = new ArrayList<>();
+        for (int i = length; i < numberOfComponents; i++) {
+            helpTexts.add(new HelpTextEntity()
+                    .setNr(i+1)
+                    .setType(ServiceType.KOMPONENT)
+                    .setContent(getRandomFromArray(helpTextDescriptions)));
+        }
+        return helpTexts;
+    }
+
+    public static List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes(int number) {
+        Random random = new Random();
+        int numberOfServices = random.nextInt(5) + 1;
+        //int numberOfComponents = random.nextInt(5) + 1;*/
+        int numberOfComponents = random.nextInt(5) + number + 1;
+        return Stream.of(
+                getHelpTextEntityWithServiceType(numberOfServices),
+                getHelpTextEntityWithKomponentType(number, numberOfComponents))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+
+
+
+
 }
 
