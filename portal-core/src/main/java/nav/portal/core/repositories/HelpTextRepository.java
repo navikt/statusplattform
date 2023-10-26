@@ -59,23 +59,22 @@ public class HelpTextRepository {
     }
 
     public  List<HelpTextEntity> retrieveAllWithType(ServiceType serviceType) {
-        return  help_textTable.orderedBy("number")
-                .where("service.type", serviceType.getDbRepresentation())
+        return  help_textTable
+                .where("type", serviceType.getDbRepresentation())
                 .stream(HelpTextRepository::toHelpText)
                 .collect(Collectors.toList());
     }
 
     public  List<HelpTextEntity> retrieveAllWithServiceType() {
         return  help_textTable.orderedBy("number")
-                .where("service.type", ServiceType.TJENESTE.getDbRepresentation())
+                .where("type", ServiceType.TJENESTE.getDbRepresentation())
                 .stream(HelpTextRepository::toHelpText)
                 .collect(Collectors.toList());
     }
 
     public  List<HelpTextEntity> retrieveAllWithComponentType() {
         return  help_textTable
-                .where("service.type",  ServiceType.KOMPONENT.getDbRepresentation())
-                .where("service.type",  ServiceType.TJENESTE.getDbRepresentation())
+                .where("type",  ServiceType.KOMPONENT.getDbRepresentation())
                 .stream(HelpTextRepository::toHelpText)
                 .collect(Collectors.toList());
     }

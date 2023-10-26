@@ -253,7 +253,7 @@ public class SampleData {
         return opsMessageSeverity.get(random.nextInt(opsMessageSeverity.size()));
     }
 
-    private static ServiceType getRandomServiceType() {
+    public static ServiceType getRandomServiceType() {
         Random random = new Random();
         return ServiceType.values()[random.nextInt(ServiceType.values().length)];
     }
