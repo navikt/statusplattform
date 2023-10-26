@@ -345,12 +345,7 @@ public class SampleData {
         return helpTexts;
     }
 
-    private static HelpTextEntity getHelpTextEnity(ServiceType serviceType,int number){
-        return new HelpTextEntity()
-                .setNr(number+1)
-                .setType(serviceType)
-                .setContent(getRandomFromArray(helpTextDescriptions));
-    }
+
 
     public static List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length) {
         List<HelpTextEntity> helpTexts = new ArrayList<>();
@@ -365,8 +360,8 @@ public class SampleData {
 
     public static List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes() {
         Random random = new Random();
-        int numberOfServices = 5;//random.nextInt(5) + 1;
-        int numberOfComponents = 5;// random.nextInt(5) + 1;
+        int numberOfServices = random.nextInt(5) + 1;
+        int numberOfComponents = random.nextInt(5) + 1;
         List<HelpTextEntity> result = new ArrayList<>();
         for(int i=0;i<numberOfServices;i++){
             result.add(getHelpTextEnity(ServiceType.TJENESTE,i));
@@ -376,6 +371,13 @@ public class SampleData {
             result.add(getHelpTextEnity(ServiceType.KOMPONENT,i));
         }
         return result;
+    }
+
+    private static HelpTextEntity getHelpTextEnity(ServiceType serviceType,int number){
+        return new HelpTextEntity()
+                .setNr(number+1)
+                .setType(serviceType)
+                .setContent(getRandomFromArray(helpTextDescriptions));
     }
 
 
