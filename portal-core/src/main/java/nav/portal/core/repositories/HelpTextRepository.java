@@ -1,8 +1,6 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.HelpTextEntity;
-import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import nav.portal.core.exceptionHandling.ExceptionUtil;
 import org.actioncontroller.HttpRequestException;
@@ -23,7 +21,7 @@ public class HelpTextRepository {
         this.dbContext = dbContext;
     }
 
-    public Long save(HelpTextEntity helpText) {
+    public void save(HelpTextEntity helpText) {
         //Sjekk på nr +type kombinasjon
         if (help_textTable.where("number", (long)helpText.getNr())
                 .where("type", helpText.getType()).getCount() > 0) {
@@ -31,11 +29,11 @@ public class HelpTextRepository {
                     + ", og type: " + helpText.getType() + " finnes allerede");
         }
 
-        return help_textTable.newSaveBuilder("number", (long)helpText.getNr())
+        help_textTable.insert()
+                .setField("number", (long)helpText.getNr())
                 .setField("type", helpText.getType().getDbRepresentation())
                 .setField("content", helpText.getContent())
-                .execute()
-                .getId();
+                .execute();
     }
 
     public void update(HelpTextEntity helpText){

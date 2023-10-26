@@ -89,7 +89,7 @@ public class HelpTextRepositoryTest {
     @Test
     void retrieveAll() {
         //Arrange
-        List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes(3);
+        List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
         //Act
         List<HelpTextEntity>allHelpTexts = helpTextRepository.retrieveAllHelpTextEntity();
