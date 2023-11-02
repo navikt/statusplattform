@@ -320,7 +320,7 @@ public class SampleData {
 
     public static HelpTextEntity getRandomizedHelpTextEntity() {
         return new HelpTextEntity()
-                .setNr(getRandomFromLongArray(numbers))
+                .setNumber(getRandomFromLongArray(numbers))
                 .setType(getRandomServiceType())
                 .setContent(getRandomFromArray(helpTextDescriptions));
     }
@@ -338,7 +338,7 @@ public class SampleData {
         List<HelpTextEntity> helpTexts = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             helpTexts.add(new HelpTextEntity()
-                    .setNr(i+1)
+                    .setNumber(i+1)
                     .setType(ServiceType.TJENESTE)
                     .setContent(getRandomFromArray(helpTextDescriptions)));
         }
@@ -351,7 +351,7 @@ public class SampleData {
         List<HelpTextEntity> helpTexts = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             helpTexts.add(new HelpTextEntity()
-                    .setNr(i+1)
+                    .setNumber(i+1)
                     .setType(ServiceType.KOMPONENT)
                     .setContent(getRandomFromArray(helpTextDescriptions)));
         }
@@ -375,7 +375,7 @@ public class SampleData {
 
     private static HelpTextEntity getHelpTextEnity(ServiceType serviceType,int number){
         return new HelpTextEntity()
-                .setNr(number+1)
+                .setNumber(number+1)
                 .setType(serviceType)
                 .setContent(getRandomFromArray(helpTextDescriptions));
     }

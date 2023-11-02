@@ -1,5 +1,6 @@
 package no.nav.portal.rest.api.v3.controllers;
 
+import nav.portal.core.entities.HelpTextEntity;
 import nav.portal.core.enums.RuleType;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
@@ -40,6 +41,18 @@ public class SampleDataDto {
             "Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00",
             "Normal work days", "??.??.???? ? 1-5 07:30-17:00"
     );
+
+    static final ArrayList<Integer> numbers =  new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
+
+    static final ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
+            "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
+            "Navnet på tjenesten slik den omtales ut mot brukerne av tjenesten",
+            "Navnet på team slik det er skrevet i Teamkatalogen",
+            "Link til et eventuelt dashboard eller monitor med mer detaljert informasjon. Eksempelvis Grafana dashboard",
+            "URL til statusendepunkt som Statusplattformen skal polle for status",
+            "Her kan man legge inn andre komponenter det er avhengigheter til. Informasjon om status på disse vil da vises i komponentbildet. Velg i liste og klikk Legg til for hver komponent.",
+            "Her legger man inn tjenester hvor komponeten skal vises. Velg i liste og klikk Legg til for hver tjeneste."));
+
 
     static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("National Holidays", "Collaborative maintenance, local maintenance", "Early closing"));
 
@@ -368,6 +381,13 @@ public class SampleDataDto {
         return groupsThinDto;
     }
 
+    /*public static HelpTextDto getRandomizedHelpTextDto() {
+        return new helpTexDto()
+                .setNumber(getRandomFromLongArray(numbers))
+                .setType(getRandomServiceTypeDto())
+                .setContent(getRandomFromArray(helpTextDescriptions));
+    }*/
+
     private static String getRandomFromKey(List<String> namesAndRulesKeys) {
         if (namesAndRulesKeys.size() == 0) {
             //Hit skal man ikke komme
@@ -414,5 +434,14 @@ public class SampleDataDto {
     private static OPSmessageDto.SeverityEnum getRandomOpsMessageDtoSeverity() {
         Random random = new Random();
         return OPSmessageDto.SeverityEnum.values()[random.nextInt(OPSmessageDto.SeverityEnum.values().length)];
+    }
+
+    private static int getRandomFromLongArray(ArrayList<Integer> array) {
+        if (array.size() == 0) {
+            //Hit skal man ikke komme
+            return 0;
+        }
+        Random random = new Random();
+        return array.get(random.nextInt(array.size()));
     }
 }

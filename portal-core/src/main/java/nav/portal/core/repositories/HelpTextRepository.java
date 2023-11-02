@@ -21,25 +21,31 @@ public class HelpTextRepository {
         this.dbContext = dbContext;
     }
 
-    public void save(HelpTextEntity helpText) {
+    public Optional<HelpTextEntity> save(HelpTextEntity helpText) {
         //Sjekk på nr +type kombinasjon
-        if (help_textTable.where("number", (long)helpText.getNr())
+        if (help_textTable.where("number", (long)helpText.getNumber())
                 .where("type", helpText.getType()).getCount() > 0) {
-            throw new HttpRequestException("Hjelpetekst med nummer: " + helpText.getNr()
+            throw new HttpRequestException("Hjelpetekst med nummer: " + helpText.getNumber()
                     + ", og type: " + helpText.getType() + " finnes allerede");
         }
 
         help_textTable.insert()
-                .setField("number", (long)helpText.getNr())
+                .setField("number", (long)helpText.getNumber())
                 .setField("type", helpText.getType().getDbRepresentation())
                 .setField("content", helpText.getContent())
                 .execute();
+
+        return help_textTable
+                .where("number", (long)helpText.getNumber())
+                .where("type", helpText.getType().getDbRepresentation() )
+                .singleObject(HelpTextRepository::toHelpText);
     }
 
     public void update(HelpTextEntity helpText){
-        help_textTable.where("number",(long)helpText.getNr())
+        help_textTable.where("number",(long)helpText.getNumber())
+                .where("type", helpText.getType().getDbRepresentation() )
                 .update()
-                .setField("number", helpText.getNr())
+                .setField("number", helpText.getNumber())
                 .setField("type", helpText.getType().getDbRepresentation())
                 .setField("content", helpText.getContent())
                 .execute();
@@ -52,27 +58,27 @@ public class HelpTextRepository {
                 .singleObject(HelpTextRepository::toHelpText);
     }
 
-    public List<HelpTextEntity> retrieveAllHelpTextEntity() {
+    public List<HelpTextEntity> retrieveAllHelpTexts() {
         return  help_textTable.orderedBy("number")
                 .stream(HelpTextRepository::toHelpText)
                 .collect(Collectors.toList());
     }
 
-    public  List<HelpTextEntity> retrieveAllWithType(ServiceType serviceType) {
+    public  List<HelpTextEntity> retrieveAllTypes(ServiceType serviceType) {
         return  help_textTable
                 .where("type", serviceType.getDbRepresentation())
                 .stream(HelpTextRepository::toHelpText)
                 .collect(Collectors.toList());
     }
 
-    public  List<HelpTextEntity> retrieveAllWithServiceType() {
+    public  List<HelpTextEntity> retrieveAllServices() {
         return  help_textTable.orderedBy("number")
                 .where("type", ServiceType.TJENESTE.getDbRepresentation())
                 .stream(HelpTextRepository::toHelpText)
                 .collect(Collectors.toList());
     }
 
-    public  List<HelpTextEntity> retrieveAllWithComponentType() {
+    public  List<HelpTextEntity> retrieveAllComponents() {
         return  help_textTable
                 .where("type",  ServiceType.KOMPONENT.getDbRepresentation())
                 .stream(HelpTextRepository::toHelpText)
@@ -89,7 +95,7 @@ public class HelpTextRepository {
     static HelpTextEntity toHelpText(DatabaseRow row) {
         try {
             return new HelpTextEntity()
-                    .setNr(row.getInt("number"))
+                    .setNumber(row.getInt("number"))
                     .setType(ServiceType.fromDb(row.getString("type")))
                     .setContent(row.getString("content"));
         } catch (SQLException e) {

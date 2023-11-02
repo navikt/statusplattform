@@ -42,8 +42,7 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-
-        Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNr(), helpText.getType());
+        Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
         retrievedHelpText.ifPresent(helpTextEntity -> Assertions.assertThat(helpTextEntity).isEqualTo(helpText));
     }
@@ -54,10 +53,10 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-        Optional<HelpTextEntity>helpTextBefore = helpTextRepository.retrieve(helpText.getNr(), helpText.getType());
+        Optional<HelpTextEntity>helpTextBefore = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         helpText.setContent("Any other information");
         helpTextRepository.update(helpText);
-        Optional<HelpTextEntity>helpTextAfter = helpTextRepository.retrieve(helpText.getNr(), helpText.getType());
+        Optional<HelpTextEntity>helpTextAfter = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
         helpTextAfter.ifPresent(helpTextEntityAfter -> Assertions.assertThat(helpTextEntityAfter.getContent())
                 .isNotEqualTo(helpTextBefore.get().getContent()));
@@ -69,9 +68,10 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-        Optional<HelpTextEntity>retrievedHelpText = helpTextRepository.retrieve(helpText.getNr(), helpText.getType());
+        Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
-        retrievedHelpText.ifPresent(helpTextEntity -> Assertions.assertThat(helpTextEntity).isEqualTo(helpText));
+        retrievedHelpText.ifPresent(retrievedHelpTextEntity ->
+                Assertions.assertThat(retrievedHelpTextEntity).isEqualTo(helpText));
     }
 
     @Test
@@ -80,14 +80,14 @@ public class HelpTextRepositoryTest {
         List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
         //Act
-        List<HelpTextEntity>allHelpTexts = helpTextRepository.retrieveAllHelpTextEntity();
+        List<HelpTextEntity>allHelpTexts = helpTextRepository.retrieveAllHelpTexts();
         //Assert
         Assertions.assertThat(allHelpTexts.size()).isEqualTo(helpTexts.size());
         Assertions.assertThat(allHelpTexts).containsAll(helpTexts);
     }
 
     @Test
-    void retrieveAllWithType() {
+    void retrieveAllTypes() {
         //Arrange
         List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
@@ -100,7 +100,7 @@ public class HelpTextRepositoryTest {
             }
         });
         List<HelpTextEntity>retrievedHelpTexts
-                = helpTextRepository.retrieveAllWithType(ServiceType.valueOf(serviceType));
+                = helpTextRepository.retrieveAllTypes(ServiceType.valueOf(serviceType));
         //Assert
         Assertions.assertThat(retrievedHelpTexts.size()).isEqualTo(typeHelpTexts.size());
         Assertions.assertThat(typeHelpTexts).containsAll(retrievedHelpTexts);
@@ -108,7 +108,7 @@ public class HelpTextRepositoryTest {
     }
 
     @Test
-    void retrieveAllWithServiceType() {
+    void retrieveAllServices() {
         //Arrange
         List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
@@ -119,7 +119,7 @@ public class HelpTextRepositoryTest {
                 serviceHelpTexts.add(helpText);
             }
         });
-        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveAllWithServiceType();
+        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveAllServices();
         //Assert
         Assertions.assertThat(retrievedHelpTexts.size()).isEqualTo(serviceHelpTexts.size());
         Assertions.assertThat(serviceHelpTexts).containsAll(retrievedHelpTexts);
@@ -127,7 +127,7 @@ public class HelpTextRepositoryTest {
     }
 
     @Test
-    void retrieveAllWithComponentType() {
+    void retrieveAllComponents() {
         //Arrange
         List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
@@ -138,7 +138,7 @@ public class HelpTextRepositoryTest {
                 componentHelpTexts.add(helpText);
             }
         });
-        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveAllWithComponentType();
+        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveAllComponents();
         //Assert
         Assertions.assertThat(retrievedHelpTexts.size()).isEqualTo(componentHelpTexts.size());
         Assertions.assertThat(componentHelpTexts).containsAll(retrievedHelpTexts);
@@ -151,10 +151,11 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-        helpTextRepository.delete(helpText.getNr(), helpText.getType());
-        Optional<HelpTextEntity>retrievedHelpText = helpTextRepository.retrieve(helpText.getNr(), helpText.getType());
+        helpTextRepository.delete(helpText.getNumber(), helpText.getType());
+        Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
-        Assertions.assertThat(retrievedHelpText.isPresent()).isFalse();
+        Assertions.assertThat(helpTextRepository.retrieve(helpText.getNumber(), helpText.getType())).isEmpty();
+
     }
 
 }

@@ -398,4 +398,28 @@ public class EntityDtoMappers {
         return dto;
     }
 
+    public static HelpTextDto toHelpTextDto(HelpTextEntity entity){
+        HelpTextDto dto = new HelpTextDto();
+        dto.setNumber(entity.getNumber());
+        dto.setType(ServiceTypeDto.fromValue(entity.getType().getDbRepresentation()));
+        dto.setContent(entity.getContent());
+        return dto;
+    }
+
+    public static HelpTextEntity toHelpTextEntity(HelpTextDto dto){
+        HelpTextEntity entity = new HelpTextEntity();
+        entity.setNumber(dto.getNumber());
+        entity.setType(ServiceType.fromDb(dto.getType().getValue()));
+        entity.setContent(dto.getContent());
+        return entity;
+    }
+
+    public static HelpTextDto toHelpTextDtoOptional(Optional<HelpTextEntity> entity) {
+        HelpTextDto dto = new HelpTextDto();
+        dto.setNumber(entity.get().getNumber());
+        dto.setType(ServiceTypeDto.fromValue(entity.get().getType().getDbRepresentation()));
+        dto.setContent(entity.get().getContent());
+        return dto;
+    }
+
 }
