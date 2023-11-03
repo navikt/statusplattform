@@ -87,27 +87,6 @@ public class HelpTextRepositoryTest {
     }
 
     @Test
-    void retrieveAllTypes() {
-        //Arrange
-        List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
-        helpTexts.forEach(helpTextRepository::save);
-        //Act
-        List<HelpTextEntity>typeHelpTexts = new ArrayList<>();
-        String serviceType = SampleData.getRandomServiceType().name();
-        helpTexts.forEach(helpText->{
-            if(helpText.getType().equals(ServiceType.valueOf(serviceType))){
-                typeHelpTexts.add(helpText);
-            }
-        });
-        List<HelpTextEntity>retrievedHelpTexts
-                = helpTextRepository.retrieveAllTypes(ServiceType.valueOf(serviceType));
-        //Assert
-        Assertions.assertThat(retrievedHelpTexts.size()).isEqualTo(typeHelpTexts.size());
-        Assertions.assertThat(typeHelpTexts).containsAll(retrievedHelpTexts);
-        Assertions.assertThat(helpTexts).containsAll(retrievedHelpTexts);
-    }
-
-    @Test
     void retrieveAllServices() {
         //Arrange
         List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();

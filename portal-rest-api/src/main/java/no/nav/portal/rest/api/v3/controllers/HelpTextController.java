@@ -23,15 +23,13 @@ public class HelpTextController {
 
     @POST("/HelpText")
     @JsonBody
-    public HelpTextDto newHepText(@JsonBody HelpTextDto helpTextDto) {
+    public HelpTextDto newHelpText(@JsonBody HelpTextDto helpTextDto) {
         return helpTextControllerHelper.saveNewHelpText(helpTextDto);
     }
 
     @PUT("/HelpText/:HelpText_number/:HelpText_type")
     @JsonBody
-    public void updateHelpText(@PathParam("HelpText_number") int helpText_number,
-                               @PathParam("HelpText_type") ServiceType helpText_type,
-                               @JsonBody HelpTextDto helpTextDto) {
+    public void updateHelpText(@JsonBody HelpTextDto helpTextDto) {
         helpTextControllerHelper.updateHelpText(helpTextDto);
     }
 

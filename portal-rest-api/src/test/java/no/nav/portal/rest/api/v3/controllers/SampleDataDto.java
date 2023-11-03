@@ -10,6 +10,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SampleDataDto {
     static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Ekstern", "Intern", "Ekstenpartner", "Dette er et velidig langt navn", "blahblahaa", "blahblahaab", "blahblahaac", "blahblahaad", "blahblahaae", "blahblahaaf", "blahblahaag", "blahblahaah", "blahblahaai", "blahblahaaj", "blahblahaak", "blahblahaal", "blahblahaam", "blahblahaan", "blahblahaao", "blahblahaap", "blahblahaaq", "blahblahaar", "blahblahaas", "blahblahaat"));
@@ -41,8 +42,6 @@ public class SampleDataDto {
             "Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00",
             "Normal work days", "??.??.???? ? 1-5 07:30-17:00"
     );
-
-    static final ArrayList<Integer> numbers =  new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
 
     static final ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
             "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
@@ -381,12 +380,44 @@ public class SampleDataDto {
         return groupsThinDto;
     }
 
-    /*public static HelpTextDto getRandomizedHelpTextDto() {
-        return new helpTexDto()
-                .setNumber(getRandomFromLongArray(numbers))
-                .setType(getRandomServiceTypeDto())
-                .setContent(getRandomFromArray(helpTextDescriptions));
-    }*/
+    public static HelpTextDto getRandomizedHelpTextDto() {
+        return new HelpTextDto()
+                .number(getRandomNumberOfServiceType())
+                .type(getRandomServiceTypeDto())
+                .content(getRandomFromArray(helpTextDescriptions));
+    }
+
+    public static List<HelpTextDto> getRandomNumberOfHelpTextDtosOfServiceType() {
+        List<HelpTextDto> helpTextDtos = new ArrayList<>();
+        int numberOfServiceTypes = getRandomNumberOfServiceType();
+            for (int i = 0; i < numberOfServiceTypes; i++) {
+            helpTextDtos.add(new HelpTextDto()
+                    .number(i+1)
+                    .type(ServiceTypeDto.TJENESTE)
+                    .content(getRandomFromArray(helpTextDescriptions)));
+        }
+        return helpTextDtos;
+    }
+
+    public static List<HelpTextDto> getRandomNumberOfHelpTextDtosOfKomponentType() {
+        List<HelpTextDto> helpTextDtos = new ArrayList<>();
+        int numberOfComponentTypes = getRandomNumberOfServiceType();
+        for (int i = 0; i < numberOfComponentTypes; i++) {
+            helpTextDtos.add(new HelpTextDto()
+                    .number(i+1)
+                    .type(ServiceTypeDto.KOMPONENT)
+                    .content(getRandomFromArray(helpTextDescriptions)));
+        }
+        return helpTextDtos;
+    }
+
+    public static List<HelpTextDto> getRandomNumberOfHelpTextDtos() {
+        List<HelpTextDto> result = Stream.concat(
+                getRandomNumberOfHelpTextDtosOfServiceType().stream(),
+                getRandomNumberOfHelpTextDtosOfKomponentType().stream())
+                .collect(Collectors.toList());
+        return result;
+    }
 
     private static String getRandomFromKey(List<String> namesAndRulesKeys) {
         if (namesAndRulesKeys.size() == 0) {
@@ -395,6 +426,16 @@ public class SampleDataDto {
         }
         Random random = new Random();
         return namesAndRulesKeys.get(random.nextInt(namesAndRulesKeys.size()));
+    }
+
+    public static List<HelpTextDto> getNonEmptyListOfHelpTextDtos(int length) {
+        List<HelpTextDto> helpTextDtos = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            helpTextDtos.add(new HelpTextDto()
+                    .number(i+1)
+                    .content(getRandomFromArray(helpTextDescriptions)));
+        }
+        return helpTextDtos;
     }
 
     private static ServiceTypeDto getRandomServiceTypeDto() {
@@ -436,12 +477,8 @@ public class SampleDataDto {
         return OPSmessageDto.SeverityEnum.values()[random.nextInt(OPSmessageDto.SeverityEnum.values().length)];
     }
 
-    private static int getRandomFromLongArray(ArrayList<Integer> array) {
-        if (array.size() == 0) {
-            //Hit skal man ikke komme
-            return 0;
-        }
+    private static int getRandomNumberOfServiceType(){
         Random random = new Random();
-        return array.get(random.nextInt(array.size()));
+        return random.nextInt(5) + 1;
     }
 }

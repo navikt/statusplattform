@@ -1733,33 +1733,6 @@ paths:
           description: Not Found
           content: {}
       deprecated: false
-  /HelpText/Types:
-    get:
-      tags:
-        - HelpText
-      summary: Hent alle hjelpeteksttyper
-      operationId: getAllHelpTexts
-      description: Hjelpeteksttyper skal kategoriseres på typer som kan finnes her.
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-                  example: Applikasjon
-        '401':
-          description: Unauthorized
-          content: { }
-        '403':
-          description: Forbidden
-          content: { }
-        '404':
-          description: Not Found
-          content: { }
-      deprecated: false
   /HelpText/Services:
     get:
       tags:
@@ -1860,6 +1833,30 @@ paths:
         '404':
           description: Not Found
           content: { }
+    put:
+      tags:
+        - HelpText
+      summary: Oppdater hjelpetekst
+      description: Endre feltene i en hjelptekst
+      requestBody:
+        description: Oppdater hjelpetekst.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelpText'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
   /HelpText/{HelpText_number}/{HelpText_type}:
     get:
       tags:
@@ -1897,41 +1894,6 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
-    put:
-      tags:
-        - HelpText
-      summary: Oppdater hjelpetekst
-      description: Endre feltene i en hjelptekst
-      parameters:
-        - name: HelpText_number
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: HelpText_type
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Oppdater hjelpetekst.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/HelpText'
-          text/plain:
-            schema:
-              type: string
-      responses:
-        '201':
-          description: Created
-        '403':
-          description: Forbidden
-          content: { }
-        '404':
-          description: Not Found
-          content: { }
     delete:
       tags:
         - HelpText

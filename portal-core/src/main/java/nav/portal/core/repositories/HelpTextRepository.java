@@ -64,13 +64,6 @@ public class HelpTextRepository {
                 .collect(Collectors.toList());
     }
 
-    public  List<HelpTextEntity> retrieveAllTypes(ServiceType serviceType) {
-        return  help_textTable
-                .where("type", serviceType.getDbRepresentation())
-                .stream(HelpTextRepository::toHelpText)
-                .collect(Collectors.toList());
-    }
-
     public  List<HelpTextEntity> retrieveAllServices() {
         return  help_textTable.orderedBy("number")
                 .where("type", ServiceType.TJENESTE.getDbRepresentation())
