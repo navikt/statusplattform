@@ -414,6 +414,13 @@ public class EntityDtoMappers {
         return entity;
     }
 
+    public static HelpTextEntity toHelpTextEntity(int nr, ServiceTypeDto serviceTypeDto){
+        HelpTextEntity entity = new HelpTextEntity();
+        entity.setNumber(nr);
+        entity.setType(ServiceType.fromDb(serviceTypeDto.getValue()));
+        return entity;
+    }
+
     public static HelpTextDto toHelpTextDtoOptional(Optional<HelpTextEntity> entity) {
         HelpTextDto dto = new HelpTextDto();
         dto.setNumber(entity.get().getNumber());

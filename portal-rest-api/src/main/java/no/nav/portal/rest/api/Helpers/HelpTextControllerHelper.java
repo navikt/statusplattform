@@ -43,8 +43,9 @@ public class HelpTextControllerHelper {
         helpTextRepository.delete(helpTextEntity);
     }
 
-    public HelpTextDto retrieveOneHelpText(int helptext_number, ServiceType serviceType) {
-        return EntityDtoMappers.toHelpTextDtoOptional(helpTextRepository.retrieve(helptext_number, serviceType));
+    public HelpTextDto retrieveOneHelpText(int helptext_number, ServiceTypeDto serviceTypeDto) {
+        HelpTextEntity helpTextEntity = EntityDtoMappers.toHelpTextEntity(helptext_number, serviceTypeDto);
+        return EntityDtoMappers.toHelpTextDtoOptional(helpTextRepository.retrieve(helpTextEntity.getNumber(),helpTextEntity.getType()));
     }
 
     public List<HelpTextDto> getAllServices() {

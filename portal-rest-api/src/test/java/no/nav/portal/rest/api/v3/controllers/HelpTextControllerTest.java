@@ -89,10 +89,10 @@ public class HelpTextControllerTest {
         HelpTextDto helpTextDto = SampleDataDto.getRandomizedHelpTextDto();
         HelpTextDto helpTextDtoBefore = helpTextController.newHelpText(helpTextDto);
         //Act
-        /*HelpTextDto helpTextDtoAfter =
-               helpTextController.getHelpText(helpTextDto.getNumber(),helpTextDto.);
+        HelpTextDto helpTextDtoAfter =
+               helpTextController.getHelpText(helpTextDto.getNumber(),helpTextDto.getType());
         //Assert
-        Assertions.assertThat(helpTextDtoAfter).isEqualTo(helpTextDtoBefore);*/
+        Assertions.assertThat(helpTextDtoAfter).isEqualTo(helpTextDtoBefore);
 
     }
 

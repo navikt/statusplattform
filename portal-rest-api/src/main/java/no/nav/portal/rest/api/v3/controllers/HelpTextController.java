@@ -36,7 +36,7 @@ public class HelpTextController {
     @GET("/HelpText/:HelpText_number/:HelpText_type")
     @JsonBody
     public HelpTextDto getHelpText(@PathParam("HelpText_number") int helpText_number,
-                                   @PathParam("HelpText_type") ServiceType helpText_type) {
+                                   @PathParam("HelpText_type") ServiceTypeDto helpText_type) {
         return helpTextControllerHelper.retrieveOneHelpText(helpText_number, helpText_type);
     }
 
