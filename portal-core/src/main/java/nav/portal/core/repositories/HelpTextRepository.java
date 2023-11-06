@@ -43,7 +43,7 @@ public class HelpTextRepository {
 
     public void update(HelpTextEntity helpText){
         help_textTable.where("number",(long)helpText.getNumber())
-                .where("type", helpText.getType().getDbRepresentation() )
+                .where("type", helpText.getType().getDbRepresentation())
                 .update()
                 .setField("number", helpText.getNumber())
                 .setField("type", helpText.getType().getDbRepresentation())
@@ -78,9 +78,9 @@ public class HelpTextRepository {
                 .collect(Collectors.toList());
     }
 
-    public boolean delete(int nr, ServiceType serviceType) {
-        help_textTable.where("number", (long)nr)
-                .where("type", serviceType )
+    public boolean delete(HelpTextEntity helpText) {
+        help_textTable.where("number",(long)helpText.getNumber())
+                .where("type", helpText.getType().getDbRepresentation())
                 .executeDelete();
         return true;
     }
@@ -95,7 +95,4 @@ public class HelpTextRepository {
             throw ExceptionUtil.soften(e);
         }
     }
-
-
-
 }

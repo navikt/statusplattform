@@ -27,15 +27,20 @@ public class HelpTextControllerHelper {
         this.helpTextRepository = new HelpTextRepository(context);
     }
 
-    public HelpTextDto saveNewHelpText(HelpTextDto helpTextDto){
+    public HelpTextDto save(HelpTextDto helpTextDto){
         Optional<HelpTextEntity> result = helpTextRepository.save(EntityDtoMappers.toHelpTextEntity(helpTextDto));
         assert result.orElse(null) != null;
         return  EntityDtoMappers.toHelpTextDto(result.orElse(null));
     }
 
-    public void updateHelpText(HelpTextDto helpTextDto){
+    public void update(HelpTextDto helpTextDto){
         HelpTextEntity helpTextEntity = EntityDtoMappers.toHelpTextEntity(helpTextDto);
         helpTextRepository.update(helpTextEntity);
+    }
+
+    public void delete(HelpTextDto helpTextDto){
+        HelpTextEntity helpTextEntity = EntityDtoMappers.toHelpTextEntity(helpTextDto);
+        helpTextRepository.delete(helpTextEntity);
     }
 
     public HelpTextDto retrieveOneHelpText(int helptext_number, ServiceType serviceType) {

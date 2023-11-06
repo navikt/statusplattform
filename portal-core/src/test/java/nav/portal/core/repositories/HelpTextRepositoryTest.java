@@ -130,7 +130,7 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-        helpTextRepository.delete(helpText.getNumber(), helpText.getType());
+        helpTextRepository.delete(helpText);
         Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
         Assertions.assertThat(helpTextRepository.retrieve(helpText.getNumber(), helpText.getType())).isEmpty();

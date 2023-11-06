@@ -1857,6 +1857,19 @@ paths:
         '404':
           description: Not Found
           content: { }
+    delete:
+      tags:
+        - HelpText
+      summary: Fjern hjelpetekst
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
   /HelpText/{HelpText_number}/{HelpText_type}:
     get:
       tags:
@@ -1894,30 +1907,7 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
-    delete:
-      tags:
-        - HelpText
-      summary: Fjern hjelpetekst
-      parameters:
-        - name: HelpText_number
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: HelpText_type
-          in: path
-          required: true
-          schema:
-            type:  string
-      responses:
-        '201':
-          description: Deleted
-        '403':
-          description: Forbidden
-          content: { }
-        '404':
-          description: Not Found
-          content: { }
+
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------

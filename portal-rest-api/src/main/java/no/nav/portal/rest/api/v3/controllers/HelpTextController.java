@@ -24,13 +24,13 @@ public class HelpTextController {
     @POST("/HelpText")
     @JsonBody
     public HelpTextDto newHelpText(@JsonBody HelpTextDto helpTextDto) {
-        return helpTextControllerHelper.saveNewHelpText(helpTextDto);
+        return helpTextControllerHelper.save(helpTextDto);
     }
 
-    @PUT("/HelpText/:HelpText_number/:HelpText_type")
+    @PUT("/HelpText")
     @JsonBody
     public void updateHelpText(@JsonBody HelpTextDto helpTextDto) {
-        helpTextControllerHelper.updateHelpText(helpTextDto);
+        helpTextControllerHelper.update(helpTextDto);
     }
 
     @GET("/HelpText/:HelpText_number/:HelpText_type")
@@ -52,11 +52,10 @@ public class HelpTextController {
         return helpTextControllerHelper.getAllComponents();
     }
 
-    @DELETE("/HelpText/:HelpText_number/:HelpText_type")
+    @DELETE("/HelpText")
     @JsonBody
-    public void deleteHelpText(@PathParam("HelpText_number") int helpText_number,
-                               @PathParam("HelpText_type") ServiceType helpText_type) {
-        helpTextRepository.delete(helpText_number, helpText_type);
+    public void deleteHelpText(@JsonBody HelpTextDto helpTextDto) {
+        helpTextControllerHelper.delete(helpTextDto);
     }
 
     @GET("/HelpText")
@@ -64,7 +63,4 @@ public class HelpTextController {
     public List<HelpTextDto> getAllHelpTexts() {
         return helpTextControllerHelper.getAllHelpTexts();
     }
-
-
-
 }

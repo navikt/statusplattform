@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static no.portal.web.generated.api.ServiceTypeDto.KOMPONENT;
 import static no.portal.web.generated.api.ServiceTypeDto.TJENESTE;
 
 public class HelpTextControllerTest {
@@ -80,7 +81,70 @@ public class HelpTextControllerTest {
                 .isNotEqualTo(retrievedHelpTextBefore.get(1).getContent());
         Assertions.assertThat(retrievedHelpTextAfter.get(0).getContent())
                 .isNotEqualTo(retrievedHelpTextBefore.get(0).getContent());
+    }
 
+    @Test
+    void getHelpText() {
+        //Arrange
+        HelpTextDto helpTextDto = SampleDataDto.getRandomizedHelpTextDto();
+        HelpTextDto helpTextDtoBefore = helpTextController.newHelpText(helpTextDto);
+        //Act
+        /*HelpTextDto helpTextDtoAfter =
+               helpTextController.getHelpText(helpTextDto.getNumber(),helpTextDto.);
+        //Assert
+        Assertions.assertThat(helpTextDtoAfter).isEqualTo(helpTextDtoBefore);*/
+
+    }
+
+    @Test
+    void getAllServices() {
+        //Arrange
+        List<HelpTextDto> helpTextDtos = SampleDataDto.getRandomNumberOfHelpTextDtos();
+        helpTextDtos.forEach(helpTextController::newHelpText);
+        int servicesTypeCount = 0;
+        for(HelpTextDto h: helpTextDtos){
+            if(h.getType().equals(TJENESTE)){
+                servicesTypeCount++;
+            }
+        }
+        //Act
+        List<HelpTextDto> retrievedHelpTextServices = helpTextController.getAllServices();
+        //Assert
+        Assertions.assertThat(retrievedHelpTextServices.size()).isEqualTo(servicesTypeCount);
+    }
+
+    @Test
+    void getAllComponents() {
+        //Arrange
+        List<HelpTextDto> helpTextDtos = SampleDataDto.getRandomNumberOfHelpTextDtos();
+        helpTextDtos.forEach(helpTextController::newHelpText);
+        int componentsTypeCount = 0;
+        for(HelpTextDto h: helpTextDtos){
+            if(h.getType().equals(KOMPONENT)){
+                componentsTypeCount++;
+            }
+        }
+        //Act
+        List<HelpTextDto> retrievedHelpTextComponents = helpTextController.getAllComponents();
+        //Assert
+        Assertions.assertThat(retrievedHelpTextComponents.size()).isEqualTo(componentsTypeCount);
+    }
+
+    @Test
+    void deleteHelpText() {
+        //Arrange
+        List<HelpTextDto> helpTextDtos = SampleDataDto.getRandomNumberOfHelpTextDtos();
+        helpTextDtos.forEach(helpTextController::newHelpText);
+        HelpTextDto toBeDeleted = helpTextDtos.get(0);
+        //Act
+        helpTextController.deleteHelpText(helpTextDtos.get(0));
+        List<HelpTextDto> retrievedHelpTextAfter = helpTextController.getAllHelpTexts();
+        //Assert
+        Assertions.assertThat(retrievedHelpTextAfter.size())
+                .isNotEqualTo(helpTextDtos.size());
+        Assertions.assertThat(retrievedHelpTextAfter.size() + 1).isEqualTo(helpTextDtos.size());
+        Assertions.assertThat(helpTextDtos).contains(toBeDeleted);
+        Assertions.assertThat(retrievedHelpTextAfter).doesNotContain(toBeDeleted);
     }
 
 }
