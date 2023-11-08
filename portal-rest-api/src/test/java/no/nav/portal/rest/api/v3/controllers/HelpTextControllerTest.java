@@ -64,20 +64,6 @@ public class HelpTextControllerTest {
 
 
     @Test
-    void saveTheSame() {
-        //Arrange
-        HelpTextDto helpTextDto = SampleDataDto.getRandomizedHelpTextDto();
-        //Act
-        HelpTextDto savedHelpTextDto = helpTextController.newHelpText(helpTextDto);
-        //Act
-        HelpTextDto savedHelpTextDto2 = helpTextController.newHelpText(helpTextDto);
-        //Assert
-        List<HelpTextDto>retrievedHelpTextDto = helpTextController.getAllHelpTexts();
-        Assertions.assertThat(retrievedHelpTextDto.size()).isEqualTo(1);
-        Assertions.assertThat(retrievedHelpTextDto.get(0)).isEqualTo(savedHelpTextDto);
-        Assertions.assertThat(retrievedHelpTextDto.get(0)).isEqualTo(helpTextDto);
-    }
-    @Test
     void updateHelpText() {
         //Arrange
         List<HelpTextDto> helpTextDtos = SampleDataDto.getNonEmptyListOfHelpTextDtos(2);

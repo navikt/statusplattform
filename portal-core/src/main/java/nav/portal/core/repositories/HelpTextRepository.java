@@ -14,28 +14,35 @@ import java.util.stream.Collectors;
 
 public class HelpTextRepository {
     private final DbContextTable help_textTable;
-    private final DbContext dbContext;
+
 
     public HelpTextRepository(DbContext dbContext) {
         help_textTable = dbContext.table("help_text");
-        this.dbContext = dbContext;
+
     }
 
-    public HelpTextEntity save(HelpTextEntity helpText) {
+    public HelpTextEntity save(HelpTextEntity helpText) throws HttpRequestException {
         //Check if input is valid, and no duplicates
+        //Sjekk på nummer+type kombinasjon
+        if(help_textTable.where("number",helpText.getNumber())
+                .where("type", helpText.getType()).getCount()>0){
+            throw new HttpRequestException("Hjelpe tekst med nummer: " +
+                    helpText.getNumber() + ", og type: " + helpText.getType() +
+                    " finnes allerede");
+        }
         help_textTable.insert()
                 .setField("number", (long)helpText.getNumber())
                 .setField("type", helpText.getType().getDbRepresentation())
                 .setField("content", helpText.getContent())
                 .execute();
 
-        Optional<HelpTextEntity> result = help_textTable
-                .where("number", (long)helpText.getNumber())
+        return help_textTable
+                .where("number", helpText.getNumber())
                 .where("type", helpText.getType().getDbRepresentation())
-                .singleObject(HelpTextRepository::toHelpText);
-
-        //orElseThrow HttpError
-        return result.get();
+                .singleObject(HelpTextRepository::toHelpText)
+                .orElseThrow(() -> new IllegalArgumentException
+                        ("Not found: HelpText nr: " + helpText.getNumber()
+                                + ", type: " + helpText.getContent()));
     }
 
     public void update(HelpTextEntity helpText){
@@ -56,7 +63,6 @@ public class HelpTextRepository {
                 .orElseThrow(() -> new IllegalArgumentException
                         ("Not found: HelpText nr: " + (int) nr
                                 + ", type: " + serviceType));
-
     }
 
     public List<HelpTextEntity> retrieveAllHelpTexts() {

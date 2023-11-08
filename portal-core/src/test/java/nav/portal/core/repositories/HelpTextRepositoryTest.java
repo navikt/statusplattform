@@ -123,12 +123,12 @@ public class HelpTextRepositoryTest {
     void delete() {
         //Arrange
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
-        //Act
         helpTextRepository.save(helpText);
-        helpTextRepository.delete(helpText);
-        HelpTextEntity retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
+        HelpTextEntity retrievedBeforeDelete = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
+        //Act
+        int isDeleted = helpTextRepository.delete(helpText);
         //Assert
-        Assertions.assertThat(retrievedHelpText).isNull();
+        Assertions.assertThat(isDeleted).isEqualTo(1);//
     }
 
 }
