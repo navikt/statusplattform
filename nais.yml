@@ -66,4 +66,4 @@ spec:
       rules:
         - application: team-catalog-backend
           namespace: org
-          cluster: dev-gcp
+          cluster: prod-gcp
