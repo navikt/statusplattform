@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HelpTextRepositoryTest {
 
