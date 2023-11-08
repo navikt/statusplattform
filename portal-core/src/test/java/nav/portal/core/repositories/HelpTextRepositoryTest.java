@@ -1,8 +1,6 @@
 package nav.portal.core.repositories;
 
-import nav.portal.core.entities.AreaEntity;
 import nav.portal.core.entities.HelpTextEntity;
-import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
@@ -15,7 +13,6 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public class HelpTextRepositoryTest {
 
@@ -42,9 +39,9 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-        Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
+        HelpTextEntity retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
-        retrievedHelpText.ifPresent(helpTextEntity -> Assertions.assertThat(helpTextEntity).isEqualTo(helpText));
+        Assertions.assertThat(retrievedHelpText).isEqualTo(helpText);
     }
 
     @Test
@@ -53,13 +50,12 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-        Optional<HelpTextEntity>helpTextBefore = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
+        HelpTextEntity helpTextBefore = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         helpText.setContent("Any other information");
         helpTextRepository.update(helpText);
-        Optional<HelpTextEntity>helpTextAfter = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
+        HelpTextEntity helpTextAfter = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
-        helpTextAfter.ifPresent(helpTextEntityAfter -> Assertions.assertThat(helpTextEntityAfter.getContent())
-                .isNotEqualTo(helpTextBefore.get().getContent()));
+        Assertions.assertThat(helpTextAfter.getContent().equals(helpTextBefore.getContent())).isFalse();
     }
 
     @Test
@@ -68,10 +64,9 @@ public class HelpTextRepositoryTest {
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
-        Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
+        HelpTextEntity retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
-        retrievedHelpText.ifPresent(retrievedHelpTextEntity ->
-                Assertions.assertThat(retrievedHelpTextEntity).isEqualTo(helpText));
+        Assertions.assertThat((retrievedHelpText).equals(helpText)).isTrue();
     }
 
     @Test
@@ -98,7 +93,7 @@ public class HelpTextRepositoryTest {
                 serviceHelpTexts.add(helpText);
             }
         });
-        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveAllServices();
+        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveHelpTextServices();
         //Assert
         Assertions.assertThat(retrievedHelpTexts.size()).isEqualTo(serviceHelpTexts.size());
         Assertions.assertThat(serviceHelpTexts).containsAll(retrievedHelpTexts);
@@ -117,7 +112,7 @@ public class HelpTextRepositoryTest {
                 componentHelpTexts.add(helpText);
             }
         });
-        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveAllComponents();
+        List<HelpTextEntity>retrievedHelpTexts = helpTextRepository.retrieveHelpTextComponents();
         //Assert
         Assertions.assertThat(retrievedHelpTexts.size()).isEqualTo(componentHelpTexts.size());
         Assertions.assertThat(componentHelpTexts).containsAll(retrievedHelpTexts);
@@ -131,10 +126,9 @@ public class HelpTextRepositoryTest {
         //Act
         helpTextRepository.save(helpText);
         helpTextRepository.delete(helpText);
-        Optional<HelpTextEntity> retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
+        HelpTextEntity retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Assert
-        Assertions.assertThat(helpTextRepository.retrieve(helpText.getNumber(), helpText.getType())).isEmpty();
-
+        Assertions.assertThat(retrievedHelpText).isNull();
     }
 
 }

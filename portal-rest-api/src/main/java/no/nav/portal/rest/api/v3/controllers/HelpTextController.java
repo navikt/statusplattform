@@ -1,24 +1,21 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.enums.ServiceType;
-import nav.portal.core.repositories.HelpTextRepository;
 import no.nav.portal.rest.api.Helpers.HelpTextControllerHelper;
-import no.nav.portal.rest.api.Helpers.StatusUrlValidator;
 import no.portal.web.generated.api.*;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
 import java.util.List;
-import java.util.UUID;
+
 
 public class HelpTextController {
     private final HelpTextControllerHelper helpTextControllerHelper;
-    private final HelpTextRepository helpTextRepository;
+
 
     public HelpTextController(DbContext dbContext){
         this.helpTextControllerHelper = new HelpTextControllerHelper(dbContext);
-        this.helpTextRepository = new HelpTextRepository(dbContext);
+
     }
 
     @POST("/HelpText")
@@ -42,14 +39,14 @@ public class HelpTextController {
 
     @GET("/HelpText/Services")
     @JsonBody
-    public  List<HelpTextDto> getAllServices() {
-        return helpTextControllerHelper.getAllServices();
+    public  List<HelpTextDto> getHelpTextServices() {
+        return helpTextControllerHelper.getHelpTextServices();
     }
 
     @GET("/HelpText/Components")
     @JsonBody
-    public  List<HelpTextDto> getAllComponents() {
-        return helpTextControllerHelper.getAllComponents();
+    public  List<HelpTextDto> getHelpTextComponents() {
+        return helpTextControllerHelper.getHelpTextComponents();
     }
 
     @DELETE("/HelpText")

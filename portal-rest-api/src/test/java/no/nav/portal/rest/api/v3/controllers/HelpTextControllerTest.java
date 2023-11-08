@@ -1,6 +1,5 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.enums.ServiceType;
 import nav.portal.core.repositories.TestDataSource;
 import nav.portal.core.repositories.TestUtil;
 import no.portal.web.generated.api.*;
@@ -97,7 +96,7 @@ public class HelpTextControllerTest {
     }
 
     @Test
-    void getAllServices() {
+    void getHelpTextServices() {
         //Arrange
         List<HelpTextDto> helpTextDtos = SampleDataDto.getRandomNumberOfHelpTextDtos();
         helpTextDtos.forEach(helpTextController::newHelpText);
@@ -108,13 +107,13 @@ public class HelpTextControllerTest {
             }
         }
         //Act
-        List<HelpTextDto> retrievedHelpTextServices = helpTextController.getAllServices();
+        List<HelpTextDto> retrievedHelpTextServices = helpTextController.getHelpTextServices();
         //Assert
         Assertions.assertThat(retrievedHelpTextServices.size()).isEqualTo(servicesTypeCount);
     }
 
     @Test
-    void getAllComponents() {
+    void getHelpTextComponents() {
         //Arrange
         List<HelpTextDto> helpTextDtos = SampleDataDto.getRandomNumberOfHelpTextDtos();
         helpTextDtos.forEach(helpTextController::newHelpText);
@@ -125,7 +124,7 @@ public class HelpTextControllerTest {
             }
         }
         //Act
-        List<HelpTextDto> retrievedHelpTextComponents = helpTextController.getAllComponents();
+        List<HelpTextDto> retrievedHelpTextComponents = helpTextController.getHelpTextComponents();
         //Assert
         Assertions.assertThat(retrievedHelpTextComponents.size()).isEqualTo(componentsTypeCount);
     }

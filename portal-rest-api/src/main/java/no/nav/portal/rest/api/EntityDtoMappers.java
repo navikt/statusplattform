@@ -5,22 +5,17 @@ import nav.portal.core.enums.OpsMessageSeverity;
 import nav.portal.core.enums.RuleType;
 import nav.portal.core.enums.ServiceStatus;
 import nav.portal.core.enums.ServiceType;
-import nav.portal.core.repositories.OpeningHoursRepository;
 import no.nav.portal.rest.api.TeamKatalogIntegrasjon.TeamKatalogKlient;
 import no.portal.web.generated.api.*;
 
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import nav.portal.core.repositories.OpeningHoursRepository;
 
 public class EntityDtoMappers {
-    private static OpeningHoursRepository openingHoursRepository;
     private static Map<UUID,String> teamIdTeamKatalog = TeamKatalogKlient.getTeams();
 
     public static StatusDto toStatusDto(RecordEntity recordEntity){
@@ -420,13 +415,4 @@ public class EntityDtoMappers {
         entity.setType(ServiceType.fromDb(serviceTypeDto.getValue()));
         return entity;
     }
-
-    public static HelpTextDto toHelpTextDtoOptional(Optional<HelpTextEntity> entity) {
-        HelpTextDto dto = new HelpTextDto();
-        dto.setNumber(entity.get().getNumber());
-        dto.setType(ServiceTypeDto.fromValue(entity.get().getType().getDbRepresentation()));
-        dto.setContent(entity.get().getContent());
-        return dto;
-    }
-
 }
