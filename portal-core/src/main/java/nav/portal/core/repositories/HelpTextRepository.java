@@ -22,6 +22,7 @@ public class HelpTextRepository {
     }
 
     public HelpTextEntity save(HelpTextEntity helpText) {
+        //Check if input is valid, and no duplicates
         help_textTable.insert()
                 .setField("number", (long)helpText.getNumber())
                 .setField("type", helpText.getType().getDbRepresentation())
@@ -33,6 +34,7 @@ public class HelpTextRepository {
                 .where("type", helpText.getType().getDbRepresentation())
                 .singleObject(HelpTextRepository::toHelpText);
 
+        //orElseThrow HttpError
         return result.get();
     }
 
@@ -47,18 +49,14 @@ public class HelpTextRepository {
     }
 
     public HelpTextEntity retrieve(long nr, ServiceType serviceType) {
-        /*return help_textTable
+        return help_textTable
                 .where("number", (long) nr)
                 .where("type", serviceType)
                 .singleObject(HelpTextRepository::toHelpText)
                 .orElseThrow(() -> new IllegalArgumentException
                         ("Not found: HelpText nr: " + (int) nr
-                                + ", type: " + serviceType));*/
+                                + ", type: " + serviceType));
 
-        return help_textTable
-                .where("number", (long) nr)
-                .where("type", serviceType)
-                .singleObject(HelpTextRepository::toHelpText).orElse(null);
     }
 
     public List<HelpTextEntity> retrieveAllHelpTexts() {
