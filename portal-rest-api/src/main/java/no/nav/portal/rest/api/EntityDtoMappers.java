@@ -384,8 +384,7 @@ public class EntityDtoMappers {
     }
 
     public static OHGroupThinDto toOpeningHoursGroupDtoShallow(OpeningHoursGroupEntity group){
-        List<UUID> rulesId = new ArrayList<>();
-        rulesId.addAll(group.getRules());
+        List<UUID> rulesId = new ArrayList<>(group.getRules());
         OHGroupThinDto dto = new OHGroupThinDto();
         dto.setId(group.getId());
         dto.setName(group.getName());
@@ -409,10 +408,4 @@ public class EntityDtoMappers {
         return entity;
     }
 
-    public static HelpTextEntity toHelpTextEntity(int nr, ServiceTypeDto serviceTypeDto){
-        HelpTextEntity entity = new HelpTextEntity();
-        entity.setNumber(nr);
-        entity.setType(ServiceType.fromDb(serviceTypeDto.getValue()));
-        return entity;
-    }
 }

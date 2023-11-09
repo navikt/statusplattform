@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HelpTextRepositoryTest {
 
@@ -124,11 +123,10 @@ public class HelpTextRepositoryTest {
         //Arrange
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
         helpTextRepository.save(helpText);
-        HelpTextEntity retrievedBeforeDelete = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
         //Act
         int isDeleted = helpTextRepository.delete(helpText);
         //Assert
-        Assertions.assertThat(isDeleted).isEqualTo(1);//
+        Assertions.assertThat(isDeleted).isEqualTo(1);
     }
 
 }

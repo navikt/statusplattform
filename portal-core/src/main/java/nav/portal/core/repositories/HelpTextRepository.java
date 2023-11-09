@@ -8,8 +8,6 @@ import org.fluentjdbc.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class HelpTextRepository {
@@ -57,7 +55,7 @@ public class HelpTextRepository {
 
     public HelpTextEntity retrieve(long nr, ServiceType serviceType) {
         return help_textTable
-                .where("number", (long) nr)
+                .where("number", nr)
                 .where("type", serviceType)
                 .singleObject(HelpTextRepository::toHelpText)
                 .orElseThrow(() -> new IllegalArgumentException
