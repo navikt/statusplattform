@@ -42,6 +42,15 @@ public class OpeningHoursParser {
         return getOpeninghours(dateEntry,rules.subList(1, rules.size()),isSubGroup);
     }
 
+    private static OpeningHoursDisplayData getDisplayData(LocalDate dateEntry,OpeningHoursGroup group){
+        return getDisplayData(dateEntry,group.getRules(),false);
+    }
+
+    private static OpeningHoursDisplayData getDisplayData(LocalDate dateEntry, List<OpeningHoursRule> rules, Boolean isSubGroup){
+        //TODO FYLL INN HER ORLENE
+        return  null;
+    }
+
 
     public static String getOpeninghours(LocalDate dateEntry, String rule) {
 //        "00:00-00:00"LocalDateTime

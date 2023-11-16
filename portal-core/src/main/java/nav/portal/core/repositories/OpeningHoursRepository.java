@@ -246,7 +246,24 @@ public class OpeningHoursRepository {
         Optional<OpeningHoursGroupEntity> entity = s2g.where("service_id", service_id)
                 .leftJoin(s2g.column("group_id"),g.column("id"))
                 .singleObject(r -> toOpeningHoursGroupEntity(r.table(g)));
-        return entity.isEmpty()? Optional.empty(): Optional.of(getGroupFromEntity(entity.get()));
+        return entity.map(this::getGroupFromEntity);
+    }
+
+    public Map<UUID, OpeningHoursGroup> getAllOpeningtimeForAllServicesWithOpeningTime(){
+        DbContextTableAlias g = ohGroupTable.alias("g");
+        DbContextTableAlias s2g = serviceOHgroupTable.alias("s2g");
+        Map<UUID,OpeningHoursGroup> result = new HashMap<>();
+
+        s2g.leftJoin(s2g.column("group_id"),g.column("id")).
+                forEach(row -> {
+                    UUID serviceId = row.getUUID("service_id");
+                    OpeningHoursGroupEntity groupEntity = toOpeningHoursGroupEntity(row.table(g));
+                    OpeningHoursGroup openingHoursGroup = getGroupFromEntity(groupEntity);
+                   result.put(serviceId,openingHoursGroup);
+                });
+
+        return result;
+
     }
 
     static OpeningHoursRuleEntity toOpeningRule(DatabaseRow row){
