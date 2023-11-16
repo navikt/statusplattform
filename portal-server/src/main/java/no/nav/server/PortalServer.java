@@ -2,6 +2,7 @@ package no.nav.server;
 
 
 import no.nav.portal.infrastructure.RedirectHandler;
+import no.nav.portal.jobs.JobHandler;
 import no.nav.portal.rest.api.PortalRestApi;
 import no.nav.portal.rest.api.SwaggerDocumentation;
 import org.actioncontroller.config.ConfigObserver;
@@ -22,10 +23,9 @@ public class PortalServer {
     private final Server server = new Server();
     private final ServerConnector connector = new ServerConnector(server);
     private final PortalRestApi portalRestApi = new PortalRestApi("/rest");
-    private String frontEndLocation;
-    private final String ENV = System.getenv("ENV");
     private final SwaggerDocumentation swaggerDocumentation = new SwaggerDocumentation("/doc");
-    private boolean isLocalHost;
+
+    private final JobHandler jobHandler = new JobHandler();
 
 
     public PortalServer() {
@@ -50,9 +50,6 @@ public class PortalServer {
         int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt)
                 .orElse(3005);
         connector.setPort(port);
-        if(port == 3005){
-            this.isLocalHost = true;
-        }
 
 
         new ConfigObserver("portal")
@@ -65,6 +62,7 @@ public class PortalServer {
     }
 
     private void setDataSource(DataSource dataSource) {
+        jobHandler.setDataSource(dataSource);
         portalRestApi.setDataSource(dataSource);
     }
 
@@ -83,6 +81,7 @@ public class PortalServer {
 
     public void start() throws Exception {
         server.start();
+        jobHandler.start();
         connector.start();
         logger.warn("Started on {}", getURI());
     }
