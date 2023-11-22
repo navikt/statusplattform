@@ -215,7 +215,7 @@ class OpeningHoursParserTest {
     @Test
     void getOpeninghoursDisplayData(){
         //Arrange
-        OpeningHoursRuleEntity rule1 = new OpeningHoursRuleEntity().setRule("17.05.???? ? ? 00:00-00:00"); //National holiday
+        OpeningHoursRuleEntity rule1 = new OpeningHoursRuleEntity().setRule("17.05.???? ? ? 00:00-00:00").setName("rule1"); //National holiday
         OpeningHoursRuleEntity rule2 = new OpeningHoursRuleEntity().setRule("??.??.???? L ? 07:00-18:00"); //Last day in Month
         OpeningHoursRuleEntity rule3 = new OpeningHoursRuleEntity().setRule("??.??.???? 1-5,25-30 ? 07:00-21:00");// Valid for days 1 to 5 or 25 to 30;
         OpeningHoursRuleEntity rule4 = new OpeningHoursRuleEntity().setRule("??.04.???? ? 1-5 10:00-16:00"); //True for all working days in a specified month
