@@ -75,10 +75,9 @@ public class OpeningHoursParser {
             }
         }
         else {
-            String firstruleOpeningHours = getOpeninghours(dateEntry,((OpeningHoursGroup) firstRGentry).getRules(),true);
-            if(!firstruleOpeningHours.equals(RULE_NOT_APPLIES)){
-                openingHoursDisplayData.setOpeningHours(firstruleOpeningHours);
-                return openingHoursDisplayData;
+            OpeningHoursDisplayData firstruleOpeningHours = getDisplayData(dateEntry,((OpeningHoursGroup) firstRGentry).getRules(),true);
+            if(!firstruleOpeningHours.getRule().equals(RULE_NOT_APPLIES)){
+                return firstruleOpeningHours;
             }
         }
         return  getDisplayData(dateEntry,rules.subList(1, rules.size()),isSubGroup);
