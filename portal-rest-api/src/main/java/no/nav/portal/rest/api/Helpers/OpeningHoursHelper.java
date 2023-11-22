@@ -9,7 +9,6 @@ import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

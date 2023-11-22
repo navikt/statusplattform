@@ -17,12 +17,10 @@ import java.util.UUID;
 public class OpeningHoursController {
 
     private OpeningHoursHelper openingHoursHelper;
-    private final ServiceRepository serviceRepository;
     private final OpeningHoursRepository openingHoursRepository;
 
     public OpeningHoursController(DbContext dbContext) {
         this.openingHoursHelper = new OpeningHoursHelper(dbContext);
-        this.serviceRepository = new ServiceRepository(dbContext);
         this.openingHoursRepository = new OpeningHoursRepository(dbContext);
     }
 

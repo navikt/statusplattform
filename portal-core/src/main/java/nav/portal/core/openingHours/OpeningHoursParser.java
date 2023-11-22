@@ -9,8 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import nav.portal.core.enums.RuleType;
 
 public class OpeningHoursParser {
+
 
     private static String RULE_NOT_APPLIES = "rule_not_applies";
 
@@ -42,13 +44,44 @@ public class OpeningHoursParser {
         return getOpeninghours(dateEntry,rules.subList(1, rules.size()),isSubGroup);
     }
 
-    private static OpeningHoursDisplayData getDisplayData(LocalDate dateEntry,OpeningHoursGroup group){
+    public static OpeningHoursDisplayData getDisplayData(LocalDate dateEntry,OpeningHoursGroup group){
         return getDisplayData(dateEntry,group.getRules(),false);
     }
 
     private static OpeningHoursDisplayData getDisplayData(LocalDate dateEntry, List<OpeningHoursRule> rules, Boolean isSubGroup){
         //TODO FYLL INN HER ORLENE
-        return  null;
+        OpeningHoursDisplayData openingHoursDisplayData = new OpeningHoursDisplayData();
+        openingHoursDisplayData.setRuleName("");
+        if(rules.size() == 0){
+            if(isSubGroup){
+                openingHoursDisplayData.setRule(RULE_NOT_APPLIES);
+                return openingHoursDisplayData;
+            }
+                openingHoursDisplayData.setRule("No Rules stated");
+                openingHoursDisplayData.setOpeningHours("00:00-00:00");
+                openingHoursDisplayData.setDisplayText("Åpen - ingen gjeldende dato regler");
+                return openingHoursDisplayData;
+        }
+
+        OpeningHoursRule firstRGentry = rules.get(0);
+
+        if(firstRGentry.getRuleType().equals(RuleType.RULE)){
+            String firstruleOpeningHours = getOpeninghours(dateEntry,((OpeningHoursRuleEntity)firstRGentry).getRule());
+            if(!firstruleOpeningHours.equals(RULE_NOT_APPLIES)){
+                openingHoursDisplayData.setRuleName(rules.get(0).getName());
+                openingHoursDisplayData.setRule(((OpeningHoursRuleEntity) firstRGentry).getRule());
+                openingHoursDisplayData.setOpeningHours(firstruleOpeningHours);
+                return openingHoursDisplayData;
+            }
+        }
+        else {
+            String firstruleOpeningHours = getOpeninghours(dateEntry,((OpeningHoursGroup) firstRGentry).getRules(),true);
+            if(!firstruleOpeningHours.equals(RULE_NOT_APPLIES)){
+                openingHoursDisplayData.setOpeningHours(firstruleOpeningHours);
+                return openingHoursDisplayData;
+            }
+        }
+        return  getDisplayData(dateEntry,rules.subList(1, rules.size()),isSubGroup);
     }
 
 
@@ -157,7 +190,6 @@ public class OpeningHoursParser {
                 }
             }
         }
-        System.out.println("Did not match month rule: "+ dayInMonthRule+ " date: "+ dateTimeEntry.toLocalDate().toString() );
         return false;
     }
 
