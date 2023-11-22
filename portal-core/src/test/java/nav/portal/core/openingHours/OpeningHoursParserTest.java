@@ -98,7 +98,7 @@ class OpeningHoursParserTest {
         //Assign
         String outsideOfOH = "00:00-00:00";
         String example1 = "??.??.???? ? 1-5 07:00-21:00";                //Valid weekday mellom kl.07-21
-        LocalDate normalWeekDay = LocalDate.of(2023,4,20);
+        LocalDate normalWeekDay = LocalDate.of(2023,11,16);
         LocalTime midday = LocalTime.of(12,00);
 
         LocalDate normalWeekend = LocalDate.of(2023,4,22); //Ugyldig Weekend
@@ -210,6 +210,103 @@ class OpeningHoursParserTest {
             Assertions.assertThat(openingHoursResult16).isEqualTo("08:00-16:30");//Rule8 valid for days 12-15 falling on weekdays
             Assertions.assertThat(openingHoursResult17).isEqualTo("07:30-17:00");// Rule7 Valid for any weekday between 7.30am to 5pm outside of range for rule 8
             Assertions.assertThat(openingHoursResult18).isEqualTo("00:00-23:59");//Rule10 Open all day first of May
+    }
+
+    @Test
+    void getOpeninghoursDisplayData(){
+        //Arrange
+        OpeningHoursRuleEntity rule1 = new OpeningHoursRuleEntity().setRule("17.05.???? ? ? 00:00-00:00"); //National holiday
+        OpeningHoursRuleEntity rule2 = new OpeningHoursRuleEntity().setRule("??.??.???? L ? 07:00-18:00"); //Last day in Month
+        OpeningHoursRuleEntity rule3 = new OpeningHoursRuleEntity().setRule("??.??.???? 1-5,25-30 ? 07:00-21:00");// Valid for days 1 to 5 or 25 to 30;
+        OpeningHoursRuleEntity rule4 = new OpeningHoursRuleEntity().setRule("??.04.???? ? 1-5 10:00-16:00"); //True for all working days in a specified month
+        OpeningHoursRuleEntity rule5 = new OpeningHoursRuleEntity().setRule("24.12.2023 ? 1-5 09:00-14:00");//Invalid for christmas eve on a weekend
+        OpeningHoursRuleEntity rule6 = new OpeningHoursRuleEntity().setRule("24.12.???? ? 1-5 09:00-15:00");//Valid for any christmas eve falling on a weekday
+        OpeningHoursRuleEntity rule7 = new OpeningHoursRuleEntity().setRule("??.??.???? ? 1-5 07:30-17:00");// Valid for any weekday between 7.30am to 5pm
+        OpeningHoursRuleEntity rule8 = new OpeningHoursRuleEntity().setRule("??.??.???? 12-15 ? 08:00-16:30");//Valid for weekdays 12 through to 15
+        OpeningHoursRuleEntity rule9 = new OpeningHoursRuleEntity().setRule("??.??.???? 6 1-2 12:00-18:30"); //Valid for the sixth day of month falling on Mondays and Tuesdays
+        OpeningHoursRuleEntity rule10 = new OpeningHoursRuleEntity().setRule("01.05.2023 ? ? 00:00-23:59");//open all day, first of May
+        //g4
+        OpeningHoursGroup group4 = new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule4,rule5,rule8));
+
+        //g3
+        OpeningHoursGroup group3 = new OpeningHoursGroup().setName("Gruppe3").setRules(List.of(rule10, rule2,rule3));
+        //g2
+        OpeningHoursGroup group2 = new OpeningHoursGroup().setName("Gruppe2").setRules(List.of(group3,rule9, group4));
+
+        //g1
+        //OpeningHoursGroup group1 = new OpeningHoursGroup().setName("Gruppe1").setRules(List.of(rule1,group2,rule6));
+        OpeningHoursGroup group1 = new OpeningHoursGroup().setName("Gruppe1").setRules(List.of(rule1,group2,rule6,rule7));
+        //Act
+        //Assert
+        //OpeningHoursDisplayData openingHoursResult1 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,11,21), group1);
+        OpeningHoursDisplayData openingHoursResult1 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,12,24), group1);//Invalid christmas eve is Sunday
+        OpeningHoursDisplayData openingHoursResult2 = OpeningHoursParser.getDisplayData(LocalDate.of(2024,12,24), group1);//Valid christmas eve on a Monday
+        OpeningHoursDisplayData openingHoursResult3 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,05,17), group1);
+        OpeningHoursDisplayData openingHoursResult4 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,11,9), group1);//no applicable rule for date
+        OpeningHoursDisplayData openingHoursResult5 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,04,24), group1);
+        OpeningHoursDisplayData openingHoursResult6 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,11,17), group1);
+        OpeningHoursDisplayData openingHoursResult7 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,10,11), group1);//Rule7 Valid for any weekday between 7.30am to 5pm
+        OpeningHoursDisplayData openingHoursResult8 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,10,12), group1);//Rule8 valid for days 12-15 falling on weekdays
+        OpeningHoursDisplayData openingHoursResult9 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,6,6), group1);//Valid for sixth day of month falling on Mondays and Tuesdays
+        OpeningHoursDisplayData openingHoursResult10 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,5,25), group1);//valid: rule3
+        OpeningHoursDisplayData openingHoursResult11 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,7,22), group1);//Date falls on a weekend
+        OpeningHoursDisplayData openingHoursResult12 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,9,30), group1);//Valid Last day of month on a weekend
+        OpeningHoursDisplayData openingHoursResult13 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,12,31), group1);//Valid last day of month the 31st
+        OpeningHoursDisplayData openingHoursResult14 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,1,31), group1);//Valid last day of month the 31st
+        OpeningHoursDisplayData openingHoursResult15 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,10,14), group1);////Rule8 valid for days 12-15 falling on weekdays
+        OpeningHoursDisplayData openingHoursResult16 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,10,15), group1);////Rule8 valid for days 12-15 falling on weekdays
+        OpeningHoursDisplayData openingHoursResult17 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,10,16), group1);//Rule7 Valid for any weekday between 7.30am to 5pm
+        OpeningHoursDisplayData openingHoursResult18 = OpeningHoursParser.getDisplayData(LocalDate.of(2023,05,1), group1);//Rule10 Open all day first of May
+
+        //Assertions.assertThat(openingHoursResult1.getOpeningHours()).isEqualTo("07:30-17:00");//Rule7 Valid for any weekday between 7.30am to 5pm
+        Assertions.assertThat(openingHoursResult1.getOpeningHours()).isEqualTo("00:00-00:00");//Rule5 christmas eve on a Sunday
+        Assertions.assertThat(openingHoursResult2.getOpeningHours()).isEqualTo("09:00-15:00");
+        Assertions.assertThat(openingHoursResult3.getOpeningHours()).isEqualTo("00:00-00:00");
+        Assertions.assertThat(openingHoursResult4.getOpeningHours()).isEqualTo("07:30-17:00");
+        Assertions.assertThat(openingHoursResult5.getOpeningHours()).isEqualTo("10:00-16:00");
+        Assertions.assertThat(openingHoursResult6.getOpeningHours()).isEqualTo("07:30-17:00");
+        Assertions.assertThat(openingHoursResult7.getOpeningHours()).isEqualTo("07:30-17:00");// Rule7 Valid for any weekday between 7.30am to 5pm outside of range for rule 8
+        Assertions.assertThat(openingHoursResult8.getOpeningHours()).isEqualTo("08:00-16:30");//Rule8 valid for days 12-15 falling on weekdays
+        Assertions.assertThat(openingHoursResult9.getOpeningHours()).isEqualTo("12:00-18:30");//Rule9 Valid for the sixth day of month falling on Mondays and Tuesdays
+        Assertions.assertThat(openingHoursResult10.getOpeningHours()).isEqualTo("07:00-21:00");//Rule3 Valid for days 1 to 5 or 25 to 30;
+        Assertions.assertThat(openingHoursResult11.getOpeningHours()).isEqualTo("00:00-00:00");//No rule - date falls on a weekend
+        Assertions.assertThat(openingHoursResult12.getOpeningHours()).isEqualTo("07:00-18:00");//Rule2 Valid Last day of month on a weekend
+        Assertions.assertThat(openingHoursResult13.getOpeningHours()).isEqualTo("07:00-18:00");//Rule2 /Valid last day of month the 31st on a weekend -sunday
+        Assertions.assertThat(openingHoursResult14.getOpeningHours()).isEqualTo("07:00-18:00");//Rule 2 Valid last day of the month weekday - wednesday
+        Assertions.assertThat(openingHoursResult15.getOpeningHours()).isEqualTo("08:00-16:30");//Rule8 valid for days 12-15 falling on weekdays
+        Assertions.assertThat(openingHoursResult16.getOpeningHours()).isEqualTo("08:00-16:30");//Rule8 valid for days 12-15 falling on weekdays
+        Assertions.assertThat(openingHoursResult17.getOpeningHours()).isEqualTo("07:30-17:00");// Rule7 Valid for any weekday between 7.30am to 5pm outside of range for rule 8
+        Assertions.assertThat(openingHoursResult18.getOpeningHours()).isEqualTo("00:00-23:59");//Rule10 Open all day first of May
+    }
+
+
+    @Test
+    void getOpeninghoursDisplayDataTest() {
+        //Arrange
+        OpeningHoursRuleEntity rule1 = new OpeningHoursRuleEntity().setRule("17.05.???? ? ? 00:00-00:00"); //National holiday
+        OpeningHoursRuleEntity rule2 = new OpeningHoursRuleEntity().setRule("??.??.???? L ? 07:00-18:00"); //Last day in Month
+        OpeningHoursRuleEntity rule3 = new OpeningHoursRuleEntity().setRule("??.??.???? 1-5,25-30 ? 07:00-21:00");// Valid for days 1 to 5 or 25 to 30;
+        OpeningHoursRuleEntity rule4 = new OpeningHoursRuleEntity().setRule("??.04.???? ? 1-5 10:00-16:00"); //True for all working days in a specified month
+        OpeningHoursRuleEntity rule5 = new OpeningHoursRuleEntity().setRule("24.12.2023 ? 1-5 09:00-14:00");//Invalid for christmas eve on a weekend
+        OpeningHoursRuleEntity rule6 = new OpeningHoursRuleEntity().setRule("24.12.???? ? 1-5 09:00-15:00");//Valid for any christmas eve falling on a weekday
+        OpeningHoursRuleEntity rule7 = new OpeningHoursRuleEntity().setRule("??.??.???? ? 1-5 07:30-17:00");// Valid for any weekday between 7.30am to 5pm
+        OpeningHoursRuleEntity rule8 = new OpeningHoursRuleEntity().setRule("??.??.???? 12-15 ? 08:00-16:30");//Valid for weekdays 12 through to 15
+        OpeningHoursRuleEntity rule9 = new OpeningHoursRuleEntity().setRule("??.??.???? 6 1-2 12:00-18:30"); //Valid for the sixth day of month falling on Mondays and Tuesdays
+        OpeningHoursRuleEntity rule10 = new OpeningHoursRuleEntity().setRule("01.05.2023 ? ? 00:00-23:59");//open all day, first of May
+        //g4
+        OpeningHoursGroup group4 = new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule4, rule5, rule8));
+
+        //g3
+        OpeningHoursGroup group3 = new OpeningHoursGroup().setName("Gruppe3").setRules(List.of(rule10, rule2, rule3));
+        //g2
+        OpeningHoursGroup group2 = new OpeningHoursGroup().setName("Gruppe2").setRules(List.of(group3, rule9, group4));
+
+        //g1
+        OpeningHoursGroup group1 = new OpeningHoursGroup().setName("Gruppe1").setRules(List.of(rule1, group2, rule6, rule7));
+        //Act
+        OpeningHoursDisplayData openingHoursResult5 = OpeningHoursParser.getDisplayData(LocalDate.of(2023, 04, 24), group1);
+        //Assert
+        Assertions.assertThat(openingHoursResult5.getOpeningHours()).isEqualTo("10:00-16:00");
     }
 
 }

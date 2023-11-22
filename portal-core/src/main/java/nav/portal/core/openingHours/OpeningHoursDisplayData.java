@@ -27,6 +27,14 @@ public class OpeningHoursDisplayData {
         this.rule = rule;
     }
 
+    public String getOpeningHours() {
+        return openingHours;
+    }
+
+    public void setOpeningHours(String openingHours) {
+        this.openingHours = openingHours;
+    }
+
     public String getDisplayText() {
         return displayText;
     }
