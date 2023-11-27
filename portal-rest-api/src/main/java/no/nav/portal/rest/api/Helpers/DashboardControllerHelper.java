@@ -52,7 +52,7 @@ public class DashboardControllerHelper {
     private void setOpeningHoursOnServices(DashboardDto dashboardDto){
         dashboardDto.getAreas().forEach(a -> {
             a.getServices().forEach(s -> {
-                    s.setServiceOpeningHours(
+                    s.setOhDisplay(
                             new OHdisplayDto().openingHours("07-20").rule("rule").displayText("Åpen").isOpen(false)
                     );
                     }
