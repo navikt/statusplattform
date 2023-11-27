@@ -2044,7 +2044,7 @@ components:
           items:
             $ref: '#/components/schemas/Service'
         serviceOpeningHours:
-          $ref: '#/components/schemas/ServiceOpeningHours'
+          $ref: '#/components/schemas/OHdisplay'
         monitorlink:
           type: string
         pollingUrl:
@@ -2350,6 +2350,22 @@ components:
         name:
           type: string
           example: "Ola Norman"
+    OHdisplay:
+      title: OHdisplay
+      type: object
+      description: data for displaying opening hours for a service
+      properties:
+        isOpen:
+          type: boolean
+        rule:
+          type: string
+        name:
+          type: string
+        openingHours:
+          type: string
+        displayText:
+          type: string
+
     OHGroupThin:
       title: OHGroupThin
       type: object
