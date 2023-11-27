@@ -277,16 +277,17 @@ class OpeningHoursRepositoryTest {
         group1.setId(openingHoursRepository.saveGroup(group1));
 
         // Setting up services
-        ServiceEntity service1 = SampleData.getRandomizedServiceEntity();
+        List<ServiceEntity> services = SampleData.getNonEmptyListOfServiceEntity(4);
+        ServiceEntity service1 = services.get(0);
         UUID serviceId1 = service1.setId(serviceRepository.save(service1)).getId();
 
-        ServiceEntity service2 = SampleData.getRandomizedServiceEntity();
+        ServiceEntity service2 = services.get(1);
         UUID serviceId2 = service2.setId(serviceRepository.save(service2)).getId();
 
-        ServiceEntity service3 = SampleData.getRandomizedServiceEntity();
+        ServiceEntity service3 = services.get(2);
         UUID serviceId3 = service3.setId(serviceRepository.save(service3)).getId();
 
-        ServiceEntity service4 = SampleData.getRandomizedServiceEntity();
+        ServiceEntity service4 = services.get(3);
         UUID serviceId4 = service4.setId(serviceRepository.save(service4)).getId();
 
 

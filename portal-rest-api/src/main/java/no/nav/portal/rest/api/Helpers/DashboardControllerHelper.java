@@ -44,7 +44,21 @@ public class DashboardControllerHelper {
 
         dashboardDto.setOpsMessages(opsControllerHelper.getOpsMessagesForDashboard(dashboardDto));
 
+        setOpeningHoursOnServices(dashboardDto);
+
         return dashboardDto;
+    }
+
+    private void setOpeningHoursOnServices(DashboardDto dashboardDto){
+        dashboardDto.getAreas().forEach(a -> {
+            a.getServices().forEach(s -> {
+                    s.setServiceOpeningHours(
+                            new OHdisplayDto().openingHours("07-20").rule("rule").displayText("Åpen").isOpen(false)
+                    );
+                    }
+
+            );
+        });
     }
 
     private void setSubAreas(DashboardDto dashboardDto) {
