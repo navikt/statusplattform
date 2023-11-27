@@ -2043,7 +2043,7 @@ components:
           example: "[Liste av servicer som er avhengig av denne komponenten]"
           items:
             $ref: '#/components/schemas/Service'
-        serviceOpeningHours:
+        ohDisplay:
           $ref: '#/components/schemas/OHdisplay'
         monitorlink:
           type: string
