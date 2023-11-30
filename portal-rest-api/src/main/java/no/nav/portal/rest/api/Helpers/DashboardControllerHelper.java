@@ -1,13 +1,19 @@
 package no.nav.portal.rest.api.Helpers;
 
+import nav.portal.core.openingHours.OpeningHoursDailyMap;
+import nav.portal.core.openingHours.OpeningHoursDisplayData;
+import nav.portal.core.openingHours.OpeningHoursParser;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,8 +23,9 @@ public class DashboardControllerHelper {
     private final RecordRepository recordRepository;
     private final AreaRepository areaRepository;
     private final SubAreaRepository subAreaRepository;
+    private final OpeningHoursRepository openingHoursRepository;
     private final OpsControllerHelper opsControllerHelper;
-
+    private final OpeningHoursDailyMap openingHoursDailyMap;
 
 
     public DashboardControllerHelper(DbContext dbContext) {
@@ -27,6 +34,8 @@ public class DashboardControllerHelper {
         this.areaRepository = new AreaRepository(dbContext);
         this.subAreaRepository = new SubAreaRepository(dbContext);
         this.opsControllerHelper = new OpsControllerHelper(dbContext);
+        this.openingHoursRepository = new OpeningHoursRepository(dbContext);
+        this.openingHoursDailyMap = new OpeningHoursDailyMap(openingHoursRepository);
     }
 
     public DashboardDto getDashboard(UUID dashboard_id){
@@ -50,13 +59,18 @@ public class DashboardControllerHelper {
     }
 
     private void setOpeningHoursOnServices(DashboardDto dashboardDto){
+        Map<UUID, OpeningHoursDisplayData>todaysDisplayData  = openingHoursDailyMap.getMap();
         dashboardDto.getAreas().forEach(a -> {
             a.getServices().forEach(s -> {
+                    OpeningHoursDisplayData tdd = todaysDisplayData.get(s.getId());
                     s.setOhDisplay(
-                            new OHdisplayDto().openingHours("07-20").rule("rule").displayText("Åpen").isOpen(false)
+                            new OHdisplayDto()
+                                    .openingHours(tdd.getOpeningHours())
+                                    .rule(tdd.getRule())
+                                    .displayText(tdd.getDisplayText())
+                                    .isOpen(OpeningHoursParser.isOpen(LocalDateTime.now(), tdd.getRule()))
                     );
                     }
-
             );
         });
     }

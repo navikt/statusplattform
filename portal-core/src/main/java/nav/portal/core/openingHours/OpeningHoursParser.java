@@ -51,7 +51,6 @@ public class OpeningHoursParser {
     private static OpeningHoursDisplayData getDisplayData(LocalDate dateEntry, List<OpeningHoursRule> rules, Boolean isSubGroup){
         //TODO FYLL INN HER ORLENE
         OpeningHoursDisplayData openingHoursDisplayData = new OpeningHoursDisplayData();
-        openingHoursDisplayData.setRuleName("");
         if(rules.size() == 0){
             if(isSubGroup){
                 openingHoursDisplayData.setRule(RULE_NOT_APPLIES);
