@@ -216,15 +216,15 @@ class OpeningHoursParserTest {
     void getOpeninghoursDisplayData(){
         //Arrange
         OpeningHoursRuleEntity rule1 = new OpeningHoursRuleEntity().setRule("17.05.???? ? ? 00:00-00:00").setName("rule1"); //National holiday
-        OpeningHoursRuleEntity rule2 = new OpeningHoursRuleEntity().setRule("??.??.???? L ? 07:00-18:00"); //Last day in Month
-        OpeningHoursRuleEntity rule3 = new OpeningHoursRuleEntity().setRule("??.??.???? 1-5,25-30 ? 07:00-21:00");// Valid for days 1 to 5 or 25 to 30;
-        OpeningHoursRuleEntity rule4 = new OpeningHoursRuleEntity().setRule("??.04.???? ? 1-5 10:00-16:00"); //True for all working days in a specified month
-        OpeningHoursRuleEntity rule5 = new OpeningHoursRuleEntity().setRule("24.12.2023 ? 1-5 09:00-14:00");//Invalid for christmas eve on a weekend
-        OpeningHoursRuleEntity rule6 = new OpeningHoursRuleEntity().setRule("24.12.???? ? 1-5 09:00-15:00");//Valid for any christmas eve falling on a weekday
-        OpeningHoursRuleEntity rule7 = new OpeningHoursRuleEntity().setRule("??.??.???? ? 1-5 07:30-17:00");// Valid for any weekday between 7.30am to 5pm
-        OpeningHoursRuleEntity rule8 = new OpeningHoursRuleEntity().setRule("??.??.???? 12-15 ? 08:00-16:30");//Valid for weekdays 12 through to 15
-        OpeningHoursRuleEntity rule9 = new OpeningHoursRuleEntity().setRule("??.??.???? 6 1-2 12:00-18:30"); //Valid for the sixth day of month falling on Mondays and Tuesdays
-        OpeningHoursRuleEntity rule10 = new OpeningHoursRuleEntity().setRule("01.05.2023 ? ? 00:00-23:59");//open all day, first of May
+        OpeningHoursRuleEntity rule2 = new OpeningHoursRuleEntity().setRule("??.??.???? L ? 07:00-18:00").setName("rule2"); //Last day in Month
+        OpeningHoursRuleEntity rule3 = new OpeningHoursRuleEntity().setRule("??.??.???? 1-5,25-30 ? 07:00-21:00").setName("rule3");// Valid for days 1 to 5 or 25 to 30;
+        OpeningHoursRuleEntity rule4 = new OpeningHoursRuleEntity().setRule("??.04.???? ? 1-5 10:00-16:00").setName("rule4"); //True for all working days in a specified month
+        OpeningHoursRuleEntity rule5 = new OpeningHoursRuleEntity().setRule("24.12.2023 ? 1-5 09:00-14:00").setName("rule5");//Invalid for christmas eve on a weekend
+        OpeningHoursRuleEntity rule6 = new OpeningHoursRuleEntity().setRule("24.12.???? ? 1-5 09:00-15:00").setName("rule6");//Valid for any christmas eve falling on a weekday
+        OpeningHoursRuleEntity rule7 = new OpeningHoursRuleEntity().setRule("??.??.???? ? 1-5 07:30-17:00").setName("rule7");// Valid for any weekday between 7.30am to 5pm
+        OpeningHoursRuleEntity rule8 = new OpeningHoursRuleEntity().setRule("??.??.???? 12-15 ? 08:00-16:30").setName("rule8");//Valid for weekdays 12 through to 15
+        OpeningHoursRuleEntity rule9 = new OpeningHoursRuleEntity().setRule("??.??.???? 6 1-2 12:00-18:30").setName("rule9"); //Valid for the sixth day of month falling on Mondays and Tuesdays
+        OpeningHoursRuleEntity rule10 = new OpeningHoursRuleEntity().setRule("01.05.2023 ? ? 00:00-23:59").setName("rule10");//open all day, first of May
         //g4
         OpeningHoursGroup group4 = new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule4,rule5,rule8));
 
@@ -283,16 +283,16 @@ class OpeningHoursParserTest {
     @Test
     void getOpeninghoursDisplayDataTest() {
         //Arrange
-        OpeningHoursRuleEntity rule1 = new OpeningHoursRuleEntity().setRule("17.05.???? ? ? 00:00-00:00"); //National holiday
-        OpeningHoursRuleEntity rule2 = new OpeningHoursRuleEntity().setRule("??.??.???? L ? 07:00-18:00"); //Last day in Month
-        OpeningHoursRuleEntity rule3 = new OpeningHoursRuleEntity().setRule("??.??.???? 1-5,25-30 ? 07:00-21:00");// Valid for days 1 to 5 or 25 to 30;
-        OpeningHoursRuleEntity rule4 = new OpeningHoursRuleEntity().setRule("??.04.???? ? 1-5 10:00-16:00"); //True for all working days in a specified month
-        OpeningHoursRuleEntity rule5 = new OpeningHoursRuleEntity().setRule("24.12.2023 ? 1-5 09:00-14:00");//Invalid for christmas eve on a weekend
-        OpeningHoursRuleEntity rule6 = new OpeningHoursRuleEntity().setRule("24.12.???? ? 1-5 09:00-15:00");//Valid for any christmas eve falling on a weekday
-        OpeningHoursRuleEntity rule7 = new OpeningHoursRuleEntity().setRule("??.??.???? ? 1-5 07:30-17:00");// Valid for any weekday between 7.30am to 5pm
-        OpeningHoursRuleEntity rule8 = new OpeningHoursRuleEntity().setRule("??.??.???? 12-15 ? 08:00-16:30");//Valid for weekdays 12 through to 15
-        OpeningHoursRuleEntity rule9 = new OpeningHoursRuleEntity().setRule("??.??.???? 6 1-2 12:00-18:30"); //Valid for the sixth day of month falling on Mondays and Tuesdays
-        OpeningHoursRuleEntity rule10 = new OpeningHoursRuleEntity().setRule("01.05.2023 ? ? 00:00-23:59");//open all day, first of May
+        OpeningHoursRuleEntity rule1 = new OpeningHoursRuleEntity().setRule("17.05.???? ? ? 00:00-00:00").setName("rule 1"); //National holiday
+        OpeningHoursRuleEntity rule2 = new OpeningHoursRuleEntity().setRule("??.??.???? L ? 07:00-18:00").setName("rule 2"); //Last day in Month
+        OpeningHoursRuleEntity rule3 = new OpeningHoursRuleEntity().setRule("??.??.???? 1-5,25-30 ? 07:00-21:00").setName("rule 3");// Valid for days 1 to 5 or 25 to 30;
+        OpeningHoursRuleEntity rule4 = new OpeningHoursRuleEntity().setRule("??.04.???? ? 1-5 10:00-16:00").setName("rule 4"); //True for all working days in a specified month
+        OpeningHoursRuleEntity rule5 = new OpeningHoursRuleEntity().setRule("24.12.2023 ? 1-5 09:00-14:00").setName("rule 5");//Invalid for christmas eve on a weekend
+        OpeningHoursRuleEntity rule6 = new OpeningHoursRuleEntity().setRule("24.12.???? ? 1-5 09:00-15:00").setName("rule 6");//Valid for any christmas eve falling on a weekday
+        OpeningHoursRuleEntity rule7 = new OpeningHoursRuleEntity().setRule("??.??.???? ? 1-5 07:30-17:00").setName("rule 7");// Valid for any weekday between 7.30am to 5pm
+        OpeningHoursRuleEntity rule8 = new OpeningHoursRuleEntity().setRule("??.??.???? 12-15 ? 08:00-16:30").setName("rule 8");//Valid for weekdays 12 through to 15
+        OpeningHoursRuleEntity rule9 = new OpeningHoursRuleEntity().setRule("??.??.???? 6 1-2 12:00-18:30").setName("rule 9"); //Valid for the sixth day of month falling on Mondays and Tuesdays
+        OpeningHoursRuleEntity rule10 = new OpeningHoursRuleEntity().setRule("01.05.2023 ? ? 00:00-23:59").setName("rule 10");//open all day, first of May
         //g4
         OpeningHoursGroup group4 = new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule4, rule5, rule8));
 
