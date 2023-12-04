@@ -84,7 +84,6 @@ public class OpeningHoursParser {
 
 
     public static String getOpeninghours(LocalDate dateEntry, String rule) {
-//        "00:00-00:00"LocalDateTime
         LocalDateTime dateTimeEntry = LocalDateTime.of(dateEntry, LocalTime.of(0,0));
         String[] ruleParts = rule.split("[\s]");
 

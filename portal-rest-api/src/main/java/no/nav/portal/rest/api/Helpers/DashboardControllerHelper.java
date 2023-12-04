@@ -62,13 +62,13 @@ public class DashboardControllerHelper {
         Map<UUID, OpeningHoursDisplayData>todaysDisplayData  = openingHoursDailyMap.getMap();
         dashboardDto.getAreas().forEach(a -> {
             a.getServices().forEach(s -> {
-                    OpeningHoursDisplayData tdd = todaysDisplayData.get(s.getId());
-                    s.setOhDisplay(
+                    OpeningHoursDisplayData ohdd = todaysDisplayData.getOrDefault(s.getId(), null);
+                    s.setOhDisplay(ohdd == null? new OHdisplayDto():
                             new OHdisplayDto()
-                                    .openingHours(tdd.getOpeningHours())
-                                    .rule(tdd.getRule())
-                                    .displayText(tdd.getDisplayText())
-                                    .isOpen(OpeningHoursParser.isOpen(LocalDateTime.now(), tdd.getRule()))
+                                    .openingHours(ohdd.getOpeningHours())
+                                    .rule(ohdd.getRule())
+                                    .displayText(ohdd.getDisplayText())
+                                    .isOpen(OpeningHoursParser.isOpen(LocalDateTime.now(), ohdd.getRule()))
                     );
                     }
             );
