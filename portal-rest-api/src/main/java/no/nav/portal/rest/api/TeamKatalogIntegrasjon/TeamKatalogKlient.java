@@ -58,7 +58,6 @@ public class TeamKatalogKlient {
                 teamIdName.put(uuid, name);
             });
             logger.info("succesfully loaded teams for teamkatalog");
-            teamIdName.forEach((k,v) -> logger.info("id: "+ k + ", name: "+ v));
         }
         catch (Exception e){
             logger.info("Error reaching team api");
