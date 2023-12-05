@@ -10,17 +10,13 @@ import java.util.UUID;
 
 public class OpeningHoursDailyMap {
 
-    OpeningHoursRepository openingHoursRepository;
-    OpeningHoursParser openingHoursParser;
 
-    public OpeningHoursDailyMap(OpeningHoursRepository openingHoursRepository){
-        this.openingHoursRepository = openingHoursRepository;
-    }
+
 
     //Service id - openingHoursDisplayData
-    Map<UUID,OpeningHoursDisplayData> map = new HashMap<>();
+    private static Map<UUID,OpeningHoursDisplayData> map = new HashMap<>();
 
-    public void populateMap(){
+    public static void populateMap(OpeningHoursRepository openingHoursRepository){
         Map<UUID, OpeningHoursGroup> idGroupMap = openingHoursRepository.getAllOpeningtimeForAllServicesWithOpeningTime();
         //Skriv kode her:
         // Se på OpeningHoursParser logikk getDisplayData
@@ -29,7 +25,7 @@ public class OpeningHoursDailyMap {
         idGroupMap.forEach((k, v) -> map.put(k, OpeningHoursParser.getDisplayData(LocalDate.now(),v)));
     }
 
-    public  Map<UUID,OpeningHoursDisplayData> getMap(){
+    public static Map<UUID,OpeningHoursDisplayData> getMap(){
         return map;
     }
 

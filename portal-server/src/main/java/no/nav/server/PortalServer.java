@@ -80,8 +80,8 @@ public class PortalServer {
     }
 
     public void start() throws Exception {
-        server.start();
         jobHandler.start();
+        server.start();
         connector.start();
         logger.warn("Started on {}", getURI());
     }

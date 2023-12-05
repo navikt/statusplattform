@@ -23,9 +23,7 @@ public class DashboardControllerHelper {
     private final RecordRepository recordRepository;
     private final AreaRepository areaRepository;
     private final SubAreaRepository subAreaRepository;
-    private final OpeningHoursRepository openingHoursRepository;
     private final OpsControllerHelper opsControllerHelper;
-    private final OpeningHoursDailyMap openingHoursDailyMap;
 
 
     public DashboardControllerHelper(DbContext dbContext) {
@@ -34,8 +32,7 @@ public class DashboardControllerHelper {
         this.areaRepository = new AreaRepository(dbContext);
         this.subAreaRepository = new SubAreaRepository(dbContext);
         this.opsControllerHelper = new OpsControllerHelper(dbContext);
-        this.openingHoursRepository = new OpeningHoursRepository(dbContext);
-        this.openingHoursDailyMap = new OpeningHoursDailyMap(openingHoursRepository);
+
     }
 
     public DashboardDto getDashboard(UUID dashboard_id){
@@ -59,17 +56,22 @@ public class DashboardControllerHelper {
     }
 
     private void setOpeningHoursOnServices(DashboardDto dashboardDto){
-        Map<UUID, OpeningHoursDisplayData>todaysDisplayData  = openingHoursDailyMap.getMap();
+        Map<UUID, OpeningHoursDisplayData>todaysDisplayData  = OpeningHoursDailyMap.getMap();
         dashboardDto.getAreas().forEach(a -> {
             a.getServices().forEach(s -> {
                     OpeningHoursDisplayData ohdd = todaysDisplayData.getOrDefault(s.getId(), null);
-                    s.setOhDisplay(ohdd == null? new OHdisplayDto():
-                            new OHdisplayDto()
-                                    .openingHours(ohdd.getOpeningHours())
-                                    .rule(ohdd.getRule())
-                                    .displayText(ohdd.getDisplayText())
-                                    .isOpen(OpeningHoursParser.isOpen(LocalDateTime.now(), ohdd.getRule()))
-                    );
+                    if(ohdd != null){
+                        boolean isOpen = OpeningHoursParser.isOpen(LocalDateTime.now(), ohdd.getRule());
+                        String displayText = ohdd.getOpeningHours();
+                        displayText = !isOpen? "Stengt " + displayText: displayText;
+                        s.setOhDisplay(
+                                new OHdisplayDto()
+                                        .openingHours(ohdd.getOpeningHours())
+                                        .rule(ohdd.getRule())
+                                        .displayText(displayText)
+                                        .isOpen(isOpen));
+
+                    }
                     }
             );
         });

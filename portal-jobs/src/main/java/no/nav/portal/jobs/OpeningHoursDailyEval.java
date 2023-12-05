@@ -1,6 +1,7 @@
 package no.nav.portal.jobs;
 
 
+import nav.portal.core.openingHours.OpeningHoursDailyMap;
 import nav.portal.core.repositories.OpeningHoursRepository;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -32,7 +33,7 @@ public class OpeningHoursDailyEval extends Thread {
     public void run(){
         Thread.currentThread().setUncaughtExceptionHandler(new JobExceptionHandler(dbContext,dataSource));
         try{
-            startPoll();
+            evalOpeningHours();
         }
         catch (Exception e){
             Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),e);
@@ -40,7 +41,7 @@ public class OpeningHoursDailyEval extends Thread {
     }
 
 
-    private void startPoll() {
+    private void evalOpeningHours() {
 
         try (DbContextConnection ignored = dbContext.startConnection(dataSource)) {
             try (DbTransaction transaction = dbContext.ensureTransaction()) {
@@ -52,7 +53,10 @@ public class OpeningHoursDailyEval extends Thread {
 
 
     private void executeDailyOpeningHoursEval(){
-        System.out.println("Started daily eval");
+
+        logger.info("Started daily eval");
+        OpeningHoursDailyMap.populateMap(openingHoursRepository);
+        logger.info("Started daily eval");
     }
 
 

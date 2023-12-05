@@ -1,7 +1,4 @@
 package no.nav.portal.jobs;
-
-
-import no.nav.portal.jobs.OpeningHoursDailyEval;
 import org.fluentjdbc.DbContext;
 
 import javax.sql.DataSource;
