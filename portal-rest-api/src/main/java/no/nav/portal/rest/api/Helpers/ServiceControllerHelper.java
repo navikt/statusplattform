@@ -2,6 +2,9 @@ package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.DailyStatusAggregationForServiceEntity;
 import nav.portal.core.entities.ServiceEntity;
+import nav.portal.core.openingHours.OpeningHoursDailyMap;
+import nav.portal.core.openingHours.OpeningHoursDisplayData;
+import nav.portal.core.openingHours.OpeningHoursParser;
 import nav.portal.core.repositories.AreaRepository;
 import nav.portal.core.repositories.RecordRepository;
 import nav.portal.core.repositories.ServiceRepository;
@@ -9,6 +12,7 @@ import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
 import org.fluentjdbc.DbContext;
 
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -180,8 +184,28 @@ public class ServiceControllerHelper {
     public ServiceDto retrieveOneService(UUID service_id) {
         ServiceDto serviceDto =  EntityDtoMappers.toServiceDtoDeep(serviceRepository.retrieveOneWithDependencies(service_id));
         settStatusOnService(serviceDto);
+        setOHdisplayOnService(serviceDto);
         return serviceDto;
     }
+
+    private static void setOHdisplayOnService(ServiceDto serviceDto) {
+        Map<UUID, OpeningHoursDisplayData>todaysDisplayData  = OpeningHoursDailyMap.getMap();
+        OpeningHoursDisplayData ohdd = todaysDisplayData.getOrDefault(serviceDto.getId(), null);
+        if(ohdd != null){
+            boolean isOpen = OpeningHoursParser.isOpen(LocalDateTime.now(), ohdd.getRule());
+            String displayText = ohdd.getOpeningHours();
+            displayText = !isOpen? "Stengt " + displayText: displayText;
+            serviceDto.setOhDisplay(
+                    new OHdisplayDto()
+                            .openingHours(ohdd.getOpeningHours())
+                            .rule(ohdd.getRule())
+                            .displayText(displayText)
+                            .isOpen(isOpen));
+
+        }
+    }
+
+
 
     public List<ServiceDto> getServicesDependantOnComponent(UUID component_id) {
         return serviceRepository.getServicesDependantOnComponent(component_id).stream().
