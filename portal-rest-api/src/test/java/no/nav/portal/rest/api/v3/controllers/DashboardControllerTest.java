@@ -1,5 +1,7 @@
 package no.nav.portal.rest.api.v3.controllers;
 import nav.portal.core.entities.*;
+import nav.portal.core.openingHours.OpeningHoursDailyMap;
+import nav.portal.core.openingHours.OpeningHoursDisplayData;
 import nav.portal.core.repositories.*;
 import no.nav.portal.rest.api.EntityDtoMappers;
 import no.portal.web.generated.api.*;
@@ -27,6 +29,11 @@ class DashboardControllerTest {
     private final DashboardController dashboardController = new DashboardController(dbContext);
     private final ServiceController serviceController = new ServiceController(dbContext);
     private final OpsController opsController = new OpsController(dbContext);
+    private final OpeningHoursController openingHoursController = new OpeningHoursController(dbContext);
+
+    private final OpeningHoursRepository openingHoursRepository = new OpeningHoursRepository(dbContext);
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
+
 
     @BeforeEach
     void startConnection() {
@@ -151,5 +158,51 @@ class DashboardControllerTest {
         //Assert
         Assertions.assertThat(retrievedDashboardDto.getId()).isEqualTo(dashboardDto.getId());
         Assertions.assertThat(retrievedDashboardDto.getOpsMessages().get(0).getAffectedServices()).isEqualTo(affectedServices);
+    }
+
+    @Test
+    void getDashboardOpeningHours() {
+        //Arrange
+        OHRuleDto oHRuleDto = SampleDataDto.getOHRuleDtoSimple();
+        OHRuleDto savedOHRuleDto = openingHoursController.newRule(oHRuleDto);
+        oHRuleDto.setId(oHRuleDto.getId());
+        savedOHRuleDto.setId(savedOHRuleDto.getId());
+
+        OHGroupThinDto oHGroupThinDto = new OHGroupThinDto()
+                .name("basic")
+                .rules(List.of(savedOHRuleDto.getId()));
+        openingHoursController.newGroup(oHGroupThinDto);
+
+        ServiceDto serviceDto = SampleDataDto.getRandomizedServiceDto();
+        ServiceDto savedServiceDto = serviceController.newService(serviceDto);
+        savedServiceDto.setId(savedServiceDto.getId());
+
+        openingHoursController.setOpeningHoursToService(oHGroupThinDto.getId(), savedServiceDto.getId());
+
+        AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
+        IdContainerDto idContainerDto =  areaController.newArea(areaDto);
+        areaDto.setId(idContainerDto.getId());
+
+        areaController.addServiceToArea(areaDto.getId(), savedServiceDto.getId());
+
+
+        DashboardDto dashboardDto = SampleDataDto.getRandomizedDashboardDto();
+        dashboardDto.setAreas(List.of(areaDto));
+        IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
+        dashboardDto.setId(dashboardIdContainerDto.getId());
+        //Act
+        DashboardDto retrievedDashboardDto = dashboardController.getDashboard(dashboardDto.getId());
+        List<AreaDto>retrievedAreasList = retrievedDashboardDto.getAreas();
+        AreaDto retrievedArea = retrievedAreasList.get(0);
+        List<ServiceDto>retrievedServicesList = retrievedArea.getServices();
+        ServiceDto retrievedService = retrievedServicesList.get(0);
+        OHdisplayDto retrievedOHDisplayDto = retrievedService.getOhDisplay();
+
+        //Assert
+        Assertions.assertThat(retrievedDashboardDto.getId()).isEqualTo(dashboardDto.getId());
+        Assertions.assertThat(retrievedOHDisplayDto.getRule()).isEqualTo(oHRuleDto.getRule());
+        Assertions.assertThat(retrievedOHDisplayDto.getName()).isEqualTo(oHRuleDto.getName());
+
+
     }
 }

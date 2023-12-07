@@ -10,33 +10,27 @@ public class OpeningHoursValidator {
         //System.out.println("Rule: " + rule);
         String[] ruleParts = rule.split("[\s]");
         if (ruleParts.length != 4) {
-            System.out.println("Invalid rule parts length : " + ruleParts.length);
             return false;
         }
         //Check if valid date format
         if (!isValidDateFormat(ruleParts[0])) {
-            System.out.println("Invalid date format: " + ruleParts[0]);
             return false;
         }
         //Check if weekday range is correct
         if (!isValidDayInMonthFormat(ruleParts[1])) {
-            System.out.println("Invalid day in month format: " + ruleParts[1]);
             return false;
         }
 
         //Check if weekday range is correct
         if (!isValidWeekdayFormat(ruleParts[2])) {
-            System.out.println("Invalid weekday format: " + ruleParts[2]);
             return false;
         }
 
         //Check if time interval is correct
         //return isValidTimeFormat(ruleParts[3]);
         if (isValidTimeFormat(ruleParts[3])){
-            System.out.println("Valid rule: " + rule);
             return true;
         }else{
-            System.out.println("Invalid time rule: " + ruleParts[3]);
             return false;
         }
     }
@@ -116,7 +110,6 @@ public class OpeningHoursValidator {
             }
             return true;
         }
-        System.out.println("dayInMonthRule : " + dayInMonthRule);
         return true;
     }
 
@@ -152,7 +145,6 @@ public class OpeningHoursValidator {
     private static boolean isValidTimeFormat(String timeRule) {
         //checks for hh:mm-hh:mm
         if (!timeRule.matches("^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])-([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$")){
-            System.out.println("Illegal time format, should be hh:mm-hh:mm");
             return false;
         }
 
