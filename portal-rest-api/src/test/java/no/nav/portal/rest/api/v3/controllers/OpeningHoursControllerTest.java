@@ -69,6 +69,26 @@ public class OpeningHoursControllerTest {
     }
 
     @Test
+    void updateRule() {
+        //Arrange
+        List<OHRuleDto>oHRulesDtos = SampleDataDto.getNonEmptyListOfOHRuleDto(2);
+        List<OHRuleDto>oHRulesDtoBefore = new ArrayList<>();
+        oHRulesDtos.forEach(oHRuleDto -> {
+            oHRulesDtoBefore.add(openingHoursController.newRule(oHRuleDto));
+            oHRuleDto.setId(oHRuleDto.getId());
+        });
+        String nameBefore = oHRulesDtoBefore.get(0).getName();
+        //Act
+        oHRulesDtoBefore.get(0).setName(oHRulesDtoBefore.get(1).getName());
+        openingHoursController.updateRule(oHRulesDtoBefore.get(0).getId(), oHRulesDtoBefore.get(1));
+        List<OHRuleDto>oHRulesDtoAfter = openingHoursController.getRules();
+        //Assert
+        Assertions.assertThat(nameBefore).isNotEqualTo(oHRulesDtoBefore.get(1).getName());
+        Assertions.assertThat(oHRulesDtoAfter.get(0).getName()).isEqualTo(oHRulesDtoAfter.get(1).getName());
+
+    }
+
+    @Test
     void deleteRule() {
         //Arrange
         List<OHRuleDto>oHRulesDtos = SampleDataDto.getNonEmptyListOfOHRuleDto(2);

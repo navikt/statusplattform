@@ -99,6 +99,18 @@ public class SampleData {
                 .setRule(getRandomFromArray(rules));
     }
 
+    public static OpeningHoursRuleEntity getOpeningRuleSimple() {
+        return new OpeningHoursRuleEntity()
+                .setName("Normal work days")
+                .setRule("??.??.???? ? 1-5 06:00-19:00");
+    }
+
+    public static OpeningHoursGroupEntity getBasicGroupSimple() {
+        return new OpeningHoursGroupEntity()
+                .setName("Basic")
+                .setRules(Collections.EMPTY_LIST);
+    }
+
     public static List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
         int numberOfRules = length;
         List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
@@ -344,7 +356,6 @@ public class SampleData {
         }
         return helpTexts;
     }
-
 
 
     public static List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length) {

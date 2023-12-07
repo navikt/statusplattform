@@ -281,6 +281,12 @@ public class SampleDataDto {
         return opsMessageDtos;
     }
 
+    public static OHRuleDto getOHRuleDtoSimple() {
+        return new OHRuleDto()
+                .name("Normal work days")
+                .rule(namesAndRules.get("Normal work days"));
+    }
+
     public static OHRuleDto getRandomizedOHRuleDto() {
         String randomKey = getRandomFromKey(new ArrayList<>(namesAndRules.keySet()));
         return new OHRuleDto()
