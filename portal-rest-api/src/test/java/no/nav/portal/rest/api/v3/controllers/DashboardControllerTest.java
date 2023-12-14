@@ -190,6 +190,9 @@ class DashboardControllerTest {
         dashboardDto.setAreas(List.of(areaDto));
         IdContainerDto dashboardIdContainerDto = dashboardController.postDashboard(dashboardDto);
         dashboardDto.setId(dashboardIdContainerDto.getId());
+
+
+        OpeningHoursDailyMap.populateMap(openingHoursRepository);
         //Act
         DashboardDto retrievedDashboardDto = dashboardController.getDashboard(dashboardDto.getId());
         List<AreaDto>retrievedAreasList = retrievedDashboardDto.getAreas();
