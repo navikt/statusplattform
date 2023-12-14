@@ -68,6 +68,7 @@ public class DashboardControllerHelper {
                                 new OHdisplayDto()
                                         .openingHours(ohdd.getOpeningHours())
                                         .rule(ohdd.getRule())
+                                        .name(ohdd.getRuleName())
                                         .displayText(displayText)
                                         .isOpen(isOpen));
 
