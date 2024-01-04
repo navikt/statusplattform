@@ -75,6 +75,7 @@ public class TeamKatalogKlient {
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
+        con.setRequestProperty("Nav-Consumer-Id","status-digitale-tjenester");
         return con;
     }
 
