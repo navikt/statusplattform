@@ -1,6 +1,7 @@
 package no.nav.portal.rest.api.Helpers;
 
 import nav.portal.core.entities.*;
+import nav.portal.core.openingHours.OpeningHoursDailyMap;
 import nav.portal.core.openingHours.OpeningHoursParser;
 import nav.portal.core.openingHours.OpeningHoursValidator;
 import nav.portal.core.repositories.OpeningHoursRepository;
@@ -36,6 +37,7 @@ public class OpeningHoursHelper {
 
     public void updateRule(OHRuleDto oHRuleDto) {
         openingHoursRepository.update(EntityDtoMappers.toOpeningHoursRuleEntity(oHRuleDto));
+        OpeningHoursDailyMap.populateMap(openingHoursRepository);
     }
 
     public void deleteRule(UUID rule_id) {
@@ -51,6 +53,7 @@ public class OpeningHoursHelper {
     public OHGroupThinDto saveGroup(OHGroupThinDto oHGroupThinDto) {
         UUID id = openingHoursRepository.saveGroup(EntityDtoMappers.toOpeningHoursGroup(oHGroupThinDto));
         oHGroupThinDto.setId(id);
+        OpeningHoursDailyMap.populateMap(openingHoursRepository);
         return oHGroupThinDto;
     }
 
@@ -65,6 +68,7 @@ public class OpeningHoursHelper {
 
     public void updateGroup(OHGroupThinDto oHGroupThinDto) {
         openingHoursRepository.updateGroup(EntityDtoMappers.toOpeningHoursGroup(oHGroupThinDto));
+        OpeningHoursDailyMap.populateMap(openingHoursRepository);
     }
 
 //    public static OpeningHoursGroup getFullGroup(OHGroupThinDto oHGroupThinDto) {
