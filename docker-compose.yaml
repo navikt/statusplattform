@@ -1,0 +1,27 @@
+version: '3'
+services:
+  database:
+    container_name: postgres
+    image: library/postgres:12
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: navstatus
+      POSTGRES_USERNAME: postgres
+      PGTZ: Europe/Oslo
+  backend:
+    container_name: javabackend
+    build:
+      context: .
+    ports:
+      - "3005:3005"
+    environment:
+      teamkatalogApiUrl: https://teamkatalog-api.intern.dev.nav.no
+      swagger-api-key: key
+      DB_USERNAME: postgres
+      DB_PORT: 5432
+      DB_HOSTNAME: database
+      FRONTEND_LOCATION: 'placeholder'
+      ENV: dev # TODO will be replaced by scope
+    depends_on:
+      - database
+

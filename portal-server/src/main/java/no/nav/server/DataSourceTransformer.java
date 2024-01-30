@@ -7,20 +7,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 public class DataSourceTransformer {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceTransformer.class);
     public static DataSource create() {
 
-        String userName = System.getenv("DB_USERNAME");
-        String password = System.getenv("DB_PASSWORD");
+        String dbUserName = System.getenv().getOrDefault("DB_USERNAME", "postgres");
+        String password = System.getenv().getOrDefault("DB_PASSWORD", "");
+        String dbHostname = System.getenv("DB_HOSTNAME");
+        String dbPort = System.getenv().getOrDefault("DB_PORT", "5432");
+
         Properties properties = new Properties();
-        properties.put("jdbcUrl", "jdbc:postgresql://127.0.0.1:5432/navstatus");
-        properties.put("username", userName);
+        properties.put("jdbcUrl", "jdbc:postgresql://" + dbHostname + ":" + dbPort + "/navstatus");
+        properties.put("username", dbUserName);
         properties.put("password", password);
         properties.put("maximumPoolSize","32");
 
@@ -34,7 +34,7 @@ public class DataSourceTransformer {
             } catch (Exception e) {
                 if (++count == maxTries) {
                     throw e;
-                };
+                }
             }
         }
         Flyway.configure().dataSource(dataSource).load().migrate();
