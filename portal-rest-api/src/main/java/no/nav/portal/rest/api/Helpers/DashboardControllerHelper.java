@@ -63,7 +63,6 @@ public class DashboardControllerHelper {
                     if(ohdd != null){
                         boolean isOpen = OpeningHoursParser.isOpen(LocalDateTime.now(), ohdd.getRule());
                         String displayText = ohdd.getOpeningHours();
-                        displayText = !isOpen? "Stengt " + displayText: displayText;
                         s.setOhDisplay(
                                 new OHdisplayDto()
                                         .openingHours(ohdd.getOpeningHours())
