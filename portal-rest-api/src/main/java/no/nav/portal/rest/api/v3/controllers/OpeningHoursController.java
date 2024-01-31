@@ -97,7 +97,7 @@ public class OpeningHoursController {
     @PUT("/OpeningHours/:Group_id/:Service_id")
     @JsonBody
     public void setOpeningHoursToService(@PathParam("Group_id") UUID group_id, @PathParam("Service_id") UUID service_id) {
-        openingHoursRepository.setOpeningHoursToService(group_id, service_id);
+        openingHoursHelper.setOpeningHoursToService(group_id, service_id);
     }
 
     @DELETE("/OpeningHours/Service/:Service_id")

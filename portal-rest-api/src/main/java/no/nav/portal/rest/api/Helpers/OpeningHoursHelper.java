@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 public class OpeningHoursHelper {
     private OpeningHoursRepository openingHoursRepository;
-   // private OpeningHoursLogic openingHoursLogic;
 
     public OpeningHoursHelper(DbContext dbContext) {
         this.openingHoursRepository = new OpeningHoursRepository(dbContext);
@@ -112,4 +111,9 @@ public class OpeningHoursHelper {
 
     }
 
+    public void setOpeningHoursToService(UUID groupId, UUID serviceId) {
+        openingHoursRepository.setOpeningHoursToService(groupId,serviceId);
+        OpeningHoursDailyMap.populateMap(openingHoursRepository);
+
+    }
 }
