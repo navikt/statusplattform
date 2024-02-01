@@ -1,14 +1,16 @@
 package no.nav.portal.rest.api.v3.controllers;
 
-import nav.portal.core.entities.OpeningHoursRuleEntity;
+
 import nav.portal.core.entities.ServiceEntity;
 import nav.portal.core.repositories.SampleData;
 import nav.portal.core.repositories.TestDataSource;
 import nav.portal.core.repositories.TestUtil;
 import no.nav.portal.rest.api.EntityDtoMappers;
-import no.portal.web.generated.api.*;
-import org.actioncontroller.PathParam;
-import org.actioncontroller.json.JsonBody;
+
+import no.portal.web.generated.api.OHGroupDto;
+import no.portal.web.generated.api.OHGroupThinDto;
+import no.portal.web.generated.api.OHRuleDto;
+import no.portal.web.generated.api.ServiceDto;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -17,7 +19,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,25 +80,7 @@ public class OpeningHoursControllerTest {
         Assertions.assertThat(retrievedOHRuleDto.getId()).isEqualTo(oHRuleDto.getId());
     }
 
-    @Test
-    void updateRule(){
-        //Arrange
-        List<OHRuleDto>oHRulesDtos = SampleDataDto.getNonEmptyListOfOHRuleDto(2);
-        List<OHRuleDto>oHRulesDto = new ArrayList<>();
-        oHRulesDtos.forEach(oHRuleDto -> {
-            oHRulesDto.add(openingHoursController.newRule(oHRuleDto));
-            oHRuleDto.setId(oHRuleDto.getId());
-        });
-        List<OHRuleDto>rulesBefore = openingHoursController.getRules();
-        //Act
-        oHRulesDto.get(0).setName(oHRulesDto.get(1).getName());
-        openingHoursController.updateRule(oHRulesDto.get(0));
-        List<OHRuleDto>rulesAfter = openingHoursController.getRules();
-        //Assert
-        Assertions.assertThat(rulesBefore.get(0).getName()).isNotEqualTo(rulesBefore.get(1).getName());
-        Assertions.assertThat(rulesAfter.get(0).getName()).isEqualTo(rulesAfter.get(1).getName());
 
-    }
 
     @Test
     void updateRule() {
@@ -174,7 +162,7 @@ public class OpeningHoursControllerTest {
         }
         rules.add(ruleId);
         oHGroupThinDto.setRules(rules);
-        openingHoursController.updateGroup(oHGroupThinDto);
+        openingHoursController.updateGroup(groupId, oHGroupThinDto);
         OHGroupDto retrievedGroupAfter = openingHoursController.getGroup(groupId);
         //Assert
         OHGroupDto rule = retrievedGroupAfter.getRules().get(0);
@@ -313,13 +301,14 @@ public class OpeningHoursControllerTest {
         //Group oppsett
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
-        savedOHGroupThinDto.setId(savedOHGroupThinDto.getId());
+        UUID groupId = savedOHGroupThinDto.getId();
+        savedOHGroupThinDto.setId(groupId);
 
         List<OHGroupDto>retrievedGroups = openingHoursController.getGroups();
 
         //add rules to group
         savedOHGroupThinDto.setRules(savedOHRulesDtoIds);
-        openingHoursController.updateGroup(savedOHGroupThinDto);
+        openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
         OHGroupDto retrievedGroupAfter = openingHoursController.getGroup(savedOHGroupThinDto.getId());
 
         //Create service
@@ -385,11 +374,11 @@ public class OpeningHoursControllerTest {
 
         //EarlyClosing
         savedGroups.get(2).setRules(savedOHRulesDtoIds.get(3));
-        openingHoursController.updateGroup(savedGroups.get(2));
+        openingHoursController.updateGroup(groups.get(2).getId(), savedGroups.get(2));
 
         //CollaborativeMaintenance
         savedGroups.get(1).setRules(savedOHRulesDtoIds.get(2));
-        openingHoursController.updateGroup(savedGroups.get(1));
+        openingHoursController.updateGroup(groups.get(1).getId(),savedGroups.get(1));
 
         //Add Groups and Rules to LocalMaintenanceGroup
 
@@ -402,11 +391,11 @@ public class OpeningHoursControllerTest {
 
         //LocalMaintenance
         savedGroups.get(0).setRules(maintenanceGroupRulesIds);
-        openingHoursController.updateGroup(savedGroups.get(0));
+        openingHoursController.updateGroup(groups.get(0).getId(),savedGroups.get(0));
 
         //NationalHolidays
         savedGroups.get(3).setRules(savedOHRulesDtoIds.get(4));
-        openingHoursController.updateGroup(savedGroups.get(3));
+        openingHoursController.updateGroup(groups.get(3).getId(),savedGroups.get(3));
 
         List<UUID> basicGroupRulesIds =
                 Stream.of(List.of(groupsDtoIds.get(3)), //BasicRulesIds
@@ -417,7 +406,7 @@ public class OpeningHoursControllerTest {
 
         //Basic
         savedBasicGroupDto.setRules(basicGroupRulesIds);
-        openingHoursController.updateGroup(savedBasicGroupDto);
+        openingHoursController.updateGroup(savedBasicGroupDto.getId(), savedBasicGroupDto);
         OHGroupDto retrievedBasicGroupAfter = openingHoursController.getGroup(savedBasicGroupDtoId);
 
         //Create service
@@ -472,7 +461,7 @@ public class OpeningHoursControllerTest {
         savedOHGroupThinDto.setId(savedOHGroupThinDto.getId());
         /*add rules to group*/
         oHGroupThinDto.setRules(savedOHRulesDtoIds);
-        openingHoursController.updateGroup(oHGroupThinDto);
+        openingHoursController.updateGroup(oHGroupThinDto.getId(), oHGroupThinDto);
 
         /*Create service*/
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
@@ -511,7 +500,7 @@ public class OpeningHoursControllerTest {
         savedOHGroupThinDto.setId(savedOHGroupThinDto.getId());
         /*add rules to group*/
         oHGroupThinDto.setRules(savedOHRulesDtoIds);
-        openingHoursController.updateGroup(oHGroupThinDto);
+        openingHoursController.updateGroup(oHGroupThinDto.getId(), oHGroupThinDto);
 
         /*Create service*/
         ServiceEntity service = SampleData.getRandomizedServiceEntity();

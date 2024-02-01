@@ -88,9 +88,6 @@ public class SampleDataDto {
     static final Map<String, String> baseRules =  Map.ofEntries(
             Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
 
-
-    static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
-
     public static DashboardDto getRandomizedDashboardDto() {
         return new DashboardDto()
                 .name(getRandomFromArray(dashboardNames));
