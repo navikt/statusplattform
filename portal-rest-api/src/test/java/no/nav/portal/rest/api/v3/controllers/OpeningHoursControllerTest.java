@@ -338,20 +338,16 @@ public class OpeningHoursControllerTest {
         //Arrange
         //Regler oppsett
         List<List<OHRuleDto>> listOfOHRulesDtos = SampleDataDto.getListOfRules ();
-        List<List<OHRuleDto>>savedOHRulesDtos = new ArrayList<>();
         List<List<UUID>>savedOHRulesDtoIds = new ArrayList<>();
 
 
         for (List<OHRuleDto> listOfOHRulesDto : listOfOHRulesDtos) {
-            List<OHRuleDto> saveRulesDto = new ArrayList<>();
             List<UUID> saveRulesDtoId = new ArrayList<>();
             for (OHRuleDto rulesDto : listOfOHRulesDto) {
                 openingHoursController.newRule(rulesDto);
                 rulesDto.setId(rulesDto.getId());
                 saveRulesDtoId.add(rulesDto.getId());
-                saveRulesDto.add(rulesDto);
             }
-            savedOHRulesDtos.add(saveRulesDto);
             savedOHRulesDtoIds.add(saveRulesDtoId);
         }
 

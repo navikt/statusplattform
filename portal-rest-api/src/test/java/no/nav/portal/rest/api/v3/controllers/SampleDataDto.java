@@ -84,7 +84,7 @@ public class SampleDataDto {
             "Her legger man inn tjenester hvor komponeten skal vises. Velg i liste og klikk Legg til for hver tjeneste."));
 
 
-    static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("National Holidays", "Collaborative maintenance, local maintenance", "Early closing"));
+    static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("National Holidays", "Collaborative maintenance", "local maintenance", "Early closing"));
     static final Map<String, String> baseRules =  Map.ofEntries(
             Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
 
