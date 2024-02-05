@@ -229,6 +229,7 @@ public class SampleData {
                 .setType(getRandomServiceType())
                 .setTeam(getRandomFromArray(teamNames))
                 .setStatusNotFromTeam(Boolean.FALSE)
+                .setPollingOnPrem(Boolean.FALSE)
                 .setMonitorlink(getRandomFromArray(urlStrings));
     }
 
@@ -242,6 +243,7 @@ public class SampleData {
                 .setTeam(getRandomFromArray(teamNames))
                 .setPolling_url(getRandomFromArray(urlStrings))
                 .setStatusNotFromTeam(Boolean.FALSE)
+                .setPollingOnPrem(Boolean.FALSE)
                 .setMonitorlink(getRandomFromArray(urlStrings));
     }
 
