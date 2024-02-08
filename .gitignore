@@ -10,3 +10,10 @@ dependency-reduced-pom.xml
 /*.cer
 /logs
 generated/
+
+# Dev env specific env vars/secrets management
+.env*
+
+# Nix stuffs
+/.direnv
+result*
