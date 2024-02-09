@@ -1,0 +1,2434 @@
+openapi: 3.0.3
+info:
+  description: Documentation NAV Statusplattform REST API
+  version: '0.1'
+  title: Nav REST API
+servers:
+  - url: /rest
+paths:
+  /Dashboards:
+    get:
+      tags:
+        - Dashboard
+      summary: Hent navn og id på alle dashboard
+      description: Henter id og navn på alle dashboard. Ikke tilhørende områder/tjenester.
+      operationId: getDashboards
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DashboardNameId'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+  /Dashboard:
+    post:
+      tags:
+        - Dashboard
+      summary: Legg til nytt dashboard.
+      description: Legg til nytt dashboard. Id genereres i backend, og sendes tilbake
+      operationId: addDashboard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dashboard'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /Dashboard/{Dashboard_id}:
+    put:
+      tags:
+        - Dashboard
+      summary: Oppdater dashboard
+      description: Endre feltene i dashboard
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DashboardUpdate'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    get:
+      tags:
+        - Dashboard
+      summary: Hent dashboard med innhold.
+      description: henter et dashboard med alle underliggende områder/ tjenester
+      operationId: getDashboard
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+    delete:
+      tags:
+        - Dashboard
+      summary: Slett et dashboard med.
+      description: sletter dashboard med uuid dashboard_id
+      operationId: deleteDashboard
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Areas/{Dashboard_id}:
+    get:
+      tags:
+        - Area
+      summary: Alle områder
+      operationId: AreasOnDashBoard
+      description: Henter alle områder med underliggende tjenster
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Areas:
+    get:
+      tags:
+        - Area
+      summary: Alle områder
+      operationId: Area
+      description: Henter alle områder med underliggende tjenster
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - Area
+      summary: Legg til ett nytt område
+      requestBody:
+        description: Legg til ett nytt område. Her trenger IKKE services å være med ved innsending.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Area'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+  /Areas/Minimal:
+    get:
+      tags:
+        - Area
+      summary: Alle områder uten underliggende tjenster
+      operationId: AreasMinimal
+      description: Henter alle områder uten underliggende tjenester
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Areas/WithComponents/Minimal:
+    get:
+      tags:
+        - Area
+      summary: Alle "komponent" områder
+      operationId: AreasWithComponentsMinimal
+      description: Henter alle områder uten underliggende tjenester
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /SubAreas:
+    get:
+      tags:
+        - Area
+      summary: Alle sub-områder
+      operationId: SubArea
+      description: Henter alle sub-områder med underliggende tjenster
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubArea'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /SubArea:
+    post:
+      tags:
+        - Area
+      summary: Legg til ett nytt sub-område
+      requestBody:
+        description: Legg til ett nytt sub-område. Her trenger IKKE services å være med ved innsending.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubArea'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Area/{Area_id}/{Service_id}:
+    put:
+      tags:
+        - Area
+      summary: Legg en tjeneste til et område
+      description: Legg inn uid for område og tjenesten som skal legges til det.
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - Area
+      summary: Fjern tjeneste fra område
+      description: Legg inn uid for område og tjenesten som skal fjernes.
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Area/{Area_id}:
+    put:
+      tags:
+        - Area
+      summary: Oppdater område
+      description: Endre feltene i et område
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Oppdater område - services trenger ikke være med.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Area'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - Area
+      summary: Fjern område
+      description: Legg inn uid på området som skal fjernes.
+      parameters:
+        - name: Area_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Services/Types:
+    get:
+      tags:
+        - Service
+      summary: Hent alle tjenestetyper
+      operationId: ServiceType
+      description: Tjenester skal kategoriseres på typer som kan finnes her.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Applikasjon
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Services/Status:
+    get:
+      tags:
+        - Service
+      summary: Hent alle statuser tjenester kan ha
+      operationId: ServiceStatus
+      description: Alle tjenester kan ha et utvalg statuser. Dette endepunktet skriver ut disse.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Applikasjon
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Components:
+    get:
+      tags:
+        - Service
+      summary: Hent alle komponenter med avhengigheter
+      operationId: getComponents
+      description: Henter alle komponenter med avhengigheter - ett lag dypt. Det vil si at dersom tjeneste A er avhengig av tjeneste B som er avhengig av tjeneste C, vil ikke avhengighet B => C dukke opp.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Services:
+    get:
+      tags:
+        - Service
+      summary: Hent alle tjenester med tjenesteavhengigheter
+      operationId: getServices
+      description: Henter alle tjenester med tjenesteavhengigheter - ett lag dypt. Det vil si at dersom tjeneste A er avhengig av tjeneste B som er avhengig av tjeneste C, vil ikke avhengighet B => C dukke opp.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Services/Minimal:
+    get:
+      tags:
+        - Service
+      summary: Hent alle tjenester uten avhengigheter
+      operationId: getServicesMinimal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Components/Minimal:
+    get:
+      tags:
+        - Service
+      summary: Hent alle tjenester uten avhengigheter
+      operationId: getComponentsMinimal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Service:
+    post:
+      tags:
+        - Service
+      summary: Legg til tjeneste
+      description: Opprett en ny tjeneste. Merk at type er predefinert og strengt, se endepunkt /Services/Types for en liste over mulige verdier.
+      requestBody:
+        description: Legg til en ny tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    put:
+      tags:
+        - Service
+      summary: Rediger tjeneste
+      description: Rediger tjenesteparametre
+      requestBody:
+        description: Oppdaterte verdier for tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+  /Service/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent en spesifikk tjeneste med tjenesteavhengigheter
+      operationId: GetService
+      description: Henter tjenestedata med tjenesteavhengigheter - ett lag dypt. Det vil si at dersom tjeneste A er avhengig av tjeneste B som er avhengig av tjeneste C, vil ikke avhengighet B => C dukke opp.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+    put:
+      tags:
+        - Service
+      summary: Rediger tjeneste
+      description: Rediger en tjeneste ved å legge ved UUIDen som er knyttet til denne. Merk at type er predefinert og strengt, se endepunkt /Services/Types for en liste over mulige verdier.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Rediger eksisterende tjeneste
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - Service
+      summary: Slett en tjeneste
+      description: Slett tjeneste med id Service_id.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Component/{Component_id}:
+    delete:
+      tags:
+        - Service
+      summary: Slett en komponent
+      description: Slett komponent med id Component_id.
+      parameters:
+        - name: Component_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Service/Areas/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent områder som har tjeneste med id
+      operationId: GetAreasContainingService
+      description: Hent områder som har tjeneste med id.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Area'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Service/Maintenance:
+    put:
+      tags:
+        - Service
+      summary: Legg til vedlikeholdsmelding på tjeneste
+      description: Legg til vedlikeholdsmelding på tjeneste
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Maintenance'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+  /Service/Maintenance/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent alle vedlikeholdsmeldinger på tjeneste
+      description: Hent alle vedlikeholdsmeldinger på tjeneste
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Maintenance'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Statusholder/{Service_id}/{Status}:
+    post:
+      tags:
+        - Statusholder
+      summary: Sett status på tjeneste i statusholder
+
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Status
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Statusholder:
+    get:
+      tags:
+        - Statusholder
+      summary: Hent allestatuser i statusholder
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Statusholder/TestAzureM2M:
+    post:
+      tags:
+        - Statusholder
+      summary: Test av azure ad
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+  /Alert:
+    get:
+      tags:
+        - Record
+      summary: Hent alle vedlikeholdsmeldinger på tjeneste
+      description: Hent alle vedlikeholdsmeldinger på tjeneste
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    post:
+      tags:
+        - Record
+      summary: Legg til status på en tjeneste
+      description: Legg til status på en tjeneste. Mulige statuser OK / DOWN / ISSUE.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Alert'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /ServiceStatus:
+    post:
+      tags:
+        - Record
+      summary: Legg til status på en tjeneste
+      description: Legg til status på en tjeneste. Mulige statuser OK / DOWN / ISSUE.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Record'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /ServiceStatus/{Service_id}:
+    get:
+      tags:
+        - Record
+      summary: Hent status-records fra en tjeneste med id Service_id
+      description: Hent rapport på alle statuser lagt inn på en spesifikk service
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /Service/HistoryAggregated/{Service_id}:
+    get:
+      tags:
+        - Service
+      summary: Hent tjenestehistorikk pr dag
+      operationId: GetServiceHistoryAggregated
+      description: Henter tjenestehistorikk per dag
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceHistory'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Service/{Service_id}/{DependentOnService_id}:
+    put:
+      tags:
+        - Service
+      summary: Legg til tjenesteavhengighet.
+      description: Legg til en tjenesteavhengighet til tjenesten med id Service_id.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: DependentOnService_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - Service
+      summary: Sletter en tjenesteavhengighet
+      description: Fjerner tjenesteavhengighet fra tjenesten med id Service_id til tjenesten med id dependentOnService_Id.
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: DependentOnService_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /OpsMessage:
+    get:
+      tags:
+        - OPS
+      summary: Hent alle avviksmeldinger
+      operationId: getOpsMessages
+      description: Henter alle avviksmeldinger definert i OPS-GUIet
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OPSmessage'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - OPS
+      summary: Legg til avviksmelding
+      description: Legg til avviksmelding.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OPSmessage'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /OpsMessage/{Ops_id}:
+    delete:
+      tags:
+        - OPS
+      summary: Slett avviksmelding
+      description: Fjerner en avviksmelding fullstendig
+      parameters:
+        - name: Ops_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    put:
+      tags:
+        - OPS
+      summary: Rediger avviksmelding
+      description: Rediger avviksmelding
+      parameters:
+        - name: Ops_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Oppdaterte verdier for avviksmelding
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OPSmessage'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /OpsMessage/Dashboard/{Dashboard_id}:
+    get:
+      tags:
+        - OPS
+      summary: Hent aktive aviksmeldinger på et dashboard
+      operationId: getAllForDashboard
+      description: Hent aktive aviksmeldinger på et dashboard
+      parameters:
+        - name: Dashboard_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OPSmessage'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Wcag/Tjeneste:
+    get:
+      tags:
+        - WCAG
+      summary: Hent alle Tjenester med tilhørende wcagkrav
+      operationId: wcagtjeneste
+      description: Hent alle Tjenester med tilhørende wcagkrav
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /Wcag/Krav:
+    get:
+      tags:
+        - WCAG
+      summary: Hent alle krav med tilhørende tjenester
+      operationId: wcagkrav
+      description: Hent alle krav med tilhørende tjenester
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KravMapEntry'
+
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /OpeningHours/Rule:
+    post:
+      tags:
+        - OpeningHours
+      summary: Legg til åpenstidsregel
+      description: Opprett en ny åpenstidsregel.
+      requestBody:
+        description: Legg til en ny åpenstidsregel
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHRule'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /OpeningHours/Rules:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent alle åpenstidsregler
+      description: henter alle åpenstidsregler
+      operationId: getRules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OHRule'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /OpeningHours/Rule/{Rule_id}:
+    put:
+      tags:
+        - OpeningHours
+      summary: Rediger åpenstidsregel
+      description: Rediger åpenstidsregel
+      parameters:
+        - name: Rule_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Oppdaterte verdier for åpenstidsregel
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHRule'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - OpeningHours
+      summary: Slett åpenstidsregel
+      description: Fjerner en åpenstidsregel
+      parameters:
+        - name: Rule_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent regel med id
+      description: henter et åpenstidsregel
+      operationId: getRule
+      parameters:
+        - name: Rule_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OHRule'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /OpeningHours/Group:
+    post:
+      tags:
+        - OpeningHours
+      summary: Legg til åpenstidsgruppe
+      description: Opprett en ny åpenstidsgruppe for innlegging av  åpenstidsregler
+      requestBody:
+        description: Legg til en ny åpenstidsgruppe
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHGroupThin'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent alle åpenstidsgrupper
+      description: henter alle åpenstidsgrupper
+      operationId: getAllGroups
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OHGroup'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /OpeningHours/Group/{Group_id}:
+    put:
+      tags:
+        - OpeningHours
+      summary: Rediger åpenstidsgruppe
+      description: Rediger åpenstidsgruppeparametre
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Oppdaterte verdier for åpenstidsgruppe
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OHGroupThin'
+          text/plain:
+            schema:
+              type: string
+
+      responses:
+        '201':
+          description: Updated
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpenstidsgruppe med id
+      description: Hent åpenstidsgruppe med id
+      operationId: GetOHGroupMedId
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OHGroup'
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+    delete:
+      tags:
+        - OpeningHours
+      summary: Slett åpenstidsgruppe med id
+      description: Fjerner en åpenstidsgruppe med id
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+
+  /OpeningHours/{Group_id}/{Service_id}:
+    put:
+      tags:
+        - OpeningHours
+      summary: Legg åpenstidsgruppe til en tjeneste
+      description: Legg inn uid for åpenstidsgruppe til en tjeneste
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '201':
+          description: Updated
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /OpeningHours/Service/{Service_id}:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent en åpenstidsgruppe for en tjeneste
+      description: hent åpenstidsgruppe for en tjeneste
+      operationId: getGroupForService
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OHGroup'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+    delete:
+      tags:
+        - OpeningHours
+      summary: Fjern åpenstidsgruppe fra tjeneste med id
+      description: Fjern åpenstidsgruppe fra tjeneste med id
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: {}
+  /OpeningHours/Service/{Service_id}/{Date}:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpningstid for en tjeneste
+      description: Hent åpningstid for en tjeneste
+      operationId: getOhForServiceOnDate
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Date
+          in: path
+          required: true
+          schema:
+            type: string
+            description: yyyy.mm.dd
+            example: 2023.06.14
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 07:00-20:00
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /OpeningHours/Group/{Group_id}/{Date}:
+    get:
+      tags:
+        - OpeningHours
+      summary: Hent åpningstid for en gruppe på en dato
+      description:  Hent åpningstid for en gruppe på en dato
+      operationId: getOhForGroupOnDate
+      parameters:
+        - name: Group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Date
+          in: path
+          required: true
+          schema:
+            type: string
+            description: yyyy.mm.dd
+            example: 2023.06.14
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 07:00-20:00
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /isAlive:
+    get:
+      tags:
+        - Health
+      summary: Sjekk tilstanden på applikasjon
+      description: Sjekk tilstand på applikasjon
+      operationId: healthCheck
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      deprecated: false
+  /HelpText/Services:
+    get:
+      tags:
+        - HelpText
+      summary: Hent alle tjenester
+      operationId: getAllServices
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HelpText'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /HelpText/Components:
+    get:
+      tags:
+        - HelpText
+      summary: Hent alle komponenter
+      operationId: getAllComponents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HelpText'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+  /HelpText:
+    get:
+      tags:
+        - HelpText
+      summary: Hent alle hjelptekster
+      operationId: HelpText
+      description: Henter alle hjelptekster
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HelpText'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+    post:
+      tags:
+        - HelpText
+      summary: Legg til Hjelpetekst
+      description: Opprett en ny hjelpetekst. Merk at type er predefinert og strengt, se endepunkt /Services/Types for en liste over mulige verdier.
+      requestBody:
+        description: Legg til en ny hjelpetekst
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelpText'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    put:
+      tags:
+        - HelpText
+      summary: Oppdater hjelpetekst
+      description: Endre feltene i en hjelptekst
+      requestBody:
+        description: Oppdater hjelpetekst.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelpText'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Created
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+    delete:
+      tags:
+        - HelpText
+      summary: Fjern hjelpetekst
+      responses:
+        '201':
+          description: Deleted
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+  /HelpText/{HelpText_number}/{HelpText_type}:
+    get:
+      tags:
+        - HelpText
+      summary: Hent en spesifikk hjelpetekst
+      operationId: GetHelpText
+      description: Henter hjelpetekst.
+      parameters:
+        - name: HelpText_number
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: HelpText_type
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HelpText'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
+
+
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
+components:
+  schemas:
+    DashboardNameId:
+      title: Dashboard
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          example: "84e49ba0-7409-41ed-8ebe-949ad94dc1d3"
+        name:
+          type: string
+          example: "Privatperson"
+    Dashboard:
+      title: Dashboard
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          example: "84e49ba0-7409-41ed-8ebe-949ad94dc1d3"
+        name:
+          type: string
+          example: "Privatperson"
+        areas:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Area'
+        opsMessages:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/OPSmessage'
+      required:
+        - areas
+        - opsMessages
+    Area:
+      title: Area
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        description:
+          type: string
+        contains_components:
+          type: boolean
+          default: false
+        services:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Service'
+        subAreas:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubArea'
+        status:
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/Status'
+      required:
+        - name
+        - services
+        - subAreas
+    SubArea:
+      title: SubArea
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/Status'
+        services:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Service'
+      required:
+        - name
+        - services
+    Service:
+      title: Service
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/ServiceType'
+        team:
+          type: string
+        teamId:
+          type: string
+          format: uuid
+          readOnly: true
+        serviceDependencies:
+          type: array
+          example: "[Liste av service objekter]"
+          items:
+            $ref: '#/components/schemas/Service'
+        componentDependencies:
+          type: array
+          example: "[Liste av service objekter]"
+          items:
+            $ref: '#/components/schemas/Service'
+        areasContainingThisService:
+          type: array
+          example: "[Liste av område UUIDer]"
+          items:
+            $ref: '#/components/schemas/Area'
+        servicesDependentOnThisComponent:
+          type: array
+          example: "[Liste av servicer som er avhengig av denne komponenten]"
+          items:
+            $ref: '#/components/schemas/Service'
+        ohDisplay:
+          $ref: '#/components/schemas/OHdisplay'
+        monitorlink:
+          type: string
+        pollingUrl:
+          type: string
+        pollingOnPrem:
+          type: boolean
+          readOnly: true
+
+        record:
+          readOnly: true
+          $ref: '#/components/schemas/Record'
+        statusNotFromTeam:
+          type: boolean
+      required:
+        - serviceDependencies
+        - componentDependencies
+        - areasContainingThisService
+        - servicesDependentOnThisComponent
+    Record:
+      title: Record
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        serviceId:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/Status'
+        source:
+          $ref: '#/components/schemas/RecordSource'
+        description:
+          type: string
+        logLink:
+          type: string
+        responseTime:
+          type: integer
+    Maintenance:
+      title: Maintenance
+      type: object
+      properties:
+        service_id:
+          type: string
+          format: uuid
+          readOnly: true
+          example: "84e49ba0-7409-41ed-8ebe-949ad94dc1d3"
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        endTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T19:32:28Z"
+    OPSmessage:
+      title: OPSmessage
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        affectedServices:
+          type: array
+          example: "[Liste av påvirkede servicer/komponenter]"
+          items:
+            $ref: '#/components/schemas/Service'
+        internalHeader:
+          type: string
+        internalMessage:
+          type: string
+        externalHeader:
+          type: string
+        externalMessage:
+          type: string
+        onlyShowForNavEmployees:
+          type: boolean
+        isActive:
+          type: boolean
+        startTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        endTime:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+        severity:
+          type: string
+          enum:
+            - NEUTRAL
+            - OK
+            - ISSUE
+            - DOWN
+      required:
+        - internalMessage
+        - internalHeader
+        - onlyShowForNavEmployees
+        - affectedServices
+    ServiceHistory:
+      title: ServiceHistory
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceHistoryMonthEntry'
+      required:
+        - history
+
+    ServiceHistoryMonthEntry:
+      title: ServiceHistoryMonthEntry
+      type: object
+      properties:
+        month:
+          type: string
+        year:
+          type: integer
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceHistoryDayEntry'
+      required:
+        - entries
+    ServiceHistoryDayEntry:
+      title: ServiceHistoryDayEntry
+      type: object
+      properties:
+        serviceId:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        information:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+    Alert:
+      title: Alert
+      type: object
+      properties:
+        receiver:
+          readOnly: true
+          type: string
+        status:
+          $ref: '#/components/schemas/AlertStatus'
+        alerts:
+          readOnly: true
+          type: array
+          items:
+            type: object
+        groupLabels:
+          readOnly: true
+          type: object
+        commonLabels:
+          $ref: '#/components/schemas/CommonLabels'
+        commonAnnotations:
+          $ref: '#/components/schemas/CommonAnnotations'
+        externalURL:
+          readOnly: true
+          type: string
+        version:
+          readOnly: true
+          type: string
+        groupKey:
+          readOnly: true
+          type: string
+    CommonAnnotations:
+      title: CommonAnnotations
+      properties:
+        severity:
+          $ref: '#/components/schemas/AlertSeverity'
+    CommonLabels:
+      title: commonLabels
+      properties:
+        alertname:
+          type: string
+          format: uuid
+    AlertStatus:
+      type: string
+      enum:
+        - firing
+        - resolved
+    AlertSeverity:
+      type: string
+      enum:
+        - good
+        - warning
+        - danger
+    Status:
+      type: string
+      enum:
+        - OK
+        - ISSUE
+        - DOWN
+        - UNKNOWN
+    RecordSource:
+      type: string
+      enum:
+        - UNKNOWN
+        - GCP_POLL
+        - ONPREM_POLL
+        - PROMETHEUS
+        - OBM
+    ServiceType:
+      type: string
+      enum:
+        - KOMPONENT
+        - TJENESTE
+    ServiceOpeningHours:
+      properties:
+        dailyOpeningHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceOpeningHoursDayEntry'
+      required:
+        - dailyOpeningHours
+    Time:
+      properties:
+        hour:
+          type: integer
+          minimum: 0
+          maximum: 23
+        minutes:
+          type: integer
+          minimum: 0
+          maximum: 59
+    ServiceOpeningHoursDayEntry:
+      properties:
+        serviceId:
+          type: string
+          format: uuid
+        dayOfWeek:
+          type: integer
+          minimum: 0
+          maximum: 6
+        openingTime:
+          $ref: '#/components/schemas/Time'
+        closingTime:
+          $ref: '#/components/schemas/Time'
+    IdContainer:
+      properties:
+        id:
+          type: string
+          format: uuid
+    DashboardUpdate:
+      properties:
+        name:
+          type: string
+        areas:
+          type: array
+          items:
+            type: string
+            format: uuid
+    KravMapEntry:
+      properties:
+        criteriaName:
+          type: string
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/WcagKrav'
+    WcagKrav:
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+        result:
+          type: string
+        date:
+          type: string
+          format: date-time
+          example: "2017-07-21T17:30:00Z"
+
+    WcagResult:
+      properties:
+        serviceName:
+          type: string
+        summary:
+          type: string
+        criterias:
+          type: array
+          items:
+            $ref: '#/components/schemas/WcagKrav'
+      required:
+        - areas
+    NavUser:
+      title: NavUser
+      type: object
+      properties:
+        navIdent:
+          type: string
+          example: "L154326"
+        name:
+          type: string
+          example: "Ola Norman"
+    OHdisplay:
+      title: OHdisplay
+      type: object
+      description: data for displaying opening hours for a service
+      properties:
+        isOpen:
+          type: boolean
+        rule:
+          type: string
+        name:
+          type: string
+        openingHours:
+          type: string
+        displayText:
+          type: string
+
+    OHGroupThin:
+      title: OHGroupThin
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "Min åpningstidsgruppe"
+        rules:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: d8d6bfc4-0a81-11ee-be56-0242ac120002uid
+    OHGroup:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "Helligdag 17.mai"
+        rule:
+          type: string
+          example: "24.12.???? ? 1-5 09:00-14:00"
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/OHGroup'
+    OHRule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "Helligdag 17.mai"
+        rule:
+          type: string
+          example: "24.12.???? ? 1-5 09:00-14:00"
+    HelpText:
+      type: object
+      properties:
+        number:
+          type: integer
+          example: 1
+        type:
+          $ref: '#/components/schemas/ServiceType'
+        content:
+          type: string
+
+
+  securitySchemes:
+    ApiKeyAuth: # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: Apikey  # name of the header, query parameter or cookie
+security:
+  - ApiKeyAuth: [ ]

@@ -1,15 +1,25 @@
-.idea
-*.iml
-target
-node_modules
-.cache
-dependency-reduced-pom.xml
-*/src/main/web/node
 /*.properties
+dependency-reduced-pom.xml
 /*.crt
 /*.cer
 /logs
 generated/
+
+# maven
+.project
+target
+
+# IntelliJ
+.idea
+*.iml
+
+# npm
+node_modules
+.cache
+*/src/main/web/node
+
+# Idiot macs
+.DS_Store
 
 # Dev env specific env vars/secrets management
 .env*

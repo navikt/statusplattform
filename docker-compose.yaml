@@ -21,6 +21,9 @@ services:
       DB_PORT: 5432
       DB_HOSTNAME: database
       FRONTEND_LOCATION: 'placeholder'
+      TENANT: trygdeetaten.no
+      AZURE_APP_CLIENT_ID: foo
+      AZURE_APP_CLIENT_SECRET: bar
       ENV: dev # TODO will be replaced by scope
     depends_on:
       - database

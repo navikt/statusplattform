@@ -3,7 +3,8 @@ name: Build, push, and deploy
 on: [push]
 
 env:
-  docker_image: ghcr.io/navikt/portal-server:${{ github.sha }}
+  # TODO: Make images sortable ("<iso8601 datetime>-<git rev-list --count REF_NAME>-<git commit short sha>")
+  docker_image: ghcr.io/navikt/statusplattform-server:${{ github.sha }}
 
 jobs:
   build:
