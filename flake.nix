@@ -19,7 +19,7 @@
 
         overlays = [
           (final: prev: let
-            javaVersion = 17;
+            javaVersion = 21;
           in {
             # JVM related overlays
             jdk = pkgs."jdk${builtins.toString javaVersion}";
