@@ -17,20 +17,20 @@
         <dependency>
             <groupId>no.nav.statusplattform</groupId>
             <artifactId>infrastructure</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>no.nav.statusplattform</groupId>
             <artifactId>api</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.statusplattform</groupId>
             <artifactId>jobs</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
 

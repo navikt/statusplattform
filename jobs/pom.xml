@@ -18,17 +18,12 @@
             <groupId>io.github.jhannes</groupId>
             <artifactId>fluent-jdbc</artifactId>
             <version>0.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.jhannes</groupId>
-            <artifactId>fluent-jdbc</artifactId>
-            <version>0.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.statusplattform</groupId>
             <artifactId>core</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
