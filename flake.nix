@@ -1,5 +1,5 @@
 {
-  description = "A Nix-flake based Kotlin & Typescript development environment";
+  description = "A Nix-flake based Kotlin development environment";
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
@@ -43,8 +43,6 @@
           # project's code specific
           ## Backend
           maven
-          ## Frontend
-          nodejs_18 # Should be 17, but seemingly that's a bit too old
 
           # Editor stuffs
           helix
