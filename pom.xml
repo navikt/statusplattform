@@ -4,22 +4,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <version>${revision}</version>
+    <artifactId>statusplattform</artifactId>
     <groupId>no.nav</groupId>
-    <artifactId>portal</artifactId>
+
+    <name>statusplattform</name>
     <packaging>pom</packaging>
-    <version>0.1-SNAPSHOT</version>
+
     <modules>
-        <module>portal-core</module>
-        <module>portal-infrastructure</module>
-        <module>portal-rest-api</module>
-        <module>portal-server</module>
-        <module>portal-jobs</module>
+        <module>core</module>
+        <module>infrastructure</module>
+        <module>api</module>
+        <module>server</module>
+        <module>jobs</module>
+        <module>config</module>
     </modules>
 
-
     <properties>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <revision>0.1-SNAPSHOT</revision>
     </properties>
 </project>
