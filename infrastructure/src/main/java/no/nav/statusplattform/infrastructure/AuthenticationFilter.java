@@ -1,7 +1,7 @@
 package no.nav.statusplattform.infrastructure;
 
-import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jwt.JWTClaimsSet;
+import net.minidev.json.JSONArray;
 import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.security.UserAuthentication;
 import org.eclipse.jetty.server.Authentication;

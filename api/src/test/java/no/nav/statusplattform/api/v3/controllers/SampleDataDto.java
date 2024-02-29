@@ -1,6 +1,5 @@
 package no.nav.statusplattform.api.v3.controllers;
 
-import nav.statusplattform.core.enums.RuleType;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
 import no.nav.statusplattform.generated.api.*;
