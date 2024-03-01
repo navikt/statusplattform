@@ -98,7 +98,7 @@
                     <dependency>
                         <groupId>io.github.jhannes.openapi</groupId>
                         <artifactId>openapi-generator-java-annotationfree</artifactId>
-                        <version>0.3.4</version>
+                        <version>0.5.5</version>
                     </dependency>
                 </dependencies>
             </plugin>
