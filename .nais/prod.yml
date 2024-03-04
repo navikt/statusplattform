@@ -1,0 +1,14 @@
+# This file contains the yaml keys differing between deploy environments
+spec:
+  # This section maps 1-1 with reference spec, because it can be copy-pasted in-place and work
+  env:
+    FRONTEND_LOCATION: https://status.nav.no/sp
+    statusholder_url: https://statusholder.prod-fss-pub.nais.io
+    BACKEND_LOCATION: https://status-api.nav.no
+    TENANT: nav.no
+    ENV: prod
+  ingresses:
+    - https://status-api.nav.no
+
+# Necessary due to https://github.com/aymerick/raymond limitations w/booleans || nested var blocks
+min_replicas: 2

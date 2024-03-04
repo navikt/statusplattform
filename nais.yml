@@ -8,27 +8,13 @@ metadata:
 spec:
   envFrom:
     - secret: swagger-api-konfig
-  env:
-    - name: FRONTEND_LOCATION
-      value: https://status.nav.no/sp
-    - name: statusholder_url
-      value: https://statusholder.prod-fss-pub.nais.io
-    - name: BACKEND_LOCATION
-      value: https://status-api.nav.no
-    - name: TENANT
-      value: nav.no
-    - name: teamkatalogApiUrl
-      value: http://team-catalog-backend.org.svc.cluster.local
-    - name: ENV
-      value: prod
   replicas:
-    min: 2
+    {{#if min_replicas}}min: {{min_replicas}}{{/if}}
+    {{#if max_replicas}}max: {{max_replicas}}{{/if}}
   secureLogs:
     enabled: true
   image: {{ image }}
   port: 3005
-  ingresses:
-    - https://status-api.nav.no
   gcp:
     sqlInstances:
       - name: navstatus
@@ -52,18 +38,25 @@ spec:
       rules:
         - application: portal
           namespace: navdig
-          cluster: prod-gcp
         - application: statuspoll
           namespace: navdig
-          cluster: prod-gcp
         - application: promstatusproxy
           namespace: navdig
-          cluster: prod-gcp
         - application: onpremstatuspoll
           namespace: navdig
-          cluster: prod-fss
+          cluster: "{{ spec.env.ENV }}-fss"
     outbound:
       rules:
         - application: team-catalog-backend
           namespace: org
-          cluster: prod-gcp
+  env:
+    - name: teamkatalogApiUrl
+      value: http://team-catalog-backend.org.svc.cluster.local
+    {{#each spec.env}}
+    - name: {{@key}}
+      value: {{this}}
+    {{/each}}
+  ingresses:
+    {{#each spec.ingresses as |url|}}
+    - {{url}}
+    {{/each}}
