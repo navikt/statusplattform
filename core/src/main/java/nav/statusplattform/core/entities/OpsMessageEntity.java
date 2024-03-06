@@ -22,10 +22,6 @@ public class OpsMessageEntity {
 
     private boolean deleted;
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
     public OpsMessageEntity setDeleted(boolean deleted) {
         this.deleted = deleted;
         return this;
@@ -112,15 +108,6 @@ public class OpsMessageEntity {
 
     public OpsMessageEntity setSeverity(OpsMessageSeverity severity) {
         this.severity = severity;
-        return this;
-    }
-
-    public OpsMessageState getState() {
-        return state;
-    }
-
-    public OpsMessageEntity setState(OpsMessageState state) {
-        this.state = state;
         return this;
     }
 

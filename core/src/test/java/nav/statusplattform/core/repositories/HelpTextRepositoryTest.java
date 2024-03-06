@@ -118,7 +118,7 @@ public class HelpTextRepositoryTest {
         Assertions.assertThat(helpTexts).containsAll(retrievedHelpTexts);
     }
 
-    //@Test
+    @Test
     void delete() {
         //Arrange
         HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
@@ -128,5 +128,4 @@ public class HelpTextRepositoryTest {
         //Assert
         Assertions.assertThat(isDeleted).isEqualTo(1);
     }
-
 }

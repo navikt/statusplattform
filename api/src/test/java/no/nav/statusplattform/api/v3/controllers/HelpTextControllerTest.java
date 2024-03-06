@@ -2,7 +2,8 @@ package no.nav.statusplattform.api.v3.controllers;
 
 import nav.statusplattform.core.repositories.TestDataSource;
 import nav.statusplattform.core.repositories.TestUtil;
-import no.nav.statusplattform.generated.api.*;
+import no.nav.statusplattform.generated.api.HelpTextDto;
+import org.actioncontroller.HttpRequestException;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -63,22 +64,27 @@ public class HelpTextControllerTest {
     }
 
 
-    //@Test
+    @Test
     void saveTheSame() {
         //Arrange
         HelpTextDto helpTextDto = SampleDataDto.getRandomizedHelpTextDto();
         //Act
         HelpTextDto savedHelpTextDto = helpTextController.newHelpText(helpTextDto);
         //Act
-        HelpTextDto savedHelpTextDto2 = helpTextController.newHelpText(helpTextDto);
+        try {
+            HelpTextDto _DuplicateSavedHelpTextDto = helpTextController.newHelpText(helpTextDto);
+        } catch (HttpRequestException e) {
+            Assertions.assertThat(e.getMessage().contains("finnes allerede"));
+        }
         //Assert
         List<HelpTextDto>retrievedHelpTextDto = helpTextController.getAllHelpTexts();
         Assertions.assertThat(retrievedHelpTextDto.size()).isEqualTo(1);
         Assertions.assertThat(retrievedHelpTextDto.get(0)).isEqualTo(savedHelpTextDto);
         Assertions.assertThat(retrievedHelpTextDto.get(0)).isEqualTo(helpTextDto);
     }
-    //@Test
+    /*@Test
     void updateHelpText() {
+        // TODO: This test is flaky... Must fix
         //Arrange
         List<HelpTextDto> helpTextDtos = SampleDataDto.getNonEmptyListOfHelpTextDtos(2);
         helpTextDtos.forEach(helpTextDto -> {
@@ -95,7 +101,7 @@ public class HelpTextControllerTest {
                 .isNotEqualTo(retrievedHelpTextBefore.get(1).getContent());
         Assertions.assertThat(retrievedHelpTextAfter.get(0).getContent())
                 .isNotEqualTo(retrievedHelpTextBefore.get(0).getContent());
-    }
+    }*/
 
     @Test
     void getHelpText() {

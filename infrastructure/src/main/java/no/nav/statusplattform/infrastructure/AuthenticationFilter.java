@@ -49,7 +49,7 @@ public class AuthenticationFilter implements Filter {
         }
         if(jwtTokenClaims != null){
             try {
-                StatusplattformRestPrincipal principal = createPortalPrinciplaFromAdClaims(jwtTokenClaims);
+                StatusplattformRestPrincipal principal = createPortalPrincipalFromAdClaims(jwtTokenClaims);
                 Authentication authenticationForUser = new UserAuthentication("user", createUserIdentity(principal));
                 ((Request) request).setAuthentication(authenticationForUser);
             }
@@ -81,7 +81,7 @@ public class AuthenticationFilter implements Filter {
     public AuthenticationFilter(){
 
     }
-    public StatusplattformRestPrincipal createPortalPrinciplaFromAdClaims(JWTClaimsSet jwtTokenClaims) throws ParseException, AuthenticationException {
+    public StatusplattformRestPrincipal createPortalPrincipalFromAdClaims(JWTClaimsSet jwtTokenClaims) throws ParseException, AuthenticationException {
         String APPLICATION_ROLE = "access_as_application";
         String DEFAULT_ACCESS = "defaultaccess";
         Map<String,Object> claims = jwtTokenClaims.getClaims();
@@ -90,7 +90,6 @@ public class AuthenticationFilter implements Filter {
         }
         if(claims.containsKey("roles")){
             JSONArray roles = (JSONArray)claims.get("roles");
-            boolean isApplication = roles.size() == 1 && roles.get(0).equals(APPLICATION_ROLE);
             return new StatusplattformRestPrincipal("application_access", "application_access");
 
         }

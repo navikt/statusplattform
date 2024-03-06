@@ -230,43 +230,6 @@ public class ServiceControllerHelper {
                 map(EntityDtoMappers::toAreaDtoShallow).collect(Collectors.toList());
     }
 
-    public MaintenanceDto setMaintenance(MaintenanceDto maintenanceDto) {
-        return maintenanceDto;
-    }
-
-
-    private ServiceHistoryDto mapToHistoryDto(List<DailyStatusAggregationForServiceEntity> aggregationList) {
-        ServiceHistoryDto result = new ServiceHistoryDto();
-        Arrays.stream(Month.values()).sorted().forEach(month ->
-                {
-                    List<DailyStatusAggregationForServiceEntity> entriesForTheMonth = aggregationList.stream().filter(listElement ->
-                            listElement.getAggregation_date().getMonth().equals(month))
-                            .collect(Collectors.toList());
-
-                    if(entriesForTheMonth.size() > 0){
-                        ArrayList<ServiceHistoryMonthEntryDto> newEntry = new ArrayList<>();
-                        newEntry.add(mapToHistoryMonthDto(entriesForTheMonth, month));
-                        newEntry.addAll(result.getHistory());
-                        
-                        result.setHistory(newEntry);
-                    }
-                }
-        );
-
-        result.getHistory().sort(Comparator.comparing(ServiceHistoryMonthEntryDto::getYear).reversed());
-        return result;
-    }
-
-    static ServiceHistoryMonthEntryDto mapToHistoryMonthDto(List<DailyStatusAggregationForServiceEntity> listOfDailyStatusOneServiceOneMonth, Month month) {
-        ServiceHistoryMonthEntryDto result = new ServiceHistoryMonthEntryDto();
-        result.setMonth(Util.mapOfMonthsToNorwegian.get(month));
-        result.setEntries(listOfDailyStatusOneServiceOneMonth.stream()
-                .map(ServiceControllerHelper::mapToHistoryDayDto)
-                .collect(Collectors.toList()));
-        result.setYear(result.getEntries().get(0).getDate().getYear());
-        return result;
-    }
-
     static ServiceHistoryDayEntryDto mapToHistoryDayDto(DailyStatusAggregationForServiceEntity entity){
         ServiceHistoryDayEntryDto result = new ServiceHistoryDayEntryDto();
         result.information(entity.getInformation());
@@ -280,8 +243,6 @@ public class ServiceControllerHelper {
     static StatusDto getAggregationStatus(DailyStatusAggregationForServiceEntity aggregation){
         return aggregation.getNumber_of_status_down()>0 ? StatusDto.DOWN:
                 (aggregation.getNumber_of_status_issue()>0 ? StatusDto.ISSUE : StatusDto.OK);
-
-
         }
 
     public List<ServiceDto> getPollingServices() {

@@ -1,15 +1,23 @@
 package nav.statusplattform.core.repositories;
 
-import nav.statusplattform.core.entities.*;
+import nav.statusplattform.core.entities.MaintenanceEntity;
+import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.enums.ServiceType;
 import nav.statusplattform.core.exceptionHandling.ExceptionUtil;
 import org.actioncontroller.HttpRequestException;
-import org.fluentjdbc.*;
+import org.fluentjdbc.DatabaseRow;
+import org.fluentjdbc.DbContext;
+import org.fluentjdbc.DbContextTable;
+import org.fluentjdbc.DbContextTableAlias;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ServiceRepository {
 
@@ -112,12 +120,6 @@ public class ServiceRepository {
         service_serviceTable.where("service2_id", serviceId).executeDelete();
     }
 
-    public void removeAllDependenciesFromService(UUID serviceId){
-        service_serviceTable.where("service1_id", serviceId).executeDelete();
-    }
-
-
-
     public Boolean isOtherServicesDependentOn(UUID id) {
         return service_serviceTable.where("service2_id", id).getCount() > 0;
 
@@ -152,7 +154,6 @@ public class ServiceRepository {
         return  serviceTable.where("deleted",Boolean.FALSE).list(ServiceRepository::toService);
     }
 
-
     public Map<ServiceEntity, List<ServiceEntity>> retrieveAllDeep() {
         DbContextTableAlias s2s = service_serviceTable.alias("s2s");
         DbContextTableAlias service = serviceTable.alias("service");
@@ -176,7 +177,6 @@ public class ServiceRepository {
         return result;
     }
 
-
     public Map<ServiceEntity, List<ServiceEntity>> retrieveAllComponents() {
         return retrieveAllWithType(ServiceType.KOMPONENT);
     }
@@ -185,8 +185,6 @@ public class ServiceRepository {
                 .where("service.type", ServiceType.KOMPONENT.getDbRepresentation())
                 .list(ServiceRepository::toService);
     }
-
-
 
     public Map<ServiceEntity, List<ServiceEntity>> retrieveAllServices() {
         return retrieveAllWithType(ServiceType.TJENESTE);
@@ -223,7 +221,6 @@ public class ServiceRepository {
         return result;
     }
 
-
     public List<ServiceEntity> getServicesDependantOnComponent(UUID component_id) {
         DbContextTableAlias serviceAlias = serviceTable.alias("service");
         DbContextTableAlias s2k = service_serviceTable.alias("s2k");
@@ -253,45 +250,12 @@ public class ServiceRepository {
                 .singleObject(ServiceRepository::toService)
                 .isPresent();
     }
-    public List<ServiceEntity> retrieve(List<String> ids) {
-        return serviceTable.whereIn("id", ids)
-                .stream(ServiceRepository::toService)
-                .collect(Collectors.toList());
-    }
 
     public void delete(UUID id) {
         serviceTable.where("id", id)
                 .update()
                 .setField("deleted", Boolean.TRUE)
                 .execute();
-    }
-
-    public void addOpeningHoursToService(UUID serviceId, UUID groupId) {
-        serviceOHgroupTable.insert()
-                .setField("service_id", serviceId)
-                .setField("group_id", groupId)
-                .execute();
-    }
-
-    public void removeOpeningHoursFromService(UUID serviceId, UUID groupId) {
-        serviceOHgroupTable.where("service_id", serviceId)
-                .where("group_id", groupId)
-                .executeDelete();
-    }
-
-    static DailyStatusAggregationForServiceEntity toDailyStatusAggregationForServiceEntity(DatabaseRow row) {
-        try {
-            return new DailyStatusAggregationForServiceEntity()
-                    .setId(row.getUUID("id"))
-                    .setService_id(row.getUUID("service_id"))
-                    .setAggregation_date(row.getLocalDate("aggregation_date"))
-                    .setNumber_of_status_ok(row.getInt("number_of_status_ok"))
-                    .setNumber_of_status_issue(row.getInt("number_of_status_issue"))
-                    .setNumber_of_status_down(row.getInt("number_of_status_down"));
-        } catch (SQLException e) {
-            throw ExceptionUtil.soften(e);
-        }
-
     }
 
     static ServiceEntity toService(DatabaseRow row) {
@@ -309,7 +273,6 @@ public class ServiceRepository {
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }
-
     }
 
     static MaintenanceEntity toMaintenanceEntity(DatabaseRow row) {
@@ -322,28 +285,6 @@ public class ServiceRepository {
                     .setEnd_time(row.getZonedDateTime("end_time"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
-        }
-
-    }
-
-    public Query query() {
-        return new Query(serviceTable.query());
-    }
-
-    public static class Query {
-
-        private final DbContextSelectBuilder query;
-
-        public Query(DbContextSelectBuilder query) {
-            this.query = query;
-        }
-
-        public Stream<ServiceEntity> stream() {
-            return query.stream(ServiceRepository::toService);
-        }
-
-        private Query query(DbContextSelectBuilder query) {
-            return this;
         }
     }
 }

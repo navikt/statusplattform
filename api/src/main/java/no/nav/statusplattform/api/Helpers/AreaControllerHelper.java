@@ -115,15 +115,4 @@ public class AreaControllerHelper {
                         .toAreaDtoDeep(as.getArea(),as.getServices()))
                 .collect(Collectors.toList());
     }
-
-
-    public List<AreaDto> getAreasOnDashboard(String dashboardName){
-        UUID dashboardUid = dashboardRepository.uidFromName(dashboardName);
-        return getAreasOnDashboard(dashboardUid);
-    }
-
-
-
-
-
 }

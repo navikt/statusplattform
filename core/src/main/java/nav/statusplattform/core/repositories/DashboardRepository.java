@@ -170,32 +170,11 @@ public class DashboardRepository {
         }
     }
 
-    public Query query() {
-        return new Query(dashboardTable.query());
-    }
-
     public void deleteAreasFromDashboard(UUID id) {
         dashboardAreaTable.where("dashboard_id", id).executeDelete();
     }
 
     public void deleteDashboard(UUID id) {
         dashboardTable.where("id", id).executeDelete();
-    }
-
-    public static class Query {
-
-        private final DbContextSelectBuilder query;
-
-        public Query(DbContextSelectBuilder query) {
-            this.query = query;
-        }
-
-        public Stream<DashboardEntity> stream() {
-            return query.stream(DashboardRepository::toDashboard);
-        }
-
-        private Query query(DbContextSelectBuilder query) {
-            return this;
-        }
     }
 }

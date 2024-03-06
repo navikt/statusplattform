@@ -17,10 +17,6 @@ public class SubAreaWithServices {
         return subArea;
     }
 
-    public void setSubArea(SubAreaEntity subArea) {
-        this.subArea = subArea;
-    }
-
     public List<ServiceEntity> getServices() {
         return services;
     }
@@ -42,5 +38,3 @@ public class SubAreaWithServices {
         return Objects.hash(getSubArea(), getServices());
     }
 }
-
-

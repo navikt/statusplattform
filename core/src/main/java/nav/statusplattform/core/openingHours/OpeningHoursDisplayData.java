@@ -7,9 +7,7 @@ public class OpeningHoursDisplayData {
     private String openingHours; // eks 07-16
     private String displayText; // Det er ikke sikkert denne kan settes her // Stengt 7-16 , Lørdagsåpen
 
-    public OpeningHoursDisplayData(){
-
-    }
+    public OpeningHoursDisplayData(){}
 
     public String getRuleName() {
         return ruleName;

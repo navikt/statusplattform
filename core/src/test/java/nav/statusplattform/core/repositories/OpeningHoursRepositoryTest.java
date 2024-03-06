@@ -125,7 +125,6 @@ class OpeningHoursRepositoryTest {
         rules.forEach(rule -> {
             rule.setId(openingHoursRepository.save(rule));
         });
-        UUID ruleId = rules.get(0).getId();
         OpeningHoursRuleEntity ruleForRetrieving = rules.get(0);
         //Act
         Optional<OpeningHoursRuleEntity> retrievedRule = openingHoursRepository.retriveRule(ruleForRetrieving.getId());
@@ -184,7 +183,6 @@ class OpeningHoursRepositoryTest {
         OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
         UUID group_id = openingHoursRepository.saveGroup(group);
         group.setId(group_id);
-        Optional<OpeningHoursGroup> retrievedGroupBefore = openingHoursRepository.retrieveOneGroup(group_id);
         //Act
         boolean isDeleted = openingHoursRepository.deleteOpeninghourGroup(group_id);
         Optional<OpeningHoursGroup> retrievedGroupAfter = openingHoursRepository.retrieveOneGroup(group_id);

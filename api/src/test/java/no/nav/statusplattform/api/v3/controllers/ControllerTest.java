@@ -1,17 +1,10 @@
-package no.nav.statusplattform.rest.api.v3.controllers;
+package no.nav.statusplattform.api.v3.controllers;
 
-import nav.statusplattform.core.entities.RecordEntity;
-import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.repositories.*;
-import no.nav.statusplattform.api.v3.controllers.*;
 import no.nav.statusplattform.generated.api.DashboardDto;
 import no.nav.statusplattform.generated.api.IdContainerDto;
-import no.nav.statusplattform.generated.api.RecordDto;
 import no.nav.statusplattform.generated.api.ServiceDto;
-import org.actioncontroller.PathParam;
-import org.actioncontroller.json.JsonBody;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.util.Arrays;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -19,10 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.stream.Stream;
 
 public class ControllerTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -72,7 +64,7 @@ public class ControllerTest {
         //Act
         List<ServiceDto> retrievedServiceDto = serviceController.getServices();
         //Assert
-        Assertions.assertThat(retrievedServiceDto.size()).isEqualTo(Stream.of(Arrays.asList(serviceDto), serviceDtos)
+        Assertions.assertThat(retrievedServiceDto.size()).isEqualTo(Stream.of(Arrays.asList(serviceDto), serviceDtos));
         Assertions.assertThat(retrievedServiceDto.containsAll(serviceDtos)).isTrue();
     }*/
 }
