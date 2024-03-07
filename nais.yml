@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: portal-server
+  name: portalserver
   namespace: navdig
   labels:
     team: navdig
