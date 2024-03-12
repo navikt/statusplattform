@@ -38,6 +38,7 @@ services:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_BACKENDPATH: http://javabackend:3005
+      ENV: local
     depends_on:
       - javabackend
 
