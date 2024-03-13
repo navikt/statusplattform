@@ -18,7 +18,7 @@ services:
       swagger-api-key: key
       DB_USERNAME: postgres
       DB_PORT: 5432
-      DB_HOSTNAME: postgres-db
+      DB_HOST: postgres-db
       FRONTEND_LOCATION: 'placeholder'
       TENANT: trygdeetaten.no
       AZURE_APP_CLIENT_ID: foo

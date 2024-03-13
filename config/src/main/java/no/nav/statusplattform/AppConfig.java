@@ -5,7 +5,7 @@ import java.util.Optional;
 public class AppConfig {
 
     public static class DbConfig {
-        public final String hostname = getEnvVar("DB_HOSTNAME").orElseThrow(IllegalStateException::new);
+        public final String hostname = getEnvVar("DB_HOST").orElseThrow(IllegalStateException::new);
         public final Integer port = getEnvVar("DB_PORT").map(Integer::parseInt).orElse(5432);
         public final String username = getEnvVar("DB_USERNAME").orElse("postgres");
         public final String password = getEnvVar("DB_PASSWORD").orElse("");
