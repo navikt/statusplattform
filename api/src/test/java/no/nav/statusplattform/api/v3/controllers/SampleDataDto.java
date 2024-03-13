@@ -1,12 +1,29 @@
 package no.nav.statusplattform.api.v3.controllers;
 
-import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
-import no.nav.statusplattform.generated.api.*;
+import no.nav.statusplattform.generated.api.AreaDto;
+import no.nav.statusplattform.generated.api.DashboardDto;
+import no.nav.statusplattform.generated.api.HelpTextDto;
+import no.nav.statusplattform.generated.api.MaintenanceDto;
+import no.nav.statusplattform.generated.api.OHGroupThinDto;
+import no.nav.statusplattform.generated.api.OHRuleDto;
+import no.nav.statusplattform.generated.api.OPSmessageDto;
+import no.nav.statusplattform.generated.api.RecordDto;
+import no.nav.statusplattform.generated.api.ServiceDto;
+import no.nav.statusplattform.generated.api.ServiceTypeDto;
+import no.nav.statusplattform.generated.api.StatusDto;
+import no.nav.statusplattform.generated.api.SubAreaDto;
 
-import java.time.*;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,8 +35,6 @@ public class SampleDataDto {
             "Trenger penger", "Trenger økonomisk help", "Berørt av depresjon", "Whatever", "cb", "cc", "cd", "ce", "cf", "cg", "ch", "ci", "cj", "ck", "cl", "cm", "cn", "co", "cp", "cq", "cr", "cs", "ct"));
 
     static final ArrayList<String> descriptions = new ArrayList<>(Arrays.asList("short description", "Too horrible consider followed may differed age. An rest if more five mr of. Age just her rank met down way. If suspicion do departure at extremely he believing. Do know said mind do rent they oh hope of.", "Rather in lasted no within no"));
-
-    static final ArrayList<String> icons = new ArrayList<>(Arrays.asList("00010", "00020", "00030", "00040", "00050", "00060", "00070", "00080", "00090", "00100", "00110", "00120"));
 
     static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.vg.no", "https://www.aftenposten.no", "https://wwww.abc123.com", "https://wwww.ba.no", "https://wwww.bb.no", "https://wwww.bc.no", "https://wwww.bd.no", "https://wwww.be.no", "https://wwww.bf.no", "https://wwww.bg.no", "https://wwww.bh.no", "https://wwww.bi.no", "https://wwww.bj.no", "https://wwww.bk.no", "https://wwww.bl.no", "https://wwww.bm.no", "https://wwww.bn.no"));
 
@@ -161,25 +176,6 @@ public class SampleDataDto {
         return subAreasDto;
     }
 
-    public static List<SubAreaDto> getRandomLengthNonEmptyListOfSubAreaDto() {
-        Random random = new Random();
-        int numberOfSubAreasDto = 1 + random.nextInt(12);
-        List<SubAreaDto> subAreasDto = new ArrayList<>();
-        for (int i = 0; i <= numberOfSubAreasDto; i++) {
-            subAreasDto.add(getRandomizedSubAreaDtoWithNameNotInList(subAreasDto));
-        }
-        return subAreasDto;
-    }
-
-    public static List<SubAreaDto> getNonEmptyListOfSubAreaDto(int length) {
-        Random random = new Random();
-        List<SubAreaDto> subAreasDto = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            subAreasDto.add(getRandomizedSubAreaDtoWithNameNotInList(subAreasDto));
-        }
-        return subAreasDto;
-    }
-
     public static ServiceDto getRandomizedServiceDto() {
         return new ServiceDto()
                 .name(getRandomFromArray(serviceNames))
@@ -214,16 +210,6 @@ public class SampleDataDto {
         return serviceDtos;
     }
 
-    public static List<ServiceDto> getRandomLengthNonEmptyListOfServiceDto() {
-        Random random = new Random();
-        int numberOfServices = 1 + random.nextInt(12);
-        List<ServiceDto> serviceDto = new ArrayList<>();
-        for (int i = 0; i < numberOfServices; i++) {
-            serviceDto.add(getRandomizedServiceDtoWithNameNotInList(serviceDto));
-        }
-        return serviceDto;
-    }
-
     public static List<ServiceDto> getNonEmptyListOfServiceDto(int numberOfServiceDto) {
         List<ServiceDto> serviceDto = new ArrayList<>();
         for (int i = 0; i < numberOfServiceDto; i++) {
@@ -238,25 +224,6 @@ public class SampleDataDto {
                 .timestamp(offsetNow())
                 .status(getRandomStatusDto())
                 .responseTime(getRandomResponseTime());
-    }
-
-    public static RecordDto getRandomizedRecordDtoForService(ServiceDto serviceDto) {
-        return new RecordDto()
-                .id(UUID.randomUUID())
-                .serviceId(serviceDto.getId())
-                .timestamp(offsetNow())
-                .status(getRandomStatusDto())
-                .responseTime(getRandomResponseTime());
-    }
-
-    public static List<RecordDto> getRandomizedRecordDtosForService(ServiceDto serviceDto) {
-        List<RecordDto> recordsDto = new ArrayList<>();
-        Random random = new Random();
-        int numberOfRecords = 1 + random.nextInt(12);
-        for (int i = 0; i < numberOfRecords; i++) {
-            recordsDto.add(getRandomizedRecordDtoForService(serviceDto));
-        }
-        return recordsDto;
     }
 
     public static MaintenanceDto getRandomizedMaintenanceDto(){
@@ -324,19 +291,6 @@ public class SampleDataDto {
         return new OHRuleDto()
                 .name(randomKey)
                 .rule(namesAndRules.get(randomKey));
-    }
-
-    public static List<OHRuleDto> getRandomRulesDto() {
-        Random random = new Random();
-        int numberOfRulesDtos = 1+ random.nextInt( namesAndRules.size()-1);
-        List<String>names = new ArrayList<>(namesAndRules.keySet());
-        List<OHRuleDto> oHRuleDtos = new ArrayList<>();
-        for (int i = 0; i <= numberOfRulesDtos; i++) {
-            oHRuleDtos.add(new OHRuleDto()
-                    .name(names.get(i))
-                    .rule(namesAndRules.get(names.get(i))));
-        }
-        return oHRuleDtos;
     }
 
     public static List<OHRuleDto> getRulesDto() {
@@ -409,16 +363,6 @@ public class SampleDataDto {
                 .rule(namesAndRules.get(randomKey));
     }
 
-    public static List<OHRuleDto> getRandomLengthListOfOHRuleDto() {
-        Random random = new Random();
-        int numberOfOHRulesDto = 1 + random.nextInt(4);
-        List<OHRuleDto> oHRulesDto = new ArrayList<>();
-        for (int i = 0; i <= numberOfOHRulesDto; i++) {
-            oHRulesDto.add(getRandomizedOHRuleDtoWithNameNotInList(oHRulesDto));
-        }
-        return oHRulesDto;
-    }
-
     public static OHGroupThinDto getBasicGroupThinDto() {
         return new OHGroupThinDto()
                 .name("Basic")
@@ -450,16 +394,6 @@ public class SampleDataDto {
         return new OHGroupThinDto()
                 .name(getRandomFromArray(possibleNames))
                 .rules(Collections.EMPTY_LIST);
-    }
-
-    public static List<OHGroupThinDto> getRandomLengthListOfOHGroupThinDto() {
-        Random random = new Random();
-        int numberOfGroupsThinDto = 1 + random.nextInt(3);
-        List<OHGroupThinDto> groupsThinDto = new ArrayList<>();
-        for (int i = 0; i <= numberOfGroupsThinDto; i++) {
-            groupsThinDto.add(getRandomizedGroupThinDtoWithNameNotInList(groupsThinDto));
-        }
-        return groupsThinDto;
     }
 
     public static List<OHGroupThinDto> getNonEmptyListOfOHGroupThinDto(int length) {
@@ -550,11 +484,6 @@ public class SampleDataDto {
         }
         Random random = new Random();
         return array.get(random.nextInt(array.size()));
-    }
-
-    private static ServiceStatus getRandomServiceStatus() {
-        Random random = new Random();
-        return ServiceStatus.values()[random.nextInt(ServiceStatus.values().length)];
     }
 
     private static StatusDto getRandomStatusDto() {

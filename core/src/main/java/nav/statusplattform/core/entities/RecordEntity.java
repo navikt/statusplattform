@@ -83,15 +83,6 @@ public class RecordEntity {
         return created_at;
     }
 
-    public Integer getCounter() {
-        return counter;
-    }
-
-    public RecordEntity setCounter(Integer counter) {
-        this.counter = counter;
-        return this;
-    }
-
     public RecordSource getRecordSource() {
         return recordSource;
     }

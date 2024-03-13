@@ -49,10 +49,6 @@ import java.util.stream.Collectors;
 public class EntityDtoMappers {
     private static Map<UUID,String> teamIdTeamKatalog = TeamKatalogKlient.getTeams();
 
-    public static StatusDto toStatusDto(RecordEntity recordEntity){
-        return StatusDto.fromValue(recordEntity.getStatus().getDbRepresentation());
-    }
-
     public static ServiceEntity toServiceEntity(ServiceDto dto){
         ServiceEntity entity = new ServiceEntity();
         entity.setId(dto.getId());
@@ -131,10 +127,6 @@ public class EntityDtoMappers {
         return teamIdTeamKatalog.getOrDefault(uuid,teamId);
     }
 
-    public static List<OPSmessageDto> toOpsMessageDtoShallow(List<OpsMessageEntity> entities){
-        return entities.stream().map(EntityDtoMappers::toOpsMessageDtoShallow).collect(Collectors.toList());
-    }
-
     public static OPSmessageDto toOpsMessageDtoShallow(OpsMessageEntity entity) {
         OPSmessageDto dto = new OPSmessageDto();
         dto.setId(entity.getId());
@@ -204,12 +196,6 @@ public class EntityDtoMappers {
         return dto;
     }
 
-    public static List<AreaDto> toAreaDtoDeep(Map<AreaEntity,List<ServiceEntity>> areasWithservices){
-        List<AreaDto> dtos = new ArrayList<>();
-        areasWithservices.forEach((area, services) -> dtos.add(toAreaDtoDeep(area, services)));
-        return dtos.stream().sorted(Comparator.comparing(AreaDto::getName)).collect(Collectors.toList());
-    }
-
     public static AreaDto toAreaDtoDeep(AreaEntity area, List<ServiceEntity> services){
         AreaDto dto = new AreaDto();
         dto.setId(area.getId());
@@ -223,9 +209,7 @@ public class EntityDtoMappers {
         );
         return dto;
     }
-    public static List<AreaDto> toAreaDtoShallow(List<AreaEntity> entities){
-        return entities.stream().map(EntityDtoMappers::toAreaDtoShallow).collect(Collectors.toList());
-    }
+
     public static AreaDto toAreaDtoShallow(AreaEntity area){
         AreaDto dto = new AreaDto()
                 .id(area.getId())
@@ -253,9 +237,7 @@ public class EntityDtoMappers {
         );
         return dto;
     }
-    public static List<SubAreaDto> toSubAreaDtoShallow(List<SubAreaEntity> entities){
-        return entities.stream().map(EntityDtoMappers::toSubAreaDtoShallow).collect(Collectors.toList());
-    }
+
     public static SubAreaDto toSubAreaDtoShallow(SubAreaEntity subArea){
         SubAreaDto dto = new SubAreaDto();
         dto.setId(subArea.getId());
@@ -273,12 +255,6 @@ public class EntityDtoMappers {
                 .map(area -> toAreaDtoDeep(area.getArea(), area.getServices()))
                 .collect(Collectors.toList()));
         return dto;
-    }
-    public static List<DashboardDto> toDashboardDtoDeep(Map<DashboardEntity,List<AreaWithServices>> dashboardMap){
-        List<DashboardDto> result = Collections.EMPTY_LIST;
-        dashboardMap.entrySet().forEach(dashboard ->
-                result.add(toDashboardDtoDeep(dashboard)));
-        return result;
     }
 
     public static DashboardNameIdDto toDashboardDtoShallow(DashboardEntity entity){
@@ -371,22 +347,10 @@ public class EntityDtoMappers {
                 .setRules(oHGroupThinDto.getRules()!= null? oHGroupThinDto.getRules(): Collections.EMPTY_LIST);
     }
 
-    public static OHGroupThinDto toOpeningHoursGroupThinDto(Optional<OpeningHoursGroup> group) {
-        List<UUID> rulesId = new ArrayList<>();
-        group.get().getRules().forEach(rule -> rulesId.add(rule.getId()));
-        OHGroupThinDto dto = new OHGroupThinDto();
-        dto.setId(group.get().getId());
-        dto.setName(group.get().getName());
-        dto.setRules(rulesId);
-        return dto;
-    }
-
     public static OHGroupDto toOpeningHoursGroupDto(OpeningHoursGroup group) {
         OHGroupDto dto = new OHGroupDto();
         dto.setId(group.getId());
         dto.setName(group.getName());
-
-        ArrayList<Object> rules = new ArrayList<>();
 
         dto.setRules(group.getRules().stream().map(rule -> {
             if(rule.getRuleType().equals(RuleType.RULE)){
@@ -399,27 +363,6 @@ public class EntityDtoMappers {
             }
         }).collect(Collectors.toList()));
 
-
-//      Stream version under
-//        dto.setRules(group.getRules().stream().map(rule ->{
-//            if(rule.getRuleType().equals(RuleType.RULE_GROUP)){
-//                return  toOpeningHoursGroupDto((OpeningHoursGroup)rule);
-//            }
-//            else {
-//                return toOpeningHoursRuleDto((OpeningHoursRuleEntity)rule);
-//            }
-//        }).collect(Collectors.toList()));
-
-
-        return dto;
-    }
-
-    public static OHGroupThinDto toOpeningHoursGroupDtoShallow(OpeningHoursGroupEntity group){
-        List<UUID> rulesId = new ArrayList<>(group.getRules());
-        OHGroupThinDto dto = new OHGroupThinDto();
-        dto.setId(group.getId());
-        dto.setName(group.getName());
-        dto.setRules(rulesId);
         return dto;
     }
 
@@ -438,5 +381,4 @@ public class EntityDtoMappers {
         entity.setContent(dto.getContent());
         return entity;
     }
-
 }

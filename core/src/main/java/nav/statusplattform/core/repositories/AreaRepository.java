@@ -224,10 +224,6 @@ public class AreaRepository {
         }
     }
 
-    public Query query() {
-        return new Query(areaTable.query());
-    }
-
     public List<AreaEntity> getAreasContainingService(UUID service_id) {
         DbContextTableAlias areaAlias = areaTable.alias("area");
         DbContextTableAlias a2s = areaServiceTable.alias("a2s");
@@ -250,10 +246,6 @@ public class AreaRepository {
 
         public Stream<AreaEntity> stream() {
             return query.stream(AreaRepository::toArea);
-        }
-
-        private Query query(DbContextSelectBuilder query) {
-            return this;
         }
     }
 }

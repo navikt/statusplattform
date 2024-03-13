@@ -111,9 +111,4 @@ class RecordControllerTest {
         Assertions.assertThat(retrievedRecordDtos.size()).isEqualTo(records.size());
         Assertions.assertThat(retrievedRecords).containsAll(records);
     }
-
-    private RecordDto truncateCreatedAtToSeconds(RecordDto dto){
-        return  dto.timestamp(dto.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
-    }
-
 }

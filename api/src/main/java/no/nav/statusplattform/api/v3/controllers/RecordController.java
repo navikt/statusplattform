@@ -73,8 +73,6 @@ public class RecordController {
         System.out.println(test.getCommonLabels().getAlertname());
         System.out.println(test.getCommonAnnotations().getSeverity());
         RecordDto recordDto = generateServiceStatusFromAlert(test);
-
-
     }
 
     @GET("/Alert")

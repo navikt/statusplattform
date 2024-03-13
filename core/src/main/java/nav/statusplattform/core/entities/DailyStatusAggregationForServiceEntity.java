@@ -29,11 +29,6 @@ public class DailyStatusAggregationForServiceEntity {
         return Information;
     }
 
-    public DailyStatusAggregationForServiceEntity setInformation(String information) {
-        Information = information;
-        return this;
-    }
-
     public UUID getService_id() {
         return service_id;
     }

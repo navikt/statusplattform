@@ -78,21 +78,11 @@ public class RecordRepository {
                 .singleObject(RecordRepository::toRecordDelta);
     }
 
-    public Optional<RecordDeltaEntity> getLatestRecordDiffBeforeDate(UUID serviceId, LocalDate date) {
-        return recordDeltaTable.where("service_id", serviceId)
-                .whereExpression("created_at <= ?", LocalDateTime.of(date, LocalTime.of(0,0)))
-                .orderBy("created_at DESC")
-                .limit(1)
-                .singleObject(RecordRepository::toRecordDelta);
-    }
-
     public Optional<RecordDeltaEntity> getActiveRecordDelta(UUID serviceId){
         return recordDeltaTable.where("service_id", serviceId)
                 .where("active",true)
                 .singleObject(RecordRepository::toRecordDelta);
     }
-
-
 
     public Optional<RecordEntity> getLatestRecord(UUID serviceId) {
         return recordTable.where("service_id", serviceId)
@@ -108,27 +98,6 @@ public class RecordRepository {
                 .limit(maxNumberOfRecords)
                 .list(RecordRepository::toRecord);
     }
-
-
-    public Map<UUID, Map<LocalDate,List<RecordEntity>>> getAllRecordsOrderedByServiceIdAndDate(){
-
-        List<RecordEntity> allRecords = recordTable.unordered().list(RecordRepository::toRecord);
-        List<UUID> serviceUUIDs = allRecords.stream().map(RecordEntity::getServiceId).distinct().collect(Collectors.toList());
-        Map<UUID, Map<LocalDate,List<RecordEntity>>> result = new HashMap<>();
-        serviceUUIDs.forEach(uuid -> {
-            List<RecordEntity> recordsForService = allRecords.stream().filter(r -> r.getServiceId().equals(uuid)).collect(Collectors.toList());
-            List<LocalDate> dates = recordsForService.stream().map(r -> r.getCreated_at().toLocalDate()).distinct().collect(Collectors.toList());
-            Map<LocalDate,List<RecordEntity>> resultForOneService = new HashMap<>();
-            dates.forEach(date -> {
-                resultForOneService.put(date,recordsForService.stream().filter(r -> r.getCreated_at().toLocalDate().equals(date)).collect(Collectors.toList()));
-            });
-            result.put(uuid,resultForOneService);
-
-        });
-        return result;
-
-    }
-
 
     public List<RecordEntity> getAllRecordsFromYesterday(){
         ZonedDateTime yesterdayMidnight = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
@@ -168,13 +137,6 @@ public class RecordRepository {
         recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusDays(daysOld))
                 .executeDelete();
     }
-    public void deleteRecordsForDate(UUID serviceID,LocalDate date) {
-        recordTable.where("id", serviceID)
-                .whereExpression("created_at >= ?", date.minusDays(1))
-                .whereExpression("created_at <= ?", date)
-                .executeDelete();
-    }
-
 
     public static UUID saveRecordBackInTime(RecordEntity entity, DbContext dbContext) {
         DbContextTable recordTable = dbContext.table(new DatabaseTableImpl("service_status"));
@@ -225,23 +187,4 @@ public class RecordRepository {
         recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusHours(48))
                 .executeDelete();
     }
-
-
-    public static class Query {
-
-        private final DbContextSelectBuilder query;
-
-        public Query(DbContextSelectBuilder query) {
-            this.query = query;
-        }
-
-        public Stream<RecordEntity> stream() {
-            return query.stream(RecordRepository::toRecord);
-        }
-
-        private RecordRepository.Query query(DbContextSelectBuilder query) {
-            return this;
-        }
-    }
-
 }

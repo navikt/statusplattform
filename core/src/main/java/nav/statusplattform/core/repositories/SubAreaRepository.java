@@ -4,12 +4,20 @@ import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.entities.SubAreaEntity;
 import nav.statusplattform.core.exceptionHandling.ExceptionUtil;
 import org.actioncontroller.HttpRequestException;
-import org.fluentjdbc.*;
+import org.fluentjdbc.DatabaseRow;
+import org.fluentjdbc.DatabaseSaveResult;
+import org.fluentjdbc.DbContext;
+import org.fluentjdbc.DbContextTable;
+import org.fluentjdbc.DbContextTableAlias;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public class SubAreaRepository {
@@ -77,7 +85,6 @@ public class SubAreaRepository {
         return result;
     }
 
-
     public void addServiceToSubArea(UUID subAreaId, UUID serviceId) {
         subAreaServiceTable.insert()
                 .setField("sub_area_id", subAreaId)
@@ -98,18 +105,19 @@ public class SubAreaRepository {
 
     }
 
-
     public void removeServiceFromAllSubAreas(UUID serviceId){
         subAreaServiceTable.where("service_id", serviceId)
                 .executeDelete();
 
     }
+
     public void removeServiceFromSubArea(UUID subAreaId, UUID serviceId) {
         subAreaServiceTable.where("sub_area_id", subAreaId)
                 .where("service_id", serviceId)
                 .executeDelete();
 
     }
+
     //TODO bør denne være optional?
     public Map.Entry<SubAreaEntity, List<ServiceEntity>> retrieveOne(UUID sub_area_id) {
         DbContextTableAlias subAreaAlias = subAreaTable.alias("sub_area");
@@ -174,10 +182,6 @@ public class SubAreaRepository {
         }
     }
 
-    public Query query() {
-        return new Query(areaTable.query());
-    }
-
     public List<SubAreaEntity> getAreasContainingService(UUID service_id) {
         DbContextTableAlias subAreaAlias = subAreaTable.alias("sub_area");
         DbContextTableAlias sa2s = subAreaServiceTable.alias("sa2s");
@@ -186,22 +190,5 @@ public class SubAreaRepository {
                 .orderBy(subAreaAlias.column("name"))
                 .where("sa2s.service_id",service_id)
                 .stream(SubAreaRepository::toSubArea).collect(Collectors.toList());
-    }
-
-    public static class Query {
-
-        private final DbContextSelectBuilder query;
-
-        public Query(DbContextSelectBuilder query) {
-            this.query = query;
-        }
-
-        public Stream<SubAreaEntity> stream() {
-            return query.stream(SubAreaRepository::toSubArea);
-        }
-
-        private Query query(DbContextSelectBuilder query) {
-            return this;
-        }
     }
 }

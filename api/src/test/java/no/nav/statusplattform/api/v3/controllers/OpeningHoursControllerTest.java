@@ -72,7 +72,7 @@ public class OpeningHoursControllerTest {
         //Arrange
         OHRuleDto oHRuleDto = SampleDataDto.getRandomizedOHRuleDto();
         //Act
-        OHRuleDto savedOHRuleDto = openingHoursController.newRule(oHRuleDto);
+        openingHoursController.newRule(oHRuleDto);
         oHRuleDto.setId(oHRuleDto.getId());
         OHRuleDto retrievedOHRuleDto = openingHoursController.getRule(oHRuleDto.getId());
         //Assert
@@ -142,19 +142,16 @@ public class OpeningHoursControllerTest {
     void addRuleToGroup() {
         //Arrange
         OHRuleDto oHRuleDto = SampleDataDto.getRandomizedOHRuleDto();
-        OHRuleDto savedOHRuleDto = openingHoursController.newRule(oHRuleDto);
+        openingHoursController.newRule(oHRuleDto);
         oHRuleDto.setId(oHRuleDto.getId());
-        OHRuleDto retrievedOHRuleDto = openingHoursController.getRule(oHRuleDto.getId());
 
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
         savedOHGroupThinDto.setId(savedOHGroupThinDto.getId());
 
-
         UUID ruleId = oHRuleDto.getId();
         UUID groupId = savedOHGroupThinDto.getId();
 
-        OHGroupDto retrievedGroupBefore = openingHoursController.getGroup(groupId);
         //Act
         List<UUID> rules = oHGroupThinDto.getRules();
         if (rules.size() == 0) {
@@ -271,7 +268,6 @@ public class OpeningHoursControllerTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
         serviceDto.setId(serviceDto.getId());
-        UUID serviceDtoID = serviceDto.getId();
         /*Create group*/
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getBasicGroupThinDto();
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
@@ -296,30 +292,23 @@ public class OpeningHoursControllerTest {
             savedOHRulesDtoIds.add(oHRuleDto.getId());
         });
 
-        List<OHRuleDto>retrievedOHRulesDto = openingHoursController.getRules();
-
         //Group oppsett
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
         UUID groupId = savedOHGroupThinDto.getId();
         savedOHGroupThinDto.setId(groupId);
 
-        List<OHGroupDto>retrievedGroups = openingHoursController.getGroups();
-
         //add rules to group
         savedOHGroupThinDto.setRules(savedOHRulesDtoIds);
         openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
-        OHGroupDto retrievedGroupAfter = openingHoursController.getGroup(savedOHGroupThinDto.getId());
 
         //Create service
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
         serviceDto.setId(serviceDto.getId());
-        UUID serviceDtoID = serviceDto.getId();
 
         //Add group to service
         openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(),serviceDto.getId());
-        OHGroupDto retrievedGroupForService = openingHoursController.getOHGroupForService(serviceDto.getId());
 
         //Act
         String retrievedOpeningHoursSpecifiedRunDays = openingHoursController.getOpeningHoursForServiceOnDate(serviceDto.getId(), "20.06.2023");
@@ -403,17 +392,14 @@ public class OpeningHoursControllerTest {
         //Basic
         savedBasicGroupDto.setRules(basicGroupRulesIds);
         openingHoursController.updateGroup(savedBasicGroupDto.getId(), savedBasicGroupDto);
-        OHGroupDto retrievedBasicGroupAfter = openingHoursController.getGroup(savedBasicGroupDtoId);
 
         //Create service
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
         serviceDto.setId(serviceDto.getId());
-        UUID serviceDtoID = serviceDto.getId();
 
         //Add group to service
         openingHoursController.setOpeningHoursToService(savedBasicGroupDtoId,serviceDto.getId());
-        OHGroupDto retrievedGroupForService = openingHoursController.getOHGroupForService(serviceDto.getId());
 
         //Act
         String retrievedOpeningHoursChristmasDay = openingHoursController.getOpeningHoursForServiceOnDate(serviceDto.getId(), "24.12.2023");

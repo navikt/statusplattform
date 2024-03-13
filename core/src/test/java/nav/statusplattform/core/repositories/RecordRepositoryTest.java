@@ -67,10 +67,9 @@ class RecordRepositoryTest {
          record.setDescription("newly generated");
          record.setActive(true);
          record.setId(recordRepository.save(record));
-         UUID recordId = record.getId();
          Optional<RecordEntity>retrievedRecordBefore = recordRepository.getLatestRecord(serviceId);
          //Act
-         UUID newStatusDiffId = recordRepository.saveNewStatusDiff(record);
+         recordRepository.saveNewStatusDiff(record);
          Optional<RecordDeltaEntity> retrievedRecordDiff = recordRepository.getLatestRecordDiff(serviceId);
          //Arrange
          Assertions.assertThat(retrievedRecordDiff.isPresent()).isTrue();
@@ -90,8 +89,7 @@ class RecordRepositoryTest {
         record.setDescription("newly generated");
         record.setActive(true);
         record.setId(recordRepository.save(record));
-        UUID recordId = record.getId();
-        UUID newStatusDiffId = recordRepository.saveNewStatusDiff(record);
+        recordRepository.saveNewStatusDiff(record);
         Optional<RecordDeltaEntity>retrievedRecordDiffBefore = recordRepository.getLatestRecordDiff(serviceId);
         //Act
         retrievedRecordDiffBefore.ifPresent(recordRepository::setOldStatusDiffInactive);
@@ -115,8 +113,7 @@ class RecordRepositoryTest {
         record.setDescription("newly generated");
         record.setActive(true);
         record.setId(recordRepository.save(record));
-        UUID recordId = record.getId();
-        UUID newStatusDiffId = recordRepository.saveNewStatusDiff(record);
+        recordRepository.saveNewStatusDiff(record);
         Optional<RecordDeltaEntity>retrievedRecordDiffBefore = recordRepository.getLatestRecordDiff(serviceId);
         //Act
         retrievedRecordDiffBefore.ifPresent(recordRepository::increaseCountOnStatusDiff);

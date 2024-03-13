@@ -204,7 +204,6 @@ public class WcagJsonParser {
 
     public static ArrayList<WcagKravDto> getKrav(JSONObject object){
         ArrayList<WcagKravDto> resultList = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try{
             JSONArray auditSampleList = object.getJSONArray("auditSample");
             auditSampleList.forEach( a -> {

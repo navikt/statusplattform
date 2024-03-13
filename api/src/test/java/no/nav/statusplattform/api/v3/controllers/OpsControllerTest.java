@@ -75,7 +75,7 @@ class OpsControllerTest {
         Assertions.assertThat(affectedServices.size()).isEqualTo(serviceDtos.size());
       }
 
-    //@Test
+    @Test
     void getAllOpsMessages() {
         //Arrange
         AreaDto areaDto = SampleDataDto.getRandomizedAreaDto();
