@@ -51,6 +51,8 @@
 
           # Other tooling
           docker-compose
+          postgresql_12 # psql, pg_restore, pg_dump, etc.
+          pgcli # psql w/tab completion and syntax highlighting
         ];
 
         shellHook = ''
