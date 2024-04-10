@@ -31,7 +31,7 @@ public class OpeningHoursRepositoryTestV2 {
 
     private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
 
-    private Map<String, String> namesAndRules =  Map.ofEntries(
+    private final Map<String, String> namesAndRules =  Map.ofEntries(
             Map.entry("Christmas day", "24.12.???? ? ? 00:00-00:00"),
             Map.entry("Boxing Day", "24.12.???? ? ? 00:00-00:00"),
             Map.entry("Good Friday", "07.04.2023 ? ? 00:00-00:00"),
