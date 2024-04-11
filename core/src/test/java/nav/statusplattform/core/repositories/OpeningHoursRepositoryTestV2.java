@@ -68,16 +68,14 @@ public class OpeningHoursRepositoryTestV2 {
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
      private String getRandomFromArray(ArrayList<String> array) {
-        if (array.size() == 0) {
-            //Hit skal man ikke komme
-            return null;
-        }
+         //Hit skal man ikke komme
+         if (array.isEmpty()) return null;
         Random random = new Random();
         return array.get(random.nextInt(array.size()));
     }
 
     private OpeningHoursRuleEntity getRandomizedOpeningHoursRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity> OpeningHoursRules) {
-        List<String> usedNames = OpeningHoursRules.stream().map(OpeningHoursRuleEntity::getName).collect(Collectors.toList());
+        List<String> usedNames = OpeningHoursRules.stream().map(OpeningHoursRuleEntity::getName).toList();
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new OpeningHoursRuleEntity()
@@ -86,7 +84,7 @@ public class OpeningHoursRepositoryTestV2 {
     }
 
     private OpeningHoursGroupEntity getRandomizedGroupEntitiesWithNameNotInList(List<OpeningHoursGroupEntity> openingHoursGroupEntities) {
-        List<String> usedNames = openingHoursGroupEntities.stream().map(OpeningHoursGroupEntity::getName).collect(Collectors.toList());
+        List<String> usedNames = openingHoursGroupEntities.stream().map(OpeningHoursGroupEntity::getName).toList();
         ArrayList<String> possibleNames = new ArrayList<>(groupDescription);
         possibleNames.removeAll(usedNames);
         return new OpeningHoursGroupEntity()
@@ -95,7 +93,7 @@ public class OpeningHoursRepositoryTestV2 {
     }
 
     private OpeningHoursRuleEntity getRandomizedOHRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity>openingHoursRuleEntities) {
-        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).collect(Collectors.toList());
+        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).toList();
         ArrayList<String> possibleNames = new ArrayList<>(namesAndRules.keySet());
         possibleNames.removeAll(usedNames);
         String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
