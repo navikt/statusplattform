@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class OpeningHoursRepositoryTestV2 {
     private final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Arbeidsøker eller permitert", "Pensjon", "Venter barn", "Alene med barn", "Sykmeldt",
