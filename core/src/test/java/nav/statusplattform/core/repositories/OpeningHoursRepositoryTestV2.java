@@ -5,6 +5,7 @@ import nav.statusplattform.core.entities.OpeningHoursGroupEntity;
 import nav.statusplattform.core.entities.OpeningHoursRuleEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.enums.ServiceType;
+import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -316,13 +317,16 @@ public class OpeningHoursRepositoryTestV2 {
         UUID groupId = openingHoursRepository.saveGroup(group);
         openingHoursRepository.setOpeningHoursToService(groupId,serviceId);
         //Act
-        Map<UUID,OpeningHoursGroup> serviceGroupMap = openingHoursRepository.getAllOpeningtimeForAllServicesWithOpeningTime();
+        Map<UUID,OpeningHoursGroup> ohServiceMap = openingHoursRepository.getAllOpeningtimeForAllServicesWithOpeningTime();
         //Assert
-        serviceGroupMap.get(UUID.randomUUID());
+        Set<UUID> ohServiceGroupMapKey = ohServiceMap.keySet();
+        UUID ohServiceGroupAfterId = ohServiceGroupMapKey.stream().findFirst().orElse(null);
+        OpeningHoursGroup ohServiceGroupAfter = ohServiceMap.get(ohServiceGroupAfterId);
+
+        Assertions.assertThat(ohServiceGroupMapKey.size()).isEqualTo(1);
+        Assertions.assertThat(ohServiceGroupAfter.getRules()).contains(rule);
+        Assertions.assertThat(ohServiceGroupAfterId).isEqualTo(serviceId);
     }
-
-
-
 
 
 }
