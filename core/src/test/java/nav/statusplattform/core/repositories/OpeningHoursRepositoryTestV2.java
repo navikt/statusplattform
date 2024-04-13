@@ -310,7 +310,7 @@ public class OpeningHoursRepositoryTestV2 {
         OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
-        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
+        ServiceEntity serviceEntity = getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(serviceEntity);
         serviceEntity.setId(serviceId);
         OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
@@ -326,6 +326,23 @@ public class OpeningHoursRepositoryTestV2 {
         Assertions.assertThat(ohServiceGroupMapKey.size()).isEqualTo(1);
         Assertions.assertThat(ohServiceGroupAfter.getRules()).contains(rule);
         Assertions.assertThat(ohServiceGroupAfterId).isEqualTo(serviceId);
+    }
+
+    @Test
+    void setOpeningHoursGroupToService() {
+        //Arrange
+        /*Create service*/
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        /*Create group*/
+        OpeningHoursGroupEntity group = SampleData.getRandomizedOpeningHoursGroupEntity();
+        group.setId(openingHoursRepository.saveGroup(group));
+        UUID groupId = group.getId();
+        //Act
+        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
+        //Assert
+        Optional<OpeningHoursGroup>retrievedGroup = openingHoursRepository.getOHGroupForService(serviceId);
+        Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
     }
 
 
