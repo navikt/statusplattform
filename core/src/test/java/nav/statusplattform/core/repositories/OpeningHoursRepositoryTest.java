@@ -129,10 +129,10 @@ class OpeningHoursRepositoryTest {
     void retrieveRule() {
         //Arrange
         List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules(2);
-        rules.forEach(rule -> {
+        for (OpeningHoursRuleEntity rule : rules) {
             rule.setId(openingHoursRepository.save(rule));
-        });
-        OpeningHoursRuleEntity ruleForRetrieving = rules.get(0);
+        }
+        OpeningHoursRuleEntity ruleForRetrieving = rules.getFirst();
         //Act
         Optional<OpeningHoursRuleEntity> retrievedRule = openingHoursRepository.retriveRule(ruleForRetrieving.getId());
         //Assert
