@@ -78,7 +78,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void deleteOpeninghours() {
         //Assign
-        OpeningHoursRuleEntity ruleToBeDeleted = SampleData.getRandomizedOpeningRule();
+        OpeningHoursRuleEntity ruleToBeDeleted = getRandomizedOpeningRule();
         ruleToBeDeleted.setId(openingHoursRepository.save(ruleToBeDeleted));
         Optional<OpeningHoursRuleEntity> beforeDelete = openingHoursRepository.retriveRule(ruleToBeDeleted.getId());
         //Act
