@@ -159,6 +159,12 @@ public class OpeningHoursRepositoryTestV2 {
         return oHRuleEntities;
     }
 
+    private OpeningHoursGroupEntity getRandomizedOpeningHoursGroupEntity() {
+        return new OpeningHoursGroupEntity()
+                .setName(getRandomFromArray(groupDescription))
+                .setRules(Collections.EMPTY_LIST);
+    }
+
     @Test
     void save() {
         //Arrange
@@ -332,10 +338,10 @@ public class OpeningHoursRepositoryTestV2 {
     void setOpeningHoursGroupToService() {
         //Arrange
         /*Create service*/
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        ServiceEntity service = getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         /*Create group*/
-        OpeningHoursGroupEntity group = SampleData.getRandomizedOpeningHoursGroupEntity();
+        OpeningHoursGroupEntity group = getRandomizedOpeningHoursGroupEntity();
         group.setId(openingHoursRepository.saveGroup(group));
         UUID groupId = group.getId();
         //Act
@@ -344,6 +350,29 @@ public class OpeningHoursRepositoryTestV2 {
         Optional<OpeningHoursGroup>retrievedGroup = openingHoursRepository.getOHGroupForService(serviceId);
         Assertions.assertThat(retrievedGroup).isPresent();
         Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
-
     }
+
+    @Test
+    void removeOpeningHoursFromService() {
+        //Arrange
+        /*Create service*/
+        ServiceEntity service = getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        /*Create group*/
+        OpeningHoursGroupEntity group = SampleData.getRandomizedOpeningHoursGroupEntity();
+        group.setId(openingHoursRepository.saveGroup(group));
+        UUID groupId = group.getId();
+        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
+        Optional<OpeningHoursGroup>retrievedGroupBefore = openingHoursRepository.getOHGroupForService(serviceId);
+        //Act
+        openingHoursRepository.removeOpeningHoursFromService(serviceId);
+        Optional<OpeningHoursGroup>retrievedGroupAfter = openingHoursRepository.getOHGroupForService(serviceId);
+        //Assert
+        Assertions.assertThat(retrievedGroupBefore).isPresent();
+        Assertions.assertThat(retrievedGroupBefore.get().getId()).isEqualTo(group.getId());
+        Assertions.assertThat(retrievedGroupAfter).isEmpty();
+    }
+
+
+
 }
