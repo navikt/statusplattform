@@ -498,7 +498,7 @@ class OpeningHoursRepositoryTest {
     }
 
     private  String getRandomFromKey(List<String> namesAndRulesKeys) {
-        if (namesAndRulesKeys.size() == 0) {
+        if (namesAndRulesKeys.isEmpty()) {
             //Hit skal man ikke komme
             return null;
         }
