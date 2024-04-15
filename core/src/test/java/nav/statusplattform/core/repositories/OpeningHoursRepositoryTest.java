@@ -35,11 +35,17 @@ class OpeningHoursRepositoryTest {
     private final OpeningHoursRepository openingHoursRepository = new OpeningHoursRepository(dbContext);
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
+    private final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Arbeidsøker eller permitert", "Pensjon", "Venter barn", "Alene med barn", "Sykmeldt",
+            "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
+            "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken", "Ett navn til", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+
+    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
+
 
     @Test
     void save() {
         //Arrange
-        OpeningHoursRuleEntity rule = SampleData.getRandomizedOpeningRule();
+        OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
         //Act
         UUID id = openingHoursRepository.save(rule);
         //Assert
@@ -399,6 +405,19 @@ class OpeningHoursRepositoryTest {
         Optional<OpeningHoursGroup>retrievedGroup = openingHoursRepository.getOHGroupForService(serviceId);
         //Assert
         Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
+    }
+
+    private OpeningHoursRuleEntity getRandomizedOpeningRule() {
+        return new OpeningHoursRuleEntity()
+                .setName(getRandomFromArray(areaNames))
+                .setRule(getRandomFromArray(rules));
+    }
+
+    private String getRandomFromArray(ArrayList<String> array) {
+        //Hit skal man ikke komme
+        if (array.isEmpty()) return null;
+        Random random = new Random();
+        return array.get(random.nextInt(array.size()));
     }
 
 }
