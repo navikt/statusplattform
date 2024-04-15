@@ -57,21 +57,21 @@ class OpeningHoursRepositoryTest {
     void update() {
         //Arrange
         List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules(2);
-        rules.forEach(rule -> {
-            rule.setId(openingHoursRepository.save(rule));
-        });
-        UUID ruleId = rules.get(0).getId();
+        rules.forEach(rule -> rule.setId(openingHoursRepository.save(rule)));
+        UUID ruleId = rules.getFirst().getId();
         Optional<OpeningHoursRuleEntity> before = openingHoursRepository.retriveRule(ruleId);
-        OpeningHoursRuleEntity retrievedBefore = before.get();
+        OpeningHoursRuleEntity retrievedBefore = before.orElse(null);
         //Act
         rules.get(0).setName(rules.get(1).getName());
         rules.get(0).setRule(rules.get(1).getRule());
         rules.get(0).setId(rules.get(1).getId());
         openingHoursRepository.update(rules.get(0));
         Optional<OpeningHoursRuleEntity> after = openingHoursRepository.retriveRule(rules.get(0).getId());
-        OpeningHoursRuleEntity retrievedAfter = after.get();
+        OpeningHoursRuleEntity retrievedAfter = after.orElse(null);
         //Assert
+        assert retrievedBefore != null;
         Assertions.assertThat(retrievedBefore.getName()).isNotEqualToIgnoringCase(rules.get(0).getName());
+        assert retrievedAfter != null;
         Assertions.assertThat(retrievedAfter.getName()).isEqualTo(rules.get(1).getName());
     }
 
