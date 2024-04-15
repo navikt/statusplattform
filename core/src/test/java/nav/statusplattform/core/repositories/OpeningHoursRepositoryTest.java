@@ -112,7 +112,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void updateGroup() {
         //Arrange
-        List<OpeningHoursGroupEntity>openingHoursGroupEntities = getNonEmptyListOfOpeningHoursGroupEntities(2);
+        List<OpeningHoursGroupEntity>openingHoursGroupEntities = getNonEmptyListOfOpeningHoursGroupEntities();
         List<OpeningHoursGroupEntity>groupEntities = new ArrayList<>();
         openingHoursGroupEntities.forEach(openingHoursGroupEntity -> {
             groupEntities.add(openingHoursGroupEntity.setId(openingHoursRepository.saveGroup(openingHoursGroupEntity)));
@@ -441,9 +441,9 @@ class OpeningHoursRepositoryTest {
                 .setRule(getRandomFromArray(rules));
     }
 
-    private List<OpeningHoursGroupEntity> getNonEmptyListOfOpeningHoursGroupEntities(int length) {
+    private List<OpeningHoursGroupEntity> getNonEmptyListOfOpeningHoursGroupEntities() {
         List<OpeningHoursGroupEntity> groupEntities = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < 2; i++) {
             groupEntities.add(getRandomizedGroupEntitiesWithNameNotInList(groupEntities));
         }
         return groupEntities;
