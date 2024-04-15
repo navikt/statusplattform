@@ -488,7 +488,7 @@ class OpeningHoursRepositoryTest {
     }
 
     private OpeningHoursRuleEntity getRandomizedOHRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity>openingHoursRuleEntities) {
-        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).collect(Collectors.toList());
+        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).toList();
         ArrayList<String> possibleNames = new ArrayList<>(namesAndRules.keySet());
         possibleNames.removeAll(usedNames);
         String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
