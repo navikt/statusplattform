@@ -457,9 +457,8 @@ class OpeningHoursRepositoryTest {
     }
 
     private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
-        int numberOfRules = length;
         List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
-        for (int i = 0; i < numberOfRules; i++) {
+        for (int i = 0; i < length; i++) {
             OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
         }
         return OpeningHoursRules;
