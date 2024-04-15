@@ -176,7 +176,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void getAllOpeningHoursGroups(){
         //Arrange
-        List<OpeningHoursGroupEntity>groups= SampleData.getRandomLengthListOfOpeningHoursGroupEntities();
+        List<OpeningHoursGroupEntity>groups= getRandomLengthListOfOpeningHoursGroupEntities();
         List<UUID>groupsId = new ArrayList<>();
         groups.forEach(group -> {
             group.setId(openingHoursRepository.saveGroup(group));
@@ -504,6 +504,16 @@ class OpeningHoursRepositoryTest {
         }
         Random random = new Random();
         return namesAndRulesKeys.get(random.nextInt(namesAndRulesKeys.size()));
+    }
+
+    private List<OpeningHoursGroupEntity> getRandomLengthListOfOpeningHoursGroupEntities() {
+        Random random = new Random();
+        int numberOfGroupEntities = 1 + random.nextInt(3);
+        List<OpeningHoursGroupEntity> groupEntities = new ArrayList<>();
+        for (int i = 0; i <= numberOfGroupEntities; i++) {
+            groupEntities.add(getRandomizedGroupEntitiesWithNameNotInList(groupEntities));
+        }
+        return groupEntities;
     }
 
 }
