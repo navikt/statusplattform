@@ -450,7 +450,7 @@ class OpeningHoursRepositoryTest {
     }
 
     private OpeningHoursGroupEntity getRandomizedGroupEntitiesWithNameNotInList(List<OpeningHoursGroupEntity> openingHoursGroupEntities) {
-        List<String> usedNames = openingHoursGroupEntities.stream().map(OpeningHoursGroupEntity::getName).collect(Collectors.toList());
+        List<String> usedNames = openingHoursGroupEntities.stream().map(OpeningHoursGroupEntity::getName).toList();
         ArrayList<String> possibleNames = new ArrayList<>(groupDescription);
         possibleNames.removeAll(usedNames);
         return new OpeningHoursGroupEntity()
