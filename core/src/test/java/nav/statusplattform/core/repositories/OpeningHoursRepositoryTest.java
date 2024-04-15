@@ -185,7 +185,7 @@ class OpeningHoursRepositoryTest {
         List<OpeningHoursGroup> retrievedGroupsBefore = new ArrayList<>();
         groupsId.forEach(groupId ->{
             Optional<OpeningHoursGroup> before = openingHoursRepository.retrieveOneGroup(groupId);
-            retrievedGroupsBefore.add(before.get());
+            retrievedGroupsBefore.add(before.orElse(null));
         });
         //Act
         List<OpeningHoursGroup> retrievedGroupsAfter = openingHoursRepository.getAllGroups();
