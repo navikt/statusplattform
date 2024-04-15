@@ -44,6 +44,23 @@ class OpeningHoursRepositoryTest {
 
     static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
 
+    static final Map<String, String> namesAndRules =  Map.ofEntries(
+            Map.entry("Christmas day", "24.12.???? ? ? 00:00-00:00"),
+            Map.entry("Boxing Day", "24.12.???? ? ? 00:00-00:00"),
+            Map.entry("Good Friday", "07.04.2023 ? ? 00:00-00:00"),
+            Map.entry("Easter Monday", "10.04.2023 ? ? 00:00-00:00"),
+            Map.entry("May day","01.05.???? ? ? 00:00-00:00"),
+            Map.entry("National day","17.05.???? ? ? 00:00-00:00"),
+            Map.entry("Kristihimmelfartsdag","18.05.2023 ? ? 00:00-00:00"),
+            Map.entry("Annen pinse dag","29.05.2023 ? ? 00:00-00:00"),
+            Map.entry("Early Closing Winter","19.01.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Spring","13.04.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Summer","20.07.2023 ? ? 07:00-15:00"),
+            Map.entry("Early Closing Autumn","19.10.2023 ? ? 07:00-15:00"),
+            Map.entry("LastDayOfTheMonth","??.??.???? L ? 07:00-18:00"),
+            Map.entry("Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00"),
+            Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
+
 
     @Test
     void save() {
@@ -142,7 +159,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void getAllOpeningHoursRules(){
         //Arrange
-        List<OpeningHoursRuleEntity> rules = SampleData.getRandomLengthListOfOHRuleEntity();
+        List<OpeningHoursRuleEntity> rules = getRandomLengthListOfOHRuleEntity();
         List<UUID>rulesId = new ArrayList<>();
         rules.forEach(rule -> {
             rule.setId(openingHoursRepository.save(rule));
@@ -462,6 +479,35 @@ class OpeningHoursRepositoryTest {
             OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
         }
         return OpeningHoursRules;
+    }
+
+    private List<OpeningHoursRuleEntity> getRandomLengthListOfOHRuleEntity() {
+        Random random = new Random();
+        int numberOfOHRulesEntities = 1 + random.nextInt(4);
+        List<OpeningHoursRuleEntity> oHRuleEntities = new ArrayList<>();
+        for (int i = 0; i <= numberOfOHRulesEntities; i++) {
+            oHRuleEntities.add(getRandomizedOHRuleEntityWithNameNotInList(oHRuleEntities));
+        }
+        return oHRuleEntities;
+    }
+
+    private OpeningHoursRuleEntity getRandomizedOHRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity>openingHoursRuleEntities) {
+        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = new ArrayList<>(namesAndRules.keySet());
+        possibleNames.removeAll(usedNames);
+        String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
+        return new OpeningHoursRuleEntity()
+                .setName(randomKey)
+                .setRule(namesAndRules.get(randomKey));
+    }
+
+    private  String getRandomFromKey(List<String> namesAndRulesKeys) {
+        if (namesAndRulesKeys.size() == 0) {
+            //Hit skal man ikke komme
+            return null;
+        }
+        Random random = new Random();
+        return namesAndRulesKeys.get(random.nextInt(namesAndRulesKeys.size()));
     }
 
 }
