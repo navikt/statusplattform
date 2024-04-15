@@ -76,7 +76,7 @@ class OpeningHoursRepositoryTest {
     }
 
     @Test
-    void deleteOpeninghours() {
+    void deleteOpeningHours() {
         //Assign
         OpeningHoursRuleEntity ruleToBeDeleted = getRandomizedOpeningRule();
         ruleToBeDeleted.setId(openingHoursRepository.save(ruleToBeDeleted));
