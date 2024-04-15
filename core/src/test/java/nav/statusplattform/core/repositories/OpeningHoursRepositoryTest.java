@@ -165,11 +165,7 @@ class OpeningHoursRepositoryTest {
             rule.setId(openingHoursRepository.save(rule));
             rulesId.add(rule.getId());
         });
-        List<OpeningHoursRuleEntity> retrievedRulesBefore = new ArrayList<>();
-        rulesId.forEach(ruleId ->{
-            Optional<OpeningHoursRuleEntity> before = openingHoursRepository.retriveRule(ruleId);
-            retrievedRulesBefore.add(before.get());
-        });
+        List<OpeningHoursRuleEntity> retrievedRulesBefore = rulesId.stream().map(openingHoursRepository::retriveRule).map(before -> before.orElse(null)).collect(Collectors.toList());
         //Act
         List<OpeningHoursRuleEntity> retrievedRulesAfter = openingHoursRepository.getAllOpeningHoursRules();
         //Assert
