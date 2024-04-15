@@ -128,7 +128,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void retrieveRule() {
         //Arrange
-        List<OpeningHoursRuleEntity> rules = SampleData.getNonEmptyListOfOpeningRules(2);
+        List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules(2);
         rules.forEach(rule -> {
             rule.setId(openingHoursRepository.save(rule));
         });
@@ -454,6 +454,15 @@ class OpeningHoursRepositoryTest {
         return new OpeningHoursGroupEntity()
                 .setName(getRandomFromArray(possibleNames))
                 .setRules(Collections.EMPTY_LIST);
+    }
+
+    private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
+        int numberOfRules = length;
+        List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
+        for (int i = 0; i < numberOfRules; i++) {
+            OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
+        }
+        return OpeningHoursRules;
     }
 
 }
