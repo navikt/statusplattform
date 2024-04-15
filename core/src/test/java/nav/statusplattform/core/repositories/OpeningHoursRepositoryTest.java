@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 class OpeningHoursRepositoryTest {
 
@@ -55,7 +56,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void update() {
         //Arrange
-        List<OpeningHoursRuleEntity> rules = SampleData.getNonEmptyListOfOpeningRules(2);
+        List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules(2);
         rules.forEach(rule -> {
             rule.setId(openingHoursRepository.save(rule));
         });
@@ -418,6 +419,24 @@ class OpeningHoursRepositoryTest {
         if (array.isEmpty()) return null;
         Random random = new Random();
         return array.get(random.nextInt(array.size()));
+    }
+
+    private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
+        int numberOfRules = length;
+        List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
+        for (int i = 0; i < numberOfRules; i++) {
+            OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
+        }
+        return OpeningHoursRules;
+    }
+
+    private OpeningHoursRuleEntity getRandomizedOpeningHoursRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity> OpeningHoursRules) {
+        List<String> usedNames = OpeningHoursRules.stream().map(OpeningHoursRuleEntity::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = new ArrayList<>(areaNames);
+        possibleNames.removeAll(usedNames);
+        return new OpeningHoursRuleEntity()
+                .setName(getRandomFromArray(possibleNames))
+                .setRule(getRandomFromArray(rules));
     }
 
 }
