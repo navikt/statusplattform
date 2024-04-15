@@ -373,6 +373,24 @@ public class OpeningHoursRepositoryTestV2 {
         Assertions.assertThat(retrievedGroupAfter).isEmpty();
     }
 
+    @Test
+    void getOHGroupForService(){
+        //Arrange
+        /*Create service*/
+        ServiceEntity service = getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        /*Create group*/
+        OpeningHoursGroupEntity group = getRandomizedOpeningHoursGroupEntity();
+        group.setId(openingHoursRepository.saveGroup(group));
+        UUID groupId = group.getId();
+        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
+        //Act
+        Optional<OpeningHoursGroup>retrievedGroup = openingHoursRepository.getOHGroupForService(serviceId);
+        //Assert
+        Assertions.assertThat(retrievedGroup).isPresent();
+        Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
+    }
+
 
 
 }
