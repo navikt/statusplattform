@@ -114,9 +114,7 @@ class OpeningHoursRepositoryTest {
         //Arrange
         List<OpeningHoursGroupEntity>openingHoursGroupEntities = getNonEmptyListOfOpeningHoursGroupEntities();
         List<OpeningHoursGroupEntity>groupEntities = new ArrayList<>();
-        openingHoursGroupEntities.forEach(openingHoursGroupEntity -> {
-            groupEntities.add(openingHoursGroupEntity.setId(openingHoursRepository.saveGroup(openingHoursGroupEntity)));
-        });
+        openingHoursGroupEntities.forEach(openingHoursGroupEntity -> groupEntities.add(openingHoursGroupEntity.setId(openingHoursRepository.saveGroup(openingHoursGroupEntity))));
         List<OpeningHoursGroup>retrievedGroupsBefore = openingHoursRepository.getAllGroups();
         //Act
         groupEntities.get(0).setName(groupEntities.get(1).getName());
