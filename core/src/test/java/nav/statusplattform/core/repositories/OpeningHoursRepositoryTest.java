@@ -42,6 +42,8 @@ class OpeningHoursRepositoryTest {
 
     private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
 
+    static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
+
 
     @Test
     void save() {
@@ -110,7 +112,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void updateGroup() {
         //Arrange
-        List<OpeningHoursGroupEntity>openingHoursGroupEntities = SampleData.getNonEmptyListOfOpeningHoursGroupEntities(2);
+        List<OpeningHoursGroupEntity>openingHoursGroupEntities = getNonEmptyListOfOpeningHoursGroupEntities(2);
         List<OpeningHoursGroupEntity>groupEntities = new ArrayList<>();
         openingHoursGroupEntities.forEach(openingHoursGroupEntity -> {
             groupEntities.add(openingHoursGroupEntity.setId(openingHoursRepository.saveGroup(openingHoursGroupEntity)));
@@ -437,6 +439,23 @@ class OpeningHoursRepositoryTest {
         return new OpeningHoursRuleEntity()
                 .setName(getRandomFromArray(possibleNames))
                 .setRule(getRandomFromArray(rules));
+    }
+
+    private List<OpeningHoursGroupEntity> getNonEmptyListOfOpeningHoursGroupEntities(int length) {
+        List<OpeningHoursGroupEntity> groupEntities = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            groupEntities.add(getRandomizedGroupEntitiesWithNameNotInList(groupEntities));
+        }
+        return groupEntities;
+    }
+
+    private OpeningHoursGroupEntity getRandomizedGroupEntitiesWithNameNotInList(List<OpeningHoursGroupEntity> openingHoursGroupEntities) {
+        List<String> usedNames = openingHoursGroupEntities.stream().map(OpeningHoursGroupEntity::getName).collect(Collectors.toList());
+        ArrayList<String> possibleNames = new ArrayList<>(groupDescription);
+        possibleNames.removeAll(usedNames);
+        return new OpeningHoursGroupEntity()
+                .setName(getRandomFromArray(possibleNames))
+                .setRules(Collections.EMPTY_LIST);
     }
 
 }
