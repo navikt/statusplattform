@@ -214,7 +214,7 @@ public class SampleData {
     }
 
 
-    private static String getRandomFromArray(ArrayList<String> array) {
+    static String getRandomFromArray(ArrayList<String> array) {
         if (array.size() == 0) {
             //Hit skal man ikke komme
             return null;

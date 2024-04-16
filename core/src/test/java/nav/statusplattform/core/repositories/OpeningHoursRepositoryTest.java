@@ -437,15 +437,8 @@ class OpeningHoursRepositoryTest {
 
     private OpeningHoursRuleEntity getRandomizedOpeningRule() {
         return new OpeningHoursRuleEntity()
-                .setName(getRandomFromArray(areaNames))
-                .setRule(getRandomFromArray(rules));
-    }
-
-    private String getRandomFromArray(ArrayList<String> array) {
-        //Hit skal man ikke komme
-        if (array.isEmpty()) return null;
-        Random random = new Random();
-        return array.get(random.nextInt(array.size()));
+                .setName(SampleData.getRandomFromArray(areaNames))
+                .setRule(SampleData.getRandomFromArray(rules));
     }
 
     private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules() {
@@ -462,8 +455,8 @@ class OpeningHoursRepositoryTest {
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return new OpeningHoursRuleEntity()
-                .setName(getRandomFromArray(possibleNames))
-                .setRule(getRandomFromArray(rules));
+                .setName(SampleData.getRandomFromArray(possibleNames))
+                .setRule(SampleData.getRandomFromArray(rules));
     }
 
     private List<OpeningHoursGroupEntity> getNonEmptyListOfOpeningHoursGroupEntities() {
@@ -479,7 +472,7 @@ class OpeningHoursRepositoryTest {
         ArrayList<String> possibleNames = new ArrayList<>(groupDescription);
         possibleNames.removeAll(usedNames);
         return new OpeningHoursGroupEntity()
-                .setName(getRandomFromArray(possibleNames))
+                .setName(SampleData.getRandomFromArray(possibleNames))
                 .setRules(Collections.EMPTY_LIST);
     }
 
@@ -532,12 +525,12 @@ class OpeningHoursRepositoryTest {
 
     private ServiceEntity getRandomizedServiceEntity() {
         return new ServiceEntity()
-                .setName(getRandomFromArray(serviceNames))
+                .setName(SampleData.getRandomFromArray(serviceNames))
                 .setType(getRandomServiceType())
-                .setTeam(getRandomFromArray(teamNames))
+                .setTeam(SampleData.getRandomFromArray(teamNames))
                 .setStatusNotFromTeam(Boolean.FALSE)
                 .setPollingOnPrem(Boolean.FALSE)
-                .setMonitorlink(getRandomFromArray(urlStrings));
+                .setMonitorlink(SampleData.getRandomFromArray(urlStrings));
     }
 
     private ServiceType getRandomServiceType() {
@@ -547,7 +540,7 @@ class OpeningHoursRepositoryTest {
 
     private OpeningHoursGroupEntity getRandomizedOpeningHoursGroupEntity() {
         return new OpeningHoursGroupEntity()
-                .setName(getRandomFromArray(groupDescription))
+                .setName(SampleData.getRandomFromArray(groupDescription))
                 .setRules(Collections.EMPTY_LIST);
     }
 
