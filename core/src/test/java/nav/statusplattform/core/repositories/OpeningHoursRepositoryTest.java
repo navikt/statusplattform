@@ -433,6 +433,7 @@ class OpeningHoursRepositoryTest {
         //Act
         Optional<OpeningHoursGroup>retrievedGroup = openingHoursRepository.getOHGroupForService(serviceId);
         //Assert
+        Assertions.assertThat(retrievedGroup).isPresent();
         Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
     }
 
