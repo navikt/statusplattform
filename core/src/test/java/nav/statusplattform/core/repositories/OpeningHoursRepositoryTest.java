@@ -305,7 +305,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void retrieveOneGroupComplexForAllServicesWithGroups() {
 
-        List<OpeningHoursRuleEntity> rules = SampleData.getNonEmptyListOfOpeningRules(6);
+        List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules(6);
         //Arrange
 
         // Setting up rules:
