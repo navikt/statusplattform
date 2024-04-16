@@ -4,6 +4,7 @@ import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.OpeningHoursGroupEntity;
 import nav.statusplattform.core.entities.OpeningHoursRuleEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
+import nav.statusplattform.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -39,6 +40,12 @@ class OpeningHoursRepositoryTest {
     private final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Arbeidsøker eller permitert", "Pensjon", "Venter barn", "Alene med barn", "Sykmeldt",
             "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
             "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken", "Ett navn til", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+
+    private final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste", "tjeneste123", "tjeneste213", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+
+    private final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.nrk.no", "https://www.nrk.no/nyheter/", "https://wwww.123abc.com", "https://wwww.ab.no", "https://wwww.ac.no", "https://wwww.ad.no", "https://wwww.ae.no", "https://wwww.af", "https://wwww.ag", "https://wwww.ah.no", "https://wwww.ai.no", "https://wwww.aj.no", "https://wwww.ak.no", "https://wwww.al.no", "https://wwww.am.no", "https://wwww.an.no", "https://wwww.ao.no"));
+
+    private final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team1", "teamOrlene", "teamÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
     private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
 
@@ -229,10 +236,10 @@ class OpeningHoursRepositoryTest {
     @Test
     void retrieveAllGroupsForAllServicesSimple() {
         //Arrange
-        OpeningHoursRuleEntity rule = SampleData.getRandomizedOpeningRule();
+        OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
-        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
+        ServiceEntity serviceEntity = getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(serviceEntity);
         serviceEntity.setId(serviceId);
         OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
@@ -514,6 +521,21 @@ class OpeningHoursRepositoryTest {
             groupEntities.add(getRandomizedGroupEntitiesWithNameNotInList(groupEntities));
         }
         return groupEntities;
+    }
+
+    private ServiceEntity getRandomizedServiceEntity() {
+        return new ServiceEntity()
+                .setName(getRandomFromArray(serviceNames))
+                .setType(getRandomServiceType())
+                .setTeam(getRandomFromArray(teamNames))
+                .setStatusNotFromTeam(Boolean.FALSE)
+                .setPollingOnPrem(Boolean.FALSE)
+                .setMonitorlink(getRandomFromArray(urlStrings));
+    }
+
+    private ServiceType getRandomServiceType() {
+        Random random = new Random();
+        return ServiceType.values()[random.nextInt(ServiceType.values().length)];
     }
 
 }
