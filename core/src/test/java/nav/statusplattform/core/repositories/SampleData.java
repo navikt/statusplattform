@@ -499,12 +499,6 @@ public class SampleData {
                 .setRules(Collections.EMPTY_LIST);
     }
 
-    public static OpeningHoursGroupEntity getRandomizedOpeningHoursGroupEntity() {
-        return new OpeningHoursGroupEntity()
-                .setName(getRandomFromArray(groupDescription))
-                .setRules(Collections.EMPTY_LIST);
-    }
-
     public static List<OpeningHoursGroupEntity> getOpeningHoursGroupEntities() {
         Random random = new Random();
         int numberOfGroupEntities = 1+ random.nextInt( groupDescription.size()-1);
