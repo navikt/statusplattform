@@ -401,18 +401,6 @@ public class SampleData {
                 .setContent(getRandomFromArray(helpTextDescriptions));
     }
 
-
-
-
-
-
-    public static OpeningHoursRuleEntity getRandomizedOpeningHoursRule() {
-        String randomKey = getRandomFromKey(new ArrayList<>(namesAndRules.keySet()));
-        return new OpeningHoursRuleEntity()
-                .setName(randomKey)
-                .setRule(namesAndRules.get(randomKey));
-    }
-
     public static List<OpeningHoursRuleEntity> getRandomOpeningHoursRuleEntities() {
         Random random = new Random();
         int numberOfRules = 1+ random.nextInt( namesAndRules.size()-1);
