@@ -260,7 +260,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void retrieveOneGroupComplex() {
 
-        List<OpeningHoursRuleEntity> rules = SampleData.getNonEmptyListOfOpeningRules(6);
+        List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules(6);
         //Arrange
         OpeningHoursRuleEntity rule1 = rules.get(0);
         OpeningHoursRuleEntity rule2 = rules.get(1);
@@ -301,8 +301,6 @@ class OpeningHoursRepositoryTest {
         Assertions.assertThat(retrievedGroup).isPresent();
 //        Assertions.assertThat(retrievedGroup.get().getRules()).containsExactlyElementsOf(rulesOfGroup2);
     }
-
-
 
     @Test
     void retrieveOneGroupComplexForAllServicesWithGroups() {
