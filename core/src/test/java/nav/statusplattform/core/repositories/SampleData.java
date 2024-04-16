@@ -526,18 +526,6 @@ public class SampleData {
                 .setRules(Collections.EMPTY_LIST);
     }
 
-    public static List<OpeningHoursGroupEntity> getRandomLengthListOfOpeningHoursGroupEntities() {
-        Random random = new Random();
-        int numberOfGroupEntities = 1 + random.nextInt(3);
-        List<OpeningHoursGroupEntity> groupEntities = new ArrayList<>();
-        for (int i = 0; i <= numberOfGroupEntities; i++) {
-            groupEntities.add(getRandomizedGroupEntitiesWithNameNotInList(groupEntities));
-        }
-        return groupEntities;
-    }
-
-
-
     public static List<OpeningHoursGroupEntity> getListOfOpeningHoursGroupEntities() {
         List<OpeningHoursGroupEntity> openingHoursGroupEntities = new ArrayList<>();
         for (String s : groupDescription) {
