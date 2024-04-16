@@ -402,10 +402,10 @@ class OpeningHoursRepositoryTest {
     void removeOpeningHoursFromService() {
         //Arrange
         /*Create service*/
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        ServiceEntity service = getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         /*Create group*/
-        OpeningHoursGroupEntity group = SampleData.getRandomizedOpeningHoursGroupEntity();
+        OpeningHoursGroupEntity group = getRandomizedOpeningHoursGroupEntity();
         group.setId(openingHoursRepository.saveGroup(group));
         UUID groupId = group.getId();
         openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
