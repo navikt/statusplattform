@@ -493,16 +493,6 @@ public class SampleData {
                 .setRule(namesAndRules.get(randomKey));
     }
 
-    public static List<OpeningHoursRuleEntity> getRandomLengthListOfOHRuleEntity() {
-        Random random = new Random();
-        int numberOfOHRulesEntities = 1 + random.nextInt(4);
-        List<OpeningHoursRuleEntity> oHRuleEntities = new ArrayList<>();
-        for (int i = 0; i <= numberOfOHRulesEntities; i++) {
-            oHRuleEntities.add(getRandomizedOHRuleEntityWithNameNotInList(oHRuleEntities));
-        }
-        return oHRuleEntities;
-    }
-
     public static OpeningHoursGroupEntity getBasicOpeningHoursGroupEntity() {
         return new OpeningHoursGroupEntity()
                 .setName("Basic")
