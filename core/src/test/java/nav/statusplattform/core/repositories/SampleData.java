@@ -139,17 +139,6 @@ public class SampleData {
                 .setContains_components(false);
     }
 
-
-
-    public static List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
-        int numberOfRules = length;
-        List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
-        for (int i = 0; i < numberOfRules; i++) {
-            OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
-        }
-        return OpeningHoursRules;
-    }
-
     public static OpeningHoursRuleEntity getRandomizedOpeningHoursRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity> OpeningHoursRules) {
         List<String> usedNames = OpeningHoursRules.stream().map(OpeningHoursRuleEntity::getName).collect(Collectors.toList());
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
@@ -557,13 +546,7 @@ public class SampleData {
         return groupEntities;
     }
 
-    public static List<OpeningHoursGroupEntity> getNonEmptyListOfOpeningHoursGroupEntities(int length) {
-        List<OpeningHoursGroupEntity> groupEntities = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            groupEntities.add(getRandomizedGroupEntitiesWithNameNotInList(groupEntities));
-        }
-        return groupEntities;
-    }
+
 
     public static List<OpeningHoursGroupEntity> getListOfOpeningHoursGroupEntities() {
         List<OpeningHoursGroupEntity> openingHoursGroupEntities = new ArrayList<>();
