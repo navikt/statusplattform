@@ -139,11 +139,7 @@ public class SampleData {
                 .setContains_components(false);
     }
 
-    public static OpeningHoursRuleEntity getRandomizedOpeningRule() {
-        return new OpeningHoursRuleEntity()
-                .setName(getRandomFromArray(areaNames))
-                .setRule(getRandomFromArray(rules));
-    }
+
 
     public static List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
         int numberOfRules = length;
