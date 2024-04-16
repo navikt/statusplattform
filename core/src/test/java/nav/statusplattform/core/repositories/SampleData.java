@@ -500,17 +500,7 @@ public class SampleData {
         }
         return openingHoursGroupEntities;
     }
-
-    public static OpeningHoursGroupEntity getRandomizedGroupEntitiesWithNameNotInList(List<OpeningHoursGroupEntity> openingHoursGroupEntities) {
-        List<String> usedNames = openingHoursGroupEntities.stream().map(OpeningHoursGroupEntity::getName).collect(Collectors.toList());
-        ArrayList<String> possibleNames = new ArrayList<>(groupDescription);
-        possibleNames.removeAll(usedNames);
-        return new OpeningHoursGroupEntity()
-                .setName(getRandomFromArray(possibleNames))
-                .setRules(Collections.EMPTY_LIST);
-    }
-
-    public static List<OpeningHoursGroupEntity> getListOfOpeningHoursGroupEntities() {
+     public static List<OpeningHoursGroupEntity> getListOfOpeningHoursGroupEntities() {
         List<OpeningHoursGroupEntity> openingHoursGroupEntities = new ArrayList<>();
         for (String s : groupDescription) {
             openingHoursGroupEntities.add(new OpeningHoursGroupEntity()
