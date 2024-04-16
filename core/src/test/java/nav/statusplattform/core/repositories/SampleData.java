@@ -37,8 +37,6 @@ public class SampleData {
     static final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK,OpsMessageSeverity.ISSUE,OpsMessageSeverity.NEUTRAL));
     static final ArrayList<String> maintenanceDescriptions = new ArrayList<>(Arrays.asList("Fixing the trøbbel i tårnet", "Supporting those som går gæli", "Mending the fuglekassa", "Taming memes", "Upkeep av nordavind fra alle kanter"));
 
-    static final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
-
     static final ArrayList<Integer> numbers =  new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
 
     static final ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
@@ -50,50 +48,6 @@ public class SampleData {
             "Her kan man legge inn andre komponenter det er avhengigheter til. Informasjon om status på disse vil da vises i komponentbildet. Velg i liste og klikk Legg til for hver komponent.",
             "Her legger man inn tjenester hvor komponeten skal vises. Velg i liste og klikk Legg til for hver tjeneste."));
 
-    static final Map<String, String> namesAndRules =  Map.ofEntries(
-            Map.entry("Christmas day", "24.12.???? ? ? 00:00-00:00"),
-            Map.entry("Boxing Day", "24.12.???? ? ? 00:00-00:00"),
-            Map.entry("Good Friday", "07.04.2023 ? ? 00:00-00:00"),
-            Map.entry("Easter Monday", "10.04.2023 ? ? 00:00-00:00"),
-            Map.entry("May day","01.05.???? ? ? 00:00-00:00"),
-            Map.entry("National day","17.05.???? ? ? 00:00-00:00"),
-            Map.entry("Kristihimmelfartsdag","18.05.2023 ? ? 00:00-00:00"),
-            Map.entry("Annen pinse dag","29.05.2023 ? ? 00:00-00:00"),
-            Map.entry("Early Closing Winter","19.01.2023 ? ? 07:00-15:00"),
-            Map.entry("Early Closing Spring","13.04.2023 ? ? 07:00-15:00"),
-            Map.entry("Early Closing Summer","20.07.2023 ? ? 07:00-15:00"),
-            Map.entry("Early Closing Autumn","19.10.2023 ? ? 07:00-15:00"),
-            Map.entry("LastDayOfTheMonth","??.??.???? L ? 07:00-18:00"),
-            Map.entry("Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00"),
-            Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
-
-    static final Map<String, String> holidayRules =  Map.ofEntries(
-            Map.entry("Good Friday", "07.04.2023 ? ? 00:00-00:00"),
-            Map.entry("Easter Monday", "10.04.2023 ? ? 00:00-00:00"),
-            Map.entry("May day","01.05.???? ? ? 00:00-00:00"),
-            Map.entry("National day","17.05.???? ? ? 00:00-00:00"),
-            Map.entry("Kristihimmelfartsdag","18.05.2023 ? ? 00:00-00:00"),
-            Map.entry("Annen pinse dag","29.05.2023 ? ? 00:00-00:00"),
-            Map.entry("Christmas day", "24.12.???? ? ? 00:00-00:00"),
-            Map.entry("Boxing Day", "25.12.???? ? ? 00:00-00:00"));
-
-    static final Map<String, String> earlyClosingRules =  Map.ofEntries(
-            Map.entry("Early Closing Winter","19.01.2023 ? ? 07:00-15:00"),
-            Map.entry("Early Closing Spring","13.04.2023 ? ? 07:00-15:00"),
-            Map.entry("Early Closing Summer","20.07.2023 ? ? 07:00-15:00"),
-            Map.entry("Early Closing Autumn","19.10.2023 ? ? 07:00-15:00"),
-            Map.entry("Open Saturday","05.08.2023 ? 6 10:00-15:00"));
-
-    static final Map<String, String> collaborativeMaintenanceRules =  Map.ofEntries(
-            Map.entry("LastDayOfTheMonth","??.??.???? L ? 07:00-18:00"));
-
-    static final Map<String, String> localMaintenanceRules =  Map.ofEntries(
-            Map.entry("local maintenance", "??.??.???? 1-5,15-20 ? 07:00-16:00"));
-
-    static final Map<String, String> baseRules =  Map.ofEntries(
-            Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
-
-    static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
 
     public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
@@ -399,103 +353,6 @@ public class SampleData {
                 .setNumber(number+1)
                 .setType(serviceType)
                 .setContent(getRandomFromArray(helpTextDescriptions));
-    }
-
-    public static List<OpeningHoursRuleEntity> getRandomOpeningHoursRuleEntities() {
-        Random random = new Random();
-        int numberOfRules = 1+ random.nextInt( namesAndRules.size()-1);
-        List<String>names = new ArrayList<>(namesAndRules.keySet());
-        List<OpeningHoursRuleEntity> openingHoursRuleEntities = new ArrayList<>();
-        for (int i = 0; i <= numberOfRules; i++) {
-            openingHoursRuleEntities.add(new OpeningHoursRuleEntity()
-                    .setName(names.get(i))
-                    .setRule(namesAndRules.get(names.get(i))));
-        }
-        return openingHoursRuleEntities;
-    }
-
-    public static List<OpeningHoursRuleEntity> getRuleEntities() {
-        List<String>names = new ArrayList<>(namesAndRules.keySet());
-        List<OpeningHoursRuleEntity> openingHoursRuleEntities = new ArrayList<>();
-        for (int i = 0; i < namesAndRules.size(); i++) {
-            openingHoursRuleEntities.add(new OpeningHoursRuleEntity()
-                    .setName(names.get(i))
-                    .setRule(namesAndRules.get(names.get(i))));
-        }
-        return openingHoursRuleEntities;
-    }
-
-    private static String getRandomFromKey(List<String> namesAndRulesKeys) {
-        if (namesAndRulesKeys.size() == 0) {
-            //Hit skal man ikke komme
-            return null;
-        }
-        Random random = new Random();
-        return namesAndRulesKeys.get(random.nextInt(namesAndRulesKeys.size()));
-    }
-
-    public static List<OpeningHoursRuleEntity> getOrderedRules() {
-        LinkedHashMap<String, String> orderedNamesAndRules = new LinkedHashMap<>();
-
-        orderedNamesAndRules.put("Christmas day", "24.12.???? ? 1-5 09:00-14:00");
-        orderedNamesAndRules.put("National day", "17.05.???? ? ? 00:00-00:00");
-        orderedNamesAndRules.put("LastDayOfTheMonth", "??.??.???? L ? 07:00-18:00");
-        orderedNamesAndRules.put("Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00");
-        orderedNamesAndRules.put("Normal work days", "??.??.???? ? 1-5 07:30-17:00");
-
-        List<String> names = new ArrayList<>(orderedNamesAndRules.keySet());
-        List<OpeningHoursRuleEntity> openingHoursRuleEntities = new ArrayList<>();
-        for (int i = 0; i < orderedNamesAndRules.size(); i++) {
-            openingHoursRuleEntities.add(new OpeningHoursRuleEntity()
-                    .setName(names.get(i))
-                    .setRule(orderedNamesAndRules.get(names.get(i))));
-        }
-        return openingHoursRuleEntities;
-    }
-
-    public static List<OpeningHoursRuleEntity> getNonEmptyListOfOHRuleEntity(int length) {
-        List<OpeningHoursRuleEntity> openingHoursRuleEntities = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            openingHoursRuleEntities.add(getRandomizedOHRuleEntityWithNameNotInList(openingHoursRuleEntities));
-        }
-        return openingHoursRuleEntities;
-    }
-
-    public static OpeningHoursRuleEntity getRandomizedOHRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity>openingHoursRuleEntities) {
-        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).collect(Collectors.toList());
-        ArrayList<String> possibleNames = new ArrayList<>(namesAndRules.keySet());
-        possibleNames.removeAll(usedNames);
-        String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
-        return new OpeningHoursRuleEntity()
-                .setName(randomKey)
-                .setRule(namesAndRules.get(randomKey));
-    }
-
-    public static OpeningHoursGroupEntity getBasicOpeningHoursGroupEntity() {
-        return new OpeningHoursGroupEntity()
-                .setName("Basic")
-                .setRules(Collections.EMPTY_LIST);
-    }
-
-    public static List<OpeningHoursGroupEntity> getOpeningHoursGroupEntities() {
-        Random random = new Random();
-        int numberOfGroupEntities = 1+ random.nextInt( groupDescription.size()-1);
-        List<OpeningHoursGroupEntity> openingHoursGroupEntities = new ArrayList<>();
-        for (int i = 0; i <= numberOfGroupEntities; i++) {
-            openingHoursGroupEntities.add(new OpeningHoursGroupEntity()
-                    .setName(groupDescription.get(i))
-                    .setRules(Collections.EMPTY_LIST));
-        }
-        return openingHoursGroupEntities;
-    }
-     public static List<OpeningHoursGroupEntity> getListOfOpeningHoursGroupEntities() {
-        List<OpeningHoursGroupEntity> openingHoursGroupEntities = new ArrayList<>();
-        for (String s : groupDescription) {
-            openingHoursGroupEntities.add(new OpeningHoursGroupEntity()
-                    .setName(s)
-                    .setRules(Collections.EMPTY_LIST));
-        }
-        return openingHoursGroupEntities;
     }
 
 
