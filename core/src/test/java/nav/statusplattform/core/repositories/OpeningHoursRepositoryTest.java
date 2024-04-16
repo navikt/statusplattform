@@ -384,10 +384,10 @@ class OpeningHoursRepositoryTest {
     void setOpeningHoursGroupToService() {
         //Arrange
         /*Create service*/
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        ServiceEntity service = getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         /*Create group*/
-        OpeningHoursGroupEntity group = SampleData.getRandomizedOpeningHoursGroupEntity();
+        OpeningHoursGroupEntity group = getRandomizedOpeningHoursGroupEntity();
         group.setId(openingHoursRepository.saveGroup(group));
         UUID groupId = group.getId();
         //Act
@@ -542,6 +542,12 @@ class OpeningHoursRepositoryTest {
     private ServiceType getRandomServiceType() {
         Random random = new Random();
         return ServiceType.values()[random.nextInt(ServiceType.values().length)];
+    }
+
+    private OpeningHoursGroupEntity getRandomizedOpeningHoursGroupEntity() {
+        return new OpeningHoursGroupEntity()
+                .setName(getRandomFromArray(groupDescription))
+                .setRules(Collections.EMPTY_LIST);
     }
 
 }
