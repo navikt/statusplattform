@@ -355,5 +355,12 @@ public class SampleData {
                 .setContent(getRandomFromArray(helpTextDescriptions));
     }
 
+    public static int getRandomLengthList(int length) {
+        Random random = new Random();
+        return 1 + random.nextInt(length);
+    }
+
+
+
 
 }
