@@ -4,7 +4,6 @@ import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.OpeningHoursGroupEntity;
 import nav.statusplattform.core.entities.OpeningHoursRuleEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
-import nav.statusplattform.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -41,12 +40,6 @@ class OpeningHoursRepositoryTest {
             "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
             "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken", "Ett navn til", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    private final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste", "tjeneste123", "tjeneste213", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
-
-    private final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.nrk.no", "https://www.nrk.no/nyheter/", "https://wwww.123abc.com", "https://wwww.ab.no", "https://wwww.ac.no", "https://wwww.ad.no", "https://wwww.ae.no", "https://wwww.af", "https://wwww.ag", "https://wwww.ah.no", "https://wwww.ai.no", "https://wwww.aj.no", "https://wwww.ak.no", "https://wwww.al.no", "https://wwww.am.no", "https://wwww.an.no", "https://wwww.ao.no"));
-
-    private final ArrayList<String> teamNames = new ArrayList<>(Arrays.asList("team1", "teamOrlene", "teamÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
-
     private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
 
     static final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
@@ -82,7 +75,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void update() {
         //Arrange
-        List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules();
+        List<OpeningHoursRuleEntity> rules = getNonEmptyListOfOpeningRules(2);
         rules.forEach(rule -> rule.setId(openingHoursRepository.save(rule)));
         UUID ruleId = rules.getFirst().getId();
         Optional<OpeningHoursRuleEntity> before = openingHoursRepository.retriveRule(ruleId);
@@ -441,13 +434,14 @@ class OpeningHoursRepositoryTest {
                 .setRule(SampleData.getRandomFromArray(rulesArray));
     }
 
-    private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules() {
-        int numberOfRules = 2;
-        List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
-        for (int i = 0; i < numberOfRules; i++) {
-            OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
-        }
-        return OpeningHoursRules;
+    private OpeningHoursRuleEntity getRandomizedOHRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity>openingHoursRuleEntities) {
+        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).toList();
+        ArrayList<String> possibleNames = new ArrayList<>(namesAndRules.keySet());
+        possibleNames.removeAll(usedNames);
+        String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
+        return new OpeningHoursRuleEntity()
+                .setName(randomKey)
+                .setRule(namesAndRules.get(randomKey));
     }
 
     private OpeningHoursRuleEntity getRandomizedOpeningHoursRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity> OpeningHoursRules) {
@@ -455,6 +449,20 @@ class OpeningHoursRepositoryTest {
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
         return getRandomizedOpeningRule(possibleNames, rules);
+    }
+
+    private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
+        List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
+        }
+        return OpeningHoursRules;
+    }
+
+    private List<OpeningHoursRuleEntity> getRandomLengthListOfOHRuleEntity() {
+        Random random = new Random();
+        int numberOfOHRulesEntities = 1 + random.nextInt(4);
+        return getNonEmptyListOfOpeningRules(numberOfOHRulesEntities);
     }
 
     private List<OpeningHoursGroupEntity> getNonEmptyListOfOpeningHoursGroupEntities() {
@@ -472,34 +480,6 @@ class OpeningHoursRepositoryTest {
         return new OpeningHoursGroupEntity()
                 .setName(SampleData.getRandomFromArray(possibleNames))
                 .setRules(Collections.EMPTY_LIST);
-    }
-
-    private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules(int length) {
-        List<OpeningHoursRuleEntity> OpeningHoursRules = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            OpeningHoursRules.add(getRandomizedOpeningHoursRuleEntityWithNameNotInList(OpeningHoursRules));
-        }
-        return OpeningHoursRules;
-    }
-
-    private List<OpeningHoursRuleEntity> getRandomLengthListOfOHRuleEntity() {
-        Random random = new Random();
-        int numberOfOHRulesEntities = 1 + random.nextInt(4);
-        List<OpeningHoursRuleEntity> oHRuleEntities = new ArrayList<>();
-        for (int i = 0; i <= numberOfOHRulesEntities; i++) {
-            oHRuleEntities.add(getRandomizedOHRuleEntityWithNameNotInList(oHRuleEntities));
-        }
-        return oHRuleEntities;
-    }
-
-    private OpeningHoursRuleEntity getRandomizedOHRuleEntityWithNameNotInList(List<OpeningHoursRuleEntity>openingHoursRuleEntities) {
-        List<String> usedNames = openingHoursRuleEntities.stream().map(OpeningHoursRuleEntity::getName).toList();
-        ArrayList<String> possibleNames = new ArrayList<>(namesAndRules.keySet());
-        possibleNames.removeAll(usedNames);
-        String randomKey = getRandomFromKey(new ArrayList<>(possibleNames));
-        return new OpeningHoursRuleEntity()
-                .setName(randomKey)
-                .setRule(namesAndRules.get(randomKey));
     }
 
     private  String getRandomFromKey(List<String> namesAndRulesKeys) {
