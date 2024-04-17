@@ -523,11 +523,6 @@ class OpeningHoursRepositoryTest {
         return groupEntities;
     }
 
-    private ServiceType getRandomServiceType() {
-        Random random = new Random();
-        return ServiceType.values()[random.nextInt(ServiceType.values().length)];
-    }
-
     private OpeningHoursGroupEntity getRandomizedOpeningHoursGroupEntity() {
         return new OpeningHoursGroupEntity()
                 .setName(SampleData.getRandomFromArray(groupDescription))
