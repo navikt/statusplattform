@@ -239,7 +239,7 @@ class OpeningHoursRepositoryTest {
         OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
-        ServiceEntity serviceEntity = getRandomizedServiceEntity();
+        ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(serviceEntity);
         serviceEntity.setId(serviceId);
         OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
@@ -382,7 +382,7 @@ class OpeningHoursRepositoryTest {
     void setOpeningHoursGroupToService() {
         //Arrange
         /*Create service*/
-        ServiceEntity service = getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         /*Create group*/
         OpeningHoursGroupEntity group = getRandomizedOpeningHoursGroupEntity();
@@ -400,7 +400,7 @@ class OpeningHoursRepositoryTest {
     void removeOpeningHoursFromService() {
         //Arrange
         /*Create service*/
-        ServiceEntity service = getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         /*Create group*/
         OpeningHoursGroupEntity group = getRandomizedOpeningHoursGroupEntity();
@@ -421,7 +421,7 @@ class OpeningHoursRepositoryTest {
     void getOHGroupForService(){
         //Arrange
         /*Create service*/
-        ServiceEntity service = getRandomizedServiceEntity();
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         /*Create group*/
         OpeningHoursGroupEntity group = getRandomizedOpeningHoursGroupEntity();
@@ -521,16 +521,6 @@ class OpeningHoursRepositoryTest {
             groupEntities.add(getRandomizedGroupEntitiesWithNameNotInList(groupEntities));
         }
         return groupEntities;
-    }
-
-    private ServiceEntity getRandomizedServiceEntity() {
-        return new ServiceEntity()
-                .setName(SampleData.getRandomFromArray(serviceNames))
-                .setType(getRandomServiceType())
-                .setTeam(SampleData.getRandomFromArray(teamNames))
-                .setStatusNotFromTeam(Boolean.FALSE)
-                .setPollingOnPrem(Boolean.FALSE)
-                .setMonitorlink(SampleData.getRandomFromArray(urlStrings));
     }
 
     private ServiceType getRandomServiceType() {
