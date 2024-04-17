@@ -72,7 +72,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void save() {
         //Arrange
-        OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
+        OpeningHoursRuleEntity rule = getRandomizedOpeningRule(areaNames, rules);
         //Act
         UUID id = openingHoursRepository.save(rule);
         //Assert
@@ -104,7 +104,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void deleteOpeningHours() {
         //Assign
-        OpeningHoursRuleEntity ruleToBeDeleted = getRandomizedOpeningRule();
+        OpeningHoursRuleEntity ruleToBeDeleted = getRandomizedOpeningRule(areaNames, rules);
         ruleToBeDeleted.setId(openingHoursRepository.save(ruleToBeDeleted));
         Optional<OpeningHoursRuleEntity> beforeDelete = openingHoursRepository.retriveRule(ruleToBeDeleted.getId());
         //Act
@@ -119,7 +119,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void saveGroup() {
         //Arrange
-        OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
+        OpeningHoursRuleEntity rule = getRandomizedOpeningRule(areaNames, rules);
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
         OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
@@ -204,7 +204,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void deleteOpeningHourGroup() {
         //Arrange
-        OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
+        OpeningHoursRuleEntity rule = getRandomizedOpeningRule(areaNames, rules);
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
         OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
@@ -221,7 +221,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void retrieveOneGroupSimple() {
         //Arrange
-        OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
+        OpeningHoursRuleEntity rule = getRandomizedOpeningRule(areaNames, rules);
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
         OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(rule_id));
@@ -236,7 +236,7 @@ class OpeningHoursRepositoryTest {
     @Test
     void retrieveAllGroupsForAllServicesSimple() {
         //Arrange
-        OpeningHoursRuleEntity rule = getRandomizedOpeningRule();
+        OpeningHoursRuleEntity rule = getRandomizedOpeningRule(areaNames, rules);
         UUID rule_id = openingHoursRepository.save(rule);
         rule.setId(rule_id);
         ServiceEntity serviceEntity = SampleData.getRandomizedServiceEntity();
@@ -435,10 +435,10 @@ class OpeningHoursRepositoryTest {
         Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
     }
 
-    private OpeningHoursRuleEntity getRandomizedOpeningRule() {
+    private OpeningHoursRuleEntity getRandomizedOpeningRule(ArrayList<String> namesArray, ArrayList<String> rulesArray) {
         return new OpeningHoursRuleEntity()
-                .setName(SampleData.getRandomFromArray(areaNames))
-                .setRule(SampleData.getRandomFromArray(rules));
+                .setName(SampleData.getRandomFromArray(namesArray))
+                .setRule(SampleData.getRandomFromArray(rulesArray));
     }
 
     private List<OpeningHoursRuleEntity> getNonEmptyListOfOpeningRules() {
@@ -454,9 +454,7 @@ class OpeningHoursRepositoryTest {
         List<String> usedNames = OpeningHoursRules.stream().map(OpeningHoursRuleEntity::getName).toList();
         ArrayList<String> possibleNames = new ArrayList<>(areaNames);
         possibleNames.removeAll(usedNames);
-        return new OpeningHoursRuleEntity()
-                .setName(SampleData.getRandomFromArray(possibleNames))
-                .setRule(SampleData.getRandomFromArray(rules));
+        return getRandomizedOpeningRule(possibleNames, rules);
     }
 
     private List<OpeningHoursGroupEntity> getNonEmptyListOfOpeningHoursGroupEntities() {
