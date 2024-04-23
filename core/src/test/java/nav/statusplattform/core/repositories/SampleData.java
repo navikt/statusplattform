@@ -174,15 +174,6 @@ public class SampleData {
         return areas;
     }
 
-    public static List<AreaEntity> getNonEmptyListOfAreaEntity(int length) {
-        int numberOfAreas = length;
-        List<AreaEntity> areas = new ArrayList<>();
-        for (int i = 0; i < numberOfAreas; i++) {
-            areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
-        }
-        return areas;
-    }
-
     public static SubAreaEntity getRandomizedSubAreaEntity() {
         return new SubAreaEntity()
                 .setName(getRandomFromArray(areaNames));
@@ -426,11 +417,6 @@ public class SampleData {
                 .setContent(getRandomFromArray(helpTextDescriptions));
     }
 
-
-
-
-
-
     public static OpeningHoursRuleEntity getRandomizedOpeningHoursRule() {
         String randomKey = getRandomFromKey(new ArrayList<>(namesAndRules.keySet()));
         return new OpeningHoursRuleEntity()
@@ -578,6 +564,5 @@ public class SampleData {
         }
         return openingHoursGroupEntities;
     }
-
 
 }
