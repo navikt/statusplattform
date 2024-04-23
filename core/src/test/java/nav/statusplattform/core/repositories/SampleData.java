@@ -32,9 +32,6 @@ public class SampleData {
     static final ArrayList<String> icons = new ArrayList<>(Arrays.asList("0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010", "0011", "0012"));
 
     static final ArrayList<String> firstNames = new ArrayList<>(Arrays.asList("Arne", "Bodil", "Gudrun", "Kjell Åge", "Hufsa", "Elg", "Rake", "Æskild", "Øygunn"));
-    static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
-    static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
-    static final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK,OpsMessageSeverity.ISSUE,OpsMessageSeverity.NEUTRAL));
     static final ArrayList<String> maintenanceDescriptions = new ArrayList<>(Arrays.asList("Fixing the trøbbel i tårnet", "Supporting those som går gæli", "Mending the fuglekassa", "Taming memes", "Upkeep av nordavind fra alle kanter"));
 
     static final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
@@ -104,29 +101,6 @@ public class SampleData {
                 .setName(getRandomFromArray(areaNames))
                 .setDescription(getRandomFromArray(descriptions))
                 .setContains_components(false);
-    }
-
-    public static OpsMessageEntity getRandomOpsMessageEntity() {
-        Random random = new Random();
-        return new OpsMessageEntity()
-                .setInternalHeader(getRandomFromArray(headersForOpsMessages))
-                .setInternalText(getRandomFromArray(infoTextForOpsMessages))
-                .setStartTime(getZonedDateTimeNowWithOutDecimals())
-                .setEndTime(getZonedDateTimeNowWithOutDecimals().plusDays(14))
-                .setSeverity(getRandomOpsMessageSeverity())
-                .setOnlyShowForNavEmployees(random.nextBoolean());
-    }
-
-    private static ZonedDateTime getZonedDateTimeNowWithOutDecimals(){
-        return ZonedDateTime.of(LocalDate.now(),LocalTime.of(0,0),ZoneId.of("Europe/Oslo"));
-    }
-
-    public static List<OpsMessageEntity> getNonEmptyListOfOpsMessageEntity(int numberOfOpsMessages) {
-        List<OpsMessageEntity> opsMessages = new ArrayList<>();
-        for (int i = 0; i < numberOfOpsMessages; i++) {
-            opsMessages.add(getRandomOpsMessageEntity());
-        }
-        return opsMessages;
     }
 
     public static AreaEntity getRandomizedAreaEntityWithNameNotInList(List<AreaEntity> areas) {
@@ -285,7 +259,7 @@ public class SampleData {
     }
 
 
-    private static String getRandomFromArray(ArrayList<String> array) {
+    static String getRandomFromArray(ArrayList<String> array) {
         if (array.size() == 0) {
             //Hit skal man ikke komme
             return null;
@@ -294,10 +268,6 @@ public class SampleData {
         return array.get(random.nextInt(array.size()));
     }
 
-    private static OpsMessageSeverity getRandomOpsMessageSeverity() {
-        Random random = new Random();
-        return opsMessageSeverity.get(random.nextInt(opsMessageSeverity.size()));
-    }
 
     private static ServiceType getRandomServiceType() {
         Random random = new Random();
