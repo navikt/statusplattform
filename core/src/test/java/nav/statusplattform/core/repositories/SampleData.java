@@ -308,22 +308,15 @@ public class SampleData {
         return dashboardNames;
     }
 
-    private static ServiceStatus getRandomServiceStatus() {
+    static ServiceStatus getRandomServiceStatus() {
         Random random = new Random();
         return ServiceStatus.values()[random.nextInt(ServiceStatus.values().length)];
     }
 
-    private static Integer getRandomResponseTime() {
+    static Integer getRandomResponseTime() {
         List<Integer> responseTime = Arrays.asList(10, 20, 30, 100, 1000);
         Random random = new Random();
         return responseTime.get(random.nextInt(responseTime.size()));
-    }
-
-    public static RecordEntity getRandomizedRecordEntity() {
-        return new RecordEntity()
-                .setCreated_at(ZonedDateTime.now())
-                .setStatus(getRandomServiceStatus())
-                .setResponsetime(getRandomResponseTime());
     }
 
     public static RecordEntity getRandomizedRecordEntityForService(ServiceEntity serviceEntity) {

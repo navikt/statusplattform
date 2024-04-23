@@ -13,10 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 class RecordRepositoryTest {
@@ -46,7 +43,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        RecordEntity record = SampleData.getRandomizedRecordEntity();
+       RecordEntity record = getRandomizedRecordEntity();
         record.setServiceId(service.getId());
         //Act
         record.setId(recordRepository.save(record));
@@ -132,7 +129,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        RecordEntity record = SampleData.getRandomizedRecordEntity();
+        RecordEntity record = getRandomizedRecordEntity();
         record.setServiceId(service.getId());
         record.setId(recordRepository.save(record));
         //Act
@@ -148,7 +145,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        RecordEntity record = SampleData.getRandomizedRecordEntity();
+        RecordEntity record = getRandomizedRecordEntity();
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(5);
         record.setCreated_at(fiveDaysBack);
@@ -186,7 +183,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        RecordEntity record = SampleData.getRandomizedRecordEntity();
+        RecordEntity record = getRandomizedRecordEntity();
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(5);
         record.setCreated_at(fiveDaysBack);
@@ -285,4 +282,12 @@ class RecordRepositoryTest {
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
         Assertions.assertThat(retrievedRecordsAfter).isEmpty();
     }
+
+    private RecordEntity getRandomizedRecordEntity() {
+        return new RecordEntity()
+                .setCreated_at(ZonedDateTime.now())
+                .setStatus(SampleData.getRandomServiceStatus())
+                .setResponsetime(SampleData.getRandomResponseTime());
+    }
+
 }
