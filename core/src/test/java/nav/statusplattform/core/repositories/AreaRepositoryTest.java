@@ -79,7 +79,7 @@ class AreaRepositoryTest {
     void update() {
         //TODO denne
         //Arrange
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(2);
+        List<AreaEntity> areas = getNonEmptyListOfAreaEntity(2);
 
         UUID uuid = areaRepository.save(areas.get(0));
         areas.forEach(area -> area.setId(uuid));
@@ -119,7 +119,7 @@ class AreaRepositoryTest {
     void deleteArea() {
         //TODO denne
         //Arrange - Lag area
-        List<AreaEntity> areas = SampleData.getNonEmptyListOfAreaEntity(3);
+        List<AreaEntity> areas = getNonEmptyListOfAreaEntity(3);
 
         /*for(AreaEntity area :areas){
              area.setId(areaRepository.save(area));
@@ -329,5 +329,14 @@ class AreaRepositoryTest {
         Assertions.assertThat(retrievedSubAreas.size()).isEqualTo(subAreas.size());
         Assertions.assertThat(retrievedSubAreas.containsAll(subAreas)).isTrue();
      }
+
+    private List<AreaEntity> getNonEmptyListOfAreaEntity(int length) {
+        int numberOfAreas = length;
+        List<AreaEntity> areas = new ArrayList<>();
+        for (int i = 0; i < numberOfAreas; i++) {
+            areas.add(SampleData.getRandomizedAreaEntityWithNameNotInList(areas));
+        }
+        return areas;
+    }
 
 }

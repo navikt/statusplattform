@@ -77,15 +77,6 @@ public class SampleData {
         return areas;
     }
 
-    public static List<AreaEntity> getNonEmptyListOfAreaEntity(int length) {
-        int numberOfAreas = length;
-        List<AreaEntity> areas = new ArrayList<>();
-        for (int i = 0; i < numberOfAreas; i++) {
-            areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
-        }
-        return areas;
-    }
-
     public static SubAreaEntity getRandomizedSubAreaEntity() {
         return new SubAreaEntity()
                 .setName(getRandomFromArray(areaNames));
@@ -284,7 +275,6 @@ public class SampleData {
         return helpTexts;
     }
 
-
     public static List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length) {
         List<HelpTextEntity> helpTexts = new ArrayList<>();
         for (int i = 0; i < length; i++) {
@@ -317,13 +307,5 @@ public class SampleData {
                 .setType(serviceType)
                 .setContent(getRandomFromArray(helpTextDescriptions));
     }
-
-    public static int getRandomLengthList(int length) {
-        Random random = new Random();
-        return 1 + random.nextInt(length);
-    }
-
-
-
 
 }
