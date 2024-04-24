@@ -3,6 +3,7 @@ package nav.statusplattform.core.repositories;
 import nav.statusplattform.core.entities.AreaEntity;
 import nav.statusplattform.core.entities.OpsMessageEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
+import nav.statusplattform.core.enums.OpsMessageSeverity;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -11,11 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 class OpsRepositoryTest {
 
@@ -27,6 +28,11 @@ class OpsRepositoryTest {
     private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
     private DbContextConnection connection;
 
+    private final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
+
+    private final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK, OpsMessageSeverity.ISSUE, OpsMessageSeverity.NEUTRAL));
+
+    private final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
 
     @BeforeEach
     void startConnection() {
@@ -48,7 +54,7 @@ class OpsRepositoryTest {
             service.setId(serviceRepository.save(service));
             serviceIds.add(service.getId());
         });
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageEntity = getRandomOpsMessageEntity();
         //Act
         opsMessageEntity.setId(opsRepository.save(opsMessageEntity, serviceIds));
         UUID opsId = opsMessageEntity.getId();
@@ -67,7 +73,7 @@ class OpsRepositoryTest {
             service.setId(serviceRepository.save(service));
             serviceIds.add(service.getId());
         });
-        OpsMessageEntity opsMessageToBeDeleted = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageToBeDeleted = getRandomOpsMessageEntity();
         UUID opsId = opsRepository.save(opsMessageToBeDeleted, serviceIds);
         opsMessageToBeDeleted.setId(opsId);
         Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageBeforeDelete
@@ -90,7 +96,7 @@ class OpsRepositoryTest {
             service.setId(serviceRepository.save(service));
             serviceIds.add(service.getId());
         });
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageEntity = getRandomOpsMessageEntity();
         UUID opsId = opsRepository.save(opsMessageEntity, new ArrayList<>());
         //Act
         opsRepository.setServicesOnOpsMessage(opsId, serviceIds);
@@ -110,7 +116,7 @@ class OpsRepositoryTest {
             service.setId(serviceRepository.save(service));
             serviceIds.add(service.getId());
         });
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageEntity = getRandomOpsMessageEntity();
         opsMessageEntity.setId(opsRepository.save(opsMessageEntity, serviceIds));
         UUID opsId = opsMessageEntity.getId();
         //Act
@@ -139,7 +145,7 @@ class OpsRepositoryTest {
 
 
         //Lager ops Message som IKKE er knyttet til noen tjeneste:
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageEntity = getRandomOpsMessageEntity();
         opsMessageEntity.setId(opsRepository.save(opsMessageEntity, new ArrayList<>()));
 
         //------------------ Act ------------------------------------
@@ -169,7 +175,7 @@ class OpsRepositoryTest {
             service.setId(serviceRepository.save(service));
             serviceIds.add(service.getId());
         });
-        OpsMessageEntity opsMessageEntity = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageEntity = getRandomOpsMessageEntity();
         UUID opsId = opsRepository.save(opsMessageEntity, serviceIds);
         opsMessageEntity.setId(opsId);
         //Act
@@ -190,7 +196,7 @@ class OpsRepositoryTest {
             service.setId(serviceRepository.save(service));
             serviceIds.add(service.getId());
         });
-        List<OpsMessageEntity>opsMessageEntities = SampleData.getNonEmptyListOfOpsMessageEntity(1);
+        List<OpsMessageEntity> opsMessageEntities = getNonEmptyListOfOpsMessageEntity(1);
 
         for (OpsMessageEntity opsMessageEntity : opsMessageEntities) {
             opsMessageEntity.setId(opsRepository.save(opsMessageEntity, serviceIds));
@@ -203,14 +209,11 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedOpsMessages.size()).isEqualTo(1);
         Assertions.assertThat(retrievedOpsMessages.keySet()).containsAll(opsMessageEntities);
     }
-
-
-
     @Test
     void retrieveAllActive() {
         //Arrange
-        OpsMessageEntity activeMessage = SampleData.getRandomOpsMessageEntity();
-        OpsMessageEntity inactiveMessage = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity activeMessage = getRandomOpsMessageEntity();
+        OpsMessageEntity inactiveMessage = getRandomOpsMessageEntity();
         ZonedDateTime yesterday = ZonedDateTime.now().minusDays(1);
         activeMessage.setStartTime(yesterday);
         inactiveMessage.setEndTime(yesterday);
@@ -218,13 +221,9 @@ class OpsRepositoryTest {
         activeMessage.setId(opsRepository.save(activeMessage,List.of()));
         inactiveMessage.setId(opsRepository.save(inactiveMessage,List.of()));
 
-
         //Act
         Map<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessagesAndServices
                 = opsRepository.retrieveAllActive();
-
-
-
         //Assert
         Assertions.assertThat(retrievedOpsMessagesAndServices.keySet().size()).isEqualTo(1);
         Assertions.assertThat(retrievedOpsMessagesAndServices.keySet()).contains(activeMessage);
@@ -240,7 +239,7 @@ class OpsRepositoryTest {
             serviceIds.add(service.getId());
         });
         String newHeader = "Gone to pot";
-        OpsMessageEntity opsMessage  = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessage = getRandomOpsMessageEntity();
         opsMessage.setId(opsRepository.save(opsMessage , serviceIds));
         UUID opsMessageBeforeUpdateId = opsMessage.getId();
         Map.Entry<OpsMessageEntity, List<ServiceEntity>> retrievedOpsMessageBeforeUpdate
@@ -272,8 +271,8 @@ class OpsRepositoryTest {
             service.setId(serviceRepository.save(service));
             serviceIds.add(service.getId());
         });
-        OpsMessageEntity opsMessageToDelete = SampleData.getRandomOpsMessageEntity();
-        OpsMessageEntity opsMessageExisting = SampleData.getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageToDelete = getRandomOpsMessageEntity();
+        OpsMessageEntity opsMessageExisting = getRandomOpsMessageEntity();
         opsMessageToDelete.setId(opsRepository.save(opsMessageToDelete, serviceIds));
         UUID opsMessageToDeleteId = opsMessageToDelete.getId();
         opsMessageExisting.setId(opsRepository.save(opsMessageExisting, serviceIds));
@@ -289,5 +288,33 @@ class OpsRepositoryTest {
         Assertions.assertThat(retrievedOpsMessageBeforeDelete.getValue()).containsAll(services);
         Assertions.assertThat(isDeleted).isTrue();
         Assertions.assertThat(isNotDeleted).isFalse();
+    }
+
+    private OpsMessageEntity getRandomOpsMessageEntity() {
+        Random random = new Random();
+        return new OpsMessageEntity()
+                .setInternalHeader(SampleData.getRandomFromArray(headersForOpsMessages))
+                .setInternalText(SampleData.getRandomFromArray(infoTextForOpsMessages))
+                .setStartTime(getZonedDateTimeNowWithOutDecimals())
+                .setEndTime(getZonedDateTimeNowWithOutDecimals().plusDays(14))
+                .setSeverity(getRandomOpsMessageSeverity())
+                .setOnlyShowForNavEmployees(random.nextBoolean());
+    }
+
+    private OpsMessageSeverity getRandomOpsMessageSeverity() {
+        Random random = new Random();
+        return opsMessageSeverity.get(random.nextInt(opsMessageSeverity.size()));
+    }
+
+    private List<OpsMessageEntity> getNonEmptyListOfOpsMessageEntity(int numberOfOpsMessages) {
+        List<OpsMessageEntity> opsMessages = new ArrayList<>();
+        for (int i = 0; i < numberOfOpsMessages; i++) {
+            opsMessages.add(getRandomOpsMessageEntity());
+        }
+        return opsMessages;
+    }
+
+    private ZonedDateTime getZonedDateTimeNowWithOutDecimals() {
+        return ZonedDateTime.of(LocalDate.now(), LocalTime.of(0, 0), ZoneId.of("Europe/Oslo"));
     }
 }
