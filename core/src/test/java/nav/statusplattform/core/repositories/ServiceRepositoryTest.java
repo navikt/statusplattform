@@ -11,11 +11,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.fail;
 
 class ServiceRepositoryTest {
+
+   static final ArrayList<String> maintenanceDescriptions = new ArrayList<>(Arrays.asList("Fixing the trøbbel i tårnet", "Supporting those som går gæli", "Mending the fuglekassa", "Taming memes", "Upkeep av nordavind fra alle kanter"));
 
    private final DataSource dataSource = TestDataSource.create();
 
@@ -42,7 +45,7 @@ class ServiceRepositoryTest {
       ServiceEntity service = SampleData.getRandomizedServiceEntity();
       UUID serviceId = serviceRepository.save(service);
       service.setId(serviceId);
-      MaintenanceEntity maintenance = SampleData.getRandomizedMaintenanceEntity();
+      MaintenanceEntity maintenance = getRandomizedMaintenanceEntity();
       maintenance.setServiceId(serviceId);
       //Act
       UUID maintenanceId = serviceRepository.saveMaintenance(maintenance);
@@ -60,9 +63,9 @@ class ServiceRepositoryTest {
       UUID serviceId = serviceRepository.save(service);
       service.setId(serviceId);
 
-      MaintenanceEntity maintenance1 = SampleData.getRandomizedMaintenanceEntity();
+      MaintenanceEntity maintenance1 = getRandomizedMaintenanceEntity();
       maintenance1.setServiceId(serviceId);
-      MaintenanceEntity maintenance2 = SampleData.getRandomizedMaintenanceEntity();
+      MaintenanceEntity maintenance2 = getRandomizedMaintenanceEntity();
       maintenance2.setServiceId(serviceId);
 
       UUID maintenance1Id = serviceRepository.saveMaintenance(maintenance1);
@@ -482,6 +485,16 @@ class ServiceRepositoryTest {
       Assertions.assertThat(retrievedService.orElseGet(() -> fail("klarte ikke legge til i db")))
               .isEqualTo(service);// Assert
 
+   }
+
+   private MaintenanceEntity getRandomizedMaintenanceEntity() {
+      Random random = new Random();
+      int numberOfDays = random.nextInt(2);
+      return new MaintenanceEntity()
+              .setCreated_at(ZonedDateTime.now())
+              .setDescription(SampleData.getRandomFromArray(maintenanceDescriptions))
+              .setStart_time(ZonedDateTime.now().plusDays(numberOfDays))
+              .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
    }
 
 

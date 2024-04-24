@@ -35,7 +35,6 @@ public class SampleData {
     static final ArrayList<String> headersForOpsMessages = new ArrayList<>(Arrays.asList("Trøbbel i tårnet", "Nå går det gæli", "Spark meg baklengs oppi fuglekassa", "For the memes", "Det blåser nordavind fra alle kanter"));
     static final ArrayList<String> infoTextForOpsMessages = new ArrayList<>(Arrays.asList("Noen har gjort noe alvorlig galt", "En ape har trengt seg inn på systemet. Det ligger bananer overalt", "WW3, oh no", "Facebook har sendt jorda inn i sola", "Elon Musk har kjøpt opp Nav"));
     static final ArrayList<OpsMessageSeverity> opsMessageSeverity = new ArrayList<>(Arrays.asList(OpsMessageSeverity.DOWN, OpsMessageSeverity.OK,OpsMessageSeverity.ISSUE,OpsMessageSeverity.NEUTRAL));
-    static final ArrayList<String> maintenanceDescriptions = new ArrayList<>(Arrays.asList("Fixing the trøbbel i tårnet", "Supporting those som går gæli", "Mending the fuglekassa", "Taming memes", "Upkeep av nordavind fra alle kanter"));
 
     static final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00","??.??.???? 1-5,10-L ? 07:00-21:00","24.12.???? ? 1-5 09:00-14:00"));
 
@@ -285,7 +284,7 @@ public class SampleData {
     }
 
 
-    private static String getRandomFromArray(ArrayList<String> array) {
+    static String getRandomFromArray(ArrayList<String> array) {
         if (array.size() == 0) {
             //Hit skal man ikke komme
             return null;
@@ -351,18 +350,6 @@ public class SampleData {
                 .setNumber_of_status_issue(new Random().nextInt(2))
                 .setNumber_of_status_ok(new Random().nextInt(100))
                 .setAggregation_date(LocalDate.now());
-    }
-
-
-
-    public static MaintenanceEntity getRandomizedMaintenanceEntity() {
-        Random random = new Random();
-        int numberOfDays = random.nextInt(2);
-        return new MaintenanceEntity()
-                .setCreated_at(ZonedDateTime.now())
-                .setDescription(getRandomFromArray(maintenanceDescriptions))
-                .setStart_time(ZonedDateTime.now().plusDays(numberOfDays))
-                .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
     }
 
     public static HelpTextEntity getRandomizedHelpTextEntity() {
