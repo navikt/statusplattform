@@ -307,5 +307,4 @@ public class SampleData {
                 .setType(serviceType)
                 .setContent(getRandomFromArray(helpTextDescriptions));
     }
-
 }
