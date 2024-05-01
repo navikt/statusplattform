@@ -149,29 +149,6 @@ public class HelpTextRepositoryTest {
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }
 
-
-    public List<HelpTextEntity> getHelpTextEntityWithServiceType(int length) {
-        List<HelpTextEntity> helpTexts = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            helpTexts.add(new HelpTextEntity()
-                    .setNumber(i + 1)
-                    .setType(ServiceType.TJENESTE)
-                    .setContent(SampleData.getRandomFromArray(helpTextDescriptions)));
-        }
-        return helpTexts;
-    }
-
-    public List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length) {
-        List<HelpTextEntity> helpTexts = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            helpTexts.add(new HelpTextEntity()
-                    .setNumber(i + 1)
-                    .setType(ServiceType.KOMPONENT)
-                    .setContent(SampleData.getRandomFromArray(helpTextDescriptions)));
-        }
-        return helpTexts;
-    }
-
     private int getRandomFromLongArray(ArrayList<Integer> array) {
         if (array.size() == 0) {
             //Hit skal man ikke komme
