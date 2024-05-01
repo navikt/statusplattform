@@ -11,9 +11,22 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class HelpTextRepositoryTest {
+
+    private final ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
+            "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
+            "Navnet på tjenesten slik den omtales ut mot brukerne av tjenesten",
+            "Navnet på team slik det er skrevet i Teamkatalogen",
+            "Link til et eventuelt dashboard eller monitor med mer detaljert informasjon. Eksempelvis Grafana dashboard",
+            "URL til statusendepunkt som Statusplattformen skal polle for status",
+            "Her kan man legge inn andre komponenter det er avhengigheter til. Informasjon om status på disse vil da vises i komponentbildet. Velg i liste og klikk Legg til for hver komponent.",
+            "Her legger man inn tjenester hvor komponeten skal vises. Velg i liste og klikk Legg til for hver tjeneste."));
+
+    private final ArrayList<Integer> numbers = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
 
     private final DataSource dataSource = TestDataSource.create();
 
@@ -35,7 +48,7 @@ public class HelpTextRepositoryTest {
     @Test
     void save() {
         //Arrange
-        HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
+        HelpTextEntity helpText = getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
         HelpTextEntity retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
@@ -46,7 +59,7 @@ public class HelpTextRepositoryTest {
     @Test
     void update() {
         //Arrange
-        HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
+        HelpTextEntity helpText = getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
         HelpTextEntity helpTextBefore = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
@@ -60,7 +73,7 @@ public class HelpTextRepositoryTest {
     @Test
     void retrieve() {
         //Arrange
-        HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
+        HelpTextEntity helpText = getRandomizedHelpTextEntity();
         //Act
         helpTextRepository.save(helpText);
         HelpTextEntity retrievedHelpText = helpTextRepository.retrieve(helpText.getNumber(), helpText.getType());
@@ -71,7 +84,7 @@ public class HelpTextRepositoryTest {
     @Test
     void retrieveAll() {
         //Arrange
-        List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
+        List<HelpTextEntity> helpTexts = getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
         //Act
         List<HelpTextEntity>allHelpTexts = helpTextRepository.retrieveAllHelpTexts();
@@ -83,7 +96,7 @@ public class HelpTextRepositoryTest {
     @Test
     void retrieveAllServices() {
         //Arrange
-        List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
+        List<HelpTextEntity> helpTexts = getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
         //Act
         List<HelpTextEntity>serviceHelpTexts = new ArrayList<>();
@@ -102,7 +115,7 @@ public class HelpTextRepositoryTest {
     @Test
     void retrieveAllComponents() {
         //Arrange
-        List<HelpTextEntity> helpTexts = SampleData.getHelpTextEntityWithRandomServiceTypes();
+        List<HelpTextEntity> helpTexts = getHelpTextEntityWithRandomServiceTypes();
         helpTexts.forEach(helpTextRepository::save);
         //Act
         List<HelpTextEntity>componentHelpTexts = new ArrayList<>();
@@ -121,11 +134,72 @@ public class HelpTextRepositoryTest {
     @Test
     void delete() {
         //Arrange
-        HelpTextEntity helpText = SampleData.getRandomizedHelpTextEntity();
+        HelpTextEntity helpText = getRandomizedHelpTextEntity();
         helpTextRepository.save(helpText);
         //Act
         int isDeleted = helpTextRepository.delete(helpText);
         //Assert
         Assertions.assertThat(isDeleted).isEqualTo(1);
+    }
+
+    private HelpTextEntity getRandomizedHelpTextEntity() {
+        return new HelpTextEntity()
+                .setNumber(getRandomFromLongArray(numbers))
+                .setType(SampleData.getRandomServiceType())
+                .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
+    }
+
+
+    public List<HelpTextEntity> getHelpTextEntityWithServiceType(int length) {
+        List<HelpTextEntity> helpTexts = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            helpTexts.add(new HelpTextEntity()
+                    .setNumber(i + 1)
+                    .setType(ServiceType.TJENESTE)
+                    .setContent(SampleData.getRandomFromArray(helpTextDescriptions)));
+        }
+        return helpTexts;
+    }
+
+    public List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length) {
+        List<HelpTextEntity> helpTexts = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            helpTexts.add(new HelpTextEntity()
+                    .setNumber(i + 1)
+                    .setType(ServiceType.KOMPONENT)
+                    .setContent(SampleData.getRandomFromArray(helpTextDescriptions)));
+        }
+        return helpTexts;
+    }
+
+    private int getRandomFromLongArray(ArrayList<Integer> array) {
+        if (array.size() == 0) {
+            //Hit skal man ikke komme
+            return 0;
+        }
+        Random random = new Random();
+        return array.get(random.nextInt(array.size()));
+    }
+
+    public List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes() {
+        Random random = new Random();
+        int numberOfServices = random.nextInt(5) + 1;
+        int numberOfComponents = random.nextInt(5) + 1;
+        List<HelpTextEntity> result = new ArrayList<>();
+        for (int i = 0; i < numberOfServices; i++) {
+            result.add(getHelpTextEnity(ServiceType.TJENESTE, i));
+        }
+
+        for (int i = 0; i < numberOfComponents; i++) {
+            result.add(getHelpTextEnity(ServiceType.KOMPONENT, i));
+        }
+        return result;
+    }
+
+    private HelpTextEntity getHelpTextEnity(ServiceType serviceType, int number) {
+        return new HelpTextEntity()
+                .setNumber(number + 1)
+                .setType(serviceType)
+                .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }
 }

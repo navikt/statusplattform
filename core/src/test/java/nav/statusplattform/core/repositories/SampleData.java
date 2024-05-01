@@ -34,18 +34,6 @@ public class SampleData {
     static final ArrayList<String> firstNames = new ArrayList<>(Arrays.asList("Arne", "Bodil", "Gudrun", "Kjell Åge", "Hufsa", "Elg", "Rake", "Æskild", "Øygunn"));
     static final ArrayList<String> maintenanceDescriptions = new ArrayList<>(Arrays.asList("Fixing the trøbbel i tårnet", "Supporting those som går gæli", "Mending the fuglekassa", "Taming memes", "Upkeep av nordavind fra alle kanter"));
 
-    static final ArrayList<Integer> numbers =  new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
-
-    static final ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
-            "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
-            "Navnet på tjenesten slik den omtales ut mot brukerne av tjenesten",
-            "Navnet på team slik det er skrevet i Teamkatalogen",
-            "Link til et eventuelt dashboard eller monitor med mer detaljert informasjon. Eksempelvis Grafana dashboard",
-            "URL til statusendepunkt som Statusplattformen skal polle for status",
-            "Her kan man legge inn andre komponenter det er avhengigheter til. Informasjon om status på disse vil da vises i komponentbildet. Velg i liste og klikk Legg til for hver komponent.",
-            "Her legger man inn tjenester hvor komponeten skal vises. Velg i liste og klikk Legg til for hver tjeneste."));
-
-
     public static String getRandomizedDashboardName() {
         return getRandomFromArray(dashboardNames);
     }
@@ -189,7 +177,7 @@ public class SampleData {
     }
 
 
-    private static ServiceType getRandomServiceType() {
+    static ServiceType getRandomServiceType() {
         Random random = new Random();
         return ServiceType.values()[random.nextInt(ServiceType.values().length)];
     }
@@ -246,65 +234,5 @@ public class SampleData {
                 .setDescription(getRandomFromArray(maintenanceDescriptions))
                 .setStart_time(ZonedDateTime.now().plusDays(numberOfDays))
                 .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
-    }
-
-    public static HelpTextEntity getRandomizedHelpTextEntity() {
-        return new HelpTextEntity()
-                .setNumber(getRandomFromLongArray(numbers))
-                .setType(getRandomServiceType())
-                .setContent(getRandomFromArray(helpTextDescriptions));
-    }
-
-    private static int getRandomFromLongArray(ArrayList<Integer> array) {
-        if (array.size() == 0) {
-            //Hit skal man ikke komme
-            return 0;
-        }
-        Random random = new Random();
-        return array.get(random.nextInt(array.size()));
-    }
-
-    public static List<HelpTextEntity> getHelpTextEntityWithServiceType(int length) {
-        List<HelpTextEntity> helpTexts = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            helpTexts.add(new HelpTextEntity()
-                    .setNumber(i+1)
-                    .setType(ServiceType.TJENESTE)
-                    .setContent(getRandomFromArray(helpTextDescriptions)));
-        }
-        return helpTexts;
-    }
-
-    public static List<HelpTextEntity> getHelpTextEntityWithKomponentType(int length) {
-        List<HelpTextEntity> helpTexts = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            helpTexts.add(new HelpTextEntity()
-                    .setNumber(i+1)
-                    .setType(ServiceType.KOMPONENT)
-                    .setContent(getRandomFromArray(helpTextDescriptions)));
-        }
-        return helpTexts;
-    }
-
-    public static List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes() {
-        Random random = new Random();
-        int numberOfServices = random.nextInt(5) + 1;
-        int numberOfComponents = random.nextInt(5) + 1;
-        List<HelpTextEntity> result = new ArrayList<>();
-        for(int i=0;i<numberOfServices;i++){
-            result.add(getHelpTextEnity(ServiceType.TJENESTE,i));
-        }
-
-        for(int i=0;i<numberOfComponents;i++){
-            result.add(getHelpTextEnity(ServiceType.KOMPONENT,i));
-        }
-        return result;
-    }
-
-    private static HelpTextEntity getHelpTextEnity(ServiceType serviceType,int number){
-        return new HelpTextEntity()
-                .setNumber(number+1)
-                .setType(serviceType)
-                .setContent(getRandomFromArray(helpTextDescriptions));
     }
 }
