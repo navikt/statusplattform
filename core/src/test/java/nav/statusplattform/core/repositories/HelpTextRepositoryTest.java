@@ -147,18 +147,9 @@ public class HelpTextRepositoryTest {
 
     private HelpTextEntity getRandomizedHelpTextEntity() {
         return new HelpTextEntity()
-                .setNumber(getRandomFromLongArray(numbers))
+                .setNumber(SampleData.getRandomFromGenericArray(numbers))
                 .setType(SampleData.getRandomServiceType())
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
-    }
-
-    private int getRandomFromLongArray(ArrayList<Integer> array) {
-        if (array.size() == 0) {
-            //Hit skal man ikke komme
-            return 0;
-        }
-        Random random = new Random();
-        return array.get(random.nextInt(array.size()));
     }
 
     private List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes() {

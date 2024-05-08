@@ -1,13 +1,10 @@
 package nav.statusplattform.core.repositories;
 
 import nav.statusplattform.core.entities.*;
-import nav.statusplattform.core.enums.OpsMessageSeverity;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -176,6 +173,14 @@ public class SampleData {
         return array.get(random.nextInt(array.size()));
     }
 
+    public static <T> T getRandomFromGenericArray(ArrayList<T> array) {
+        if (array.isEmpty()) {
+            //Hit skal man ikke komme
+            throw new NullPointerException("array is null");
+        }
+        Random random = new Random();
+        return array.get(random.nextInt(array.size()));
+    }
 
     static ServiceType getRandomServiceType() {
         Random random = new Random();
