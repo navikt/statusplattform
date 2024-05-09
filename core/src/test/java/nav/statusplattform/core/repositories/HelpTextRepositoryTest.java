@@ -147,7 +147,7 @@ public class HelpTextRepositoryTest {
 
     private HelpTextEntity getRandomizedHelpTextEntity() {
         return new HelpTextEntity()
-                .setNumber(SampleData.getRandomFromGenericArray(numbers))
+                .setNumber(SampleData.getRandomFromArray(numbers))
                 .setType(SampleData.getRandomServiceType())
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }

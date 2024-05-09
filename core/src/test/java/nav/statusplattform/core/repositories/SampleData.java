@@ -163,17 +163,7 @@ public class SampleData {
         return result;
     }
 
-
-    static String getRandomFromArray(ArrayList<String> array) {
-        if (array.size() == 0) {
-            //Hit skal man ikke komme
-            return null;
-        }
-        Random random = new Random();
-        return array.get(random.nextInt(array.size()));
-    }
-
-    public static <T> T getRandomFromGenericArray(ArrayList<T> array) {
+    public static <T> T getRandomFromArray(ArrayList<T> array) {
         if (array.isEmpty()) {
             //Hit skal man ikke komme
             throw new NullPointerException("array is null");
