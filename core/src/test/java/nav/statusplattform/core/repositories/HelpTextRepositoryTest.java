@@ -25,8 +25,6 @@ public class HelpTextRepositoryTest {
     private final HelpTextRepository helpTextRepository = new HelpTextRepository(dbContext);
     private DbContextConnection connection;
 
-    private ArrayList<Integer> numbers = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5));
-
     private ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
             "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
             "Navnet på tjenesten slik den omtales ut mot brukerne av tjenesten",
@@ -147,15 +145,15 @@ public class HelpTextRepositoryTest {
 
     private HelpTextEntity getRandomizedHelpTextEntity() {
         return new HelpTextEntity()
-                .setNumber(SampleData.getRandomFromArray(numbers))
+                .setNumber(randomHelpTextNumber())
                 .setType(SampleData.getRandomServiceType())
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }
 
     private List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes() {
         Random random = new Random();
-        int numberOfServices = random.nextInt(5) + 1;
-        int numberOfComponents = random.nextInt(5) + 1;
+        int numberOfServices = randomHelpTextNumber();
+        int numberOfComponents = randomHelpTextNumber();
         List<HelpTextEntity> result = new ArrayList<>();
         for (int i = 0; i < numberOfServices; i++) {
             result.add(getHelpTextEnity(ServiceType.TJENESTE, i));
@@ -172,5 +170,10 @@ public class HelpTextRepositoryTest {
                 .setNumber(number + 1)
                 .setType(serviceType)
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
+    }
+
+    private int randomHelpTextNumber() {
+        Random random = new Random();
+        return random.nextInt(5) + 1; //up to five service and component help texts
     }
 }
