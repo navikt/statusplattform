@@ -157,12 +157,12 @@ public class HelpTextRepositoryTest {
         int numberOfServices = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
         int numberOfComponents = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
         List<HelpTextEntity> result = new ArrayList<>();
-        for (int i = 0; i < numberOfServices; i++) {
-            result.add(getHelpTextEnity(ServiceType.TJENESTE, numberOfServices));
+        for (int i = 1; i <= numberOfServices; i++) {
+            result.add(getHelpTextEnity(ServiceType.TJENESTE, i));
         }
 
-        for (int i = 0; i < numberOfComponents; i++) {
-            result.add(getHelpTextEnity(ServiceType.KOMPONENT, numberOfComponents));
+        for (int i = 1; i <= numberOfComponents; i++) {
+            result.add(getHelpTextEnity(ServiceType.KOMPONENT, i));
         }
         return result;
     }
