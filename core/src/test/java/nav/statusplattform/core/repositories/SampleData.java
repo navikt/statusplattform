@@ -230,6 +230,9 @@ public class SampleData {
     }
 
     public static int randomPositiveInteger(int maxValue) {
+        if (maxValue <= 0) {
+            throw new IllegalArgumentException("Expected input argument to contain positive integers only")
+        }
         Random random = new Random();
         return random.nextInt(maxValue);
     }
