@@ -166,7 +166,7 @@ public class SampleData {
     public static <T> T getRandomFromArray(ArrayList<T> array) {
         if (array.isEmpty()) {
             //Hit skal man ikke komme
-            throw new NullPointerException("array is null");
+            throw new IllegalArgumentException("Expected input argument to contain a non-empty ArrayList");
         }
         Random random = new Random();
         return array.get(random.nextInt(array.size()));
