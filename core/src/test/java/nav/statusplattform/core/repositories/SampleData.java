@@ -231,10 +231,6 @@ public class SampleData {
 
     public static int randomPositiveInteger(int maxValue) {
         Random random = new Random();
-        int number = random.nextInt(maxValue);
-        if (number == 0) {
-            number = maxValue;
-        }
-        return number;
+        return random.nextInt(maxValue);
     }
 }
