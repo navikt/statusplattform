@@ -181,12 +181,12 @@ public class SampleData {
         return dashboardNames;
     }
 
-    static ServiceStatus getRandomServiceStatus() {
+    public static ServiceStatus getRandomServiceStatus() {
         Random random = new Random();
         return ServiceStatus.values()[random.nextInt(ServiceStatus.values().length)];
     }
 
-    static Integer getRandomResponseTime() {
+    public static Integer getRandomResponseTime() {
         List<Integer> responseTime = Arrays.asList(10, 20, 30, 100, 1000);
         Random random = new Random();
         return responseTime.get(random.nextInt(responseTime.size()));
@@ -231,7 +231,7 @@ public class SampleData {
 
     public static int randomPositiveInteger(int maxValue) {
         if (maxValue <= 0) {
-            throw new IllegalArgumentException("Expected input argument to contain positive integers only")
+            throw new IllegalArgumentException("Expected input argument to contain positive integers only");
         }
         Random random = new Random();
         return random.nextInt(maxValue);
