@@ -25,6 +25,7 @@ public class HelpTextRepositoryTest {
     private final HelpTextRepository helpTextRepository = new HelpTextRepository(dbContext);
     private DbContextConnection connection;
 
+    private final int MAX_NUM_OF_HELP_TEXT = 5;
     private ArrayList<String> helpTextDescriptions = new ArrayList<>(Arrays.asList(
             "Navnet på komponenten slik den omtales ut mot brukerne av komponenten",
             "Navnet på tjenesten slik den omtales ut mot brukerne av tjenesten",
@@ -144,36 +145,33 @@ public class HelpTextRepositoryTest {
     }
 
     private HelpTextEntity getRandomizedHelpTextEntity() {
+        int numberOfHelpText = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);
         return new HelpTextEntity()
-                .setNumber(randomHelpTextNumber())
+                .setNumber(numberOfHelpText)//up to five service and component help texts
                 .setType(SampleData.getRandomServiceType())
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }
 
     private List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes() {
         Random random = new Random();
-        int numberOfServices = randomHelpTextNumber();
-        int numberOfComponents = randomHelpTextNumber();
+        int numberOfServices = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
+        int numberOfComponents = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
         List<HelpTextEntity> result = new ArrayList<>();
         for (int i = 0; i < numberOfServices; i++) {
-            result.add(getHelpTextEnity(ServiceType.TJENESTE, i));
+            result.add(getHelpTextEnity(ServiceType.TJENESTE, numberOfServices));
         }
 
         for (int i = 0; i < numberOfComponents; i++) {
-            result.add(getHelpTextEnity(ServiceType.KOMPONENT, i));
+            result.add(getHelpTextEnity(ServiceType.KOMPONENT, numberOfComponents));
         }
         return result;
     }
 
     private HelpTextEntity getHelpTextEnity(ServiceType serviceType, int number) {
         return new HelpTextEntity()
-                .setNumber(number + 1)
+                .setNumber(number)
                 .setType(serviceType)
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }
 
-    private int randomHelpTextNumber() {
-        Random random = new Random();
-        return random.nextInt(5) + 1; //up to five service and component help texts
-    }
 }

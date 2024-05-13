@@ -228,4 +228,13 @@ public class SampleData {
                 .setStart_time(ZonedDateTime.now().plusDays(numberOfDays))
                 .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
     }
+
+    public static int randomPositiveInteger(int maxValue) {
+        Random random = new Random();
+        int number = random.nextInt(maxValue);
+        if (number == 0) {
+            number = maxValue;
+        }
+        return number;
+    }
 }
