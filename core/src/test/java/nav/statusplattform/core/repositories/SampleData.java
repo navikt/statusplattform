@@ -16,8 +16,6 @@ public class SampleData {
             "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
             "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken", "Ett navn til", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
-
     static final ArrayList<String> serviceNames = new ArrayList<>(Arrays.asList("Service1", "Testesrvice 2", "Æ er en tjeneste", "Øgletjeneste", "tjeneste123", "tjeneste213", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
     static final ArrayList<String> urlStrings = new ArrayList<>(Arrays.asList("https://www.nrk.no", "https://www.nrk.no/nyheter/", "https://wwww.123abc.com", "https://wwww.ab.no", "https://wwww.ac.no", "https://wwww.ad.no", "https://wwww.ae.no", "https://wwww.af", "https://wwww.ag", "https://wwww.ah.no", "https://wwww.ai.no", "https://wwww.aj.no", "https://wwww.ak.no", "https://wwww.al.no", "https://wwww.am.no", "https://wwww.an.no", "https://wwww.ao.no"));
@@ -31,9 +29,6 @@ public class SampleData {
     static final ArrayList<String> firstNames = new ArrayList<>(Arrays.asList("Arne", "Bodil", "Gudrun", "Kjell Åge", "Hufsa", "Elg", "Rake", "Æskild", "Øygunn"));
     static final ArrayList<String> maintenanceDescriptions = new ArrayList<>(Arrays.asList("Fixing the trøbbel i tårnet", "Supporting those som går gæli", "Mending the fuglekassa", "Taming memes", "Upkeep av nordavind fra alle kanter"));
 
-    public static String getRandomizedDashboardName() {
-        return getRandomFromArray(dashboardNames);
-    }
 
     public static AreaEntity getRandomizedAreaEntity() {
         return new AreaEntity()
@@ -175,10 +170,6 @@ public class SampleData {
     static ServiceType getRandomServiceType() {
         Random random = new Random();
         return ServiceType.values()[random.nextInt(ServiceType.values().length)];
-    }
-
-    public static List<String> getDashboardNames() {
-        return dashboardNames;
     }
 
     public static ServiceStatus getRandomServiceStatus() {
