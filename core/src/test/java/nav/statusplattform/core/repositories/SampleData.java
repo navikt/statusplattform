@@ -48,8 +48,7 @@ public class SampleData {
     }
 
     public static List<AreaEntity> getRandomLengthListOfAreaEntity() {
-        Random random = new Random();
-        int numberOfAreas = 1 + random.nextInt(12);
+        int numberOfAreas = numberCheck(SampleData.randomPositiveInteger(12));
         List<AreaEntity> areas = new ArrayList<>();
         for (int i = 0; i <= numberOfAreas; i++) {
             areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
@@ -71,8 +70,7 @@ public class SampleData {
     }
 
     public static List<SubAreaEntity> getRandomLengthListOfSubAreaEntity() {
-        Random random = new Random();
-        int numberOfSubAreas = random.nextInt(12);
+        int numberOfSubAreas = numberCheck(SampleData.randomPositiveInteger(12));
         List<SubAreaEntity> subAreas = new ArrayList<>();
         for (int i = 0; i <= numberOfSubAreas; i++) {
             subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
@@ -81,8 +79,7 @@ public class SampleData {
     }
 
     public static List<SubAreaEntity> getRandomLengthNonEmptyListOfSubAreaEntity() {
-        Random random = new Random();
-        int numberOfSubAreas = 1 + random.nextInt(12);
+        int numberOfSubAreas = numberCheck(SampleData.randomPositiveInteger(12));
         List<SubAreaEntity> subAreas = new ArrayList<>();
         for (int i = 0; i <= numberOfSubAreas; i++) {
             subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
@@ -135,8 +132,7 @@ public class SampleData {
     }
 
     public static List<ServiceEntity> getRandomLengthNonEmptyListOfServiceEntity() {
-        Random random = new Random();
-        int numberOfServices = 1 + random.nextInt(12);
+        int numberOfServices = numberCheck(SampleData.randomPositiveInteger(12));
         List<ServiceEntity> services = new ArrayList<>();
         for (int i = 0; i < numberOfServices; i++) {
             services.add(getRandomizedServiceEntityWithNameNotInList(services));
@@ -192,8 +188,7 @@ public class SampleData {
 
     public static List<RecordEntity> getRandomizedRecordEntitiesForService(ServiceEntity serviceEntity) {
         List<RecordEntity> records = new ArrayList<>();
-        Random random = new Random();
-        int numberOfRecords = 1 + random.nextInt(12);
+        int numberOfRecords = numberCheck(SampleData.randomPositiveInteger(12));
         for (int i = 0; i < numberOfRecords; i++) {
             records.add(getRandomizedRecordEntityForService(serviceEntity));
         }
@@ -225,5 +220,12 @@ public class SampleData {
         }
         Random random = new Random();
         return random.nextInt(maxValue);
+    }
+
+    private static int numberCheck(int generatedNumber) {
+        if (generatedNumber == 0) {
+            return 12;
+        }
+        return generatedNumber;
     }
 }
