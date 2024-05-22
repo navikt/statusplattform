@@ -48,7 +48,7 @@ public class SampleData {
     }
 
     public static List<AreaEntity> getRandomLengthListOfAreaEntity() {
-        int numberOfAreas = randomPositiveInteger(12);
+        int numberOfAreas = randomNonZeroPositiveInteger(12);
         List<AreaEntity> areas = new ArrayList<>();
         for (int i = 0; i <= numberOfAreas; i++) {
             areas.add(getRandomizedAreaEntityWithNameNotInList(areas));
@@ -70,7 +70,7 @@ public class SampleData {
     }
 
     public static List<SubAreaEntity> getRandomLengthListOfSubAreaEntity() {
-        int numberOfSubAreas = randomPositiveInteger(12);
+        int numberOfSubAreas = randomNonZeroPositiveInteger(12);
         List<SubAreaEntity> subAreas = new ArrayList<>();
         for (int i = 0; i <= numberOfSubAreas; i++) {
             subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
@@ -79,7 +79,7 @@ public class SampleData {
     }
 
     public static List<SubAreaEntity> getRandomLengthNonEmptyListOfSubAreaEntity() {
-        int numberOfSubAreas = randomPositiveInteger(12);
+        int numberOfSubAreas = randomNonZeroPositiveInteger(12);
         List<SubAreaEntity> subAreas = new ArrayList<>();
         for (int i = 0; i <= numberOfSubAreas; i++) {
             subAreas.add(getRandomizedSubAreaEntityWithNameNotInList(subAreas));
@@ -132,7 +132,7 @@ public class SampleData {
     }
 
     public static List<ServiceEntity> getRandomLengthNonEmptyListOfServiceEntity() {
-        int numberOfServices = randomPositiveInteger(12);
+        int numberOfServices = randomNonZeroPositiveInteger(12);
         List<ServiceEntity> services = new ArrayList<>();
         for (int i = 0; i < numberOfServices; i++) {
             services.add(getRandomizedServiceEntityWithNameNotInList(services));
@@ -188,7 +188,7 @@ public class SampleData {
 
     public static List<RecordEntity> getRandomizedRecordEntitiesForService(ServiceEntity serviceEntity) {
         List<RecordEntity> records = new ArrayList<>();
-        int numberOfRecords = randomPositiveInteger(12);
+        int numberOfRecords = randomNonZeroPositiveInteger(12);
         for (int i = 0; i < numberOfRecords; i++) {
             records.add(getRandomizedRecordEntityForService(serviceEntity));
         }
@@ -214,13 +214,11 @@ public class SampleData {
                 .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
     }
 
-    public static int randomPositiveInteger(int maxValue) {
+    public static int randomNonZeroPositiveInteger(int maxValue) {
         if (maxValue <= 0) {
             throw new IllegalArgumentException("Expected input argument to contain positive integers only");
         }
-        Random random = new Random();
-        int randomValue = random.nextInt(maxValue);
-        return ensureNonZeroCheck(randomValue, maxValue);
+        return ensureNonZeroCheck(new Random().nextInt(maxValue), maxValue);
     }
 
     private static int ensureNonZeroCheck(int randomNumber, int maxValue) {

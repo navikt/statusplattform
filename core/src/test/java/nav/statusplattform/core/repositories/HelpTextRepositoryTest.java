@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class HelpTextRepositoryTest {
 
@@ -143,16 +142,15 @@ public class HelpTextRepositoryTest {
     }
 
     private HelpTextEntity getRandomizedHelpTextEntity() {
-        int numberOfHelpTexts = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);
         return new HelpTextEntity()
-                .setNumber(numberOfHelpTexts)//up to five service and component help texts
+                .setNumber(SampleData.randomNonZeroPositiveInteger(MAX_NUM_OF_HELP_TEXT))//up to five service and component help texts
                 .setType(SampleData.getRandomServiceType())
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }
 
     private List<HelpTextEntity> getHelpTextEntityWithRandomServiceTypes() {
-        int numberOfServices = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
-        int numberOfComponents = SampleData.randomPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
+        int numberOfServices = SampleData.randomNonZeroPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
+        int numberOfComponents = SampleData.randomNonZeroPositiveInteger(MAX_NUM_OF_HELP_TEXT);//up to five service and component help texts
         List<HelpTextEntity> result = new ArrayList<>();
         for (int i = 1; i <= numberOfServices; i++) {
             result.add(getHelpTextEnity(ServiceType.TJENESTE, i));
@@ -170,5 +168,4 @@ public class HelpTextRepositoryTest {
                 .setType(serviceType)
                 .setContent(SampleData.getRandomFromArray(helpTextDescriptions));
     }
-
 }
