@@ -195,15 +195,6 @@ public class SampleData {
         return records;
     }
 
-    public static DailyStatusAggregationForServiceEntity getRandomizedDailyStatusAggregationForService(ServiceEntity serviceEntity) {
-        return new DailyStatusAggregationForServiceEntity()
-                .setService_id(serviceEntity.getId())
-                .setNumber_of_status_down(new Random().nextInt(3))
-                .setNumber_of_status_issue(new Random().nextInt(2))
-                .setNumber_of_status_ok(new Random().nextInt(100))
-                .setAggregation_date(LocalDate.now());
-    }
-
     public static MaintenanceEntity getRandomizedMaintenanceEntity() {
         Random random = new Random();
         int numberOfDays = random.nextInt(2);
