@@ -168,19 +168,18 @@ public class SampleData {
     }
 
     static ServiceType getRandomServiceType() {
-        Random random = new Random();
-        return ServiceType.values()[random.nextInt(ServiceType.values().length)];
+        ArrayList<ServiceType> serviceTypes = new ArrayList<>(EnumSet.allOf(ServiceType.class));
+        return getRandomFromArray(serviceTypes);
     }
 
     public static ServiceStatus getRandomServiceStatus() {
-        Random random = new Random();
-        return ServiceStatus.values()[random.nextInt(ServiceStatus.values().length)];
+        ArrayList<ServiceStatus> serviceStatuses = new ArrayList<>(EnumSet.allOf(ServiceStatus.class));
+        return getRandomFromArray(serviceStatuses);
     }
 
     public static Integer getRandomResponseTime() {
-        List<Integer> responseTime = Arrays.asList(10, 20, 30, 100, 1000);
-        Random random = new Random();
-        return responseTime.get(random.nextInt(responseTime.size()));
+        ArrayList<Integer> responseTime = new ArrayList<>(Arrays.asList(10, 20, 30, 100, 1000));
+        return getRandomFromArray(responseTime);
     }
 
     public static RecordEntity getRandomizedRecordEntityForService(ServiceEntity serviceEntity) {
