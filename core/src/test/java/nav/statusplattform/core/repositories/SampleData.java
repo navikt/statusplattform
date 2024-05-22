@@ -206,7 +206,7 @@ public class SampleData {
 
     public static MaintenanceEntity getRandomizedMaintenanceEntity() {
         Random random = new Random();
-        int numberOfDays = random.nextInt(2);
+        int numberOfDays = randomPositiveInteger(2);
         return new MaintenanceEntity()
                 .setCreated_at(ZonedDateTime.now())
                 .setDescription(getRandomFromArray(maintenanceDescriptions))
