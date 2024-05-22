@@ -1,7 +1,6 @@
 package nav.statusplattform.core.repositories;
 
 import nav.statusplattform.core.entities.HelpTextEntity;
-import nav.statusplattform.core.entities.MaintenanceEntity;
 import nav.statusplattform.core.enums.ServiceType;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
