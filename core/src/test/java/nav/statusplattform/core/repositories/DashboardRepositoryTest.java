@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 class DashboardRepositoryTest {
 
-    static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
+    private final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Privatperson", "Arbeidsgiver", "Sammarbeidspartner", "Et ganske så langt navn kommer her, går dette an da?", "ÆØÅ", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
     private final DataSource dataSource = TestDataSource.create();
     private final DbContext dbContext = new DbContext();
@@ -41,7 +41,7 @@ class DashboardRepositoryTest {
     @Test
     void save() {
         //Arrange
-        String dashboardName = getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomFromArray(dashboardNames);
         //Act
         UUID uuid = dashboardRepository.save(dashboardName);
         //Assert
@@ -52,7 +52,7 @@ class DashboardRepositoryTest {
     void settAreasOnDashboard() {
         //Arrange
         //Sett opp et dashboard java-obj
-        String dashboardName = getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomFromArray(dashboardNames);
         //Lagra java-obj ned i db
         UUID dashboard_id = dashboardRepository.save(dashboardName);
         //Sett opp en liste av områder(area)
@@ -96,7 +96,7 @@ class DashboardRepositoryTest {
     @Test
     void updateNameOfDashboard(){
         //Arrange
-        String dashboardName = getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomFromArray(dashboardNames);
         //Lagra java-obj ned i db
         UUID dashboardId = dashboardRepository.save(dashboardName);
         //Act
@@ -111,7 +111,7 @@ class DashboardRepositoryTest {
     @Test
     void getAllDashboardUUIDsAndNames() {
         //Arrange
-        List<String> dashboardNames = getDashboardNames();
+        List<String> dashboardNames = this.dashboardNames;
         dashboardNames.forEach(dashboardRepository::save);
 
         //Act
@@ -140,7 +140,7 @@ class DashboardRepositoryTest {
     @Test
     void uidFromName(){
     //Arrange
-        String name = getRandomizedDashboardName();
+        String name = SampleData.getRandomFromArray(dashboardNames);
     dashboardRepository.save(name);
     //Act
     UUID uuid = dashboardRepository.uidFromName(name);
@@ -152,7 +152,7 @@ class DashboardRepositoryTest {
     void retrieveOne() {
         //TODO denne
         //Arrange -
-        String dashboardName = getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomFromArray(dashboardNames);
         UUID dashboardId = dashboardRepository.save(dashboardName);
         List<ServiceEntity>services = SampleData.getRandomLengthNonEmptyListOfServiceEntity();
         List<UUID>serviceIds = new ArrayList<>();
@@ -177,7 +177,7 @@ class DashboardRepositoryTest {
     void retrieveOneFromName() {
         //TODO denne
         //Arrange -
-        String dashboardname = getRandomizedDashboardName();
+        String dashboardname = SampleData.getRandomFromArray(dashboardNames);
         UUID uuid = dashboardRepository.save(dashboardname);
         //Act
         Map.Entry<DashboardEntity, List<AreaWithServices>> retrievedDashboard = dashboardRepository.retrieveOneFromName(dashboardname);
@@ -189,7 +189,7 @@ class DashboardRepositoryTest {
     @Test
     void retrieveAll() {
         //Arrange
-        String dashboardName = getRandomizedDashboardName();
+        String dashboardName = SampleData.getRandomFromArray(dashboardNames);
         UUID dashboard_id = dashboardRepository.save(dashboardName);
         List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
         List<UUID> areas_ids =  areas.stream()
@@ -231,7 +231,7 @@ class DashboardRepositoryTest {
     @Test
     public void deleteAreasFromDashboard() {
         //Arrange
-        String dashboardname = getRandomizedDashboardName();
+        String dashboardname = SampleData.getRandomFromArray(dashboardNames);
         UUID dashboardId = dashboardRepository.save(dashboardname);
 
         List<AreaEntity> areas = SampleData.getRandomLengthListOfAreaEntity();
@@ -246,14 +246,6 @@ class DashboardRepositoryTest {
         Map.Entry<DashboardEntity, List<AreaWithServices>> result = dashboardRepository.retrieveOneFromName(dashboardname);
         //Assert
         Assertions.assertThat(result.getValue()).isEmpty();
-    }
-
-    private String getRandomizedDashboardName() {
-        return SampleData.getRandomFromArray(dashboardNames);
-    }
-
-    private List<String> getDashboardNames() {
-        return dashboardNames;
     }
 
 }
