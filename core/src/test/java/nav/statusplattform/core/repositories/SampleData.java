@@ -186,15 +186,6 @@ public class SampleData {
                 .setResponsetime(getRandomResponseTime());
     }
 
-    public static List<RecordEntity> getRandomizedRecordEntitiesForService(ServiceEntity serviceEntity) {
-        List<RecordEntity> records = new ArrayList<>();
-        int numberOfRecords = randomNonZeroPositiveInteger(12);
-        for (int i = 0; i < numberOfRecords; i++) {
-            records.add(getRandomizedRecordEntityForService(serviceEntity));
-        }
-        return records;
-    }
-
     public static MaintenanceEntity getRandomizedMaintenanceEntity() {
         Random random = new Random();
         int numberOfDays = random.nextInt(2);

@@ -168,7 +168,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        List<RecordEntity> records = getRandomizedRecordEntitiesForService(service);
         records.forEach(record -> record.setId(recordRepository.save(record)));
         //Act
         List<RecordEntity> retrievedRecords = recordRepository.getRecordHistory(serviceId, records.size());
@@ -204,7 +204,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        List<RecordEntity> records = getRandomizedRecordEntitiesForService(service);
         records.forEach(record -> {
             int min = 1;
             int max = 5;
@@ -237,7 +237,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        List<RecordEntity> records = getRandomizedRecordEntitiesForService(service);
         records.forEach(record -> {
             int min = 2;
             int max = 10;
@@ -263,7 +263,7 @@ class RecordRepositoryTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
-        List<RecordEntity> records = SampleData.getRandomizedRecordEntitiesForService(service);
+        List<RecordEntity> records = getRandomizedRecordEntitiesForService(service);
         records.forEach(record -> {
             int min = 2;
             int max = 5;
@@ -288,6 +288,15 @@ class RecordRepositoryTest {
                 .setCreated_at(ZonedDateTime.now())
                 .setStatus(SampleData.getRandomServiceStatus())
                 .setResponsetime(SampleData.getRandomResponseTime());
+    }
+
+    public static List<RecordEntity> getRandomizedRecordEntitiesForService(ServiceEntity serviceEntity) {
+        List<RecordEntity> records = new ArrayList<>();
+        int numberOfRecords = SampleData.randomNonZeroPositiveInteger(12);
+        for (int i = 0; i < numberOfRecords; i++) {
+            records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
+        }
+        return records;
     }
 
 }
