@@ -4,7 +4,6 @@ import nav.statusplattform.core.entities.*;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -119,16 +118,6 @@ public class SampleData {
                 .setStatusNotFromTeam(Boolean.FALSE)
                 .setPollingOnPrem(Boolean.FALSE)
                 .setMonitorlink(getRandomFromArray(urlStrings));
-    }
-
-    public static List<ServiceEntity> getRandomLengthListOfServiceEntity() {
-        Random random = new Random();
-        int numberOfAreas = random.nextInt(12);
-        List<ServiceEntity> services = new ArrayList<>();
-        for (int i = 0; i < numberOfAreas; i++) {
-            services.add(getRandomizedServiceEntityWithNameNotInList(services));
-        }
-        return services;
     }
 
     public static List<ServiceEntity> getRandomLengthNonEmptyListOfServiceEntity() {
