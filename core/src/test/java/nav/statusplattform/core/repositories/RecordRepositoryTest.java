@@ -290,7 +290,7 @@ class RecordRepositoryTest {
                 .setResponsetime(SampleData.getRandomResponseTime());
     }
 
-    public static List<RecordEntity> generateRandomizedRecordEntities(ServiceEntity serviceEntity) {
+    private List<RecordEntity> generateRandomizedRecordEntities(ServiceEntity serviceEntity) {
         List<RecordEntity> records = new ArrayList<>();
         int numberOfRecords = SampleData.randomNonZeroPositiveInteger(12);
         for (int i = 0; i < numberOfRecords; i++) {
