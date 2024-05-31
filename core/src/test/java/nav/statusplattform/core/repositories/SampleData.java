@@ -4,7 +4,6 @@ import nav.statusplattform.core.entities.*;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -121,16 +120,6 @@ public class SampleData {
                 .setMonitorlink(getRandomFromArray(urlStrings));
     }
 
-    public static List<ServiceEntity> getRandomLengthListOfServiceEntity() {
-        Random random = new Random();
-        int numberOfAreas = random.nextInt(12);
-        List<ServiceEntity> services = new ArrayList<>();
-        for (int i = 0; i < numberOfAreas; i++) {
-            services.add(getRandomizedServiceEntityWithNameNotInList(services));
-        }
-        return services;
-    }
-
     public static List<ServiceEntity> getRandomLengthNonEmptyListOfServiceEntity() {
         int numberOfServices = randomNonZeroPositiveInteger(12);
         List<ServiceEntity> services = new ArrayList<>();
@@ -184,15 +173,6 @@ public class SampleData {
                 .setCreated_at(ZonedDateTime.now())
                 .setStatus(getRandomServiceStatus())
                 .setResponsetime(getRandomResponseTime());
-    }
-
-    public static List<RecordEntity> getRandomizedRecordEntitiesForService(ServiceEntity serviceEntity) {
-        List<RecordEntity> records = new ArrayList<>();
-        int numberOfRecords = randomNonZeroPositiveInteger(12);
-        for (int i = 0; i < numberOfRecords; i++) {
-            records.add(getRandomizedRecordEntityForService(serviceEntity));
-        }
-        return records;
     }
 
     public static MaintenanceEntity getRandomizedMaintenanceEntity() {
