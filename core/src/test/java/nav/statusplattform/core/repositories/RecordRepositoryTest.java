@@ -292,7 +292,7 @@ class RecordRepositoryTest {
 
     private List<RecordEntity> generateRandomizedRecordEntities(ServiceEntity serviceEntity, int amount) {
         if (amount <= 0) {
-            throw new IllegalArgumentException("argument amount refers to size of list, must be either non-zero or positive integer.");
+            throw new IllegalArgumentException("The argument amount refers to size of list, must be a non-zero, positive integer.");
         }
         List<RecordEntity> records = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
