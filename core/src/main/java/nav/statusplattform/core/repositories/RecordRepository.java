@@ -99,6 +99,14 @@ public class RecordRepository {
                 .list(RecordRepository::toRecord);
     }
 
+    public List<RecordEntity> getRecordHistoryWithinPeriod(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+        return recordTable.where("service_id", serviceId)
+                .whereExpression("created_at <= ?", from)
+                .whereExpression("created_at >= ?", to)
+                .orderBy("created_at DESC")
+                .list(RecordRepository::toRecord);
+    }
+
     public List<RecordEntity> getAllRecordsFromYesterday(){
         ZonedDateTime yesterdayMidnight = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
         ZonedDateTime todayMidnight = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);

@@ -1,9 +1,12 @@
 package nav.statusplattform.core.openingHours;
 
 import com.sun.source.tree.IfTree;
+import nav.statusplattform.core.entities.RecordEntity;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.time.LocalDate.*;
@@ -48,6 +51,19 @@ public class ServicesUpTimeRenumerator {
         String[] ohStartTime = ruleParts[0].split("[:]"); //start time hours[0] and minutes[1]
         String[] ohEndTime = ruleParts[1].split("[:]"); //end time hours[0] and minutes[1]
 
+        //Obtain time in LocalDateFormat
+        LocalTime ohLocalTimeStart = LocalTime.of(Integer.parseInt(ohStartTime[0]), Integer.parseInt(ohStartTime[1]));
+        LocalTime ohLocalTimeEnd = LocalTime.of(Integer.parseInt(ohEndTime[0]), Integer.parseInt(ohEndTime[1]));
+
+        //Obtain current tme of request
+        LocalTime currentTime = LocalTime.now();
+
+        //Obtained zonedDateTime
+        ZonedDateTime zonedDateTimeFrom = ZonedDateTime.of(fromDateEntry, ohLocalTimeStart, (ZoneId.of("Europe/Oslo")));
+        ZonedDateTime zonedDateTimeTo = ZonedDateTime.of(toDateEntry, ohLocalTimeEnd, (ZoneId.of("Europe/Oslo")));
+
+        //List<RecordEntity> getRecordHistoryWithinPeriod(serviceId, zonedDateTimeFrom, zonedDateTimeTo);
+
 
         final int dailyOpeningHours = getDailyOpeningHours(ohStartTime, ohEndTime);
 
@@ -63,20 +79,21 @@ public class ServicesUpTimeRenumerator {
         /*If the request includes the current date and falls within the services opening hours only the time
          lapsed from opening hours start time is included as part of the calculation. The lapsed time is removed*/
         if (toDateEntry.isEqual(LocalDate.now())) { //check for input entryDate falls on same day as current date
-
-            //Obtain time in LocalDateFormat
-            LocalTime ohLocalTimeStart = LocalTime.of(Integer.parseInt(ohStartTime[0]), Integer.parseInt(ohStartTime[1]));
-            LocalTime ohLocalTimeEnd = LocalTime.of(Integer.parseInt(ohEndTime[0]), Integer.parseInt(ohEndTime[1]));
-
-
             //Check that time of request is after opening hours start but before opening hours end
-            if (LocalTime.now().isAfter(ohLocalTimeStart) && LocalTime.now().isBefore(ohLocalTimeEnd)) {
-                unlapsedTimeinCurrentDate = MINUTES.between(LocalTime.now(), ohLocalTimeEnd);
+            if (currentTime.isAfter(ohLocalTimeStart) && currentTime.isBefore(ohLocalTimeEnd)) {
+                unlapsedTimeinCurrentDate = MINUTES.between(currentTime, ohLocalTimeEnd);
             }
         }
 
         return allOpeningHourMinutes - unlapsedTimeinCurrentDate;
+
+
     }
+
+    /*public static int calculateServiceDownTimeForPeriod(UUID serviceId, zonedDateTimeFrom, zonedDateTimeTo) {
+        List<RecordEntity> recordEntities = getRecordHistoryWithinPeriod(UUID serviceId, ZonedDateTime from, ZonedDateTime to)
+
+    }*/
 
     private static int getDailyOpeningHours(String[] openingString, String[] closingString) {
         LocalTime openingTime = LocalTime.of(Integer.parseInt(openingString[0]), Integer.parseInt(openingString[1]));
