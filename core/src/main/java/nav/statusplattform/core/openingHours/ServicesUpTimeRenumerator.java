@@ -17,15 +17,21 @@ public class ServicesUpTimeRenumerator {
     public static final int MINUTES_IN_A_HOUR = 60;
 
 
-    public static long getTotalOpeningHoursMinutes(LocalDate fromDateEntry, LocalDate toDateEntry, String openingHours) {
+    /*public static long calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String openingHours) {
+
+
+    }*/
+
+
+    public static long getTotalOpeningHoursMinutes(LocalDate DateEntryFrom, LocalDate DateEntryTo, String openingHours) {
 
         //checks for yyyy-MM-dd
-        if (fromDateEntry == null || toDateEntry == null) {
+        if (DateEntryFrom == null || DateEntryTo == null) {
             throw new IllegalStateException("Arguments for DateEntry must have a format pattern of 'yyyy-MM-dd'");
         }
 
         //checks if the date entries are greater than the current date
-        if (fromDateEntry.isAfter(now()) || toDateEntry.isAfter(now())) {
+        if (DateEntryFrom.isAfter(now()) || DateEntryTo.isAfter(now())) {
             throw new IllegalStateException("Arguments for DateEntry cannot be greater than the current date");
         }
 
@@ -59,18 +65,25 @@ public class ServicesUpTimeRenumerator {
         LocalTime currentTime = LocalTime.now();
 
         //Obtained zonedDateTime
-        ZonedDateTime zonedDateTimeFrom = ZonedDateTime.of(fromDateEntry, ohLocalTimeStart, (ZoneId.of("Europe/Oslo")));
-        ZonedDateTime zonedDateTimeTo = ZonedDateTime.of(toDateEntry, ohLocalTimeEnd, (ZoneId.of("Europe/Oslo")));
+        ZonedDateTime zonedDateTimeFrom = ZonedDateTime.of(DateEntryFrom, ohLocalTimeStart, (ZoneId.of("Europe/Oslo")));
+        ZonedDateTime zonedDateTimeTo = ZonedDateTime.of(DateEntryTo, ohLocalTimeEnd, (ZoneId.of("Europe/Oslo")));
 
-        //List<RecordEntity> getRecordHistoryWithinPeriod(serviceId, zonedDateTimeFrom, zonedDateTimeTo);
 
 
         final int dailyOpeningHours = getDailyOpeningHours(ohStartTime, ohEndTime);
 
+        //Total opening hours in minutes
+        return calculateTotalOpeningTime(DateEntryFrom, DateEntryTo, dailyOpeningHours, ohLocalTimeStart,
+                ohLocalTimeEnd, currentTime);
+
+    }
+
+    public static long calculateTotalOpeningTime(LocalDate DateEntryFrom, LocalDate DateEntryTo, int dailyOpeningHours, LocalTime ohLocalTimeStart,
+                                                 LocalTime ohLocalTimeEnd, LocalTime currentTime) {
         //Calculate total number of minutes in a period from fromDateEntry to toDateEntry
-        int allDaysBetween = (int) (ChronoUnit.DAYS.between(fromDateEntry, toDateEntry) + 1);
+        int allDaysBetween = (int) (ChronoUnit.DAYS.between(DateEntryFrom, DateEntryTo) + 1);
         long allOpeningHourMinutes = IntStream.range(0, allDaysBetween)
-                .filter(i -> isWorkingDay(fromDateEntry.plusDays(i)))
+                .filter(i -> isWorkingDay(DateEntryFrom.plusDays(i)))
                 .count() * dailyOpeningHours;
 
 
@@ -78,7 +91,7 @@ public class ServicesUpTimeRenumerator {
 
         /*If the request includes the current date and falls within the services opening hours only the time
          lapsed from opening hours start time is included as part of the calculation. The lapsed time is removed*/
-        if (toDateEntry.isEqual(LocalDate.now())) { //check for input entryDate falls on same day as current date
+        if (DateEntryTo.isEqual(LocalDate.now())) { //check for input entryDate falls on same day as current date
             //Check that time of request is after opening hours start but before opening hours end
             if (currentTime.isAfter(ohLocalTimeStart) && currentTime.isBefore(ohLocalTimeEnd)) {
                 unlapsedTimeinCurrentDate = MINUTES.between(currentTime, ohLocalTimeEnd);
@@ -86,7 +99,6 @@ public class ServicesUpTimeRenumerator {
         }
 
         return allOpeningHourMinutes - unlapsedTimeinCurrentDate;
-
 
     }
 

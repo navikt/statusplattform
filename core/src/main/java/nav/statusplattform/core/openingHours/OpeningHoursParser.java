@@ -231,6 +231,5 @@ public class OpeningHoursParser {
         LocalTime closing = LocalTime.of(Integer.parseInt(closingString[0]),Integer.parseInt(closingString[1])).plusMinutes(1);
 
         return time.isAfter(opening) && time.isBefore(closing);
-
     }
 }
