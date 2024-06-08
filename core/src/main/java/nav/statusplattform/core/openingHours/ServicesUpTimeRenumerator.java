@@ -3,10 +3,10 @@ package nav.statusplattform.core.openingHours;
 import com.sun.source.tree.IfTree;
 import nav.statusplattform.core.entities.RecordEntity;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.time.LocalDate.*;
@@ -15,12 +15,56 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 public class ServicesUpTimeRenumerator {
 
     public static final int MINUTES_IN_A_HOUR = 60;
+    private static Set<Integer> weekdaysList;
 
 
-    /*public static long calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String openingHours) {
+    public static long calculateUpTimeForService(LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
+        String[] ruleParts = rule.split("[\s]");
+        if (!isWeekDaysRuleApplicable(ruleParts[2])) {
+            throw new IllegalStateException("Arguments for weekdays must be of of numeric values, representing 1 for Monday to 7 for Sunday");
+        }
 
+        //ruleParts[3] represents the services opening hours
+        return getTotalOpeningHoursMinutes(DateEntryFrom, DateEntryTo, ruleParts[3]);
+    }
 
-    }*/
+    private static boolean isWeekDaysRuleApplicable(String weekDayRule) {
+
+        //Checks for ?
+        if (weekDayRule.equals("?")) {
+            weekdaysList = Set.of(1, 2, 3, 4, 5, 6, 7);
+            return true;
+        }
+
+        //int dayOfWeekNumber = dateTimeEntry.getDayOfWeek().getValue();
+
+        weekdaysList = new HashSet<>();
+
+        //Checks for a singular week day in the month or for a range
+        String[] ruleParts = weekDayRule.split("[,]");
+
+        int lowerRange;
+        int upperRange;
+
+        //check the range/s for a weekday number match
+        for (String rulePart : ruleParts) {
+            if (rulePart.contains("-")) {
+                //checks weekday falls within a range
+                lowerRange = Integer.parseInt(rulePart.substring(0, 1));
+                upperRange = Integer.parseInt(rulePart.substring(2));
+                for (int i = lowerRange; i < upperRange; i++) {
+                    weekdaysList.add(i);
+                }
+            } else {
+                //checks weekday value matches a single weekday value
+                weekdaysList.add(Integer.parseInt(rulePart));
+            }
+        }
+        if (!weekdaysList.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
 
 
     public static long getTotalOpeningHoursMinutes(LocalDate DateEntryFrom, LocalDate DateEntryTo, String openingHours) {
@@ -131,7 +175,7 @@ public class ServicesUpTimeRenumerator {
     }
 
     public static boolean isWorkingDay(final LocalDate date) {
-        return date.getDayOfWeek().getValue() < DayOfWeek.SATURDAY.getValue();
+        return weekdaysList.contains(date.getDayOfWeek().getValue());
     }
 
 }
