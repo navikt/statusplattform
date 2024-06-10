@@ -99,12 +99,15 @@ public class RecordRepository {
                 .list(RecordRepository::toRecord);
     }
 
-    public List<RecordEntity> getRecordHistoryWithinPeriod(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
-        return recordTable.where("service_id", serviceId)
+    public final List<RecordDeltaEntity> getRecordHistoryWithinPeriod(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+        return recordDeltaTable.where("service_Id", serviceId)
                 .whereExpression("created_at <= ?", from)
                 .whereExpression("created_at >= ?", to)
-                .orderBy("created_at DESC")
-                .list(RecordRepository::toRecord);
+                .whereExpression("status", ServiceStatus.DOWN)
+                .whereExpression("status", ServiceStatus.ISSUE)
+                .whereExpression("status", ServiceStatus.UNKNOWN)
+                .orderBy("created_at ASC")
+                .list(RecordRepository::toRecordDelta);
     }
 
     public List<RecordEntity> getAllRecordsFromYesterday(){
