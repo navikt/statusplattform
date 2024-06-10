@@ -1,7 +1,9 @@
 package nav.statusplattform.core.openingHours;
 
 import com.sun.source.tree.IfTree;
+import nav.statusplattform.core.entities.RecordDeltaEntity;
 import nav.statusplattform.core.entities.RecordEntity;
+import nav.statusplattform.core.repositories.RecordRepository;
 
 import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.time.*;
@@ -13,7 +15,7 @@ import static java.time.LocalDate.*;
 import static java.time.temporal.ChronoUnit.MINUTES;
 
 public class ServicesUpTimeRenumerator {
-
+    static RecordRepository recordRepository;
     public static final int MINUTES_IN_A_HOUR = 60;
     private static Set<Integer> weekdaysList;
 
@@ -112,8 +114,6 @@ public class ServicesUpTimeRenumerator {
         ZonedDateTime zonedDateTimeFrom = ZonedDateTime.of(DateEntryFrom, ohLocalTimeStart, (ZoneId.of("Europe/Oslo")));
         ZonedDateTime zonedDateTimeTo = ZonedDateTime.of(DateEntryTo, ohLocalTimeEnd, (ZoneId.of("Europe/Oslo")));
 
-
-
         final int dailyOpeningHours = getDailyOpeningHours(ohStartTime, ohEndTime);
 
         //Total opening hours in minutes
@@ -146,9 +146,17 @@ public class ServicesUpTimeRenumerator {
 
     }
 
-    /*public static int calculateServiceDownTimeForPeriod(UUID serviceId, zonedDateTimeFrom, zonedDateTimeTo) {
-        List<RecordEntity> recordEntities = getRecordHistoryWithinPeriod(UUID serviceId, ZonedDateTime from, ZonedDateTime to)
+    /*public static int calculateServiceDownTimeForPeriod(UUID serviceId, ZonedDateTime zonedDateTimeFrom,
+                                                        ZonedDateTime zonedDateTimeTo) {
+        List<RecordDeltaEntity> recordDeltaEntities =
+                recordRepository.getRecordHistoryWithinPeriod(serviceId, zonedDateTimeFrom, zonedDateTimeTo);
 
+        int sumDownTime = 0;
+        recordDeltaEntities.forEach(recordDeltaEntity -> {
+            ;
+        });
+
+        return 0;
     }*/
 
     private static int getDailyOpeningHours(String[] openingString, String[] closingString) {
