@@ -20,27 +20,37 @@ public class OpeningHoursParser {
         return getOpeninghours(dateEntry,group.getRules(),false);
     }
 
-    private static String getOpeninghours(LocalDate dateEntry, List<OpeningHoursRule> rules, Boolean isSubGroup){
-        if(rules.size() == 0){
+    private static String getOpeninghours(LocalDate date, List<OpeningHoursRule> rules, Boolean isSubGroup){
+        // First check if we've reached recursion guard
+       OpeningHoursRule nextOpeningHoursRuleEntry;
+        try {
+            nextOpeningHoursRuleEntry = rules.get(0);
+        }
+        catch (IndexOutOfBoundsException _e) {
             if(isSubGroup){
                 return RULE_NOT_APPLIES;
             }
             return "00:00-00:00";
         }
-        OpeningHoursRule firstRGentry = rules.get(0);
-        if(firstRGentry.getRuleType().equals(RuleType.RULE)){
-            String firstruleOpeningHours = getOpeninghours(dateEntry,((OpeningHoursRuleEntity)firstRGentry).getRule());
-            if(!firstruleOpeningHours.equals(RULE_NOT_APPLIES)){
-                return firstruleOpeningHours;
-            }
+
+        // Then figure out which type of "string rule" we're dealing with (another group, or a rule)
+        String nextRulesOpeningHours = switch (nextOpeningHoursRuleEntry.getRuleType()) {
+            case RuleType.RULE -> getOpeninghours(
+                date,
+                ((OpeningHoursRuleEntity)nextOpeningHoursRuleEntry).getRule()
+            );
+            case RuleType.GROUP -> getOpeninghours(
+                date,
+                ((OpeningHoursGroup) nextOpeningHoursRuleEntry).getRules(),
+                true
+            );
+        };
+
+        // Recurse further if necessary
+        if(nextRulesOpeningHours.equals(RULE_NOT_APPLIES)){
+            return getOpeninghours(date,rules.subList(1, rules.size()),isSubGroup);
         }
-        else {
-            String firstruleOpeningHours = getOpeninghours(dateEntry,((OpeningHoursGroup) firstRGentry).getRules(),true);
-            if(!firstruleOpeningHours.equals(RULE_NOT_APPLIES)){
-                return firstruleOpeningHours;
-            }
-        }
-        return getOpeninghours(dateEntry,rules.subList(1, rules.size()),isSubGroup);
+        return nextRulesOpeningHours;
     }
 
     public static OpeningHoursDisplayData getDisplayData(LocalDate dateEntry,OpeningHoursGroup group){
