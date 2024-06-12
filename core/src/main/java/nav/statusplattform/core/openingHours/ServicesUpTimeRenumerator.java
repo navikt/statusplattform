@@ -18,14 +18,14 @@ public class ServicesUpTimeRenumerator {
     private static Set<Integer> weekdaysList;
 
 
-    public static long calculateUpTimeForService(LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
-        String[] ruleParts = rule.split("[\s]");
+    public static long calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
+        String[] ruleParts = "[\s]".split(rule);
         if (!isWeekDaysRuleApplicable(ruleParts[2])) {
             throw new IllegalStateException("Arguments for weekdays must be of of numeric values, representing 1 for Monday to 7 for Sunday");
         }
 
         //ruleParts[3] represents the services opening hours
-        return getTotalOpeningHoursMinutes(DateEntryFrom, DateEntryTo, ruleParts[3]);
+        return checkAndGetCalculationForUpTimePercentage(serviceId, DateEntryFrom, DateEntryTo, ruleParts[3]);
     }
 
     private static boolean isWeekDaysRuleApplicable(String weekDayRule) {
@@ -60,14 +60,11 @@ public class ServicesUpTimeRenumerator {
                 weekdaysList.add(Integer.parseInt(rulePart));
             }
         }
-        if (!weekdaysList.isEmpty()) {
-            return true;
-        }
-        return false;
+        return !weekdaysList.isEmpty();
     }
 
 
-    public static long getTotalOpeningHoursMinutes(LocalDate DateEntryFrom, LocalDate DateEntryTo, String openingHours) {
+    public static long checkAndGetCalculationForUpTimePercentage(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String openingHours) {
 
         //checks for yyyy-MM-dd
         if (DateEntryFrom == null || DateEntryTo == null) {
@@ -88,7 +85,6 @@ public class ServicesUpTimeRenumerator {
         if (openingHours.equals("00:00-00:00")) {
             return 0;
         }
-
 
         //Application is always up
         if (openingHours.equals("00:00-23:59")) {
@@ -115,9 +111,15 @@ public class ServicesUpTimeRenumerator {
         final int dailyOpeningHours = getDailyOpeningHours(ohStartTime, ohEndTime);
 
         //Total opening hours in minutes
-        return calculateTotalOpeningTime(DateEntryFrom, DateEntryTo, dailyOpeningHours, ohLocalTimeStart,
+        long totalOpeningTimeInMinutes = calculateTotalOpeningTime(DateEntryFrom, DateEntryTo, dailyOpeningHours, ohLocalTimeStart,
                 ohLocalTimeEnd, currentTime);
 
+
+        //Total down time for service in minutes
+        long totalDownTimeInMinutes = calculateServiceDownTimeForPeriod(serviceId, zonedDateTimeFrom, zonedDateTimeTo);
+
+        /* Percentage uptime of service  is  the services uptime total - total down time total divided up time times by 100 */
+        return (totalOpeningTimeInMinutes - totalDownTimeInMinutes) / totalDownTimeInMinutes * 100;
     }
 
     public static long calculateTotalOpeningTime(LocalDate DateEntryFrom, LocalDate DateEntryTo, int dailyOpeningHours, LocalTime ohLocalTimeStart,

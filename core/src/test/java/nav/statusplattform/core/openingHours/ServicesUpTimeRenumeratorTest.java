@@ -1,11 +1,34 @@
 package nav.statusplattform.core.openingHours;
 
+import nav.statusplattform.core.entities.ServiceEntity;
+import nav.statusplattform.core.repositories.SampleData;
+import nav.statusplattform.core.repositories.ServiceRepository;
+import nav.statusplattform.core.repositories.TestDataSource;
+import nav.statusplattform.core.repositories.TestUtil;
+import org.fluentjdbc.DbContext;
+import org.fluentjdbc.DbContextConnection;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.util.UUID;
 
 
 public class ServicesUpTimeRenumeratorTest {
+
+    private final DataSource dataSource = TestDataSource.create();
+
+    private final DbContext dbContext = new DbContext();
+    private DbContextConnection connection;
+
+    @BeforeEach
+    void startConnection() {
+        connection = dbContext.startConnection(dataSource);
+        TestUtil.clearAllTableData(dbContext);
+    }
+
+    private final ServiceRepository serviceRepository = new ServiceRepository(dbContext);
 
     private LocalDate nullDateEntry = null;
 
@@ -21,9 +44,15 @@ public class ServicesUpTimeRenumeratorTest {
 
     private LocalDate fiveDaysBack = todaysDate.minusDays(5);
 
+    private LocalDate twoDaysBack = todaysDate.minusDays(2);
+
     private String ohNull = null;
     private String ohAlwaysDown = "00:00-00:00";
     private String ohSevenToFive = "07:00-17:00";
+
+    String validNotThursdayOrSunday = "??.??.???? ? 1,2,3,5-6 07:00-21:00";  //Gyldig
+    String validMondayToFriday = "??.??.???? ? 1,2,3,4,5 07:00-21:00";  //Gyldig
+    String validMondayToSaturday = "??.??.???? ? 1,2,3,4,5,6 07:00-21:00";  //Gyldig
 
     private LocalDate minusTwoMonths = yesterdayDate.minusMonths(2);
 
@@ -33,8 +62,7 @@ public class ServicesUpTimeRenumeratorTest {
     @Test
     void getTotalOpeningHoursMinutes() {
 
-
-//        int incorrectDateEntry = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(nullDateEntry, normalFridayEndOfMonth, ohSevenToFive);//incorrectDateEntry
+        //        int incorrectDateEntry = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(nullDateEntry, normalFridayEndOfMonth, ohSevenToFive);//incorrectDateEntry
 //        int entryDateGreaterThankCurrentDate = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(normalFridayStartOfMonth, dateGreaterThaCurrentDate, ohSevenToFive);//dateGreaterThanCurrentDate
 //        int ohEqualsNull = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(normalFridayStartOfMonth, normalFridayEndOfMonth, ohNull);//opening hours is equal to null
 //        int serviceAlwaysDown = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(normalFridayStartOfMonth, normalFridayEndOfMonth, ohAlwaysDown);//service always down
@@ -54,8 +82,22 @@ public class ServicesUpTimeRenumeratorTest {
         /*int twoMonthsBack = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(minusTwoMonths, yesterdayDate, ohSevenToFive);
         System.out.println("twoMonthsBack: " + twoMonthsBack);*/
 
-        int oneYearBack = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(minusOneYear, yesterdayDate, ohSevenToFive);
-        System.out.println("oneYearBack: " + oneYearBack);
+        /*int oneYearBack = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(minusOneYear, yesterdayDate, ohSevenToFive);
+        System.out.println("oneYearBack: " + oneYearBack);*/
+
+        /*int fiveDaysBacktoYesterDay = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(fiveDaysBack, yesterdayDate, validNotThursdayOrSunday);
+        System.out.println("fiveDaysBacktoYesterDay: " + fiveDaysBacktoYesterDay);*/
+
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        /*int validWorkDaysMondayToFriday = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(serviceId, fiveDaysBack, yesterdayDate, validMondayToFriday);
+        System.out.println("validWorkDaysMondayToFriday: " + validWorkDaysMondayToFriday);
+        int validWeekDaysMondayToSaturday = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(serviceId, fiveDaysBack, yesterdayDate, validMondayToSaturday);
+        System.out.println("validWeekDaysMondayToSaturday: " + validWeekDaysMondayToSaturday);*/
+        int validTimeMondayToSaturday = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(serviceId, fiveDaysBack, todaysDate, validMondayToSaturday);
+        System.out.println("validTimeMondayToSaturday: " + validTimeMondayToSaturday);
+
 
 
 
