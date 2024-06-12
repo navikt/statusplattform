@@ -1,11 +1,9 @@
 package nav.statusplattform.core.openingHours;
 
-import com.sun.source.tree.IfTree;
-import nav.statusplattform.core.entities.RecordDeltaEntity;
 import nav.statusplattform.core.entities.RecordEntity;
+import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.repositories.RecordRepository;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -146,18 +144,22 @@ public class ServicesUpTimeRenumerator {
 
     }
 
-    /*public static int calculateServiceDownTimeForPeriod(UUID serviceId, ZonedDateTime zonedDateTimeFrom,
+    public static long calculateServiceDownTimeForPeriod(UUID serviceId, ZonedDateTime zonedDateTimeFrom,
                                                         ZonedDateTime zonedDateTimeTo) {
-        List<RecordDeltaEntity> recordDeltaEntities =
+        List<RecordEntity> recordEntities =
                 recordRepository.getRecordHistoryWithinPeriod(serviceId, zonedDateTimeFrom, zonedDateTimeTo);
 
-        int sumDownTime = 0;
-        recordDeltaEntities.forEach(recordDeltaEntity -> {
-            ;
-        });
+        long sumDownTime = 0L;
 
-        return 0;
-    }*/
+        for (int i = 0; i < recordEntities.size() - 1; i++) {
+            if (recordEntities.get(i).getStatus() == ServiceStatus.DOWN) {
+                sumDownTime += zonedDateTimeDifference(recordEntities.get(i).getCreated_at(), recordEntities.get(i + 1).getCreated_at());
+            }
+
+            //What if the last record status is down?
+        }
+        return sumDownTime;
+    }
 
     private static int getDailyOpeningHours(String[] openingString, String[] closingString) {
         LocalTime openingTime = LocalTime.of(Integer.parseInt(openingString[0]), Integer.parseInt(openingString[1]));
@@ -184,6 +186,10 @@ public class ServicesUpTimeRenumerator {
 
     public static boolean isWorkingDay(final LocalDate date) {
         return weekdaysList.contains(date.getDayOfWeek().getValue());
+    }
+
+    static long zonedDateTimeDifference(ZonedDateTime d1, ZonedDateTime d2) {
+        return ChronoUnit.MINUTES.between(d1, d2);
     }
 
 }
