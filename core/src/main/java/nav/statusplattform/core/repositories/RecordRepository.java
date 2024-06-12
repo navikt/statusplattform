@@ -108,6 +108,8 @@ public class RecordRepository {
                 .singleObject(RecordRepository::toRecord);
 
         List<RecordEntity> recordEntities = new ArrayList<>();
+
+
         recordEntity.ifPresent(recordEntities::add);
 
         recordEntities = recordTable.where("service_Id", serviceId)
