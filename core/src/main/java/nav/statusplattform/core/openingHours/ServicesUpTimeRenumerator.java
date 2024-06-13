@@ -19,7 +19,7 @@ public class ServicesUpTimeRenumerator {
 
 
     public static long calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
-        String[] ruleParts = "[\s]".split(rule);
+        String[] ruleParts = "[ ]".split(rule);
         if (!isWeekDaysRuleApplicable(ruleParts[2])) {
             throw new IllegalStateException("Arguments for weekdays must be of of numeric values, representing 1 for Monday to 7 for Sunday");
         }
@@ -91,11 +91,11 @@ public class ServicesUpTimeRenumerator {
             openingHours = "00:00-24:00";
         }
 
-        String[] ruleParts = openingHours.split("[-]");
+        String[] ruleParts = openingHours.split("-");
 
         //Obtain the time in hh:mm format
-        String[] ohStartTime = ruleParts[0].split("[:]"); //start time hours[0] and minutes[1]
-        String[] ohEndTime = ruleParts[1].split("[:]"); //end time hours[0] and minutes[1]
+        String[] ohStartTime = ruleParts[0].split(":"); //start time hours[0] and minutes[1]
+        String[] ohEndTime = ruleParts[1].split(":"); //end time hours[0] and minutes[1]
 
         //Obtain time in LocalDateFormat
         LocalTime ohLocalTimeStart = LocalTime.of(Integer.parseInt(ohStartTime[0]), Integer.parseInt(ohStartTime[1]));
@@ -116,7 +116,7 @@ public class ServicesUpTimeRenumerator {
 
 
         //Total down time for service in minutes
-        long totalDownTimeInMinutes = calculateServiceDownTimeForPeriod(serviceId, zonedDateTimeFrom, zonedDateTimeTo);
+        long totalDownTimeInMinutes = 10; //
 
         /* Percentage uptime of service  is  the services uptime total - total down time total divided up time times by 100 */
         return (totalOpeningTimeInMinutes - totalDownTimeInMinutes) / totalDownTimeInMinutes * 100;
@@ -146,22 +146,7 @@ public class ServicesUpTimeRenumerator {
 
     }
 
-    public static long calculateServiceDownTimeForPeriod(UUID serviceId, ZonedDateTime zonedDateTimeFrom,
-                                                        ZonedDateTime zonedDateTimeTo) {
-        List<RecordEntity> recordEntities =
-                recordRepository.getRecordHistoryWithinPeriod(serviceId, zonedDateTimeFrom, zonedDateTimeTo);
 
-        long sumDownTime = 0L;
-
-        for (int i = 0; i < recordEntities.size() - 1; i++) {
-            if (recordEntities.get(i).getStatus() == ServiceStatus.DOWN) {
-                sumDownTime += zonedDateTimeDifference(recordEntities.get(i).getCreated_at(), recordEntities.get(i + 1).getCreated_at());
-            }
-
-            //What if the last record status is down?
-        }
-        return sumDownTime;
-    }
 
     private static int getDailyOpeningHours(String[] openingString, String[] closingString) {
         LocalTime openingTime = LocalTime.of(Integer.parseInt(openingString[0]), Integer.parseInt(openingString[1]));
@@ -190,8 +175,50 @@ public class ServicesUpTimeRenumerator {
         return weekdaysList.contains(date.getDayOfWeek().getValue());
     }
 
-    static long zonedDateTimeDifference(ZonedDateTime d1, ZonedDateTime d2) {
+    static long getOpeningHoursInPeriod(ZonedDateTime d1, ZonedDateTime d2) {
         return ChronoUnit.MINUTES.between(d1, d2);
+    }
+
+
+    static long getTimeDifference(ZonedDateTime d1, ZonedDateTime d2) {
+        return ChronoUnit.MINUTES.between(d1, d2);
+    }
+
+    public long calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+        // These records Have to be sorted in chrononlogical order
+        List<RecordEntity> records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
+
+        long sumOfActualUptime = 0;
+        long sumOfExpectedUptime = 0;
+        RecordEntity previousRecord = records.getFirst();
+        ZonedDateTime previousTimestamp = previousRecord.getCreated_at();
+
+        //Sum up (A) all the time  service has been UP, and all the time service should have been up
+        for (RecordEntity currentRecord : records.subList(1, records.size())) {
+            // Get the summarized (NOT AVERAGED) amount of minutes of uptime in this timespan that the openinghoursrule(s) expect
+            long expectedOpeningHoursTimeSpan = getOpeningHoursInPeriod(previousTimestamp, currentRecord.getCreated_at());
+            sumOfExpectedUptime += expectedOpeningHoursTimeSpan;
+
+            // If the currentRecord is of uptime, record it
+            if (currentRecord.getStatus() == ServiceStatus.OK) {
+                sumOfActualUptime += getTimeDifference(previousRecord.getCreated_at(), currentRecord.getCreated_at());
+            }
+            // Prepare for next iteration of loop
+            previousRecord = currentRecord;
+        }
+
+        RecordEntity lastRecord = records.getLast();
+        if (lastRecord.getCreated_at().isBefore(to)) {
+            long expectedOpeningHoursTimeSpan = getOpeningHoursInPeriod(lastRecord.getCreated_at(), to);
+            sumOfExpectedUptime += expectedOpeningHoursTimeSpan;
+
+            //If the current record is of uptime , record it
+            if (lastRecord.getStatus() == ServiceStatus.OK) {
+                sumOfActualUptime += getTimeDifference(lastRecord.getCreated_at(), to);
+            }
+
+        }
+        return (sumOfActualUptime / sumOfExpectedUptime) * 100; // Uptime percentage calculation
     }
 
 }

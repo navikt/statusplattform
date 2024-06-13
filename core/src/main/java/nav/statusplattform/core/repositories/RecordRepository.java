@@ -99,7 +99,7 @@ public class RecordRepository {
                 .list(RecordRepository::toRecord);
     }
 
-    public final List<RecordEntity> getRecordHistoryWithinPeriod(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+    public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
 
         Optional<RecordEntity> recordEntity = recordTable.where("service_Id", serviceId)
                 .whereExpression("created_at <= ?", from)
