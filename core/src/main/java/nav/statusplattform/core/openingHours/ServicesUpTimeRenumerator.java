@@ -7,10 +7,8 @@ import nav.statusplattform.core.repositories.RecordRepository;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.IntStream;
 
 import static java.time.LocalDate.*;
-import static java.time.temporal.ChronoUnit.MINUTES;
 
 public class ServicesUpTimeRenumerator {
     static RecordRepository recordRepository;
@@ -64,7 +62,6 @@ public class ServicesUpTimeRenumerator {
 
     }
 
-
     public static long calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
         // These records Have to be sorted in chrononlogical order
         List<RecordEntity> records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
@@ -109,8 +106,6 @@ public class ServicesUpTimeRenumerator {
     static long getTimeDifferenceInMinutes(ZonedDateTime d1, ZonedDateTime d2) {
         return ChronoUnit.MINUTES.between(d1, d2);
     }
-
-
 
 
 }
