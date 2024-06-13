@@ -14,7 +14,7 @@ public class ServicesUpTimeRenumerator {
     static RecordRepository recordRepository;
 
     public static long calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
-        String[] ruleParts = "[ ]".split(rule);
+        String[] ruleParts = rule.split("[\s]");
 
         String openingHours = ruleParts[3];
 
@@ -63,8 +63,12 @@ public class ServicesUpTimeRenumerator {
     }
 
     public static long calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
-        // These records Have to be sorted in chrononlogical order
+        // These records Have to be sorted in chronological order
         List<RecordEntity> records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
+
+        /*if (records.isEmpty()){
+            throw new IllegalStateException("The service must contain records recording it's status.");
+        }*/
 
         long sumOfActualUptime = 0;
         long sumOfExpectedUptime = 0;
@@ -73,7 +77,7 @@ public class ServicesUpTimeRenumerator {
 
         //Sum up (A) all the time  service has been UP, and all the time service should have been up
         for (RecordEntity currentRecord : records.subList(1, records.size())) {
-            // Get the summarized (NOT AVERAGED) amount of minutes of uptime in this timespan that the openinghoursrule(s) expect
+            // Get the summarized (NOT AVERAGED) amount of minutes of uptime in this timespan that the openinghours rule(s) expect
             //Obtains the time difference between two periods
             long expectedOpeningHoursTimeSpan = getTimeDifferenceInMinutes(previousTimestamp, currentRecord.getCreated_at());
             sumOfExpectedUptime += expectedOpeningHoursTimeSpan;
