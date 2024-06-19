@@ -96,6 +96,7 @@ public class RecordRepository {
     }
 
     public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+        System.out.println("getRecordsInTimeSpan");
 
         Optional<RecordEntity> recordEntity = recordTable.where("service_Id", serviceId)
                 .whereExpression("created_at <= ?", from)
