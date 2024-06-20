@@ -56,8 +56,8 @@ public class ServicesUpTimeRenumerator {
         LocalTime oHEndTime = LocalTime.of(Integer.parseInt(ohEndTime[0]), Integer.parseInt(ohEndTime[1]));
 
         //Obtained zonedDateTime
-        ZonedDateTime from = ZonedDateTime.of(DateEntryFrom, oHStartTime, (ZoneId.of("Europe/Oslo")));
-        ZonedDateTime to = ZonedDateTime.of(DateEntryTo, oHEndTime, (ZoneId.of("Europe/Oslo")));
+        ZonedDateTime from = ZonedDateTime.of(DateEntryFrom, oHStartTime, ZoneId.of("Europe/Oslo"));
+        ZonedDateTime to = ZonedDateTime.of(DateEntryTo, oHEndTime, ZoneId.of("Europe/Oslo"));
 
         return calculatePercentageUptime(serviceId, from, to);
 
