@@ -42,7 +42,7 @@ public class ServicesUpTimeRenumerator {
 
         //Application is always up
         if (openingHours.equals("00:00-23:59")) {
-            openingHours = "00:00-24:00";
+            openingHours = "00:00-23:59";
         }
 
         String[] openingHoursParts = openingHours.split("-");
@@ -59,7 +59,7 @@ public class ServicesUpTimeRenumerator {
         ZonedDateTime from = ZonedDateTime.of(DateEntryFrom, oHStartTime, ZoneId.of("Europe/Oslo"));
         ZonedDateTime to = ZonedDateTime.of(DateEntryTo, oHEndTime, ZoneId.of("Europe/Oslo"));
 
-        return calculatePercentageUptime(serviceId, from, to);
+        return (int) calculatePercentageUptime(serviceId, from, to);
 
     }
 

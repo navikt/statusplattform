@@ -1,5 +1,6 @@
 package nav.statusplattform.core.openingHours;
 
+import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.repositories.SampleData;
 import nav.statusplattform.core.repositories.ServiceRepository;
@@ -12,7 +13,14 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static nav.statusplattform.core.openingHours.ServicesUpTimeRenumerator.recordRepository;
 
 
 public class ServicesUpTimeRenumeratorTest {
@@ -54,6 +62,8 @@ public class ServicesUpTimeRenumeratorTest {
     String validMondayToFriday = "??.??.???? ? 1,2,3,4,5 07:00-21:00";  //Gyldig
     String validMondayToSaturday = "??.??.???? ? 1,2,3,4,5,6 07:00-21:00";  //Gyldig
 
+    String validMondayToSunday = "??.??.???? ? 1,2,3,4,5,6,7 00:00-23:59";  //Gyldig
+
     private LocalDate minusTwoMonths = yesterdayDate.minusMonths(2);
 
     private LocalDate minusOneYear = yesterdayDate.minusYears(1);
@@ -91,16 +101,25 @@ public class ServicesUpTimeRenumeratorTest {
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
+        List<RecordEntity> records = generateRandomizedRecordEntities(service, 12);
+        records.forEach(record -> {
+            int min = 2;
+            int max = 5;
+            ZonedDateTime now = ZonedDateTime.now();
+            int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
+            ZonedDateTime fiveDaysBack = now.minusHours(now.getHour()).minusDays(numberOfDays);
+            record.setCreated_at(fiveDaysBack);
+            record.setServiceId(service.getId());
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+
+
         /*int validWorkDaysMondayToFriday = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(serviceId, fiveDaysBack, yesterdayDate, validMondayToFriday);
         System.out.println("validWorkDaysMondayToFriday: " + validWorkDaysMondayToFriday);
         int validWeekDaysMondayToSaturday = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(serviceId, fiveDaysBack, yesterdayDate, validMondayToSaturday);
         System.out.println("validWeekDaysMondayToSaturday: " + validWeekDaysMondayToSaturday);*/
-        int validTimeMondayToSaturday = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(serviceId, fiveDaysBack, todaysDate, validMondayToSaturday);
-        System.out.println("validTimeMondayToSaturday: " + validTimeMondayToSaturday);
-
-
-
-
+        int validTimeMondayToSunday = (int) ServicesUpTimeRenumerator.calculateUpTimeForService(serviceId, fiveDaysBack, todaysDate, validMondayToSunday);
+        System.out.println("validTimeMondayToSunday: " + validTimeMondayToSunday);
 
         /*int MarchTotal0130 = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(normalFridayStartOfMonth, normalFridayEndOfMonth, ohSevenToFive);
         System.out.println("MarchTotal0130: " + MarchTotal0130);
@@ -109,6 +128,17 @@ public class ServicesUpTimeRenumeratorTest {
         int week9StartOfMarch = (int) ServicesUpTimeRenumerator.getTotalOpeningHoursMinutes(normalFridayStartOfMonth, thirdOfMarch, ohSevenToFive);
         System.out.println("week9StartOfMarch: " + week9StartOfMarch);*/
 
+    }
+
+    private List<RecordEntity> generateRandomizedRecordEntities(ServiceEntity serviceEntity, int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("The argument amount refers to size of list, must be a non-zero, positive integer.");
+        }
+        List<RecordEntity> records = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
+        }
+        return records;
     }
 
 }
