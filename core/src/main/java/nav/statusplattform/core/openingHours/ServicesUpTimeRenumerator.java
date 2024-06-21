@@ -121,7 +121,12 @@ public class ServicesUpTimeRenumerator {
             sumOfExpectedUptime += expectedOpeningHoursTimeSpan - trailingRedundantMinutes - leadingRedundantMinutes;
 
             // If the currentRecord is of uptime, record it
-            if (currentRecord.getStatus() == ServiceStatus.OK) {
+            if ((previousRecord.getStatus() == ServiceStatus.OK &&
+                    currentRecord.getStatus() == ServiceStatus.DOWN) ||
+                    (previousRecord.getStatus() == ServiceStatus.OK &&
+                            currentRecord.getStatus() == ServiceStatus.ISSUE) ||
+                    (previousRecord.getStatus() == ServiceStatus.OK &&
+                            currentRecord.getStatus() == ServiceStatus.UNKNOWN)) {
                 //Obtains the time difference
                 sumOfActualUptime += sumOfExpectedUptime;
             }
@@ -129,6 +134,7 @@ public class ServicesUpTimeRenumerator {
             /* Prepare for next iteration of loop */
             previousRecord = currentRecord;
         }
+
 
         uptimeTotals = new UptimeTotals(sumOfActualUptime, sumOfExpectedUptime);
     }
