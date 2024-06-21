@@ -12,10 +12,10 @@ import java.util.stream.IntStream;
 import static java.time.LocalDate.*;
 
 public class ServicesUpTimeRenumerator {
-
     static RecordRepository recordRepository;
+    static UptimeTotals uptimeTotals;
 
-    public static long calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
+    public static UptimeTotals calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
         String[] ruleParts = rule.split("\s");
 
         String openingHours = ruleParts[3];
@@ -37,7 +37,8 @@ public class ServicesUpTimeRenumerator {
 
         //Application is always down
         if (openingHours.equals("00:00-00:00")) {
-            return 0;
+            uptimeTotals = new UptimeTotals(0, 0);
+            return uptimeTotals.getUptimeTotals();
         }
 
         //Application is always up
@@ -59,11 +60,12 @@ public class ServicesUpTimeRenumerator {
         ZonedDateTime from = ZonedDateTime.of(DateEntryFrom, oHStartTime, ZoneId.of("Europe/Oslo"));
         ZonedDateTime to = ZonedDateTime.of(DateEntryTo, oHEndTime, ZoneId.of("Europe/Oslo"));
 
-        return (int) calculatePercentageUptime(serviceId, from, to);
+        calculatePercentageUptime(serviceId, from, to);
 
+        return uptimeTotals.getUptimeTotals();
     }
 
-    public static long calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+    public static void calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
         // These records Have to be sorted in chronological order
         List<RecordEntity> records;
 
@@ -96,7 +98,7 @@ public class ServicesUpTimeRenumerator {
             int allDaysBetween = (int) (ChronoUnit.DAYS.between(from, to));
 
             expectedOpeningHoursTimeSpan = IntStream.range(0, allDaysBetween)
-                    .count() * getOpeningHoursInMinutes(from, to);
+                    .count() * ChronoUnit.MINUTES.between(from, to);
 
 
             /*Remove any redundant time from opening hours start time from previous records actual start time as long
@@ -104,7 +106,7 @@ public class ServicesUpTimeRenumerator {
             long trailingRedundantMinutes = 0;
             if (previousRecord.getCreated_at().toLocalTime().isAfter(from.toLocalTime())
                     && previousRecord.getCreated_at().toLocalTime().isBefore(to.toLocalTime())) {
-                trailingRedundantMinutes = getOpeningHoursInMinutes(from, previousRecord.getCreated_at());
+                trailingRedundantMinutes = ChronoUnit.MINUTES.between(from, previousRecord.getCreated_at());
             }
 
             /*Remove any redundant time from opening hours end time from current record actual end time
@@ -112,7 +114,7 @@ public class ServicesUpTimeRenumerator {
             long leadingRedundantMinutes = 0;
             if (currentRecord.getCreated_at().toLocalTime().isBefore(to.toLocalTime()) &&
                     currentRecord.getCreated_at().toLocalTime().isAfter(from.toLocalTime())) {
-                leadingRedundantMinutes = getOpeningHoursInMinutes(currentRecord.getCreated_at(), to);
+                leadingRedundantMinutes = ChronoUnit.MINUTES.between(currentRecord.getCreated_at(), to);
             }
 
             //total time between two previous and current records
@@ -128,12 +130,29 @@ public class ServicesUpTimeRenumerator {
             previousRecord = currentRecord;
         }
 
-        return (sumOfActualUptime / sumOfExpectedUptime) * 100; // Uptime percentage calculation
-    }
-
-    private static long getOpeningHoursInMinutes(ZonedDateTime from, ZonedDateTime to) {
-        LocalDateTime ltdFrom = from.toLocalDateTime();
-        LocalDateTime ltdTo = to.toLocalDateTime();
-        return ChronoUnit.MINUTES.between(ltdFrom.toLocalTime(), ltdTo.toLocalTime());
+        uptimeTotals = new UptimeTotals(sumOfActualUptime, sumOfExpectedUptime);
     }
 }
+
+final class UptimeTotals {
+    private final long sumOfActualUptime;
+    private final long sumOfExpectedUptime;
+
+    public UptimeTotals(long sumOfActualUptime, long sumOfExpectedUptime) {
+        this.sumOfActualUptime = sumOfActualUptime;
+        this.sumOfExpectedUptime = sumOfExpectedUptime;
+    }
+
+    public long getSumOfActualUptime() {
+        return sumOfActualUptime;
+    }
+
+    public long getSumOfExpectedUptime() {
+        return sumOfExpectedUptime;
+    }
+
+    public UptimeTotals getUptimeTotals() {
+        return new UptimeTotals(getSumOfActualUptime(), getSumOfExpectedUptime());
+    }
+}
+
