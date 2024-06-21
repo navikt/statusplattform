@@ -16,7 +16,7 @@ public class ServicesUpTimeRenumerator {
     static RecordRepository recordRepository;
 
     public static long calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
-        String[] ruleParts = rule.split("[ ]");
+        String[] ruleParts = rule.split("\s");
 
         String openingHours = ruleParts[3];
 
@@ -65,13 +65,26 @@ public class ServicesUpTimeRenumerator {
 
     public static long calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
         // These records Have to be sorted in chronological order
+        List<RecordEntity> records;
 
-        List<RecordEntity> records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
+        //manages when no records are found
+        try {
+            records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
+        } catch (Exception e) {
+            throw new RuntimeException("No records not found for serviceId: " + serviceId);
+        }
 
-        long sumOfActualUptime = 0; //Represents the total uptime for service for example,  service status equals
-        long sumOfExpectedUptime = 0; //Represents the total time
+        long sumOfActualUptime = 0; //the total time the service is up
+        long sumOfExpectedUptime = 0; //total time within specified timespan
 
-        RecordEntity previousRecord = records.getFirst();
+        Optional<RecordEntity> firstRecord = records.stream()
+                .filter(Objects::nonNull)
+                .findFirst();
+
+        if (firstRecord.isEmpty()) {
+            throw new NullPointerException(" First record not found for serviceId: " + serviceId);
+        }
+        RecordEntity previousRecord = firstRecord.get();
 
         //Sum up (A) all the time  service has been UP, and all the time service should have been up
         for (RecordEntity currentRecord : records.subList(1, records.size())) {
@@ -80,7 +93,7 @@ public class ServicesUpTimeRenumerator {
             //Obtains the time difference between two periods
             long expectedOpeningHoursTimeSpan;
 
-            int allDaysBetween = (int) (ChronoUnit.DAYS.between(from, to) + 1);
+            int allDaysBetween = (int) (ChronoUnit.DAYS.between(from, to));
 
             expectedOpeningHoursTimeSpan = IntStream.range(0, allDaysBetween)
                     .count() * getOpeningHoursInMinutes(from, to);
