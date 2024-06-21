@@ -98,23 +98,25 @@ public class RecordRepository {
     public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
         System.out.println("getRecordsInTimeSpan");
 
-        Optional<RecordEntity> recordEntity = recordTable.where("service_Id", serviceId)
+        Optional<RecordEntity> recordInTimeSpan = recordTable.where("service_Id", serviceId)
                 .whereExpression("created_at <= ?", from)
                 .orderBy("created_at DESC")
                 .limit(1)
                 .singleObject(RecordRepository::toRecord);
 
-        List<RecordEntity> recordEntities = new ArrayList<>();
+        List<RecordEntity> recordsInTimeSpan = new ArrayList<>();
 
-        recordEntity.ifPresent(recordEntities::add);
+        RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
 
-        recordEntities = recordTable.where("service_Id", serviceId)
+        recordsInTimeSpan = recordTable.where("service_Id", serviceId)
                 .whereExpression("created_at <= ?", from)
                 .whereExpression("created_at >= ?", to)
                 .orderBy("created_at ASC")
                 .list(RecordRepository::toRecord);
 
-        return recordEntities;
+        recordsInTimeSpan.addFirst(firstRecordInTimeSpan);
+
+        return recordsInTimeSpan;
     }
 
     public List<RecordEntity> getAllRecordsFromYesterday(){
