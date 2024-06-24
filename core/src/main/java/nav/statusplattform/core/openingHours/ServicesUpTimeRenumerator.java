@@ -88,17 +88,23 @@ public class ServicesUpTimeRenumerator {
         }
         RecordEntity previousRecord = firstRecord.get();
 
+        //todo
+        //If only one service record is found and is up for the time period
+        if (records.size() == 1) {
+            if (previousRecord.getStatus() == ServiceStatus.OK) {
+
+            }
+        }
+
         //Sum up (A) all the time  service has been UP, and all the time service should have been up
         for (RecordEntity currentRecord : records.subList(1, records.size())) {
 
-            // Get the summarized amount of minutes of uptime specified within the timespan that the opening hours rule(s) expect
-            //Obtains the time difference between two periods
-            long expectedOpeningHoursTimeSpan;
+            // totalling the Opening Hours times between previous and current records.
+            //Calculate total number of days between previous and current record
+            int allDaysBetween = (int) (ChronoUnit.DAYS.between(previousRecord.getCreated_at(), currentRecord.getCreated_at()));
 
-            int allDaysBetween = (int) (ChronoUnit.DAYS.between(from, to));
-
-            expectedOpeningHoursTimeSpan = IntStream.range(0, allDaysBetween)
-                    .count() * ChronoUnit.MINUTES.between(from, to);
+            //Obtains the total Opening time between opening hours
+            long totalOHWithinTimespan = ChronoUnit.MINUTES.between(from, to) * allDaysBetween;
 
 
             /*Remove any redundant time from opening hours start time from previous records actual start time as long
@@ -118,7 +124,7 @@ public class ServicesUpTimeRenumerator {
             }
 
             //total time between two previous and current records
-            sumOfExpectedUptime += expectedOpeningHoursTimeSpan - trailingRedundantMinutes - leadingRedundantMinutes;
+            sumOfExpectedUptime += totalOHWithinTimespan - trailingRedundantMinutes - leadingRedundantMinutes;
 
             // If the currentRecord is of uptime, record it
             if ((previousRecord.getStatus() == ServiceStatus.OK &&
@@ -134,7 +140,6 @@ public class ServicesUpTimeRenumerator {
             /* Prepare for next iteration of loop */
             previousRecord = currentRecord;
         }
-
 
         uptimeTotals = new UptimeTotals(sumOfActualUptime, sumOfExpectedUptime);
     }
