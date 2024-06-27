@@ -109,9 +109,9 @@ public class RecordRepository {
 
         RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
 
-        recordsInTimeSpan = recordTable.where("service_Id", serviceId)
-                .whereExpression("created_at <= ?", from)
-                .whereExpression("created_at >= ?", to)
+        recordsInTimeSpan = recordTable.where("service_id", serviceId)
+                .whereExpression("created_at >= ?", from)
+                .whereExpression("created_at <= ?", to)
                 .orderBy("created_at ASC")
                 .list(RecordRepository::toRecord);
 
