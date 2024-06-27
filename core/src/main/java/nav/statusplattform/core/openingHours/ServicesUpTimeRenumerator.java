@@ -2,20 +2,28 @@ package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
+import nav.statusplattform.core.repositories.AreaRepository;
 import nav.statusplattform.core.repositories.RecordRepository;
+import nav.statusplattform.core.repositories.ServiceRepository;
+import org.fluentjdbc.DbContext;
+
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.IntStream;
+import java.util.zip.Checksum;
 
 import static java.time.LocalDate.*;
 
 public class ServicesUpTimeRenumerator {
-    static RecordRepository recordRepository;
+    RecordRepository recordRepository;
     static UptimeTotals uptimeTotals;
 
-    public static UptimeTotals calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
+    public ServicesUpTimeRenumerator(DbContext context) {
+        this.recordRepository = new RecordRepository(context);
+    }
+
+    public UptimeTotals calculateUpTimeForService(UUID serviceId, LocalDate DateEntryFrom, LocalDate DateEntryTo, String rule) {
         String[] ruleParts = rule.split("\s");
 
         String openingHours = ruleParts[3];
@@ -65,19 +73,20 @@ public class ServicesUpTimeRenumerator {
         return uptimeTotals.getUptimeTotals();
     }
 
-    public static void calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
-        // These records Have to be sorted in chronological order
+    public void calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+        // Records  sorted in chronological order
         List<RecordEntity> records;
 
-        //manages when no records are found
+        //If no records are found
         try {
             records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
         } catch (Exception e) {
             throw new RuntimeException("No records not found for serviceId: " + serviceId);
         }
 
-        long sumOfActualUptime = 0; //the total time the service is up
-        long sumOfExpectedUptime = 0; //total time within specified timespan
+        long sumOfActualUptime = 0L; //the total time the service is up
+        long sumOfExpectedUptime = 0L; //total sum of time duration
+        long totalOHMinutesBetweenPeriods = 0L; //total sum of time duration between each record
 
         Optional<RecordEntity> firstRecord = records.stream()
                 .filter(Objects::nonNull)
@@ -88,61 +97,89 @@ public class ServicesUpTimeRenumerator {
         }
         RecordEntity previousRecord = firstRecord.get();
 
-        //todo
-        //If only one service record is found and is up for the time period
-        if (records.size() == 1) {
-            if (previousRecord.getStatus() == ServiceStatus.OK) {
-
-            }
-        }
 
         //Sum up (A) all the time  service has been UP, and all the time service should have been up
         for (RecordEntity currentRecord : records.subList(1, records.size())) {
 
-            // totalling the Opening Hours times between previous and current records.
-            //Calculate total number of days between previous and current record
-            int allDaysBetween = (int) (ChronoUnit.DAYS.between(previousRecord.getCreated_at(), currentRecord.getCreated_at()));
+            // Sum the total number of time in days between the two periods
+            int noOfDays = (int) noOfDaysBetweenTwoPeriods(previousRecord.getCreated_at(), currentRecord.getCreated_at());
 
-            //Obtains the total Opening time between opening hours
-            long totalOHWithinTimespan = ChronoUnit.MINUTES.between(from, to) * allDaysBetween;
+            /*if no Of days is zero indicating a period less than a day, (under 24 hours) set nofDays to 1 as
+            it forms part of the calculation for determining number of work hours*/
 
-
-            /*Remove any redundant time from opening hours start time from previous records actual start time as long
-            as it within the opening hours specified by the rule */
-            long trailingRedundantMinutes = 0;
-            if (previousRecord.getCreated_at().toLocalTime().isAfter(from.toLocalTime())
-                    && previousRecord.getCreated_at().toLocalTime().isBefore(to.toLocalTime())) {
-                trailingRedundantMinutes = ChronoUnit.MINUTES.between(from, previousRecord.getCreated_at());
+            if (noOfDays == 0) {
+                noOfDays = 1;
             }
 
-            /*Remove any redundant time from opening hours end time from current record actual end time
-            as long as it within the opening hours specified by the rule */
-            long leadingRedundantMinutes = 0;
-            if (currentRecord.getCreated_at().toLocalTime().isBefore(to.toLocalTime()) &&
-                    currentRecord.getCreated_at().toLocalTime().isAfter(from.toLocalTime())) {
-                leadingRedundantMinutes = ChronoUnit.MINUTES.between(currentRecord.getCreated_at(), to);
+            //Obtains the total of Opening hours start and end time in minutes
+            totalOHMinutesBetweenPeriods = ChronoUnit.MINUTES.between(from.toLocalTime(), to.toLocalTime()) * noOfDays;
+
+            //calculate
+            long excessStartMinutes = 0;
+            if (withinWorkingHours(previousRecord, from, to)) {
+                excessStartMinutes = ChronoUnit.MINUTES.between(from.toLocalTime(), previousRecord.getCreated_at().toLocalTime());
             }
 
-            //total time between two previous and current records
-            sumOfExpectedUptime += totalOHWithinTimespan - trailingRedundantMinutes - leadingRedundantMinutes;
+            long excessEndMinutes = 0;
+            if (withinWorkingHours(currentRecord, from, to)) {
+                excessEndMinutes = ChronoUnit.MINUTES.between(currentRecord.getCreated_at().toLocalTime(), to.toLocalTime());
+            }
 
-            // If the currentRecord is of uptime, record it
+
+            //Calculate uptime duration
+            //uptime duration before down time
             if ((previousRecord.getStatus() == ServiceStatus.OK &&
                     currentRecord.getStatus() == ServiceStatus.DOWN) ||
+
+                    //uptime duration before an issue
                     (previousRecord.getStatus() == ServiceStatus.OK &&
                             currentRecord.getStatus() == ServiceStatus.ISSUE) ||
+
+                    //uptime duration before an unknown event
                     (previousRecord.getStatus() == ServiceStatus.OK &&
                             currentRecord.getStatus() == ServiceStatus.UNKNOWN)) {
-                //Obtains the time difference
-                sumOfActualUptime += sumOfExpectedUptime;
+
+                sumOfActualUptime += totalOHMinutesBetweenPeriods - excessStartMinutes - excessEndMinutes;
             }
+
+            sumOfExpectedUptime += totalOHMinutesBetweenPeriods - excessStartMinutes - excessEndMinutes;
 
             /* Prepare for next iteration of loop */
             previousRecord = currentRecord;
         }
 
-        uptimeTotals = new UptimeTotals(sumOfActualUptime, sumOfExpectedUptime);
+        //todo manage last record
+
+        RecordEntity lastRecord = records.getLast();
+
+
+        //todo
+        //total expected time
+        long expectedUptimeTotal = sumOfExpectedUptime;
+        //todo
+        //total actual up time
+        long actualUpTimeTotal = sumOfActualUptime;
+
+        uptimeTotals = new UptimeTotals(actualUpTimeTotal, expectedUptimeTotal);
     }
+
+    private long noOfDaysBetweenTwoPeriods(ZonedDateTime periodOne, ZonedDateTime periodTwo) {
+        // Returns the sum of Opening Hours times between the records previous and current times.
+        return (int) (ChronoUnit.DAYS.between(periodOne, periodTwo));
+    }
+
+    //Check that time falls within working hours
+    private boolean withinWorkingHours(RecordEntity recordEntity, ZonedDateTime from, ZonedDateTime to) {
+        // Has a value of  0 or less if  opening hours start time is before or equal to the record start time
+        int withinStartTime = from.toLocalTime().compareTo(recordEntity.getCreated_at().toLocalTime());
+
+        // Has a value greater than zero if opening hours end time is equal or after the record end time
+        int withinEndTime = to.toLocalTime().compareTo(recordEntity.getCreated_at().toLocalTime());
+
+        //Returns true if if record is within opening hours, otherwise false.
+        return withinStartTime <= 0 && withinEndTime >= 0;
+    }
+
 }
 
 final class UptimeTotals {
