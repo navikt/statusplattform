@@ -7,6 +7,7 @@ import nav.statusplattform.core.enums.RecordSource;
 import nav.statusplattform.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
+
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;

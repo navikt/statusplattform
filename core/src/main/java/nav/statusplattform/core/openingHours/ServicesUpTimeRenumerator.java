@@ -2,16 +2,13 @@ package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
-import nav.statusplattform.core.repositories.AreaRepository;
 import nav.statusplattform.core.repositories.RecordRepository;
-import nav.statusplattform.core.repositories.ServiceRepository;
 import org.fluentjdbc.DbContext;
 
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.zip.Checksum;
 
 import static java.time.LocalDate.*;
 
@@ -86,7 +83,7 @@ public class ServicesUpTimeRenumerator {
 
         long sumOfActualUptime = 0L; //the total time the service is up
         long sumOfExpectedUptime = 0L; //total sum of time duration
-        long totalOHMinutesBetweenPeriods = 0L; //total sum of time duration between each record
+        long totalOHMinutesBetweenPeriods; //total sum of time duration between each record
 
         Optional<RecordEntity> firstRecord = records.stream()
                 .filter(Objects::nonNull)
