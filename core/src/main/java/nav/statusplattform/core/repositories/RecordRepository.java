@@ -99,23 +99,27 @@ public class RecordRepository {
     public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
         System.out.println("getRecordsInTimeSpan");
 
-        Optional<RecordEntity> recordInTimeSpan = recordTable.where("service_Id", serviceId)
-                .whereExpression("created_at <= ?", from)
-                .orderBy("created_at DESC")
-                .limit(1)
-                .singleObject(RecordRepository::toRecord);
-
-        List<RecordEntity> recordsInTimeSpan = new ArrayList<>();
-
-        RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
-
-        recordsInTimeSpan = recordTable.where("service_id", serviceId)
+        List<RecordEntity> recordsInTimeSpan = recordTable.where("service_id", serviceId)
                 .whereExpression("created_at >= ?", from)
                 .whereExpression("created_at <= ?", to)
                 .orderBy("created_at ASC")
                 .list(RecordRepository::toRecord);
 
-        recordsInTimeSpan.addFirst(firstRecordInTimeSpan);
+
+        try {
+
+            Optional<RecordEntity> recordInTimeSpan = recordTable.where("service_id", serviceId)
+                .whereExpression("created_at <= ?", from)
+                .orderBy("created_at DESC")
+                .limit(1)
+                .singleObject(RecordRepository::toRecord);
+
+            RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
+
+            recordsInTimeSpan.addFirst(firstRecordInTimeSpan);
+        } catch (Exception e) {
+            return recordsInTimeSpan;
+        }
 
         return recordsInTimeSpan;
     }
