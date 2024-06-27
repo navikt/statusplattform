@@ -48,7 +48,7 @@ public class ServicesUpTimeRenumerator {
 
         //Application is always up
         if (openingHours.equals("00:00-23:59")) {
-            openingHours = "00:00-23:59";
+            openingHours = "00:00-00:00";
         }
 
         String[] openingHoursParts = openingHours.split("-");
@@ -78,7 +78,7 @@ public class ServicesUpTimeRenumerator {
         try {
             records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
         } catch (Exception e) {
-            throw new RuntimeException("No records not found for serviceId: " + serviceId);
+            throw new RuntimeException("Records not found for serviceId: " + serviceId);
         }
 
         long sumOfActualUptime = 0L; //the total time the service is up
@@ -127,6 +127,10 @@ public class ServicesUpTimeRenumerator {
             //uptime duration before down time
             if ((previousRecord.getStatus() == ServiceStatus.OK &&
                     currentRecord.getStatus() == ServiceStatus.DOWN) ||
+
+                    //uptime duration before another Ok
+                    (previousRecord.getStatus() == ServiceStatus.OK &&
+                            currentRecord.getStatus() == ServiceStatus.OK) ||
 
                     //uptime duration before an issue
                     (previousRecord.getStatus() == ServiceStatus.OK &&
