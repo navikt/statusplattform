@@ -37,14 +37,11 @@ spec:
     inbound:
       rules:
         - application: portal
-          namespace: navdig
         - application: statuspoll
-          namespace: navdig
         - application: promstatusproxy
-          namespace: navdig
         - application: onpremstatuspoll
-          namespace: navdig
           cluster: "{{ spec.env.ENV }}-fss"
+        - application: statusplattform-nais-operator
     outbound:
       rules:
         - application: team-catalog-backend
