@@ -48,7 +48,7 @@ public class ServicesUpTimeRenumerator {
 
         //Application is always up
         if (openingHours.equals("00:00-23:59")) {
-            openingHours = "00:00-00:00";
+            openingHours = "00:00-23:59";
         }
 
         String[] openingHoursParts = openingHours.split("-");
@@ -128,7 +128,7 @@ public class ServicesUpTimeRenumerator {
             if ((previousRecord.getStatus() == ServiceStatus.OK &&
                     currentRecord.getStatus() == ServiceStatus.DOWN) ||
 
-                    //uptime duration before another Ok
+                    //uptime duration before another Ok? - not sure if this an condition
                     (previousRecord.getStatus() == ServiceStatus.OK &&
                             currentRecord.getStatus() == ServiceStatus.OK) ||
 
@@ -149,17 +149,37 @@ public class ServicesUpTimeRenumerator {
             previousRecord = currentRecord;
         }
 
-        //todo manage last record
-
+        //Obtain the number of minutes from the last record
         RecordEntity lastRecord = records.getLast();
 
+        /* Sum the total number of time in days between the two periods.  Add 1 if the period between
+        last record and end date is under 1 as the number of days is used in the calculation.
+        */
+        int noOfDays = (int) noOfDaysBetweenTwoPeriods(lastRecord.getCreated_at(), to) + 1;
 
-        //todo
+        //Obtain the total of Opening hours start and end time in minutes
+        long totalMinsBetweenLastRecordAndTo = ChronoUnit.MINUTES.between(lastRecord.getCreated_at().toLocalTime(), to.toLocalTime()) * noOfDays;
+
+        /*Calculates minutes from the last record start time if its time is greater than the opening hours start time */
+        long minsFromStartToLastRecordActualStart = 0;
+        if (withinWorkingHours(lastRecord, from, to)) {
+            minsFromStartToLastRecordActualStart = ChronoUnit.MINUTES.between(lastRecord.getCreated_at().toLocalTime(), to.toLocalTime());
+        }
+
+        //Last record total minutes
+        long expectedUptimeLastRecord = totalMinsBetweenLastRecordAndTo - minsFromStartToLastRecordActualStart;
+
+        //Check idf the last record is up, if it is its time is included in the calculation
+        long actualUpTimeLastRecord = 0L;
+        if (lastRecord.getStatus() == ServiceStatus.OK) {
+            actualUpTimeLastRecord = expectedUptimeLastRecord;
+        }
+
         //total expected time
-        long expectedUptimeTotal = sumOfExpectedUptime;
-        //todo
+        long expectedUptimeTotal = sumOfExpectedUptime + expectedUptimeLastRecord;
+
         //total actual up time
-        long actualUpTimeTotal = sumOfActualUptime;
+        long actualUpTimeTotal = sumOfActualUptime + actualUpTimeLastRecord;
 
         uptimeTotals = new UptimeTotals(actualUpTimeTotal, expectedUptimeTotal);
     }
