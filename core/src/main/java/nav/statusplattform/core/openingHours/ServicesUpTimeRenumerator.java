@@ -161,21 +161,34 @@ public class ServicesUpTimeRenumerator {
         /* Sum the total number of time in days between the two periods.  Add 1 if the period between
         last record and end date is under 1 as the number of days is used in the calculation.
         */
-        int noOfDays = (int) noOfDaysBetweenTwoPeriods(lastRecord.getCreated_at(), to) + 1;
+
+        long totalMinsBetweenLastRecordAndTo = 0;
+
+        ZonedDateTime currentTime = ZonedDateTime.now();
+        int noOfDays = (int) noOfDaysBetweenTwoPeriods(lastRecord.getCreated_at(), to);
+
 
         //The total of Opening hours start and end time in minutes
-        long totalMinsBetweenLastRecordAndTo = ChronoUnit.MINUTES.between(lastRecord.getCreated_at().toLocalTime(), to.toLocalTime()) * noOfDays;
+        if (noOfDays > 1) {
+            totalMinsBetweenLastRecordAndTo = ChronoUnit.MINUTES.between(lastRecord.getCreated_at().toLocalTime(), to.toLocalTime()) * noOfDays;
+        }
+
 
         /*Calculates minutes from the last record start time if its time is greater than the opening hours start time */
-        long minsFromStartToLastRecordActualStart = 0;
-        if (noOfDays > 1) {
-            if (withinWorkingHours(lastRecord, from, to)) {
-                minsFromStartToLastRecordActualStart = ChronoUnit.MINUTES.between(lastRecord.getCreated_at().toLocalTime(), to.toLocalTime());
+        long minsToLastRecordActualStart = 0;
+
+        if (withinWorkingHours(lastRecord, from, to)) {
+            if (currentTime.toLocalTime().isBefore(to.toLocalTime())) {
+                minsToLastRecordActualStart = ChronoUnit.MINUTES.between(lastRecord.getCreated_at().toLocalTime(), currentTime.toLocalTime());
+            } else {
+                minsToLastRecordActualStart = ChronoUnit.MINUTES.between(lastRecord.getCreated_at().toLocalTime(), to.toLocalTime());
             }
         }
 
+
         //Last record total minutes
-        long expectedUptimeLastRecord = totalMinsBetweenLastRecordAndTo - minsFromStartToLastRecordActualStart;
+        long expectedUptimeLastRecord = totalMinsBetweenLastRecordAndTo - minsToLastRecordActualStart;
+        //long expectedUptimeLastRecord = minsFromStartToLastRecordActualStart;
 
         //if the last record is up, its time is included in the calculation
         long actualUpTimeLastRecord = 0L;
@@ -208,7 +221,6 @@ public class ServicesUpTimeRenumerator {
         //Returns true if record is within opening hours, otherwise false.
         return withinStartTime <= 0 && withinEndTime >= 0;
     }
-
 }
 
 //Returns the actual and expected uptimes
