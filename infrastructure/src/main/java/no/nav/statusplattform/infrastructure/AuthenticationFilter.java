@@ -63,11 +63,8 @@ public class AuthenticationFilter implements Filter {
     }
 
     private boolean validateSwaggerAuthentication(ServletRequest request) {
-        logger.info("Why the F are we not passing this");
         String apikey = ((HttpServletRequest) request).getHeader(SWAGGER_API_KEY_HEADERNAME);
-        boolean comparison = SWAGGER_API_KEY.equals(apikey);
-        logger.info("This is how the Swagger Authentication looked at us: " + comparison);
-        return comparison;
+        return SWAGGER_API_KEY.equals(apikey);
     }
 
     @Override
