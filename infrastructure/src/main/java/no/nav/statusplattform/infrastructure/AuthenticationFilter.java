@@ -1,7 +1,6 @@
 package no.nav.statusplattform.infrastructure;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import net.minidev.json.JSONArray;
 import org.eclipse.jetty.security.DefaultUserIdentity;
 import org.eclipse.jetty.security.UserAuthentication;
 import org.eclipse.jetty.server.Authentication;
@@ -80,14 +79,12 @@ public class AuthenticationFilter implements Filter {
 
     }
     public StatusplattformRestPrincipal createPortalPrincipalFromAdClaims(JWTClaimsSet jwtTokenClaims) throws ParseException, AuthenticationException {
-        String APPLICATION_ROLE = "access_as_application";
         String DEFAULT_ACCESS = "defaultaccess";
         Map<String,Object> claims = jwtTokenClaims.getClaims();
         if(claims.containsKey("scp") && claims.get("scp").equals(DEFAULT_ACCESS)){
             return new StatusplattformRestPrincipal(jwtTokenClaims.getStringClaim("name"), null);
         }
         if(claims.containsKey("roles")){
-            JSONArray roles = (JSONArray)claims.get("roles");
             return new StatusplattformRestPrincipal("application_access", "application_access");
 
         }
