@@ -241,4 +241,12 @@ public class OpeningHoursParser {
         return LocalTime.of(Integer.parseInt(openingString[0]), Integer.parseInt(openingString[1]));
     }
 
+    public static LocalTime getClosingTime(String timeRule) {
+        String[] ruleParts = timeRule.split("[-]");
+        //Obtain opening time in hh:mm format
+        String[] closingString = ruleParts[1].split("[:]");
+        return LocalTime.of(Integer.parseInt(closingString[0]), Integer.parseInt(closingString[1]));
+    }
+
+
 }
