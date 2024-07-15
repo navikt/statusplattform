@@ -233,4 +233,12 @@ public class OpeningHoursParser {
         return time.isAfter(opening) && time.isBefore(closing);
 
     }
+
+    public static LocalTime getOpeningTime(String timeRule) {
+        String[] ruleParts = timeRule.split("[-]");
+        //Obtain opening time in hh:mm format
+        String[] openingString = ruleParts[0].split("[:]");
+        return LocalTime.of(Integer.parseInt(openingString[0]), Integer.parseInt(openingString[1]));
+    }
+
 }
