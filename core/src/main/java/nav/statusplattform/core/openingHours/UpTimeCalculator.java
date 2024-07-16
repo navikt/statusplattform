@@ -68,21 +68,21 @@ public class UpTimeCalculator {
 
 
         //Obtain the first record
-        Optional<RecordEntity> firstRecord = records.stream()
-                .filter(Objects::nonNull)
-                .findFirst();
+        Optional<RecordEntity> firstRecord = records.stream().findFirst();
 
         if (firstRecord.isEmpty()) {
             throw new NullPointerException(" First record not found for serviceId: " + serviceId);
         }
-        RecordEntity previousRecord = firstRecord.get();
+
+        /*Exclude the period of time starting before the requested start date time from the first record as
+         this is not to be included as part of the calculation. */
+        if (firstRecord.get().getCreated_at().isBefore(from)) {
+            firstRecord.get().setCreated_at(from);
+        }
 
         //get the Services opening hours start and end times from the data entry start date
-        String ohString = getOpeningHours(serviceId, from);
-        LocalTime ohStart = OpeningHoursParser.getOpeningTime(ohString);
-        LocalTime ohEnd = OpeningHoursParser.getOpeningTime(ohString);
-
-        previousRecord.setCreated_at(from);
+        LocalTime ohStart = getOpeningHoursStart(serviceId, from);
+        LocalTime ohEnd = getOpeningHoursEnd(serviceId, from);
 
         //Sum up (A) all the time  service has been UP, and all the time service should have been up
         for (int i = 0; i < records.size() - 1; i++) {
@@ -144,8 +144,6 @@ public class UpTimeCalculator {
             } else if (lastRecord.getCreated_at().toLocalTime().isBefore(ohStart)) {
                 totalMinutes += Duration.between(lastRecord.getCreated_at().withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), lastRecord.getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
             }
-
-
             //todo
             //Last record next day
             ZonedDateTime lastRecordNextDay = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
@@ -188,6 +186,22 @@ public class UpTimeCalculator {
         Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(serviceId);
         OpeningHoursGroup oHGroupEntity = group.orElseThrow();
         return OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
+    }
+
+
+    //get the Services opening hours start and end times from the data entry start date
+    private LocalTime getOpeningHoursStart(UUID serviceId, ZonedDateTime zdt) {
+        Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(serviceId);
+        OpeningHoursGroup oHGroupEntity = group.orElseThrow();
+        String ohString = OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
+        return OpeningHoursParser.getOpeningTime(ohString);
+    }
+
+    private LocalTime getOpeningHoursEnd(UUID serviceId, ZonedDateTime zdt) {
+        Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(serviceId);
+        OpeningHoursGroup oHGroupEntity = group.orElseThrow();
+        String ohString = OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
+        return OpeningHoursParser.getClosingTime(ohString);
     }
 
 
