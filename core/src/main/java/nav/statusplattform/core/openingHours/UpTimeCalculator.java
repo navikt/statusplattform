@@ -86,91 +86,27 @@ public class UpTimeCalculator {
 
         //Sum up (A) all the time  service has been UP, and all the time service should have been up
         for (int i = 0; i < records.size() - 1; i++) {
+            //Current Record startTime in localTime
+            LocalTime recordStartTimeLt = records.get(i).getCreated_at().toLocalTime();
+            //Current record StartDateTime in zdt
+            ZonedDateTime recordDateTimeZdt = records.get(i).getCreated_at();
+            //Opening hours Start Time in zdt
+            ZonedDateTime startOfDay = records.get(i).getCreated_at().withHour(ohStart.getHour())
+                    .withMinute(ohStart.getMinute());
+            //Opening hours End Time in zdt
+            ZonedDateTime endOfDay = records.get(i).getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
 
-            //todo update comment
-            //get records.get() opening hours start and end for full days  - used in calculation for full days
-            String ohStringNextDay = getOpeningHours(serviceId, records.get(i).getCreated_at().plusDays(1));
-            LocalTime ohStartNextDay = OpeningHoursParser.getOpeningTime(ohStringNextDay);
-            LocalTime ohEndNextDay = OpeningHoursParser.getOpeningTime(ohStringNextDay);
 
-            ZonedDateTime current = records.get(i).getCreated_at().plusDays(1)
-                    .withHour(ohStartNextDay.getHour()).withMinute(ohStartNextDay.getMinute());
-
-            // Handle partial day on the starting day
-
-            if (records.get(i).getCreated_at().toLocalTime().isBefore(ohEnd) && records.get(i).getCreated_at().toLocalTime().isAfter(ohStart)) {
-                ZonedDateTime endOfDay = records.get(i).getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
-                totalMinutes += Math.min(Duration.between(records.get(i).getCreated_at(), endOfDay)
-                        .toMinutes(), Duration.between(records.get(i).getCreated_at(), records.get(i + 1).getCreated_at()).toMinutes());
-            } else if (records.get(i).getCreated_at().toLocalTime().isBefore(ohStart)) {
-                totalMinutes += Duration.between(records.get(i).getCreated_at().withHour(ohStart.getHour())
-                        .withMinute(ohStart.getMinute()), records.get(i).getCreated_at()
-                        .withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
+            //Manage opening hours on a starting day
+            if (recordStartTimeLt.isBefore(ohEnd) && recordStartTimeLt.isAfter(ohStart)) {
+                totalMinutes += Duration.between(recordDateTimeZdt, endOfDay).toMinutes();
+            } else if (recordStartTimeLt.isBefore(ohStart)) {
+                totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
             }
 
-            //todo update comments
-            // Handle any full days between current and next record
-            while (current.isBefore(records.get(i + 1).getCreated_at())) {
-                ZonedDateTime endOfDay = current.withHour(ohEndNextDay.getHour()).withMinute(ohEndNextDay.getMinute());
-                totalMinutes += Duration.between(current, endOfDay).toMinutes();
-                //obtain opening hours for date
-                ohStringNextDay = getOpeningHours(serviceId, records.get(i).getCreated_at().plusDays(1));
-                ohStartNextDay = OpeningHoursParser.getOpeningTime(ohStringNextDay);
-                ohEndNextDay = OpeningHoursParser.getOpeningTime(ohStringNextDay);
-                current = current.plusDays(1).withHour(ohStartNextDay.getHour()).withMinute(ohStartNextDay.getMinute());
-            }
 
-            //todo update comment
-            if (records.get(i + 1).getCreated_at().toLocalTime()
-                    .isBefore(ohEndNextDay) && records.get(i + 1).getCreated_at().toLocalTime().isAfter(ohStartNextDay)) {
-                totalMinutes += Duration.between(current, records.get(i + 1).getCreated_at()).toMinutes();
-            } else if (records.get(i + 1).getCreated_at().toLocalTime().isAfter(ohEndNextDay)) {
-                totalMinutes += Duration.between(current.withHour(ohStartNextDay.getHour()).withMinute(ohStartNextDay.getMinute()),
-                        records.get(i + 1).getCreated_at().withHour(ohEndNextDay.getHour()).withMinute(ohEndNextDay.getMinute())).toMinutes();
-            }
 
-            //Last record
-            RecordEntity lastRecord = records.getLast();
-            //get the Services opening hours start and end times from the data entry start date
-            ohString = getOpeningHours(serviceId, lastRecord.getCreated_at());
-            ohStart = OpeningHoursParser.getOpeningTime(ohString);
-            ohEnd = OpeningHoursParser.getOpeningTime(ohString);
 
-            // Handle partial day on the starting day
-            if (lastRecord.getCreated_at().toLocalTime().isBefore(ohEnd) && lastRecord.getCreated_at().toLocalTime().isAfter(ohStart)) {
-                ZonedDateTime endOfDay = lastRecord.getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd
-                        .getMinute());
-                totalMinutes += Math.min(Duration.between(lastRecord.getCreated_at(), endOfDay).toMinutes(), Duration.between(lastRecord.getCreated_at(), to).toMinutes());
-            } else if (lastRecord.getCreated_at().toLocalTime().isBefore(ohStart)) {
-                totalMinutes += Duration.between(lastRecord.getCreated_at().withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), lastRecord.getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
-            }
-            //todo
-            //Last record next day
-            ZonedDateTime lastRecordNextDay = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
-
-            //get opening hours start and end times for next day
-            String ohLastRecordString = getOpeningHours(serviceId, records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
-            LocalTime ohLastRecordNextDayStart = OpeningHoursParser.getOpeningTime(ohLastRecordString);
-            LocalTime ohLastRecordNextDayEnd = OpeningHoursParser.getOpeningTime(ohLastRecordString);
-
-            // Handle full days between start and end
-            while (lastRecordNextDay.isBefore(to.truncatedTo(ChronoUnit.DAYS))) {
-                ZonedDateTime endOfDay = lastRecordNextDay.withHour(ohLastRecordNextDayEnd.getHour()).withMinute(ohLastRecordNextDayEnd.getMinute());
-                totalMinutes += Duration.between(lastRecordNextDay, endOfDay).toMinutes();
-                current = current.plusDays(1).withHour(ohLastRecordNextDayStart.getHour()).withMinute(ohLastRecordNextDayStart.getMinute());
-            }
-
-            // Handle partial day on the ending day
-            //obtain opening hours for date
-            ohString = getOpeningHours(serviceId, to);
-            ohStart = OpeningHoursParser.getOpeningTime(ohStringNextDay);
-            ohEnd = OpeningHoursParser.getOpeningTime(ohStringNextDay);
-            if (to.toLocalTime().isBefore(ohEnd) && to.toLocalTime().isAfter(ohStart)) {
-                ZonedDateTime startOfDay = to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
-                totalMinutes += Duration.between(startOfDay, to).toMinutes();
-            } else if (to.toLocalTime().isAfter(ohEnd)) {
-                totalMinutes += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
-            }
         }
 
         //total expected time
