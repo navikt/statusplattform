@@ -103,11 +103,8 @@ public class UpTimeCalculator {
             } else if (recordStartTimeLt.isBefore(ohStart)) {
                 totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
             }
-
-
-
-
         }
+
 
         //total expected time
         long expectedUptimeTotal = totalMinutes;
@@ -116,12 +113,6 @@ public class UpTimeCalculator {
         long actualUpTimeTotal = sumOfActualUptime;
 
         uptimeTotal = new UpTimeTotal(actualUpTimeTotal, expectedUptimeTotal);
-    }
-
-    private String getOpeningHours(UUID serviceId, ZonedDateTime zdt) {
-        Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(serviceId);
-        OpeningHoursGroup oHGroupEntity = group.orElseThrow();
-        return OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
     }
 
 
