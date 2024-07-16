@@ -1,6 +1,5 @@
 package nav.statusplattform.core.openingHours;
 
-
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
@@ -104,6 +103,50 @@ public class UpTimeCalculator {
                 totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
             }
         }
+
+        //Last record
+        RecordEntity lastRecord = records.getLast();
+
+        //get the Services opening hours start and end times from the data entry start date
+        ohStart = getOpeningHoursStart(serviceId, lastRecord.getCreated_at());
+        ohEnd = getOpeningHoursEnd(serviceId, lastRecord.getCreated_at());
+
+        //Last Record startTime in localTime
+        LocalTime lastRecordStartTimeLt = lastRecord.getCreated_at().toLocalTime();
+        //Last record StartDateTime in zdt
+        ZonedDateTime lastRecordDateTimeZdt = lastRecord.getCreated_at();
+        //Opening hours Start Time in zdt
+        ZonedDateTime startOfDay = lastRecord.getCreated_at().withHour(ohStart.getHour())
+                .withMinute(ohStart.getMinute());
+        //Opening hours End Time in zdt
+        ZonedDateTime endOfDay = lastRecord.getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
+
+        // Handle partial day on the starting day
+        if (lastRecordStartTimeLt.isBefore(ohEnd) && lastRecordStartTimeLt.isAfter(ohStart)) {
+            totalMinutes += Duration.between(lastRecordDateTimeZdt, endOfDay).toMinutes();
+        } else if (lastRecordStartTimeLt.isBefore(ohStart)) {
+            totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
+        }
+
+        //todo
+        //Last record next day
+        ZonedDateTime current = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1);
+
+        //get the Services opening hours start and end times from the data entry start date
+        ohStart = getOpeningHoursStart(serviceId, current);
+        ohEnd = getOpeningHoursEnd(serviceId, current);
+
+        //add current opening hours start time to the date
+        current = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+
+        // Handle full days between start and end
+        while (current.isBefore(to.truncatedTo(ChronoUnit.DAYS))) {
+            endOfDay = current.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
+            totalMinutes += Duration.between(current, endOfDay).toMinutes();
+            current = current.plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+        }
+
+
 
 
         //total expected time
