@@ -128,24 +128,36 @@ public class UpTimeCalculator {
             totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
         }
 
-        //todo
-        //Last record next day
-        ZonedDateTime current = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1);
 
-        //get the Services opening hours start and end times from the data entry start date
-        ohStart = getOpeningHoursStart(serviceId, current);
-        ohEnd = getOpeningHoursEnd(serviceId, current);
+        //Sum the duration of time that goes over a period of days
+        //Get the opening hours start time
+        ohStart = getOpeningHoursStart(serviceId, records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
+        ohEnd = getOpeningHoursEnd(serviceId, records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
+        //Set it on the current date
+        ZonedDateTime current = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
 
-        //add current opening hours start time to the date
-        current = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
-
-        // Handle full days between start and end
+        // Iterate and calculate the duration of time for full days
         while (current.isBefore(to.truncatedTo(ChronoUnit.DAYS))) {
             endOfDay = current.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
             totalMinutes += Duration.between(current, endOfDay).toMinutes();
+
+            //get the next day and its corresponding opening hours start and end times
+            ohStart = getOpeningHoursStart(serviceId, current.plusDays(1));
+            ohEnd = getOpeningHoursEnd(serviceId, current.plusDays(1));
             current = current.plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
         }
 
+        //partial day on the ending day
+        //obtain opening hours for date
+        ohStart = getOpeningHoursStart(serviceId, to);
+        ohEnd = getOpeningHoursEnd(serviceId, to);
+        if (to.toLocalTime().isBefore(ohEnd) && to.toLocalTime().isAfter(ohStart)) {
+            startOfDay = to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+            totalMinutes += Duration.between(startOfDay, to).toMinutes();
+        } else if (to.toLocalTime().isAfter(ohEnd)) {
+            //add the duration of the last date with its respective opening and ending hours
+            totalMinutes += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
+        }
 
 
 

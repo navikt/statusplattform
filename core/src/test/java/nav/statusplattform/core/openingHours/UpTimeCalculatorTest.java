@@ -68,7 +68,7 @@ public class UpTimeCalculatorTest {
     private final ZonedDateTime minusOneYear = yesterdayDate.minusYears(1);
 
 
-    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("24.12.???? ? 1-5 09:00-14:00", "06.04.2023 ? ? 08:00-17:00", "??.??.???? ? ? 07:00-21:00"));
+    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("24.12.???? ? 1-5 09:00-14:00", "06.04.2023 ? ? 08:00-17:00", "??.??.???? ? ? 07:00-15:00"));
 
     private final ArrayList<String> ruleNames = new ArrayList<>(Arrays.asList("ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
