@@ -52,11 +52,9 @@ public class UpTimeCalculator {
         // Records sorted in chronological order
         List<RecordEntity> records;
 
-        //Throws an exception if no records are found
-        try {
-            records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
-        } catch (Exception e) {
-            throw new RuntimeException("Records not found for serviceId: " + serviceId);
+        records = recordRepository.getRecordsInTimeSpan(serviceId, from, to);
+        if (records.isEmpty()) {
+            throw new NullPointerException("Records not found for serviceId: " + serviceId);
         }
 
         long sumOfActualUptime = 0L; //total time service is up (in minutes)
@@ -65,13 +63,8 @@ public class UpTimeCalculator {
 
         long totalMinutes = 0;
 
-
         //Obtain the first record
         Optional<RecordEntity> firstRecord = records.stream().findFirst();
-
-        if (firstRecord.isEmpty()) {
-            throw new NullPointerException(" First record not found for serviceId: " + serviceId);
-        }
 
         /*Exclude the period of time starting before the requested start date time from the first record as
          this is not to be included as part of the calculation. */

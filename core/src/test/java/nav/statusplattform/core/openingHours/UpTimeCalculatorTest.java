@@ -80,38 +80,6 @@ public class UpTimeCalculatorTest {
     private final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
 
     @Test
-    void testOfToAndFromDates() {
-        //Arrange
-
-        OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
-        rule.setName(ruleNames.getFirst());
-        rule.setRule(rules.get(2));
-        UUID ruleId = openingHoursRepository.save(rule);
-        rule.setId(ruleId);
-        //Add rule to group
-        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(ruleId));
-        UUID groupId = openingHoursRepository.saveGroup(group);
-        group.setId(groupId);
-        //Add service
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        //add group to service
-        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
-
-        //Test of a data entry of null
-        //UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, nullDateEntry, todaysDate);
-
-        //Test of a to from date greater than todays date
-        //Greater than one day
-        //UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusDays(1));
-        //Greater than one minute
-        //UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusMinutes(1));
-        //Greater than one second
-        //UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusSeconds(1));
-    }
-
-    @Test
     void assertionThrownForADateOFNull() {
         //Arrange
         //Add service
@@ -160,15 +128,27 @@ public class UpTimeCalculatorTest {
     @Test
     void recordEntitiesAssertions() {
         //Arrange
+        OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
+        rule.setName(ruleNames.getFirst());
+        rule.setRule(rules.get(2));
+        UUID ruleId = openingHoursRepository.save(rule);
+        rule.setId(ruleId);
+        //Add rule to group
+        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(ruleId));
+        UUID groupId = openingHoursRepository.saveGroup(group);
+        group.setId(groupId);
         //Add service
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
+        //add group to service
+        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
+
         //Assert
-        //Throws an exception if the to and from period is of  yyyy-MM-dd - HH:mm:ss format
-        Throwable exception = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, nullDateEntry, todaysDate));
-        assertEquals("Arguments for DateEntry must consist of a date and time of 'yyyy-MM-dd - HH:mm:ss", exception.getMessage());
+        //Throws an exception if no records are found
+        Throwable exception = assertThrows(NullPointerException.class, () ->
+                upTimeCalculator.calculatePercentageUptime(serviceId, yesterdayDate, todaysDate));
+        assertEquals("Records not found for serviceId: " + serviceId, exception.getMessage());
     }
 
 
