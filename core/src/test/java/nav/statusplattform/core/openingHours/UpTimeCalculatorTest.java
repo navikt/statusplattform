@@ -59,7 +59,9 @@ public class UpTimeCalculatorTest {
     private final ZonedDateTime todaysDate = ZonedDateTime.now();
     private final ZonedDateTime yesterdayDate = todaysDate.minusDays(1);
 
-    private final ZonedDateTime daysBack = todaysDate.minusDays(2);
+    private final ZonedDateTime daysBack = todaysDate.minusDays(0).minusHours(2);
+
+    private final ZonedDateTime daysForward = todaysDate.minusDays(0).plusHours(6);
 
     private final ZonedDateTime twoDaysBack = todaysDate.minusDays(2);
 
@@ -68,11 +70,33 @@ public class UpTimeCalculatorTest {
     private final ZonedDateTime minusOneYear = yesterdayDate.minusYears(1);
 
 
-    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("24.12.???? ? 1-5 09:00-14:00", "06.04.2023 ? ? 08:00-17:00", "??.??.???? ? ? 07:00-15:00"));
+    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("24.12.???? ? 1-5 09:00-14:00", "06.04.2023 ? ? 08:00-17:00", "??.??.???? ? ? 07:00-10:00"));
 
     private final ArrayList<String> ruleNames = new ArrayList<>(Arrays.asList("ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
     private final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
+
+    @Test
+    void testOfToAndFromDates() {
+        //Arrange
+        OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
+        rule.setName(ruleNames.getFirst());
+        rule.setRule(rules.get(2));
+        UUID ruleId = openingHoursRepository.save(rule);
+        rule.setId(ruleId);
+        //Add rule to group
+        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(ruleId));
+        UUID groupId = openingHoursRepository.saveGroup(group);
+        group.setId(groupId);
+        //Add service
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        //add group to service
+        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
+
+
+    }
 
     @Test
     void getTotalOpeningHoursMinutes() {
@@ -119,9 +143,13 @@ public class UpTimeCalculatorTest {
         }
 
 
-        UpTimeTotal uptimeOpenAllTheTime = upTimeCalculator.calculateUpTimeForService(serviceId, daysBack, todaysDate);
-        System.out.println("Actual Up Time: " + uptimeOpenAllTheTime.getSumOfActualUptime());
-        System.out.println("Expected Uptime: " + uptimeOpenAllTheTime.getSumOfExpectedUptime());
+        /*UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, daysBack, todaysDate);
+        System.out.println("Actual Up Time: " + uptimeOpenAllTheTime1.getSumOfActualUptime());
+        System.out.println("Expected Uptime: " + uptimeOpenAllTheTime1.getSumOfExpectedUptime());*/
+
+        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, daysBack, todaysDate);
+        System.out.println("Actual Up Time: " + uptimeOpenAllTheTime2.getSumOfActualUptime());
+        System.out.println("Expected Uptime: " + uptimeOpenAllTheTime2.getSumOfExpectedUptime());
 
     }
 

@@ -121,11 +121,13 @@ public class UpTimeCalculator {
         //Opening hours End Time in zdt
         ZonedDateTime endOfDay = lastRecord.getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
 
-        // Handle partial day on the starting day
-        if (lastRecordStartTimeLt.isBefore(ohEnd) && lastRecordStartTimeLt.isAfter(ohStart)) {
-            totalMinutes += Duration.between(lastRecordDateTimeZdt, endOfDay).toMinutes();
-        } else if (lastRecordStartTimeLt.isBefore(ohStart)) {
-            totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
+        if (lastRecord.getCreated_at().toLocalDate().until(to.toLocalDate(), ChronoUnit.DAYS) > 1) {
+            // Handle partial day on the starting day
+            if (lastRecordStartTimeLt.isBefore(ohEnd) && lastRecordStartTimeLt.isAfter(ohStart)) {
+                totalMinutes += Duration.between(lastRecordDateTimeZdt, endOfDay).toMinutes();
+            } else if (lastRecordStartTimeLt.isBefore(ohStart)) {
+                totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
+            }
         }
 
 
@@ -158,8 +160,6 @@ public class UpTimeCalculator {
             //add the duration of the last date with its respective opening and ending hours
             totalMinutes += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
         }
-
-
 
         //total expected time
         long expectedUptimeTotal = totalMinutes;
