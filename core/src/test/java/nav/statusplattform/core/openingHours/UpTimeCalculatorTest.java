@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 public class UpTimeCalculatorTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -47,7 +50,7 @@ public class UpTimeCalculatorTest {
 
     private final UpTimeCalculator upTimeCalculator = new UpTimeCalculator(dbContext);
 
-    private LocalDate nullDateEntry = null;
+    private ZonedDateTime nullDateEntry = null;
 
     private LocalDate dateGreaterThaCurrentDate = LocalDate.of(2025, 3, 1);
 
@@ -79,6 +82,7 @@ public class UpTimeCalculatorTest {
     @Test
     void testOfToAndFromDates() {
         //Arrange
+
         OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
         rule.setName(ruleNames.getFirst());
         rule.setRule(rules.get(2));
@@ -95,8 +99,78 @@ public class UpTimeCalculatorTest {
         //add group to service
         openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
 
+        //Test of a data entry of null
+        //UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, nullDateEntry, todaysDate);
+
+        //Test of a to from date greater than todays date
+        //Greater than one day
+        //UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusDays(1));
+        //Greater than one minute
+        //UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusMinutes(1));
+        //Greater than one second
+        //UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusSeconds(1));
+    }
+
+    @Test
+    void assertionThrownForADateOFNull() {
+        //Arrange
+        //Add service
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        //Assert
+        //Throws an exception if the to and from period is of  yyyy-MM-dd - HH:mm:ss format
+        Throwable exception = assertThrows(IllegalStateException.class, () ->
+                upTimeCalculator.calculateUpTimeForService(serviceId, nullDateEntry, todaysDate));
+        assertEquals("Arguments for DateEntry must consist of a date and time of 'yyyy-MM-dd - HH:mm:ss", exception.getMessage());
+    }
+
+    @Test
+    void assertionThrownForDatEntryGreaterThanCurrentDate() {
+        //Arrange
+        //Add service
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        //Assert
+        //Throws an exception if the date entries are greater than the previousRecordCurrentDay date
+
+        //Greater than one day
+        Throwable exceptionOneDay = assertThrows(IllegalStateException.class, () ->
+                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusDays(1)));
+        assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionOneDay.getMessage());
+
+        //Greater than one hour
+        Throwable exceptionOneHour = assertThrows(IllegalStateException.class, () ->
+                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusHours(1)));
+        assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionOneHour.getMessage());
+
+        //Greater than two minutes
+        Throwable exceptionTwoMinutes = assertThrows(IllegalStateException.class, () ->
+                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusMinutes(2)));
+        assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionTwoMinutes.getMessage());
+
+        //Greater than three seconds
+        Throwable exceptionThreeSeconds = assertThrows(IllegalStateException.class, () ->
+                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusSeconds(3)));
+        assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionThreeSeconds.getMessage());
 
     }
+
+    @Test
+    void recordEntitiesAssertions() {
+        //Arrange
+        //Add service
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        //Assert
+        //Throws an exception if the to and from period is of  yyyy-MM-dd - HH:mm:ss format
+        Throwable exception = assertThrows(IllegalStateException.class, () ->
+                upTimeCalculator.calculateUpTimeForService(serviceId, nullDateEntry, todaysDate));
+        assertEquals("Arguments for DateEntry must consist of a date and time of 'yyyy-MM-dd - HH:mm:ss", exception.getMessage());
+    }
+
 
     @Test
     void getTotalOpeningHoursMinutes() {

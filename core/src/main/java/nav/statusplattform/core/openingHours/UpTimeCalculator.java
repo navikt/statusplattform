@@ -32,14 +32,14 @@ public class UpTimeCalculator {
     }
 
 
-    public UpTimeTotal calculateUpTimeForService(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+    public UpTimeTotal calculateUpTimeForService(UUID serviceId, ZonedDateTime from, ZonedDateTime to) throws IllegalStateException {
 
-        //checks for yyyy-MM-dd
+        //Throws an exception if the to and from period is of  yyyy-MM-dd - HH:mm:ss format
         if (from == null || to == null) {
-            throw new IllegalStateException("Arguments for DateEntry must have a format pattern of 'yyyy-MM-dd'");
+            throw new IllegalStateException("Arguments for DateEntry must consist of a date and time of 'yyyy-MM-dd - HH:mm:ss");
         }
 
-        //checks if the date entries are greater than the previousRecordCurrentDay date
+        //Throws an exception if the date entries are greater than the previousRecordCurrentDay date
         if (from.isBefore(ZonedDateTime.now()) && to.isAfter(ZonedDateTime.now())) {
             throw new IllegalStateException("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time");
         }
