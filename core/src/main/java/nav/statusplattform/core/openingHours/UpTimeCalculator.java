@@ -51,8 +51,8 @@ public class UpTimeCalculator {
             throw new NullPointerException("Records not found for serviceId: " + serviceId);
         }
 
-        long sumOfActualUptime = 0L; //total time service is up (in minutes)
-        long sumOfExpectedUptime = 0L; //total sum of entire time duration
+        long sumOfActualUptime = 0L; //total actual uptime
+        long sumOfExpectedUptime = 0L; //total expected time
 
         //Obtain the first record
         Optional<RecordEntity> firstRecord = records.stream().findFirst();
@@ -114,7 +114,6 @@ public class UpTimeCalculator {
             }
         }
 
-
         //Sum the duration of time that goes over a period of days
         //Get the opening hours start time
         ohStart = getOpeningHoursStart(serviceId, records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
@@ -146,13 +145,8 @@ public class UpTimeCalculator {
             sumOfExpectedUptime += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
         }
 
-        //total expected time
-        long expectedUptimeTotal = sumOfExpectedUptime;
-
-        //total actual uptime
-        long actualUpTimeTotal = sumOfActualUptime;
-
-        uptimeTotal = new UpTimeTotal(actualUpTimeTotal, expectedUptimeTotal);
+        //Actual and Expected Uptime totals
+        uptimeTotal = new UpTimeTotal(sumOfActualUptime, sumOfExpectedUptime);
     }
 
 
