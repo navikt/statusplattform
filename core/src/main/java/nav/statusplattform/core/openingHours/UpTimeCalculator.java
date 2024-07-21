@@ -2,20 +2,14 @@ package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.RecordEntity;
-import nav.statusplattform.core.enums.ServiceStatus;
 
 import nav.statusplattform.core.repositories.OpeningHoursRepository;
 import nav.statusplattform.core.repositories.RecordRepository;
 import org.fluentjdbc.DbContext;
 
-
-import javax.swing.*;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public class UpTimeCalculator {
@@ -114,7 +108,7 @@ public class UpTimeCalculator {
         //Opening hours End Time in zdt
         ZonedDateTime endOfDay = lastRecord.getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
 
-        if (lastRecord.getCreated_at().toLocalDate().until(to.toLocalDate(), ChronoUnit.DAYS) > 1) {
+        if ((zonedDateTimeDifference(lastRecord.getCreated_at(), to) > 1)) {
             // Handle partial day on the starting day
             if (lastRecordStartTimeLt.isBefore(ohEnd) && lastRecordStartTimeLt.isAfter(ohStart)) {
                 totalMinutes += Duration.between(lastRecordDateTimeZdt, endOfDay).toMinutes();
@@ -177,6 +171,11 @@ public class UpTimeCalculator {
         OpeningHoursGroup oHGroupEntity = group.orElseThrow();
         String ohString = OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
         return OpeningHoursParser.getClosingTime(ohString);
+    }
+
+    static long zonedDateTimeDifference(ZonedDateTime d1, ZonedDateTime d2) {
+        System.out.println(ChronoUnit.DAYS.between(d1, d2));
+        return ChronoUnit.DAYS.between(d1, d2);
     }
 
 

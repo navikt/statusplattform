@@ -6,14 +6,18 @@ import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.repositories.*;
+import org.assertj.core.internal.bytebuddy.implementation.bytecode.Addition;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,17 +56,24 @@ public class UpTimeCalculatorTest {
 
     private ZonedDateTime nullDateEntry = null;
 
-    private LocalDate dateGreaterThaCurrentDate = LocalDate.of(2025, 3, 1);
+    private final ZonedDateTime to = ZonedDateTime.now();
 
-    private LocalDate normalFridayStartOfMonth = LocalDate.of(2024, 3, 1);
-    private LocalDate thirdOfMarch = LocalDate.of(2024, 3, 3);
-    private LocalDate normalFridayEndOfMonth = LocalDate.of(2024, 3, 30);
-    private LocalDate weekendEndOfMonth = LocalDate.of(2024, 3, 31);
+    private final ZonedDateTime toMinusTwoHours = to.minusHours(2);
 
     private final ZonedDateTime todaysDate = ZonedDateTime.now();
     private final ZonedDateTime yesterdayDate = todaysDate.minusDays(1);
 
-    private final ZonedDateTime daysBack = todaysDate.minusDays(0).minusHours(2);
+    private final ZonedDateTime backOneDay = ZonedDateTime.now().minusDays(1);
+
+    private final ZonedDateTime fiveDaysBack = todaysDate.minusDays(5);
+
+    private final ZonedDateTime daysBackMinusTwohours = todaysDate.minusDays(0).minusHours(2);
+
+    private final ZonedDateTime beforeOpeningHoursEnd = todaysDate.with(LocalTime.of(6, 30));
+
+    private final ZonedDateTime beforeOpeningHoursStart = todaysDate.with(LocalTime.of(6, 30).minusHours(4));
+
+    private final ZonedDateTime recordBeforeOpeningHours = todaysDate.with(LocalTime.of(6, 30).minusHours(2));
 
     private final ZonedDateTime daysForward = todaysDate.minusDays(0).plusHours(6);
 
@@ -73,7 +84,7 @@ public class UpTimeCalculatorTest {
     private final ZonedDateTime minusOneYear = yesterdayDate.minusYears(1);
 
 
-    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("24.12.???? ? 1-5 09:00-14:00", "06.04.2023 ? ? 08:00-17:00", "??.??.???? ? ? 07:00-10:00"));
+    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("24.12.???? ? 1-5 09:00-14:00", "06.04.2023 ? ? 08:00-17:00", "??.??.???? ? ? 07:00-17:00"));
 
     private final ArrayList<String> ruleNames = new ArrayList<>(Arrays.asList("ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
@@ -122,7 +133,6 @@ public class UpTimeCalculatorTest {
         Throwable exceptionThreeSeconds = assertThrows(IllegalStateException.class, () ->
                 upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusSeconds(3)));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionThreeSeconds.getMessage());
-
     }
 
     @Test
@@ -153,13 +163,12 @@ public class UpTimeCalculatorTest {
 
 
     @Test
-    void getTotalOpeningHoursMinutes() {
+    void getTotalOpeningHoursMinutesForDurationUnderADay() {
         //Arrange
-
         //Add rule
         OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
         rule.setName(ruleNames.getFirst());
-        rule.setRule(rules.get(2));
+        rule.setRule(rules.get(2)); //"??.??.???? ? ? 07:00-17:00" open all days
         UUID ruleId = openingHoursRepository.save(rule);
         rule.setId(ruleId);
         //Add rule to group
@@ -173,37 +182,101 @@ public class UpTimeCalculatorTest {
         //add group to service
         openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
 
-
+        //Add record
         List<RecordEntity> records = generateRandomizedRecordEntities(service, 1);
         records.forEach(record -> {
             int min = 1;
             int max = 1;
             ZonedDateTime now = ZonedDateTime.now();
             int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
-            System.out.println("numberOfDays: " + numberOfDays);
-            record.setCreated_at(daysBack);
+            record.setCreated_at(daysBackMinusTwohours);
             record.setServiceId(service.getId());
             record.setStatus(ServiceStatus.OK);
             record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
-            System.out.println("createdAt: " + record.getCreated_at());
-            System.out.println("daysBackDate " + daysBack.toLocalDate());
-            System.out.println("daysBackTime " + daysBack.toLocalTime());
-            System.out.println("todays date " + now.toLocalDate());
-            System.out.println("todays time " + now.toLocalTime());
         });
         List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(0);
         for (RecordEntity r : retrievedRecordsBefore) {
             System.out.println(r.getStatus());
+            System.out.println(r.getCreated_at());
         }
 
+        //calculate the number of minutes
+        LocalTime openingTime = OpeningHoursParser.getOpeningTime(rules.get(2).substring(15));
+        LocalTime closingTime = OpeningHoursParser.getClosingTime(rules.get(2).substring(15));
 
-        /*UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, daysBack, todaysDate);
-        System.out.println("Actual Up Time: " + uptimeOpenAllTheTime1.getSumOfActualUptime());
-        System.out.println("Expected Uptime: " + uptimeOpenAllTheTime1.getSumOfExpectedUptime());*/
 
-        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, daysBack, todaysDate);
-        System.out.println("Actual Up Time: " + uptimeOpenAllTheTime2.getSumOfActualUptime());
-        System.out.println("Expected Uptime: " + uptimeOpenAllTheTime2.getSumOfExpectedUptime());
+        long totalUpTimeMinutes1 = getDurationInMinutes(openingTime, closingTime, to);
+
+        long totalUpTimeMinutes2 = getDurationInMinutes(openingTime, closingTime, to);
+
+        //Act
+        // within opening hours
+        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, toMinusTwoHours, to);
+
+        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, beforeOpeningHoursStart, to);
+
+        //Assert
+        //Record under a day within opening hours end time during working hours
+        Assertions.assertEquals(uptimeOpenAllTheTime1.getSumOfExpectedUptime(), totalUpTimeMinutes1);
+
+        //Assertions starts before working hours
+        Assertions.assertEquals(uptimeOpenAllTheTime2.getSumOfExpectedUptime(), totalUpTimeMinutes2);
+    }
+
+    @Test
+    void getTotalOpeningHoursMinutesForDurationOverSeveralDays() {
+        //Arrange
+        //Add rule
+        OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
+        rule.setName(ruleNames.getFirst());
+        rule.setRule(rules.get(2)); //"??.??.???? ? ? 07:00-17:00" open all days
+        UUID ruleId = openingHoursRepository.save(rule);
+        rule.setId(ruleId);
+        //Add rule to group
+        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(ruleId));
+        UUID groupId = openingHoursRepository.saveGroup(group);
+        group.setId(groupId);
+        //Add service
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        //add group to service
+        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
+
+        //Add record
+        List<RecordEntity> records = generateRandomizedRecordEntities(service, 1);
+        records.forEach(record -> {
+            int min = 1;
+            int max = 1;
+            ZonedDateTime now = ZonedDateTime.now();
+            int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
+            record.setCreated_at(fiveDaysBack);
+            record.setServiceId(service.getId());
+            record.setStatus(ServiceStatus.OK);
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+        List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(0);
+        for (RecordEntity r : retrievedRecordsBefore) {
+            System.out.println(r.getStatus());
+            System.out.println(r.getCreated_at());
+        }
+
+        //calculate the number of minutes
+        LocalTime openingTime = OpeningHoursParser.getOpeningTime(rules.get(2).substring(15));
+        LocalTime closingTime = OpeningHoursParser.getClosingTime(rules.get(2).substring(15));
+
+
+        long totalUpTimeMinutes1 = getDurationInMinutes(openingTime, closingTime, backOneDay);
+
+        //Act
+        // within opening hours
+        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, fiveDaysBack, backOneDay);
+
+        //Assert
+        //Record under a day within opening hours end time during working hours
+        //Assertions.assertEquals(uptimeOpenAllTheTime1.getSumOfExpectedUptime(), totalUpTimeMinutes1);
+        System.out.println("total uptime minutes " + uptimeOpenAllTheTime1.getSumOfExpectedUptime());
+
 
     }
 
@@ -218,5 +291,18 @@ public class UpTimeCalculatorTest {
         return records;
     }
 
+    private long getDurationInMinutes(LocalTime openingTime, LocalTime closingTime, ZonedDateTime durationEnd) {
+        Long totalUpTimeMinutes = 0L;
+
+        if (durationEnd.toLocalTime().isBefore(closingTime) && durationEnd.toLocalTime().isAfter(openingTime)) {
+            ZonedDateTime startOfDay = durationEnd.withHour(openingTime.getHour()).withMinute(openingTime.getMinute());
+            totalUpTimeMinutes = Duration.between(startOfDay, durationEnd).toMinutes();
+        } else if (durationEnd.toLocalTime().isAfter(closingTime)) {
+            //add the duration of the last date with its respective opening and ending hours
+            totalUpTimeMinutes = Duration.between(durationEnd.withHour(openingTime.getHour()).withMinute(openingTime.getMinute()), durationEnd.withHour(closingTime.getHour()).withMinute(closingTime.getMinute())).toMinutes();
+        }
+        return totalUpTimeMinutes;
+
+    }
 
 }
