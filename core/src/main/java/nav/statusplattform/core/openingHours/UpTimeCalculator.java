@@ -53,9 +53,6 @@ public class UpTimeCalculator {
 
         long sumOfActualUptime = 0L; //total time service is up (in minutes)
         long sumOfExpectedUptime = 0L; //total sum of entire time duration
-        long totalOHMinutesBetweenPeriods; //total time duration sum between each record
-
-        long totalMinutes = 0;
 
         //Obtain the first record
         Optional<RecordEntity> firstRecord = records.stream().findFirst();
@@ -85,9 +82,9 @@ public class UpTimeCalculator {
 
             //Manage opening hours on a starting day
             if (recordStartTimeLt.isBefore(ohEnd) && recordStartTimeLt.isAfter(ohStart)) {
-                totalMinutes += Duration.between(recordDateTimeZdt, endOfDay).toMinutes();
+                sumOfExpectedUptime += Duration.between(recordDateTimeZdt, endOfDay).toMinutes();
             } else if (recordStartTimeLt.isBefore(ohStart)) {
-                totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
+                sumOfExpectedUptime += Duration.between(startOfDay, endOfDay).toMinutes();
             }
         }
 
@@ -111,9 +108,9 @@ public class UpTimeCalculator {
         if ((zonedDateTimeDifference(lastRecord.getCreated_at(), to) > 1)) {
             // Handle partial day on the starting day
             if (lastRecordStartTimeLt.isBefore(ohEnd) && lastRecordStartTimeLt.isAfter(ohStart)) {
-                totalMinutes += Duration.between(lastRecordDateTimeZdt, endOfDay).toMinutes();
+                sumOfExpectedUptime += Duration.between(lastRecordDateTimeZdt, endOfDay).toMinutes();
             } else if (lastRecordStartTimeLt.isBefore(ohStart)) {
-                totalMinutes += Duration.between(startOfDay, endOfDay).toMinutes();
+                sumOfExpectedUptime += Duration.between(startOfDay, endOfDay).toMinutes();
             }
         }
 
@@ -128,7 +125,8 @@ public class UpTimeCalculator {
         // Iterate and calculate the duration of time for full days
         while (current.isBefore(to.truncatedTo(ChronoUnit.DAYS))) {
             endOfDay = current.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
-            totalMinutes += Duration.between(current, endOfDay).toMinutes();
+            sumOfExpectedUptime += Duration.between(current, endOfDay).toMinutes();
+
 
             //get the next day and its corresponding opening hours start and end times
             ohStart = getOpeningHoursStart(serviceId, current.plusDays(1));
@@ -142,14 +140,14 @@ public class UpTimeCalculator {
         ohEnd = getOpeningHoursEnd(serviceId, to);
         if (to.toLocalTime().isBefore(ohEnd) && to.toLocalTime().isAfter(ohStart)) {
             startOfDay = to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
-            totalMinutes += Duration.between(startOfDay, to).toMinutes();
+            sumOfExpectedUptime += Duration.between(startOfDay, to).toMinutes();
         } else if (to.toLocalTime().isAfter(ohEnd)) {
             //add the duration of the last date with its respective opening and ending hours
-            totalMinutes += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
+            sumOfExpectedUptime += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
         }
 
         //total expected time
-        long expectedUptimeTotal = totalMinutes;
+        long expectedUptimeTotal = sumOfExpectedUptime;
 
         //total actual uptime
         long actualUpTimeTotal = sumOfActualUptime;
@@ -174,7 +172,6 @@ public class UpTimeCalculator {
     }
 
     static long zonedDateTimeDifference(ZonedDateTime d1, ZonedDateTime d2) {
-        System.out.println(ChronoUnit.DAYS.between(d1, d2));
         return ChronoUnit.DAYS.between(d1, d2);
     }
 
