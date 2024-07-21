@@ -2,6 +2,7 @@ package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.RecordEntity;
+import nav.statusplattform.core.enums.ServiceStatus;
 
 import nav.statusplattform.core.repositories.OpeningHoursRepository;
 import nav.statusplattform.core.repositories.RecordRepository;
@@ -90,6 +91,10 @@ public class UpTimeCalculator {
 
         //Last record
         RecordEntity lastRecord = records.getLast();
+        boolean isValidUptime = false;
+        if (lastRecord.getStatus().equals(ServiceStatus.OK)) {
+            isValidUptime = true;
+        }
 
         //get the Services opening hours start and end times from the data entry start date
         ohStart = getOpeningHoursStart(serviceId, lastRecord.getCreated_at());
@@ -143,6 +148,10 @@ public class UpTimeCalculator {
         } else if (to.toLocalTime().isAfter(ohEnd)) {
             //add the duration of the last date with its respective opening and ending hours
             sumOfExpectedUptime += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
+        }
+
+        if (isValidUptime) {
+            sumOfActualUptime += sumOfExpectedUptime;
         }
 
         //Actual and Expected Uptime totals
