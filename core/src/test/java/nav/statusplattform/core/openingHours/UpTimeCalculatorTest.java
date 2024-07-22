@@ -157,7 +157,7 @@ public class UpTimeCalculatorTest {
         //Assert
         //Throws an exception if no records are found
         Throwable exception = assertThrows(NullPointerException.class, () ->
-                upTimeCalculator.calculatePercentageUptime(serviceId, yesterdayDate, todaysDate));
+                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate));
         assertEquals("Records not found for serviceId: " + serviceId, exception.getMessage());
     }
 
@@ -276,6 +276,7 @@ public class UpTimeCalculatorTest {
         //Record under a day within opening hours end time during working hours
         //Assertions.assertEquals(uptimeOpenAllTheTime1.getSumOfExpectedUptime(), totalUpTimeMinutes1);
         System.out.println("total uptime minutes " + uptimeOpenAllTheTime1.getSumOfExpectedUptime());
+        System.out.println("actual uptime minutes " + uptimeOpenAllTheTime1.getSumOfActualUptime());
 
 
     }
