@@ -83,7 +83,7 @@ public class UpTimeCalculator {
                     .withMinute(ohStart.getMinute());
             //Opening hours End Time in zdt
             ZonedDateTime endOfDay = records.get(i).getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
-
+            boolean isValidUptime = records.get(i).getStatus().equals(ServiceStatus.OK);
 
             //Manage opening hours on the starting day
             if ((zonedDateTimeDifference(currentRecordZdt, nextRecordZdt) > 1)) {
@@ -96,10 +96,10 @@ public class UpTimeCalculator {
 
             //Sum the duration of time that goes over a period of days
             //Get the opening hours start time
-            ohStart = getOpeningHoursStart(serviceId, records.get(i).getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
-            ohEnd = getOpeningHoursEnd(serviceId, records.get(i).getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
+            ohStart = getOpeningHoursStart(serviceId, currentRecordZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1));
+            ohEnd = getOpeningHoursEnd(serviceId, currentRecordZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1));
             //Set it on the current date
-            currentRecordZdt = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+            currentRecordZdt = currentRecordZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
 
             // Iterate and calculate the duration of time for full days
             while (currentRecordZdt.isBefore(nextRecordZdt.truncatedTo(ChronoUnit.DAYS))) {
@@ -116,7 +116,7 @@ public class UpTimeCalculator {
             //partial day on the ending day
             //obtain opening hours for date
             ohStart = getOpeningHoursStart(serviceId, nextRecordZdt);
-            ohEnd = getOpeningHoursEnd(serviceId, to);
+            ohEnd = getOpeningHoursEnd(serviceId, nextRecordZdt);
             if (nextRecordLt.isBefore(ohEnd) && nextRecordLt.isAfter(ohStart)) {
                 startOfDay = nextRecordZdt.withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
                 sumOfExpectedUptime += Duration.between(startOfDay, nextRecordZdt).toMinutes();
@@ -127,7 +127,9 @@ public class UpTimeCalculator {
                                 nextRecordZdt.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
             }
 
-
+            if (isValidUptime) {
+                sumOfActualUptime += sumOfExpectedUptime;
+            }
         }
 
         //Last record
@@ -159,16 +161,15 @@ public class UpTimeCalculator {
 
         //Sum the duration of time that goes over a period of days
         //Get the opening hours start time
-        ohStart = getOpeningHoursStart(serviceId, records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
-        ohEnd = getOpeningHoursEnd(serviceId, records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1));
+        ohStart = getOpeningHoursStart(serviceId, lastRecordDateTimeZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1));
+        ohEnd = getOpeningHoursEnd(serviceId, lastRecordDateTimeZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1));
         //Set it on the current date
-        ZonedDateTime current = records.getLast().getCreated_at().truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+        ZonedDateTime current = lastRecordDateTimeZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
 
         // Iterate and calculate the duration of time for full days
         while (current.isBefore(to.truncatedTo(ChronoUnit.DAYS))) {
             endOfDay = current.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
             sumOfExpectedUptime += Duration.between(current, endOfDay).toMinutes();
-
 
             //get the next day and its corresponding opening hours start and end times
             ohStart = getOpeningHoursStart(serviceId, current.plusDays(1));
@@ -195,7 +196,6 @@ public class UpTimeCalculator {
         //Actual and Expected Uptime totals
         uptimeTotal = new UpTimeTotal(sumOfActualUptime, sumOfExpectedUptime);
     }
-
 
     //get the Services opening hours start and end times from the data entry start date
     private LocalTime getOpeningHoursStart(UUID serviceId, ZonedDateTime zdt) {
