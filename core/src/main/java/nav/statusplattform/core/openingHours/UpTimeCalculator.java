@@ -43,7 +43,7 @@ public class UpTimeCalculator {
         return uptimeTotal.getUptimeTotals();
     }
 
-    public void calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+    private void calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
         // Records sorted in chronological order
         List<RecordEntity> records;
 
@@ -87,6 +87,8 @@ public class UpTimeCalculator {
             } else if (recordStartTimeLt.isBefore(ohStart)) {
                 sumOfExpectedUptime += Duration.between(startOfDay, endOfDay).toMinutes();
             }
+
+
         }
 
         //Last record
@@ -177,8 +179,6 @@ public class UpTimeCalculator {
     static long zonedDateTimeDifference(ZonedDateTime d1, ZonedDateTime d2) {
         return ChronoUnit.DAYS.between(d1, d2);
     }
-
-
 }
 
 //Returns the actual and expected uptimes
