@@ -18,7 +18,7 @@ public class UpTimeCalculator {
     private final RecordRepository recordRepository;
     private final OpeningHoursRepository openingHoursRepository;
 
-    static UpTimeTotal uptimeTotal;
+    private UpTimeTotal uptimeTotal;
 
     public UpTimeCalculator(DbContext context) {
 
@@ -78,10 +78,10 @@ public class UpTimeCalculator {
             ZonedDateTime fromCurrentCreatedAtZdt = records.get(i).getCreated_at();
             //Next record StartDateTime in zdt
             ZonedDateTime toNextCreatedAtZdt = records.get(i + 1).getCreated_at();
-            //Opening hours Start Time in zdt
+            //Retrieve the opening hours Start Time
             ZonedDateTime startOfDay = records.get(i).getCreated_at().withHour(ohStart.getHour())
                     .withMinute(ohStart.getMinute());
-            //Opening hours End Time in zdt
+            //Retrieve the opening hours End Time
             ZonedDateTime endOfDay = records.get(i).getCreated_at().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
 
             //Check if the current record is of uptime; if so, sum it up to actual uptime.
@@ -168,20 +168,20 @@ public class UpTimeCalculator {
 
     private long sumFullDays(UUID serviceId, ZonedDateTime fromCurrentCreatedAtZdt, ZonedDateTime toNextCreatedAtZdt) {
         //Sum the duration of time that goes over a period of days
-        //Get the opening hours start time
+        //Get the opening hours start time and end times
         LocalTime ohStart = getOpeningHoursStart(serviceId, fromCurrentCreatedAtZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1));
         LocalTime ohEnd = getOpeningHoursEnd(serviceId, fromCurrentCreatedAtZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1));
         //Set it on the current date
         fromCurrentCreatedAtZdt = fromCurrentCreatedAtZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
 
-        Long expectedUptimeTotal = 0L;
+        long expectedUptimeTotal = 0L;
 
         // Iterate and calculate the duration of time for full days
         while (fromCurrentCreatedAtZdt.isBefore(toNextCreatedAtZdt.truncatedTo(ChronoUnit.DAYS))) {
             ZonedDateTime endOfDay = fromCurrentCreatedAtZdt.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
             expectedUptimeTotal += Duration.between(fromCurrentCreatedAtZdt, endOfDay).toMinutes();
 
-            //get the next day and its corresponding opening hours start and end times
+            //get the next day and its corresponding opening hours
             ohStart = getOpeningHoursStart(serviceId, fromCurrentCreatedAtZdt.plusDays(1));
             ohEnd = getOpeningHoursEnd(serviceId, fromCurrentCreatedAtZdt.plusDays(1));
             fromCurrentCreatedAtZdt = fromCurrentCreatedAtZdt.plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
