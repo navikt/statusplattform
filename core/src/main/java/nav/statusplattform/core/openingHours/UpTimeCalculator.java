@@ -191,18 +191,19 @@ public class UpTimeCalculator {
 
     //get the Services opening hours start and end times from the data entry start date
     private LocalTime getOpeningHoursStart(UUID serviceId, ZonedDateTime zdt) {
-        Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(serviceId);
-        OpeningHoursGroup oHGroupEntity = group.orElseThrow();
-        String ohString = OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
-        return OpeningHoursParser.getOpeningTime(ohString);
+        return OpeningHoursParser.getOpeningTime(openingHoursToString(serviceId, zdt));
     }
 
     private LocalTime getOpeningHoursEnd(UUID serviceId, ZonedDateTime zdt) {
+        return OpeningHoursParser.getClosingTime(openingHoursToString(serviceId, zdt));
+    }
+
+    private String openingHoursToString(UUID serviceId, ZonedDateTime zdt) {
         Optional<OpeningHoursGroup> group = openingHoursRepository.getOHGroupForService(serviceId);
         OpeningHoursGroup oHGroupEntity = group.orElseThrow();
-        String ohString = OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
-        return OpeningHoursParser.getClosingTime(ohString);
+        return OpeningHoursParser.getOpeninghours(zdt.toLocalDate(), oHGroupEntity);
     }
+
 
     static long zonedDateTimeDifference(ZonedDateTime d1, ZonedDateTime d2) {
         return ChronoUnit.DAYS.between(d1, d2);
