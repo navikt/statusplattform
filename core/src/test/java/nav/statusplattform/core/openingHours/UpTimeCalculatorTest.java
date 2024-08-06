@@ -6,7 +6,6 @@ import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.repositories.*;
-import org.assertj.core.internal.bytebuddy.implementation.bytecode.Addition;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -100,7 +98,7 @@ public class UpTimeCalculatorTest {
         //Assert
         //Throws an exception if the to and from period is of  yyyy-MM-dd - HH:mm:ss format
         Throwable exception = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, nullDateEntry, todaysDate));
+                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(nullDateEntry, todaysDate)));
         assertEquals("Arguments for DateEntry must consist of a date and time of 'yyyy-MM-dd - HH:mm:ss", exception.getMessage());
     }
 
@@ -116,22 +114,22 @@ public class UpTimeCalculatorTest {
 
         //Greater than one day
         Throwable exceptionOneDay = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusDays(1)));
+                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusDays(1))));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionOneDay.getMessage());
 
         //Greater than one hour
         Throwable exceptionOneHour = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusHours(1)));
+                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusHours(1))));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionOneHour.getMessage());
 
         //Greater than two minutes
         Throwable exceptionTwoMinutes = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusMinutes(2)));
+                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusMinutes(2))));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionTwoMinutes.getMessage());
 
         //Greater than three seconds
         Throwable exceptionThreeSeconds = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate.plusSeconds(3)));
+                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusSeconds(3))));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionThreeSeconds.getMessage());
     }
 
@@ -157,7 +155,7 @@ public class UpTimeCalculatorTest {
         //Assert
         //Throws an exception if no records are found
         Throwable exception = assertThrows(NullPointerException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, yesterdayDate, todaysDate));
+                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate)));
         assertEquals("Records not found for serviceId: " + serviceId, exception.getMessage());
     }
 
@@ -211,9 +209,9 @@ public class UpTimeCalculatorTest {
 
         //Act
         // within opening hours
-        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, toMinusTwoHours, to);
+        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(toMinusTwoHours, to));
 
-        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, beforeOpeningHoursStart, to);
+        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(beforeOpeningHoursStart, to));
 
         //Assert
         //Record under a day within opening hours end time during working hours
@@ -270,7 +268,7 @@ public class UpTimeCalculatorTest {
 
         //Act
         // within opening hours
-        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, fiveDaysBack, backOneDay);
+        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(fiveDaysBack, backOneDay));
 
         //Assert
         //Record under a day within opening hours end time during working hours

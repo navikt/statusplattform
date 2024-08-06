@@ -18,8 +18,6 @@ public class UpTimeCalculator {
     private final RecordRepository recordRepository;
     private final OpeningHoursRepository openingHoursRepository;
 
-    private UpTimeTotal uptimeTotal;
-
     public UpTimeCalculator(DbContext context) {
 
         this.recordRepository = new RecordRepository(context);
@@ -27,23 +25,9 @@ public class UpTimeCalculator {
     }
 
 
-    public UpTimeTotal calculateUpTimeForService(UUID serviceId, ZonedDateTime from, ZonedDateTime to) throws IllegalStateException {
-
-        //Throws an exception if the to and from period is of  yyyy-MM-dd - HH:mm:ss format
-        if (from == null || to == null) {
-            throw new IllegalStateException("Arguments for DateEntry must consist of a date and time of 'yyyy-MM-dd - HH:mm:ss");
-        }
-
-        //Throws an exception if the date entries are greater than the previousRecordCurrentDay date
-        if (from.isBefore(ZonedDateTime.now()) && to.isAfter(ZonedDateTime.now())) {
-            throw new IllegalStateException("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time");
-        }
-        calculatePercentageUptime(serviceId, from, to);
-
-        return uptimeTotal.getUptimeTotals();
-    }
-
-    private void calculatePercentageUptime(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+    public UpTimeTotal calculateUpTimeForService(UUID serviceId, TimeSpan timeSpan) throws IllegalStateException {
+        ZonedDateTime from = timeSpan.from();
+        ZonedDateTime to = timeSpan.to();
         // Records sorted in chronological order
         List<RecordEntity> records;
 
@@ -163,7 +147,7 @@ public class UpTimeCalculator {
         }
 
         //Actual and Expected Uptime totals
-        uptimeTotal = new UpTimeTotal(sumOfActualUptime, sumOfExpectedUptime);
+        return new UpTimeTotal(sumOfActualUptime, sumOfExpectedUptime);
     }
 
     private long sumFullDays(UUID serviceId, ZonedDateTime fromCurrentCreatedAtZdt, ZonedDateTime toNextCreatedAtZdt) {
@@ -228,9 +212,6 @@ final class UpTimeTotal {
         return sumOfExpectedUptime;
     }
 
-    public UpTimeTotal getUptimeTotals() {
-        return new UpTimeTotal(getSumOfActualUptime(), getSumOfExpectedUptime());
-    }
 }
 
 
