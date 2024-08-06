@@ -202,9 +202,7 @@ public class UpTimeCalculatorTest {
         LocalTime openingTime = OpeningHoursParser.getOpeningTime(rules.get(2).substring(15));
         LocalTime closingTime = OpeningHoursParser.getClosingTime(rules.get(2).substring(15));
 
-
         long totalUpTimeMinutes1 = getDurationInMinutes(openingTime, closingTime, to);
-
         long totalUpTimeMinutes2 = getDurationInMinutes(openingTime, closingTime, to);
 
         //Act
@@ -263,7 +261,6 @@ public class UpTimeCalculatorTest {
         LocalTime openingTime = OpeningHoursParser.getOpeningTime(rules.get(2).substring(15));
         LocalTime closingTime = OpeningHoursParser.getClosingTime(rules.get(2).substring(15));
 
-
         long totalUpTimeMinutes1 = getDurationInMinutes(openingTime, closingTime, backOneDay);
 
         //Act
@@ -275,8 +272,6 @@ public class UpTimeCalculatorTest {
         //Assertions.assertEquals(uptimeOpenAllTheTime1.getSumOfExpectedUptime(), totalUpTimeMinutes1);
         System.out.println("total uptime minutes " + uptimeOpenAllTheTime1.getSumOfExpectedUptime());
         System.out.println("actual uptime minutes " + uptimeOpenAllTheTime1.getSumOfActualUptime());
-
-
     }
 
     private List<RecordEntity> generateRandomizedRecordEntities(ServiceEntity serviceEntity, int amount) {
