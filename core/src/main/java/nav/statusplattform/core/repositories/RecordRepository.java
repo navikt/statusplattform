@@ -8,10 +8,7 @@ import nav.statusplattform.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -99,10 +96,10 @@ public class RecordRepository {
                 .list(RecordRepository::toRecord);
     }
 
-    public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, ZonedDateTime from, ZonedDateTime to) {
+    public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, LocalDateTime from, LocalDateTime to) {
         List<RecordEntity> recordsInTimeSpan = recordTable.where("service_id", serviceId)
-                .whereExpression("created_at >= ?", from)
-                .whereExpression("created_at <= ?", to)
+                .whereExpression("created_at >= ?", from.atZone(ZoneId.systemDefault()))
+                .whereExpression("created_at <= ?", to.atZone(ZoneId.systemDefault()))
                 .orderBy("created_at ASC")
                 .list(RecordRepository::toRecord);
 

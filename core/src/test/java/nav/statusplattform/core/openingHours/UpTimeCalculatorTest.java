@@ -16,7 +16,8 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,34 +53,34 @@ public class UpTimeCalculatorTest {
 
     private final UpTimeCalculator upTimeCalculator = new UpTimeCalculator(dbContext);
 
-    private ZonedDateTime nullDateEntry = null;
+    private LocalDateTime nullDateEntry = null;
 
-    private final ZonedDateTime to = ZonedDateTime.now();
+    private final LocalDateTime to = LocalDateTime.now();
 
-    private final ZonedDateTime toMinusTwoHours = to.minusHours(2);
+    private final LocalDateTime toMinusTwoHours = to.minusHours(2);
 
-    private final ZonedDateTime todaysDate = ZonedDateTime.now();
-    private final ZonedDateTime yesterdayDate = todaysDate.minusDays(1);
+    private final LocalDateTime todaysDate = LocalDateTime.now();
+    private final LocalDateTime yesterdayDate = todaysDate.minusDays(1);
 
-    private final ZonedDateTime backOneDay = ZonedDateTime.now().minusDays(1);
+    private final LocalDateTime backOneDay = LocalDateTime.now().minusDays(1);
 
-    private final ZonedDateTime fiveDaysBack = todaysDate.minusDays(5);
+    private final LocalDateTime fiveDaysBack = todaysDate.minusDays(5);
 
-    private final ZonedDateTime daysBackMinusTwohours = todaysDate.minusDays(0).minusHours(2);
+    private final LocalDateTime daysBackMinusTwohours = todaysDate.minusDays(0).minusHours(2);
 
-    private final ZonedDateTime beforeOpeningHoursEnd = todaysDate.with(LocalTime.of(6, 30));
+    private final LocalDateTime beforeOpeningHoursEnd = todaysDate.with(LocalTime.of(6, 30));
 
-    private final ZonedDateTime beforeOpeningHoursStart = todaysDate.with(LocalTime.of(6, 30).minusHours(4));
+    private final LocalDateTime beforeOpeningHoursStart = todaysDate.with(LocalTime.of(6, 30).minusHours(4));
 
-    private final ZonedDateTime recordBeforeOpeningHours = todaysDate.with(LocalTime.of(6, 30).minusHours(2));
+    private final LocalDateTime recordBeforeOpeningHours = todaysDate.with(LocalTime.of(6, 30).minusHours(2));
 
-    private final ZonedDateTime daysForward = todaysDate.minusDays(0).plusHours(6);
+    private final LocalDateTime daysForward = todaysDate.minusDays(0).plusHours(6);
 
-    private final ZonedDateTime twoDaysBack = todaysDate.minusDays(2);
+    private final LocalDateTime twoDaysBack = todaysDate.minusDays(2);
 
-    private final ZonedDateTime minusTwoMonths = yesterdayDate.minusMonths(2);
+    private final LocalDateTime minusTwoMonths = yesterdayDate.minusMonths(2);
 
-    private final ZonedDateTime minusOneYear = yesterdayDate.minusYears(1);
+    private final LocalDateTime minusOneYear = yesterdayDate.minusYears(1);
 
 
     private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("24.12.???? ? 1-5 09:00-14:00", "06.04.2023 ? ? 08:00-17:00", "??.??.???? ? ? 07:00-17:00"));
@@ -185,9 +186,9 @@ public class UpTimeCalculatorTest {
         records.forEach(record -> {
             int min = 1;
             int max = 1;
-            ZonedDateTime now = ZonedDateTime.now();
+            LocalDateTime now = LocalDateTime.now();
             int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
-            record.setCreated_at(daysBackMinusTwohours);
+            record.setCreated_at(daysBackMinusTwohours.atZone(ZoneId.systemDefault()));
             record.setServiceId(service.getId());
             record.setStatus(ServiceStatus.OK);
             record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
@@ -244,9 +245,9 @@ public class UpTimeCalculatorTest {
         records.forEach(record -> {
             int min = 1;
             int max = 1;
-            ZonedDateTime now = ZonedDateTime.now();
+            LocalDateTime now = LocalDateTime.now();
             int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
-            record.setCreated_at(fiveDaysBack);
+            record.setCreated_at(fiveDaysBack.atZone(ZoneId.systemDefault()));
             record.setServiceId(service.getId());
             record.setStatus(ServiceStatus.OK);
             record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
@@ -285,11 +286,11 @@ public class UpTimeCalculatorTest {
         return records;
     }
 
-    private long getDurationInMinutes(LocalTime openingTime, LocalTime closingTime, ZonedDateTime durationEnd) {
+    private long getDurationInMinutes(LocalTime openingTime, LocalTime closingTime, LocalDateTime durationEnd) {
         Long totalUpTimeMinutes = 0L;
 
         if (durationEnd.toLocalTime().isBefore(closingTime) && durationEnd.toLocalTime().isAfter(openingTime)) {
-            ZonedDateTime startOfDay = durationEnd.withHour(openingTime.getHour()).withMinute(openingTime.getMinute());
+            LocalDateTime startOfDay = durationEnd.withHour(openingTime.getHour()).withMinute(openingTime.getMinute());
             totalUpTimeMinutes = Duration.between(startOfDay, durationEnd).toMinutes();
         } else if (durationEnd.toLocalTime().isAfter(closingTime)) {
             //add the duration of the last date with its respective opening and ending hours
