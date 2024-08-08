@@ -1,5 +1,6 @@
 package nav.statusplattform.core.openingHours;
 
+import nav.statusplattform.core.entities.OpeningHours;
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
@@ -26,6 +27,13 @@ public class UpTimeCalculator {
 
 
     public UpTimeTotal calculateUpTimeForService(UUID serviceId, TimeSpan timeSpan) throws IllegalStateException {
+
+        /*
+        Returns a map containing the dates in range and its corresponding opening start and end times
+         */
+        Map<LocalDate, OpeningHours> openingHours = openingHoursRepository.getMapContainingOpeningHoursForTimeSpan(serviceId, timeSpan);
+
+
         LocalDateTime from = timeSpan.from();
         LocalDateTime to = timeSpan.to();
         // Records sorted in chronological order

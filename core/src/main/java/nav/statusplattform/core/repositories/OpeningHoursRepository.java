@@ -1,15 +1,16 @@
 package nav.statusplattform.core.repositories;
 
-import nav.statusplattform.core.entities.OpeningHoursGroup;
-import nav.statusplattform.core.entities.OpeningHoursGroupEntity;
-import nav.statusplattform.core.entities.OpeningHoursRule;
-import nav.statusplattform.core.entities.OpeningHoursRuleEntity;
+import nav.statusplattform.core.entities.*;
 import nav.statusplattform.core.enums.RuleType;
 import nav.statusplattform.core.exceptionHandling.ExceptionUtil;
+import nav.statusplattform.core.openingHours.OpeningHoursParser;
+import nav.statusplattform.core.openingHours.TimeSpan;
 import org.actioncontroller.HttpRequestException;
+import org.apache.commons.collections.map.HashedMap;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -262,6 +263,33 @@ public class OpeningHoursRepository {
 
         return result;
 
+    }
+
+    /*
+     *The code returns a map containing each date in the timespan and its corresponding opening times.
+     *Firstly, get the group of rules for a given service. After that, the rule applicable for each day
+     *returns its opening hours in String format to determine the opening hours.
+     *The string format containing opening start and end times is converted to local time
+     *format and stored in an opening hours object. The end of the result is added alongside its
+     *corresponding date in a map, returning a map containing the date as keys and corresponding
+     * opening start and end times as values.*/
+    public Map<LocalDate, OpeningHours> getMapContainingOpeningHoursForTimeSpan(UUID serviceId, TimeSpan timeSpan) {
+        Map<LocalDate, OpeningHours> openingHoursMap = new HashedMap();
+
+        Optional<OpeningHoursGroup> group = getOHGroupForService(serviceId);
+        OpeningHoursGroup oHGroup = group.orElseThrow();
+        LocalDate startDate = timeSpan.from().toLocalDate();
+        LocalDate endDate = timeSpan.to().toLocalDate();
+        while (startDate.isBefore(endDate)) {
+            String oHTimeString = OpeningHoursParser.getOpeninghours(startDate, oHGroup); //opening hours in String format
+            OpeningHours openingHours = new OpeningHours();
+            openingHours.setStartTime(OpeningHoursParser.getOpeningTime(oHTimeString));
+            openingHours.setEndTime(OpeningHoursParser.getClosingTime(oHTimeString));
+            openingHoursMap.put(startDate, openingHours);
+
+            startDate = startDate.plusDays(1);
+        }
+        return openingHoursMap;
     }
 
     static OpeningHoursRuleEntity toOpeningRule(DatabaseRow row){
