@@ -6,7 +6,6 @@ import nav.statusplattform.core.exceptionHandling.ExceptionUtil;
 import nav.statusplattform.core.openingHours.OpeningHoursParser;
 import nav.statusplattform.core.openingHours.TimeSpan;
 import org.actioncontroller.HttpRequestException;
-import org.apache.commons.collections.map.HashedMap;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
@@ -274,7 +273,7 @@ public class OpeningHoursRepository {
      *corresponding date in a map, returning a map containing the date as keys and corresponding
      * opening start and end times as values.*/
     public Map<LocalDate, OpeningHours> getMapContainingOpeningHoursForTimeSpan(UUID serviceId, TimeSpan timeSpan) {
-        Map<LocalDate, OpeningHours> openingHoursMap = new HashedMap();
+        Map<LocalDate, OpeningHours> openingHoursMap = new HashMap<>();
 
         Optional<OpeningHoursGroup> group = getOHGroupForService(serviceId);
         OpeningHoursGroup oHGroup = group.orElseThrow();
