@@ -455,7 +455,7 @@ class OpeningHoursRepositoryTest {
         // using for-each loop for iteration over Map.entrySet()
         for (Map.Entry<LocalDate, OpeningHours> entry : dateOpeningHoursMap.entrySet()) {
             System.out.println("Key = " + entry.getKey() +
-                    ", Values = " + entry.getValue().getStartTime() + " " + entry.getValue().getEndTime());
+                    ", Values = " + entry.getValue().startTime() + " " + entry.getValue().endTime());
         }
 
     }

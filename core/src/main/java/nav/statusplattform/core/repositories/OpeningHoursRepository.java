@@ -281,9 +281,9 @@ public class OpeningHoursRepository {
         LocalDate endDate = timeSpan.to().toLocalDate();
         while (startDate.isBefore(endDate)) {
             String oHTimeString = OpeningHoursParser.getOpeninghours(startDate, oHGroup); //opening hours in String format
-            OpeningHours openingHours = new OpeningHours();
-            openingHours.setStartTime(OpeningHoursParser.getOpeningTime(oHTimeString));
-            openingHours.setEndTime(OpeningHoursParser.getClosingTime(oHTimeString));
+            OpeningHours openingHours = new OpeningHours(
+                    OpeningHoursParser.getOpeningTime(oHTimeString),
+                    OpeningHoursParser.getClosingTime(oHTimeString));
             openingHoursMap.put(startDate, openingHours);
 
             startDate = startDate.plusDays(1);
