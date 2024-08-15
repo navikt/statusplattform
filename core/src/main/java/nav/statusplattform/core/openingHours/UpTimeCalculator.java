@@ -67,15 +67,15 @@ public class UpTimeCalculator {
             //Get currentRecord record
             RecordEntity currentRecord = records.get(i);
             //Get next record
-            RecordEntity next = records.get(i + 1);
+            RecordEntity nextRecord = records.get(i + 1);
 
             //Next record StartDateTime in zdt
             LocalDateTime toNextCreatedAtLdt = records.get(i + 1).getCreated_at().toLocalDateTime();
             //Retrieve the opening hours Start Time
-            LocalDateTime startOfDay = records.get(i).getCreated_at().toLocalDateTime().withHour(ohStart.getHour())
+            LocalDateTime startOfDay = currentRecord.dateTime().withHour(ohStart.getHour())
                     .withMinute(ohStart.getMinute());
             //Retrieve the opening hours End Time
-            LocalDateTime endOfDay = records.get(i).getCreated_at().toLocalDateTime().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
+            LocalDateTime endOfDay = currentRecord.dateTime().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
 
             //Check if the currentRecord record is of uptime; if so, sum it up to actual uptime.
             boolean isValidUptime = records.get(i).getStatus().equals(ServiceStatus.OK);
