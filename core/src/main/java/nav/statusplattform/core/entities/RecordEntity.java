@@ -95,7 +95,7 @@ public class RecordEntity {
         return this;
     }
 
-    public LocalDateTime createdAt() {
+    public LocalDateTime dateTime() {
         return created_at.toLocalDateTime();
     }
 
