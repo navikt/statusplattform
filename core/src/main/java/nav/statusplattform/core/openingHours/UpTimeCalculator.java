@@ -1,7 +1,7 @@
 package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.OpeningHours;
-import nav.statusplattform.core.entities.OpeningHoursGroup;
+
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
 
@@ -56,11 +56,9 @@ public class UpTimeCalculator {
             firstRecord.get().setCreated_at(from.atZone(ZoneId.systemDefault()));
         }
 
-        //Get the Services opening hours start and end times from the data entry start date
-
-        OpeningHours openingHours1 = openingHours.get(from.toLocalDate());
-        LocalTime ohStart = openingHours1.startTime();
-        LocalTime ohEnd = openingHours1.endTime();
+        //Get the Services opening hours start and end times from the data entry start
+        LocalTime ohStartTime = openingHours.get(from.toLocalDate()).startTime();
+        LocalTime ohEndTime = openingHours.get(from.toLocalDate()).endTime();
 
         //Sum up (A) all the time  service has been UP, and all the time service should have been up
         for (int i = 0; i < records.size() - 1; i++) {
@@ -70,19 +68,19 @@ public class UpTimeCalculator {
             RecordEntity nextRecord = records.get(i + 1);
 
             //Retrieve the opening hours Start Time
-            LocalDateTime startOfDay = currentRecord.dateTime().withHour(ohStart.getHour())
-                    .withMinute(ohStart.getMinute());
+            LocalDateTime startOfDay = currentRecord.dateTime().withHour(ohStartTime.getHour())
+                    .withMinute(ohStartTime.getMinute());
             //Retrieve the opening hours End Time
-            LocalDateTime endOfDay = currentRecord.dateTime().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
+            LocalDateTime endOfDay = currentRecord.dateTime().withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute());
 
             //Check if the currentRecord record is of uptime; if so, sum it up to actual uptime.
             boolean isValidUptime = records.get(i).getStatus().equals(ServiceStatus.OK);
 
             //Manage opening hours on the starting day
             if ((localDateTimeDifference(currentRecord.dateTime(), nextRecord.dateTime()) > 1)) {
-                if (currentRecord.time().isAfter(ohStart) && currentRecord.time().isBefore(ohEnd)) {
+                if (currentRecord.time().isAfter(ohStartTime) && currentRecord.time().isBefore(ohEndTime)) {
                     sumOfExpectedUptime += Duration.between(currentRecord.dateTime(), endOfDay).toMinutes();
-                } else if (currentRecord.time().isBefore(ohStart)) {
+                } else if (currentRecord.time().isBefore(ohStartTime)) {
                     sumOfExpectedUptime += Duration.between(startOfDay, endOfDay).toMinutes();
                 }
                 sumOfExpectedUptime += sumFullDays(openingHours, currentRecord.dateTime(), nextRecord.dateTime());
@@ -90,17 +88,17 @@ public class UpTimeCalculator {
 
             //partial day on the ending day
             //obtain opening hours for date
-            openingHours1 = openingHours.get(nextRecord.date());
-            ohStart = openingHours1.startTime();
-            ohEnd = openingHours1.endTime();
-            if (currentRecord.time().isAfter(ohStart) && currentRecord.time().isBefore(ohEnd)) {
-                startOfDay = nextRecord.dateTime().withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+            ohStartTime = openingHours.get(nextRecord.date()).startTime();
+            ohEndTime = openingHours.get(nextRecord.date()).endTime();
+
+            if (currentRecord.time().isAfter(ohStartTime) && currentRecord.time().isBefore(ohEndTime)) {
+                startOfDay = nextRecord.dateTime().withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
                 sumOfExpectedUptime += Duration.between(startOfDay, nextRecord.dateTime()).toMinutes();
-            } else if (currentRecord.time().isAfter(ohEnd)) {
+            } else if (currentRecord.time().isAfter(ohEndTime)) {
                 //add the duration of the last date with its respective opening and ending hours
                 sumOfExpectedUptime += Duration
-                        .between(nextRecord.dateTime().withHour(ohStart.getHour()).withMinute(ohStart.getMinute()),
-                                nextRecord.dateTime().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
+                        .between(nextRecord.dateTime().withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute()),
+                                nextRecord.dateTime().withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute())).toMinutes();
             }
 
             if (isValidUptime) {
@@ -113,22 +111,21 @@ public class UpTimeCalculator {
         boolean isValidUptime = lastRecord.getStatus().equals(ServiceStatus.OK);
 
         //get the Services opening hours start and end times from the data entry start date
-        openingHours1 = openingHours.get(lastRecord.getCreated_at().toLocalDate());
-        ohStart = openingHours1.startTime();
-        ohEnd = openingHours1.endTime();
+        ohStartTime = openingHours.get(lastRecord.date()).startTime();
+        ohEndTime = openingHours.get(lastRecord.date()).endTime();
 
 
-        //Opening hours Start Time in zdt
-        LocalDateTime startOfDay = lastRecord.getCreated_at().toLocalDateTime().withHour(ohStart.getHour())
-                .withMinute(ohStart.getMinute());
-        //Opening hours End Time in zdt
-        LocalDateTime endOfDay = lastRecord.getCreated_at().toLocalDateTime().withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
+        //Opening hours Start Time
+        LocalDateTime startOfDay = lastRecord.dateTime().withHour(ohStartTime.getHour())
+                .withMinute(ohStartTime.getMinute());
+        //Opening hours End Time
+        LocalDateTime endOfDay = lastRecord.dateTime().withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute());
 
-        if ((localDateTimeDifference(lastRecord.getCreated_at().toLocalDateTime(), to) > 1)) {
+        if ((localDateTimeDifference(lastRecord.dateTime(), to) > 1)) {
             // Handle partial day on the starting day
-            if (lastRecord.time().isAfter(ohStart) && lastRecord.time().isBefore(ohEnd)) {
+            if (lastRecord.time().isAfter(ohStartTime) && lastRecord.time().isBefore(ohEndTime)) {
                 sumOfExpectedUptime += Duration.between(lastRecord.dateTime(), endOfDay).toMinutes();
-            } else if (lastRecord.time().isBefore(ohStart)) {
+            } else if (lastRecord.time().isBefore(ohStartTime)) {
                 sumOfExpectedUptime += Duration.between(startOfDay, endOfDay).toMinutes();
             }
             sumOfExpectedUptime = sumFullDays(openingHours, lastRecord.dateTime(), to);
@@ -136,15 +133,17 @@ public class UpTimeCalculator {
 
         //partial day on the ending day
         //obtain opening hours for date
-        openingHours1 = openingHours.get(to.toLocalDate());
-        ohStart = openingHours1.startTime();
-        ohEnd = openingHours1.endTime();
-        if (to.toLocalTime().isBefore(ohEnd) && to.toLocalTime().isAfter(ohStart)) {
-            startOfDay = to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+        ohStartTime = openingHours.get(to.toLocalDate()).startTime();
+        ohEndTime = openingHours.get(to.toLocalDate()).endTime();
+
+        if (to.toLocalTime().isBefore(ohEndTime) && to.toLocalTime().isAfter(ohStartTime)) {
+            startOfDay = to.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
             sumOfExpectedUptime += Duration.between(startOfDay, to).toMinutes();
-        } else if (to.toLocalTime().isAfter(ohEnd)) {
+        } else if (to.toLocalTime().isAfter(ohEndTime)) {
             //add the duration of the last date with its respective opening and ending hours
-            sumOfExpectedUptime += Duration.between(to.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()), to.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute())).toMinutes();
+            sumOfExpectedUptime += Duration.between(
+                    to.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute()),
+                    to.withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute())).toMinutes();
         }
 
         if (isValidUptime) {
@@ -155,28 +154,28 @@ public class UpTimeCalculator {
         return new UpTimeTotal(sumOfActualUptime, sumOfExpectedUptime);
     }
 
-    private long sumFullDays(Map<LocalDate, OpeningHours> openingHours, LocalDateTime fromCurrentCreatedAtZdt, LocalDateTime toNextCreatedAtLdt) {
+    private long sumFullDays(Map<LocalDate, OpeningHours> openingHours, LocalDateTime currentRecordDateTime, LocalDateTime nextRecordDateTime) {
         //Sum the duration of time that goes over a period of days
         //Get the opening hours start time and end times
-        OpeningHours openingHours1 = openingHours.get(fromCurrentCreatedAtZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1).toLocalDate());
-        LocalTime ohStart = openingHours1.startTime();
-        LocalTime ohEnd = openingHours1.endTime();
+        OpeningHours openingHours1 = openingHours.get(currentRecordDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1).toLocalDate());
+        LocalTime ohStartTime = openingHours1.startTime();
+        LocalTime ohEndTime = openingHours1.endTime();
 
         //Set it on the currentRecord date
-        fromCurrentCreatedAtZdt = fromCurrentCreatedAtZdt.truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+        currentRecordDateTime = currentRecordDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
 
         long expectedUptimeTotal = 0L;
 
         // Iterate and calculate the duration of time for full days
-        while (fromCurrentCreatedAtZdt.isBefore(toNextCreatedAtLdt.truncatedTo(ChronoUnit.DAYS))) {
-            LocalDateTime endOfDay = fromCurrentCreatedAtZdt.withHour(ohEnd.getHour()).withMinute(ohEnd.getMinute());
-            expectedUptimeTotal += Duration.between(fromCurrentCreatedAtZdt, endOfDay).toMinutes();
+        while (currentRecordDateTime.isBefore(nextRecordDateTime.truncatedTo(ChronoUnit.DAYS))) {
+            LocalDateTime endOfDay = currentRecordDateTime.withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute());
+            expectedUptimeTotal += Duration.between(currentRecordDateTime, endOfDay).toMinutes();
 
             //get the next day and its corresponding opening hours
-            openingHours1 = openingHours.get(fromCurrentCreatedAtZdt.plusDays(1).toLocalDate());
-            ohStart = openingHours1.startTime();
-            ohEnd = openingHours1.endTime();
-            fromCurrentCreatedAtZdt = fromCurrentCreatedAtZdt.plusDays(1).withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
+            openingHours1 = openingHours.get(currentRecordDateTime.plusDays(1).toLocalDate());
+            ohStartTime = openingHours1.startTime();
+            ohEndTime = openingHours1.endTime();
+            currentRecordDateTime = currentRecordDateTime.plusDays(1).withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
         }
         return expectedUptimeTotal;
     }
