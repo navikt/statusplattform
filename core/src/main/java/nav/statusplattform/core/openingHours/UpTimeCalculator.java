@@ -67,7 +67,7 @@ public class UpTimeCalculator {
             //Get current record
             RecordEntity current = records.get(i);
             //Next Record startDate and Time in localTime
-            LocalTime toNextCreatedAtLt = records.get(i + 1).getCreated_at().toLocalTime();
+
             //Current record StartDateTime in zdt
             LocalDateTime fromCurrentCreatedAtLdt = records.get(i).getCreated_at().toLocalDateTime();
             //Next record StartDateTime in zdt
@@ -96,10 +96,10 @@ public class UpTimeCalculator {
             openingHours1 = openingHours.get(toNextCreatedAtLdt.toLocalDate());
             ohStart = openingHours1.startTime();
             ohEnd = openingHours1.endTime();
-            if (toNextCreatedAtLt.isBefore(ohEnd) && toNextCreatedAtLt.isAfter(ohStart)) {
+            if (current.time().isAfter(ohStart) && current.time().isBefore(ohEnd)) {
                 startOfDay = toNextCreatedAtLdt.withHour(ohStart.getHour()).withMinute(ohStart.getMinute());
                 sumOfExpectedUptime += Duration.between(startOfDay, toNextCreatedAtLdt).toMinutes();
-            } else if (toNextCreatedAtLt.isAfter(ohEnd)) {
+            } else if (current.time().isAfter(ohEnd)) {
                 //add the duration of the last date with its respective opening and ending hours
                 sumOfExpectedUptime += Duration
                         .between(toNextCreatedAtLdt.withHour(ohStart.getHour()).withMinute(ohStart.getMinute()),
