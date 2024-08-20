@@ -75,20 +75,7 @@ public class UpTimeCalculator {
                 sumOfExpectedUptime += sumFullDays(openingHours, currentRecord.dateTime().minusDays(1), nextRecord.dateTime());
             }
 
-            //partial day on the ending day
-            //obtain opening hours for date
-            LocalTime ohStartTime = openingHours.get(nextRecord.date()).startTime();
-            LocalTime ohEndTime = openingHours.get(nextRecord.date()).endTime();
-
-            if (currentRecord.time().isAfter(ohStartTime) && currentRecord.time().isBefore(ohEndTime)) {
-                LocalDateTime startOfDay = nextRecord.dateTime().withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
-                sumOfExpectedUptime += Duration.between(startOfDay, nextRecord.dateTime()).toMinutes();
-            } else if (currentRecord.time().isAfter(ohEndTime)) {
-                //add the duration of the last date with its respective opening and ending hours
-                sumOfExpectedUptime += Duration
-                        .between(nextRecord.dateTime().withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute()),
-                                nextRecord.dateTime().withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute())).toMinutes();
-            }
+            sumOfExpectedUptime = sumLastDay(openingHours, nextRecord.dateTime());
 
             if (isValidUptime) {
                 sumOfActualUptime += sumOfExpectedUptime;
@@ -105,20 +92,8 @@ public class UpTimeCalculator {
             sumOfExpectedUptime = sumFullDays(openingHours, lastRecord.dateTime().minusDays(1), to);
         }
 
-        //partial day on the ending day
-        //obtain opening hours for date
-        LocalTime ohStartTime = openingHours.get(to.toLocalDate()).startTime();
-        LocalTime ohEndTime = openingHours.get(to.toLocalDate()).endTime();
+        sumOfExpectedUptime += sumLastDay(openingHours, to);
 
-        if (to.toLocalTime().isBefore(ohEndTime) && to.toLocalTime().isAfter(ohStartTime)) {
-            LocalDateTime startOfDay = to.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
-            sumOfExpectedUptime += Duration.between(startOfDay, to).toMinutes();
-        } else if (to.toLocalTime().isAfter(ohEndTime)) {
-            //add the duration of the last date with its respective opening and ending hours
-            sumOfExpectedUptime += Duration.between(
-                    to.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute()),
-                    to.withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute())).toMinutes();
-        }
 
         if (isValidUptime) {
             sumOfActualUptime += sumOfExpectedUptime;
@@ -152,6 +127,28 @@ public class UpTimeCalculator {
             currentRecordDateTime = currentRecordDateTime.plusDays(1).withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
         }
         return expectedUptimeTotal;
+    }
+
+    private long sumLastDay(Map<LocalDate, OpeningHours> openingHours, LocalDateTime endDate) {
+        long sumOfExpectedUptime = 0L;
+
+        //partial day on the ending day
+        //obtain opening hours for date
+        LocalTime ohStartTime = openingHours.get(endDate.toLocalDate()).startTime();
+        LocalTime ohEndTime = openingHours.get(endDate.toLocalDate()).endTime();
+
+        if (endDate.toLocalTime().isBefore(ohEndTime) && endDate.toLocalTime().isAfter(ohStartTime)) {
+            LocalDateTime startOfDay = endDate.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
+            sumOfExpectedUptime += Duration.between(startOfDay, endDate).toMinutes();
+        } else if (endDate.toLocalTime().isAfter(ohEndTime)) {
+            //add the duration of the last date with its respective opening and ending hours
+            sumOfExpectedUptime += Duration.between(
+                    endDate.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute()),
+                    endDate.withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute())).toMinutes();
+        }
+
+        return sumOfExpectedUptime;
+
     }
 
     static long localDateTimeDifference(LocalDateTime d1, LocalDateTime d2) {
