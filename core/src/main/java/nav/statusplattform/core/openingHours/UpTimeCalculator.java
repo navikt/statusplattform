@@ -111,17 +111,6 @@ public class UpTimeCalculator {
         boolean isValidUptime = lastRecord.getStatus().equals(ServiceStatus.OK);
 
         //get the Services opening hours start and end times from the data entry start date
-
-        ohStartTime = openingHours.get(lastRecord.date()).startTime();
-        ohEndTime = openingHours.get(lastRecord.date()).endTime();
-
-
-        //Opening hours Start Time
-        LocalDateTime startOfDay = lastRecord.dateTime().withHour(ohStartTime.getHour())
-                .withMinute(ohStartTime.getMinute());
-        //Opening hours End Time
-        LocalDateTime endOfDay = lastRecord.dateTime().withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute());
-
         if (localDateTimeDifference(lastRecord.dateTime(), to) > 1) {
             // Handle partial day of the starting day of last record
             sumOfExpectedUptime = sumFullDays(openingHours, lastRecord.dateTime().minusDays(1), to);
@@ -133,8 +122,7 @@ public class UpTimeCalculator {
         ohEndTime = openingHours.get(to.toLocalDate()).endTime();
 
         if (to.toLocalTime().isBefore(ohEndTime) && to.toLocalTime().isAfter(ohStartTime)) {
-            startOfDay = to.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
-            sumOfExpectedUptime += Duration.between(startOfDay, to).toMinutes();
+            sumOfExpectedUptime += Duration.between(ohStartTime, to).toMinutes();
         } else if (to.toLocalTime().isAfter(ohEndTime)) {
             //add the duration of the last date with its respective opening and ending hours
             sumOfExpectedUptime += Duration.between(
