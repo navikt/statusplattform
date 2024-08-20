@@ -111,7 +111,8 @@ public class UpTimeCalculator {
         LocalTime ohEndTime = openingHours.get(to.toLocalDate()).endTime();
 
         if (to.toLocalTime().isBefore(ohEndTime) && to.toLocalTime().isAfter(ohStartTime)) {
-            sumOfExpectedUptime += Duration.between(ohStartTime, to).toMinutes();
+            LocalDateTime startOfDay = to.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
+            sumOfExpectedUptime += Duration.between(startOfDay, to).toMinutes();
         } else if (to.toLocalTime().isAfter(ohEndTime)) {
             //add the duration of the last date with its respective opening and ending hours
             sumOfExpectedUptime += Duration.between(
