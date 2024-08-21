@@ -66,25 +66,19 @@ public class UpTimeCalculator {
             //Get next record
             RecordEntity nextRecord = records.get(i + 1);
 
-
-            //Check if the currentRecord record is of uptime; if so, sum it up to actual uptime.
-            boolean isValidUptime = records.get(i).getStatus().equals(ServiceStatus.OK);
-
             //Manage opening hours on the starting day
             if ((localDateTimeDifference(currentRecord.dateTime(), nextRecord.dateTime()) > 1)) {
-                sumOfExpectedUptime += sumFullDays(openingHours, currentRecord.dateTime().minusDays(1), nextRecord.dateTime());
+                sumOfExpectedUptime = sumFullDays(openingHours, currentRecord.dateTime().minusDays(1), nextRecord.dateTime());
             }
 
-            sumOfExpectedUptime = sumLastDay(openingHours, nextRecord.dateTime());
+            sumOfExpectedUptime += sumLastDay(openingHours, nextRecord.dateTime());
 
-            if (isValidUptime) {
-                sumOfActualUptime += sumOfExpectedUptime;
-            }
+            //sum uptime in minutes when service status = ok
+            sumOfActualUptime += sumValidUpTime(currentRecord, sumOfExpectedUptime);
         }
 
         //Last record
         RecordEntity lastRecord = records.getLast();
-        boolean isValidUptime = lastRecord.getStatus().equals(ServiceStatus.OK);
 
         //get the Services opening hours start and end times from the data entry start date
         if (localDateTimeDifference(lastRecord.dateTime(), to) > 1) {
@@ -94,10 +88,9 @@ public class UpTimeCalculator {
 
         sumOfExpectedUptime += sumLastDay(openingHours, to);
 
+        //sum uptime in minutes when service status = ok
+        sumOfActualUptime += sumValidUpTime(lastRecord, sumOfExpectedUptime);
 
-        if (isValidUptime) {
-            sumOfActualUptime += sumOfExpectedUptime;
-        }
 
         //Actual and Expected Uptime totals
         return new UpTimeTotal(sumOfActualUptime, sumOfExpectedUptime);
@@ -149,6 +142,15 @@ public class UpTimeCalculator {
 
         return sumOfExpectedUptime;
 
+    }
+
+    //sums a record uptime in minutes when service status = ok
+    private long sumValidUpTime(RecordEntity record, long sumOfExpectedUptime) {
+        long sumValidUpTime = 0L;
+        if (record.getStatus().equals(ServiceStatus.OK)) {
+            sumValidUpTime += sumOfExpectedUptime;
+        }
+        return sumValidUpTime;
     }
 
     static long localDateTimeDifference(LocalDateTime d1, LocalDateTime d2) {
