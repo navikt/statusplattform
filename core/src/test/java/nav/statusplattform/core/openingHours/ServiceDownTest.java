@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ServiceDownTest {
 
-    private final DailyUptime.OpeningHours OPENING_HOURS_8_16 = new DailyUptime.OpeningHours(
+    private final OpeningHours OPENING_HOURS_8_16 = new OpeningHours(
             LocalDateTime.of(2024, 8, 10, 8, 0),
             LocalDateTime.of(2024, 8, 10, 16, 0));
 
@@ -35,7 +35,7 @@ public class ServiceDownTest {
     }
 
     @Test
-    public void serviceIsDownInsideOfOpneningHours() {
+    public void serviceFallsWithinOpeningHours() {
         ServiceDown serviceDown = new ServiceDown(
                 LocalDateTime.of(2024, 8, 10, 13, 41),
                 LocalDateTime.of(2024, 8, 10, 14, 10));
@@ -46,7 +46,7 @@ public class ServiceDownTest {
     }
 
     @Test
-    public void serviceIsDownEqualToOpneningHours() {
+    public void serviceIsDownEqualToOpeningHours() {
         ServiceDown serviceDown = new ServiceDown(
                 LocalDateTime.of(2024, 8, 10, 8, 0),
                 LocalDateTime.of(2024, 8, 10, 16, 0));

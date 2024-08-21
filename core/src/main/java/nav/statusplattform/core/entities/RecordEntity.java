@@ -118,4 +118,12 @@ public class RecordEntity {
         this.responsetime = responsetime;
         return this;
     }
+
+    public boolean serviceGoesDown(ServiceStatus serviceStatus) {
+        return ServiceStatus.OK.equals(serviceStatus) && !ServiceStatus.OK.equals(status);
+    }
+
+    public boolean serviceComesUp(ServiceStatus serviceStatus) {
+        return !ServiceStatus.OK.equals(serviceStatus) && ServiceStatus.OK.equals(status);
+    }
 }
