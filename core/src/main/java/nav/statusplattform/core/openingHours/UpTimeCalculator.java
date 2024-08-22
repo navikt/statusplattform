@@ -96,31 +96,30 @@ public class UpTimeCalculator {
         return new UpTimeTotal(sumOfActualUptime, sumOfExpectedUptime);
     }
 
-    private long sumFullDays(Map<LocalDate, OpeningHours> openingHours, LocalDateTime currentRecordDateTime, LocalDateTime nextRecordDateTime) {
-        //Sum the duration of time that goes over a period of days
+    private long sumFullDays(Map<LocalDate, OpeningHours> openingHours, LocalDateTime actualDateTime, LocalDateTime nextDateTime) {
+        //Sum the duration of time that goes over a period of days between the current and next date/times
         //Get the opening hours start time and end times
-        OpeningHours openingHours1 = openingHours.get(currentRecordDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1).toLocalDate());
-        LocalTime ohStartTime = openingHours1.startTime();
-        LocalTime ohEndTime = openingHours1.endTime();
+        OpeningHours openingHours1 = openingHours.get(actualDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1).toLocalDate());
 
-        //Set it on the currentRecord date
-        currentRecordDateTime = currentRecordDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1).withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
+        //Set the opening start and end times for the current date/time
+        actualDateTime = actualDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1).with(openingHours1.startTime());
+        LocalDateTime actualDateTimeEnd = actualDateTime.with(openingHours1.endTime());
 
         long expectedUptimeTotal = 0L;
 
-        // Iterate and calculate the duration of time for full days
-        while (currentRecordDateTime.isBefore(nextRecordDateTime.truncatedTo(ChronoUnit.DAYS))) {
-            LocalDateTime endOfDay = currentRecordDateTime.withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute());
-            expectedUptimeTotal += Duration.between(currentRecordDateTime, endOfDay).toMinutes();
+        //Sum the expected uptime while iterating through late the duration of time for full days
+        while (actualDateTime.isBefore(nextDateTime.truncatedTo(ChronoUnit.DAYS))) {
+
+            expectedUptimeTotal += Duration.between(actualDateTime, actualDateTimeEnd).toMinutes();
 
             //get the next day and its corresponding opening hours
-            openingHours1 = openingHours.get(currentRecordDateTime.plusDays(1).toLocalDate());
-            ohStartTime = openingHours1.startTime();
-            ohEndTime = openingHours1.endTime();
-            currentRecordDateTime = currentRecordDateTime.plusDays(1).withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
+            openingHours1 = openingHours.get(actualDateTime.plusDays(1).toLocalDate());
+            actualDateTime = actualDateTime.plusDays(1).with(openingHours1.startTime());
+            actualDateTimeEnd = actualDateTime.with(openingHours1.endTime());
         }
         return expectedUptimeTotal;
     }
+
 
     private long sumLastDay(Map<LocalDate, OpeningHours> openingHours, LocalDateTime endDate) {
         long sumOfExpectedUptime = 0L;
