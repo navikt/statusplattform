@@ -1,7 +1,6 @@
 package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.OpeningHours;
-
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
 
@@ -25,13 +24,13 @@ public class UpTimeCalculator {
         this.openingHoursRepository = new OpeningHoursRepository(context);
     }
 
-
     public UpTimeTotal calculateUpTimeForService(UUID serviceId, TimeSpan timeSpan) throws IllegalStateException {
 
         /*
         Returns a map containing the dates in range and its corresponding opening start and end times
          */
-        Map<LocalDate, OpeningHours> openingHours = openingHoursRepository.getMapContainingOpeningHoursForTimeSpan(serviceId, timeSpan);
+        Map<LocalDate, OpeningHours> openingHours =
+                openingHoursRepository.getMapContainingOpeningHoursForTimeSpan(serviceId, timeSpan);
 
 
         LocalDateTime from = timeSpan.from();
@@ -120,27 +119,23 @@ public class UpTimeCalculator {
         return expectedUptimeTotal;
     }
 
-
     private long sumLastDay(Map<LocalDate, OpeningHours> openingHours, LocalDateTime endDate) {
         long sumOfExpectedUptime = 0L;
+
+        LocalTime actualEndTime = endDate.toLocalTime();
 
         //partial day on the ending day
         //obtain opening hours for date
         LocalTime ohStartTime = openingHours.get(endDate.toLocalDate()).startTime();
         LocalTime ohEndTime = openingHours.get(endDate.toLocalDate()).endTime();
 
-        if (endDate.toLocalTime().isBefore(ohEndTime) && endDate.toLocalTime().isAfter(ohStartTime)) {
-            LocalDateTime startOfDay = endDate.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute());
-            sumOfExpectedUptime += Duration.between(startOfDay, endDate).toMinutes();
-        } else if (endDate.toLocalTime().isAfter(ohEndTime)) {
+        if (actualEndTime.isBefore(ohEndTime) && actualEndTime.isAfter(ohStartTime)) {
+            sumOfExpectedUptime += Duration.between(ohStartTime, actualEndTime).toMinutes();
+        } else if (actualEndTime.isAfter(ohEndTime)) {
             //add the duration of the last date with its respective opening and ending hours
-            sumOfExpectedUptime += Duration.between(
-                    endDate.withHour(ohStartTime.getHour()).withMinute(ohStartTime.getMinute()),
-                    endDate.withHour(ohEndTime.getHour()).withMinute(ohEndTime.getMinute())).toMinutes();
+            sumOfExpectedUptime += Duration.between(ohStartTime, ohEndTime).toMinutes();
         }
-
         return sumOfExpectedUptime;
-
     }
 
     //sums a record uptime in minutes when service status = ok
