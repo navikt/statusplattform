@@ -20,7 +20,6 @@ public class UpTimeCalculator {
     private final OpeningHoursRepository openingHoursRepository;
 
     public UpTimeCalculator(DbContext context) {
-
         this.recordRepository = new RecordRepository(context);
         this.openingHoursRepository = new OpeningHoursRepository(context);
     }

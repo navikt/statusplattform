@@ -19,35 +19,39 @@ public class RecordsTest {
 
     @Test
     public void converting_an_empty_list_of_recordEntity_should_throw_an_exception() {
-        Records records = new Records(emptyList());
-
-        IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () -> records.toRecordInterval());
+        IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () -> Records.fromRecordEntities(emptyList(), new TimeSpan(LocalDate.of(2024, 7, 1).atTime(11, 14, 3), LocalDate.of(2024, 8, 1).atTime(14, 13))));
         assertThat(illegalStateException.getMessage()).isEqualTo("There has to be at least one record in the list.");
     }
 
     @Test
     public void converting_list_of_one_should_result_in_list_of_one() {
-        Records records = new Records(List.of(
-                getRecordEntity(LocalDate.of(2024, 8, 1).atStartOfDay(), ServiceStatus.DOWN)
-        ));
+        Records records = Records.fromRecordEntities(
+                List.of(
+                        getRecordEntity(LocalDate.of(2024, 8, 1).atStartOfDay(), ServiceStatus.DOWN)
+                ), new TimeSpan(
+                        LocalDate.of(2024, 7, 1).atTime(11, 14, 3),
+                        LocalDate.of(2024, 8, 1).atTime(14, 13)));
 
-        List<RecordInterval> recordInterval = records.toRecordInterval();
+        List<RecordInterval> recordInterval = records.intervals();
 
         assertThat(recordInterval).contains(
                 new RecordInterval(
                         LocalDate.of(2024, 8, 1).atStartOfDay(),
-                        null,
+                        LocalDate.of(2024, 8, 1).atTime(14, 13),
                         ServiceStatus.DOWN));
     }
 
     @Test
     public void converts_a_list_of_recordEntity_to_a_list_of_recordIntervals() {
-        Records records = new Records(List.of(
-                getRecordEntity(LocalDate.of(2024, 8, 1).atStartOfDay(), ServiceStatus.DOWN),
-                getRecordEntity(LocalDate.of(2024, 8, 3).atStartOfDay(), ServiceStatus.OK)
-        ));
+        Records records = Records.fromRecordEntities(
+                List.of(
+                        getRecordEntity(LocalDate.of(2024, 8, 1).atStartOfDay(), ServiceStatus.DOWN),
+                        getRecordEntity(LocalDate.of(2024, 8, 3).atStartOfDay(), ServiceStatus.OK)
+                ), new TimeSpan(
+                        LocalDate.of(2024, 7, 1).atTime(11, 14, 3),
+                        LocalDate.of(2024, 8, 1).atTime(14, 13)));
 
-        List<RecordInterval> recordInterval = records.toRecordInterval();
+        List<RecordInterval> recordInterval = records.intervals();
 
         assertThat(recordInterval).containsExactly(
                 new RecordInterval(
@@ -56,7 +60,7 @@ public class RecordsTest {
                         ServiceStatus.DOWN),
                 new RecordInterval(
                         LocalDate.of(2024, 8, 3).atStartOfDay(),
-                        null,
+                        LocalDate.of(2024, 8, 1).atTime(14, 13),
                         ServiceStatus.OK));
     }
 

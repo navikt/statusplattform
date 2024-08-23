@@ -5,7 +5,24 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * ServiceDown has det responsibility to tell when a service is down.
+ *
+ * A service can be down zero, one or many times during the same day.
+ *
+ * @param from when the service went down
+ * @param to when the service returned to ok
+ */
 record ServiceDown(LocalDateTime from, LocalDateTime to) {
+
+    ServiceDown {
+        if (from == null || to == null) {
+            throw new IllegalStateException("From and to can not be null.");
+        }
+        if (!from.toLocalDate().isEqual(to.toLocalDate())) {
+            throw new IllegalStateException("From and to needs to be the same day.");
+        }
+    }
 
     static ServiceDown from(RecordInterval record, LocalDate actualDay) {
 
@@ -17,9 +34,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
         }
 
         LocalDateTime to;
-        if (record.to() == null) {
-            to = actualDay.atTime(LocalTime.MAX);
-        } else if (record.to().toLocalDate().isEqual(actualDay)) {
+        if (record.to().toLocalDate().isEqual(actualDay)) {
             to = record.to();
         } else {
             to = actualDay.atTime(LocalTime.MAX);

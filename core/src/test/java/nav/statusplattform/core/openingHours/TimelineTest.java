@@ -38,7 +38,7 @@ public class TimelineTest {
         OpeningHoursGroup openingHoursGroup = new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule1, rule3));
 
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
-        Records records = new Records(generateRandomizedRecordEntities(service, 1));
+        Records records = Records.fromRecordEntities(generateRandomizedRecordEntities(service, 1), new TimeSpan(LocalDate.of(2024, 7, 1).atTime(11, 14, 3), LocalDate.of(2024, 8, 1).atTime(14, 13)));
 
         TimeSpan timeSpan = new TimeSpan(
                 LocalDate.of(2024, 8, 1).atStartOfDay(),

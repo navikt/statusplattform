@@ -7,52 +7,57 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-record Records(List<RecordEntity> records) {
+record Records(List<RecordInterval> intervals) {
 
-    List<RecordInterval> toRecordInterval() {
+    Records {
+        if (intervals == null || intervals.isEmpty()) {
+            throw new IllegalStateException("There has to be at least one record in the list.");
+        }
+    }
+
+    static Records fromRecordEntities(List<RecordEntity> records, TimeSpan timeSpan) {
 
         if (records.isEmpty()) {
             throw new IllegalStateException("There has to be at least one record in the list.");
         }
 
-        RecordsBuilder recordsBuilder = RecordsBuilder.init(records.get(0));
+        RecordsBuilder recordsBuilder = new RecordsBuilder().init(records.get(0));
 
         for (int i=1; i < records.size(); i++) {
             RecordEntity currentRecord = records.get(i);
             recordsBuilder.append(currentRecord);
         }
 
-        return recordsBuilder.build();
-    }
-}
-
-class RecordsBuilder {
-
-    private ServiceStatus status;
-    private LocalDateTime localDateTime;
-
-    private List<RecordInterval> intervals = new ArrayList<>();
-
-    static RecordsBuilder init(RecordEntity recordEntity) {
-        RecordsBuilder recordsBuilder = new RecordsBuilder();
-        recordsBuilder.localDateTime = recordEntity.getCreated_at().toLocalDateTime();
-        recordsBuilder.status = recordEntity.getStatus();
-        return recordsBuilder;
+        return new Records(recordsBuilder.build(timeSpan.to()));
     }
 
-    void append(RecordEntity currentRecord) {
-        RecordInterval recordInterval = new RecordInterval(localDateTime, currentRecord.getCreated_at().toLocalDateTime(), status);
-        this.intervals.add(recordInterval);
-        this.localDateTime = currentRecord.getCreated_at().toLocalDateTime();
-        this.status = currentRecord.getStatus();
-    }
+    private static class RecordsBuilder {
 
-    List<RecordInterval> build() {
-        RecordInterval recordInterval = new RecordInterval(localDateTime, null, status);
-        this.intervals.add(recordInterval);
-        return intervals;
+        private ServiceStatus status;
+        private LocalDateTime localDateTime;
+
+        private List<RecordInterval> intervals = new ArrayList<>();
+
+        RecordsBuilder init(RecordEntity recordEntity) {
+            RecordsBuilder recordsBuilder = new RecordsBuilder();
+            recordsBuilder.localDateTime = recordEntity.getCreated_at().toLocalDateTime();
+            recordsBuilder.status = recordEntity.getStatus();
+            return recordsBuilder;
+        }
+
+        void append(RecordEntity currentRecord) {
+            RecordInterval recordInterval = new RecordInterval(localDateTime, currentRecord.getCreated_at().toLocalDateTime(), status);
+            this.intervals.add(recordInterval);
+            this.localDateTime = currentRecord.getCreated_at().toLocalDateTime();
+            this.status = currentRecord.getStatus();
+        }
+
+        List<RecordInterval> build(LocalDateTime endOfTimeSpan) {
+            RecordInterval recordInterval = new RecordInterval(this.localDateTime, endOfTimeSpan, status);
+            this.intervals.add(recordInterval);
+            return intervals;
+        }
     }
 }
 

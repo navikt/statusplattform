@@ -8,9 +8,8 @@ import static java.util.stream.Collectors.toList;
 public record DayDuringTimeline(LocalDate actualDay) {
 
     public DailyUptime dailyUptimeFrom(Records records) {
-        List<RecordInterval> recordInterval = records.toRecordInterval();
-
-        List<ServiceDown> serviceDowns = recordInterval.stream()
+        List<ServiceDown> serviceDowns = records.intervals()
+                .stream()
                 .filter(record -> record.isValidFor(actualDay))
                 .filter(RecordInterval::isDown)
                 .map(record -> ServiceDown.from(record, actualDay))
