@@ -1,5 +1,6 @@
 package nav.statusplattform.core.openingHours;
 
+import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
 
@@ -8,7 +9,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-record Records(List<RecordInterval> intervals) {
+import static java.util.stream.Collectors.toList;
+
+record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
 
     Records {
         if (intervals == null || intervals.isEmpty()) {
@@ -29,7 +32,25 @@ record Records(List<RecordInterval> intervals) {
             recordsBuilder.append(currentRecord);
         }
 
-        return new Records(recordsBuilder.build(timeSpan.to()));
+        return new Records(recordsBuilder.build(timeSpan.to()), timeSpan);
+    }
+
+    public List<ActualExpectedUptime> apply(OpeningHoursGroup openingHoursGroup) {
+        return timeSpan.allDays().stream()
+                .map(actualDay -> dailyUptimeFrom(actualDay))
+                .map(dailyUptime -> dailyUptime.apply(openingHoursGroup))
+                .toList();
+    }
+
+    private DailyUptime dailyUptimeFrom(LocalDate actualDay) {
+        List<ServiceDown> serviceDowns = this.intervals
+                .stream()
+                .filter(record -> record.isValidFor(actualDay))
+                .filter(RecordInterval::isDown)
+                .map(record -> ServiceDown.from(record, actualDay))
+                .collect(toList());
+
+        return new DailyUptime(actualDay, serviceDowns);
     }
 
     private static class RecordsBuilder {
