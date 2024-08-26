@@ -24,14 +24,8 @@ public class UpTimeCalculator {
 
         List<ActualExpectedUptime> actualExpectedUptimes = records.apply(openingHoursGroup);
 
-        ActualExpectedUptime totalActualExpectedUptime = new ActualExpectedUptime(0, 0);
-        actualExpectedUptimes.stream().map(totalActualExpectedUptime::pluss);
-
-        return new UpTimeTotal(totalActualExpectedUptime.actualUptime(), totalActualExpectedUptime.expectedUptime());
+        return UpTimeTotal.sumOfAll(actualExpectedUptimes);
     }
-}
-
-record UpTimeTotal(long sumOfActualUptime, long sumOfExpectedUptime) {
 }
 
 

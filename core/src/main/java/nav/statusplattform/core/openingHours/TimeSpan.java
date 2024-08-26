@@ -17,15 +17,7 @@ public record TimeSpan(LocalDateTime from, LocalDateTime to) {
         }
     }
 
-    Timeline toTimeline() {
-        return new Timeline(
-                from.toLocalDate()
-                        .datesUntil(to.toLocalDate().plusDays(1))
-                        .map(localDate -> new DayDuringTimeline(localDate))
-                        .collect(toList()));
-    }
-
-    public List<LocalDate> allDays() {
+    public List<LocalDate> allDaysIncludingStartAndEndDate() {
         return from.toLocalDate()
                 .datesUntil(to.toLocalDate().plusDays(1))
                 .collect(toList());

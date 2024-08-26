@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
 
     Records {
@@ -20,7 +18,6 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
     }
 
     static Records fromRecordEntities(List<RecordEntity> records, TimeSpan timeSpan) {
-
         if (records.isEmpty()) {
             throw new IllegalStateException("There has to be at least one record in the list.");
         }
@@ -35,22 +32,19 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
         return new Records(recordsBuilder.build(timeSpan.to()), timeSpan);
     }
 
+    /**
+     * Loops through all days during a timespan, and looks for matching RecordIntervals from the Records and
+     * apply the opening hours for each day.
+     *
+     * @param openingHoursGroup
+     * @return
+     */
     public List<ActualExpectedUptime> apply(OpeningHoursGroup openingHoursGroup) {
-        return timeSpan.allDays().stream()
-                .map(actualDay -> dailyUptimeFrom(actualDay))
+        return timeSpan.allDaysIncludingStartAndEndDate().stream()
+                .map(DayDuringTimeline::new)
+                .map(dayDuringTimeline -> dayDuringTimeline.dailyUptimeFrom(this))
                 .map(dailyUptime -> dailyUptime.apply(openingHoursGroup))
                 .toList();
-    }
-
-    private DailyUptime dailyUptimeFrom(LocalDate actualDay) {
-        List<ServiceDown> serviceDowns = this.intervals
-                .stream()
-                .filter(record -> record.isValidFor(actualDay))
-                .filter(RecordInterval::isDown)
-                .map(record -> ServiceDown.from(record, actualDay))
-                .collect(toList());
-
-        return new DailyUptime(actualDay, serviceDowns);
     }
 
     private static class RecordsBuilder {
