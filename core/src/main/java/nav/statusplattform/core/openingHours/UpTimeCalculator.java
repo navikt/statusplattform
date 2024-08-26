@@ -7,7 +7,6 @@ import nav.statusplattform.core.repositories.RecordRepository;
 import java.util.List;
 import java.util.UUID;
 
-
 public class UpTimeCalculator {
 
     private final RecordRepository recordRepository;
@@ -26,7 +25,7 @@ public class UpTimeCalculator {
         List<ActualExpectedUptime> actualExpectedUptimes = records.apply(openingHoursGroup);
 
         ActualExpectedUptime totalActualExpectedUptime = new ActualExpectedUptime(0, 0);
-        actualExpectedUptimes.stream().forEach(actualExpectedUptime -> totalActualExpectedUptime.pluss(actualExpectedUptime));
+        actualExpectedUptimes.stream().map(totalActualExpectedUptime::pluss);
 
         return new UpTimeTotal(totalActualExpectedUptime.actualUptime(), totalActualExpectedUptime.expectedUptime());
     }

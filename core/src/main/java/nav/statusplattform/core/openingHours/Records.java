@@ -15,7 +15,7 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
 
     Records {
         if (intervals == null || intervals.isEmpty()) {
-            throw new IllegalStateException("There has to be at least one record in the list.");
+            throw new IllegalStateException("The list of RecordInterval can´t be empty.");
         }
     }
 
@@ -92,4 +92,3 @@ record RecordInterval(LocalDateTime from, LocalDateTime to, ServiceStatus servic
         return serviceStatus != ServiceStatus.OK;
     }
 }
-
