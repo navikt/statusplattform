@@ -27,3 +27,6 @@ record DailyUptime(LocalDate dateTime, List<ServiceDown> serviceDowns) {
         return new ActualExpectedUptime(expectedMinutes, actualMinutes);
     }
 }
+
+record ActualExpectedUptime(long expectedUptime, long actualUptime) {
+}

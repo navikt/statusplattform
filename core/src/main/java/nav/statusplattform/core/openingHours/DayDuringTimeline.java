@@ -5,9 +5,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public record DayDuringTimeline(LocalDate actualDay) {
+record DayDuringTimeline(LocalDate actualDay) {
 
-    public DailyUptime dailyUptimeFrom(Records records) {
+    DailyUptime dailyUptimeFrom(Records records) {
         List<ServiceDown> serviceDowns = records.intervals()
                 .stream()
                 .filter(record -> record.isValidFor(actualDay))

@@ -17,6 +17,18 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
         }
     }
 
+    /**
+     * Loops through all days during a timespan, and looks for matching RecordIntervals from the Records and
+     * apply the opening hours for each day.
+     */
+    List<ActualExpectedUptime> apply(OpeningHoursGroup openingHoursGroup) {
+        return timeSpan.allDaysIncludingStartAndEndDate().stream()
+                .map(DayDuringTimeline::new)
+                .map(dayDuringTimeline -> dayDuringTimeline.dailyUptimeFrom(this))
+                .map(dailyUptime -> dailyUptime.apply(openingHoursGroup))
+                .toList();
+    }
+
     static Records fromRecordEntities(List<RecordEntity> records, TimeSpan timeSpan) {
         if (records.isEmpty()) {
             throw new IllegalStateException("There has to be at least one record in the list.");
@@ -30,21 +42,6 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
         }
 
         return new Records(recordsBuilder.build(timeSpan.to()), timeSpan);
-    }
-
-    /**
-     * Loops through all days during a timespan, and looks for matching RecordIntervals from the Records and
-     * apply the opening hours for each day.
-     *
-     * @param openingHoursGroup
-     * @return
-     */
-    public List<ActualExpectedUptime> apply(OpeningHoursGroup openingHoursGroup) {
-        return timeSpan.allDaysIncludingStartAndEndDate().stream()
-                .map(DayDuringTimeline::new)
-                .map(dayDuringTimeline -> dayDuringTimeline.dailyUptimeFrom(this))
-                .map(dailyUptime -> dailyUptime.apply(openingHoursGroup))
-                .toList();
     }
 
     private static class RecordsBuilder {
@@ -79,7 +76,7 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
 record RecordInterval(LocalDateTime from, LocalDateTime to, ServiceStatus serviceStatus) {
     boolean isValidFor(LocalDate actualDay) {
         return (actualDay.isEqual(from.toLocalDate()) || actualDay.isAfter(from.toLocalDate())
-                && (to == null || (actualDay.isEqual(to.toLocalDate()) || actualDay.isBefore(to.toLocalDate()))));
+                && (actualDay.isEqual(to.toLocalDate()) || actualDay.isBefore(to.toLocalDate())));
     }
 
     boolean isDown() {

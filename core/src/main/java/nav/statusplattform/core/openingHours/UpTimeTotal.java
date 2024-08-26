@@ -12,7 +12,7 @@ public final class UpTimeTotal {
         this.sumOfExpectedUptime = sumOfExpectedUptime;
     }
 
-    public static UpTimeTotal sumOfAll(List<ActualExpectedUptime> actualExpectedUptimes) {
+    static UpTimeTotal sumOfAll(List<ActualExpectedUptime> actualExpectedUptimes) {
         UpTimeTotal upTimeTotal = new UpTimeTotal(0, 0);
         actualExpectedUptimes.stream()
                 .forEach(actualExpectedUptime -> upTimeTotal.pluss(actualExpectedUptime));
