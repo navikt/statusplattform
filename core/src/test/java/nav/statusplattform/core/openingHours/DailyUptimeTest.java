@@ -2,6 +2,7 @@ package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.OpeningHoursRuleEntity;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class DailyUptimeTest {
 
     @Test
-    public void calculate_expected_uptime_for_a_whole_day() {
+    public void calculate_expected_uptime_for_a_part_of_a_day() {
         DailyUptime dailyUptime = new DailyUptime(LocalDate.of(2024, 4, 23), emptyList());
         ActualExpectedUptime actualExpectedUptime = dailyUptime.apply(openingHours_7_30_to_17_00());
 
@@ -21,11 +22,20 @@ public class DailyUptimeTest {
     }
 
     @Test
-    public void calculate_actual_uptime_for_a_whole_day_without_any_downtime() {
+    public void calculate_actual_uptime_for_a_part_of_a_day_without_any_downtime() {
         DailyUptime dailyUptime = new DailyUptime(LocalDate.of(2024, 4, 23), emptyList());
         ActualExpectedUptime actualExpectedUptime = dailyUptime.apply(openingHours_7_30_to_17_00());
 
         assertThat(actualExpectedUptime.actualUptime()).isEqualTo(570);
+    }
+
+    @Disabled
+    @Test
+    public void calculate_actual_uptime_for_a_whole_day_without_any_downtime() {
+        DailyUptime dailyUptime = new DailyUptime(LocalDate.of(2024, 4, 23), emptyList());
+        ActualExpectedUptime actualExpectedUptime = dailyUptime.apply(openingHours_00_00_to_23_59());
+
+        assertThat(actualExpectedUptime.actualUptime()).isEqualTo(1440);
     }
 
     @Test
@@ -66,6 +76,11 @@ public class DailyUptimeTest {
 
     private static OpeningHoursGroup openingHours_7_30_to_17_00() {
         OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity().setRule("??.??.???? ? ? 07:30-17:00");
+        return new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule));
+    }
+
+    private static OpeningHoursGroup openingHours_00_00_to_23_59() {
+        OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity().setRule("??.??.???? ? ? 00:00-23:59");
         return new OpeningHoursGroup().setName("Gruppe4").setRules(List.of(rule));
     }
 }

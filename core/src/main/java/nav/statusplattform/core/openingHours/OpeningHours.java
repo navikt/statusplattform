@@ -2,6 +2,7 @@ package nav.statusplattform.core.openingHours;
 
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -17,5 +18,13 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
         LocalDateTime expectedClosingTime = localDateTime.withHour(closingTime.getHour()).withMinute(closingTime.getMinute());
 
         return new OpeningHours(expectedOpeningTime, expectedClosingTime);
+    }
+
+    long openingHoursInMunutes() {
+        return Duration.between(openingTime, closingTime).toMinutes();
+    }
+
+    long getMinutes(LocalDateTime from) {
+        return Duration.between(from, closingTime).toMinutes();
     }
 }

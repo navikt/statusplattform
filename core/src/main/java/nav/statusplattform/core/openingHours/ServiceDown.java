@@ -58,7 +58,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
         }
 
         if (serviceIsDownAll(openingHours)) {
-            return Duration.between(openingHours.openingTime(), openingHours.closingTime()).toMinutes();
+            return openingHours.openingHoursInMunutes();
         }
 
         if (serviceIsDownDuringOpeningTime(openingHours)) {
@@ -66,7 +66,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
         }
 
         if (serviceIsDownDuringClosingTime(openingHours)) {
-            return Duration.between(from, openingHours.closingTime()).toMinutes();
+            return openingHours.getMinutes(this.from);
         }
 
         throw new IllegalStateException("We are missing a use case when the service is down from %s to %s and the opening hours are %s and %s"
