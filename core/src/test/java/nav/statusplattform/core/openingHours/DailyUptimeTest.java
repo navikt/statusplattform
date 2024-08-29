@@ -3,14 +3,12 @@ package nav.statusplattform.core.openingHours;
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.entities.OpeningHoursRuleEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class DailyUptimeTest {
@@ -41,8 +39,6 @@ public class DailyUptimeTest {
         assertThat(actualExpectedUptime.actualUptime()).isEqualTo(570);
     }
 
-    //TODO: To fix this, we need to take 23:59 into account
-    @Disabled
     @Test
     public void calculate_actual_uptime_when_openinghours_are_00_to_2359_and_service_is_never_down() {
         DailyUptime dailyUptime = new DailyUptime(LocalDate.of(2024, 4, 23),

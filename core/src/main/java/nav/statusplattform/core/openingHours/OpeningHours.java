@@ -3,6 +3,7 @@ package nav.statusplattform.core.openingHours;
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -33,6 +34,12 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
             to = toDateTime;
         } else {
             to = closingTime;
+        }
+
+        //Fix to solve the problem with 23:59
+        //TODO: This needs to be used from more places - important to have all places use the same logic
+        if (to.toLocalTime().equals(LocalTime.of(23, 59))) {
+            to = to.plusDays(1).toLocalDate().atStartOfDay();
         }
 
         return Duration.between(from, to).toMinutes();
