@@ -1,6 +1,5 @@
 package nav.statusplattform.core.openingHours;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -41,7 +40,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
         }
 
         if (serviceIsDownInsideOfThe(openingHours)) {
-            return Duration.between(from, to).toMinutes();
+            return openingHours.openingHoursInMinutes(from, to);
         }
 
         if (serviceIsDownAll(openingHours)) {
@@ -49,11 +48,11 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
         }
 
         if (serviceIsDownDuringOpeningTime(openingHours)) {
-            return Duration.between(openingHours.openingTime(), to).toMinutes();
+            return openingHours.getMinutesTo(to);
         }
 
         if (serviceIsDownDuringClosingTime(openingHours)) {
-            return openingHours.getMinutes(this.from);
+            return openingHours.getMinutesFrom(from);
         }
 
         throw new IllegalStateException("We are missing a use case when the service is down from %s to %s and the opening hours are %s and %s"

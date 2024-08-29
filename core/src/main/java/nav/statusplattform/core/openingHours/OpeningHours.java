@@ -3,7 +3,6 @@ package nav.statusplattform.core.openingHours;
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -36,20 +35,29 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
             to = closingTime;
         }
 
-        //Fix to solve the problem with 23:59
-        //TODO: This needs to be used from more places - important to have all places use the same logic
+        return getMinutes(from, to);
+    }
+
+    long openingHoursInMinutes() {
+        return getMinutes(openingTime, closingTime);
+    }
+
+    long getMinutesFrom(LocalDateTime from) {
+        return getMinutes(from, closingTime);
+    }
+
+    long getMinutesTo(LocalDateTime to) {
+        return getMinutes(openingTime, to);
+    }
+
+    /**
+     * This method takes into account that the opening hours could be 23:59 and should be threated as next day.
+     */
+    private long getMinutes(LocalDateTime from, LocalDateTime to) {
         if (to.toLocalTime().equals(LocalTime.of(23, 59))) {
             to = to.plusDays(1).toLocalDate().atStartOfDay();
         }
 
         return Duration.between(from, to).toMinutes();
-    }
-
-    long openingHoursInMinutes() {
-        return Duration.between(openingTime, closingTime).toMinutes();
-    }
-
-    long getMinutes(LocalDateTime from) {
-        return Duration.between(from, closingTime).toMinutes();
     }
 }
