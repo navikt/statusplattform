@@ -6,9 +6,15 @@ import nav.statusplattform.core.enums.ServiceStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains a list of RecordIntervals and the given timespan.
+ *
+ * This is another way of looking at the RecordEntities, where each interval is closed.
+ */
 record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
 
     Records {
@@ -59,6 +65,7 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
         }
 
         void append(RecordEntity currentRecord) {
+            //TODO: Is it correct that the to-date is equal to the next from-date? Should there be a slightly difference?
             RecordInterval recordInterval = new RecordInterval(localDateTime, currentRecord.getCreated_at().toLocalDateTime(), status);
             this.intervals.add(recordInterval);
             this.localDateTime = currentRecord.getCreated_at().toLocalDateTime();
@@ -73,7 +80,38 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
     }
 }
 
+/**
+ * Record Interval contains the from and to for a given ServiceStatus. The "from" is created from when an event is
+ * happening (like turn into UP, DOWN, UNKNOWN etc) and the "to" is created from when the next event is happening.
+ *
+ * If there is no next event, then the "to" is equal to the end of the timespan.
+ */
 record RecordInterval(LocalDateTime from, LocalDateTime to, ServiceStatus serviceStatus) {
+
+    /**
+     * If the from-date is equal to the actual day, we can use the given time for that day.
+     * If not, we assume the event happened some day before and use the start of the day as the given time.
+     */
+    LocalDateTime getFromDateTime(LocalDate actualDay) {
+        LocalDateTime from;
+        if (this.from.toLocalDate().isEqual(actualDay)) {
+            from = this.from;
+        } else {
+            from = actualDay.atStartOfDay();
+        }
+        return from;
+    }
+
+    LocalDateTime getToDateTime(LocalDate actualDay) {
+        LocalDateTime to;
+        if (this.to.toLocalDate().isEqual(actualDay)) {
+            to = this.to;
+        } else {
+            to = actualDay.atTime(LocalTime.MAX);
+        }
+        return to;
+    }
+
     boolean isValidFor(LocalDate actualDay) {
         return (actualDay.isEqual(from.toLocalDate()) || actualDay.isAfter(from.toLocalDate())
                 && (actualDay.isEqual(to.toLocalDate()) || actualDay.isBefore(to.toLocalDate())));

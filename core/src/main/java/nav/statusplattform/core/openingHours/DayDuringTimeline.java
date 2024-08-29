@@ -5,16 +5,19 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Wrapper class for a given day.
+ *
+ * Gives us the ability to apply a method to the class which could be tested in isolation.
+ */
 record DayDuringTimeline(LocalDate actualDay) {
 
     DailyUptime dailyUptimeFrom(Records records) {
-        List<ServiceDown> serviceDowns = records.intervals()
+        List<RecordInterval> recordIntervals = records.intervals()
                 .stream()
                 .filter(record -> record.isValidFor(actualDay))
-                .filter(RecordInterval::isDown)
-                .map(record -> ServiceDown.from(record, actualDay))
                 .collect(toList());
 
-        return new DailyUptime(actualDay, serviceDowns);
+        return new DailyUptime(actualDay, recordIntervals);
     }
 }

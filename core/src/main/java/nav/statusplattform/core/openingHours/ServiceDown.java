@@ -3,7 +3,6 @@ package nav.statusplattform.core.openingHours;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * ServiceDown has det responsibility to tell when a service is down.
@@ -25,22 +24,10 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
     }
 
     static ServiceDown from(RecordInterval record, LocalDate actualDay) {
-
-        LocalDateTime from;
-        if (record.from().toLocalDate().isEqual(actualDay)) {
-            from = record.from();
-        } else {
-            from = actualDay.atStartOfDay();
-        }
-
-        LocalDateTime to;
-        if (record.to().toLocalDate().isEqual(actualDay)) {
-            to = record.to();
-        } else {
-            to = actualDay.atTime(LocalTime.MAX);
-        }
-
-        return new ServiceDown(from, to);
+        return new ServiceDown(
+                record.getFromDateTime(actualDay),
+                record.getToDateTime(actualDay)
+        );
     }
 
     /**
@@ -58,7 +45,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
         }
 
         if (serviceIsDownAll(openingHours)) {
-            return openingHours.openingHoursInMunutes();
+            return openingHours.openingHoursInMinutes();
         }
 
         if (serviceIsDownDuringOpeningTime(openingHours)) {

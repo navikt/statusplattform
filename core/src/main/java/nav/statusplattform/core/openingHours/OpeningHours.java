@@ -20,7 +20,25 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
         return new OpeningHours(expectedOpeningTime, expectedClosingTime);
     }
 
-    long openingHoursInMunutes() {
+    long openingHoursInMinutes(LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        LocalDateTime from;
+        if (fromDateTime.isAfter(openingTime)) {
+            from = fromDateTime;
+        } else {
+            from = openingTime;
+        }
+
+        LocalDateTime to;
+        if (toDateTime.isBefore(closingTime)) {
+            to = toDateTime;
+        } else {
+            to = closingTime;
+        }
+
+        return Duration.between(from, to).toMinutes();
+    }
+
+    long openingHoursInMinutes() {
         return Duration.between(openingTime, closingTime).toMinutes();
     }
 
