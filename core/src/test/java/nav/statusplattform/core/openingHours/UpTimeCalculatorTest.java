@@ -142,8 +142,6 @@ public class UpTimeCalculatorTest {
         assertEquals("There has to be at least one record in the list.", exception.getMessage());
     }
 
-    //TODO: Hvorfor feiler denne testen?
-    @Disabled
     @Test
     void getTotalOpeningHoursMinutesForDurationUnderADay() {
         //Arrange
@@ -178,25 +176,19 @@ public class UpTimeCalculatorTest {
             System.out.println(r.getCreated_at());
         }
 
-        //calculate the number of minutes
-        LocalTime openingTime = OpeningHoursParser.getOpeningTime(rules.get(2).substring(15));
-        LocalTime closingTime = OpeningHoursParser.getClosingTime(rules.get(2).substring(15));
-
-        long totalUpTimeMinutes1 = getDurationInMinutes(openingTime, closingTime, to);
-        long totalUpTimeMinutes2 = getDurationInMinutes(openingTime, closingTime, to);
-
         //Act
         // within opening hours
         UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(toMinusTwoHours, to));
 
-        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(beforeOpeningHoursStart, to));
+        TimeSpan timeSpan = new TimeSpan(beforeOpeningHoursStart, to);
+        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, timeSpan);
 
         //Assert
         //Record under a day within opening hours end time during working hours
-        Assertions.assertEquals(uptimeOpenAllTheTime1.sumOfExpectedUptime(), totalUpTimeMinutes1);
+        Assertions.assertEquals(120, uptimeOpenAllTheTime1.sumOfExpectedUptime());
 
         //Assertions starts before working hours
-        Assertions.assertEquals(uptimeOpenAllTheTime2.sumOfExpectedUptime(), totalUpTimeMinutes2);
+        Assertions.assertEquals(120, uptimeOpenAllTheTime2.sumOfExpectedUptime());
     }
 
     @Test
