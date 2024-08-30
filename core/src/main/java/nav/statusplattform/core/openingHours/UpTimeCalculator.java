@@ -1,6 +1,8 @@
 package nav.statusplattform.core.openingHours;
 
+
 import nav.statusplattform.core.entities.OpeningHoursGroup;
+
 import nav.statusplattform.core.repositories.OpeningHoursRepository;
 import nav.statusplattform.core.repositories.RecordRepository;
 
@@ -21,11 +23,13 @@ public class UpTimeCalculator {
         OpeningHoursGroup openingHoursGroup = openingHoursRepository.getOHGroupForService(serviceId)
                 .orElseThrow(() -> new IllegalStateException("Didn´t find any opening hours for serviceId = %s".formatted(serviceId)));
 
+
         Records records = Records.fromRecordEntities(recordRepository.getRecordsInTimeSpan(serviceId, timeSpan.from(), timeSpan.to()), timeSpan);
         List<ActualExpectedUptime> actualExpectedUptimes = records.apply(openingHoursGroup);
 
         return UpTimeTotal.sumOfAll(actualExpectedUptimes);
     }
+
 }
 
 
