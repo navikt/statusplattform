@@ -7,6 +7,8 @@ import nav.statusplattform.core.enums.ServiceStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,21 +61,20 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
 
         RecordsBuilder init(RecordEntity recordEntity) {
             RecordsBuilder recordsBuilder = new RecordsBuilder();
-            recordsBuilder.localDateTime = recordEntity.getCreated_at().toLocalDateTime();
+            recordsBuilder.localDateTime = recordEntity.getCreated_at().toLocalDateTime().truncatedTo(ChronoUnit.SECONDS);
             recordsBuilder.status = recordEntity.getStatus();
             return recordsBuilder;
         }
 
         void append(RecordEntity currentRecord) {
-            //TODO: Is it correct that the to-date is equal to the next from-date? Should there be a slightly difference?
             RecordInterval recordInterval = new RecordInterval(localDateTime, currentRecord.getCreated_at().toLocalDateTime(), status);
             this.intervals.add(recordInterval);
-            this.localDateTime = currentRecord.getCreated_at().toLocalDateTime();
+            this.localDateTime = currentRecord.getCreated_at().toLocalDateTime().truncatedTo(ChronoUnit.SECONDS);
             this.status = currentRecord.getStatus();
         }
 
         List<RecordInterval> build(LocalDateTime endOfTimeSpan) {
-            RecordInterval recordInterval = new RecordInterval(this.localDateTime, endOfTimeSpan, status);
+            RecordInterval recordInterval = new RecordInterval(this.localDateTime, endOfTimeSpan.truncatedTo(ChronoUnit.SECONDS), status);
             this.intervals.add(recordInterval);
             return intervals;
         }
