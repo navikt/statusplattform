@@ -13,9 +13,9 @@ public class UpTimeTotalTest {
         ActualExpectedUptime actualExpectedUptime_A = new ActualExpectedUptime(500, 400);
         ActualExpectedUptime actualExpectedUptime_B = new ActualExpectedUptime(241, 102);
 
-        UpTimeTotal upTimeTotal = UpTimeTotal.sumOfAll(List.of(actualExpectedUptime_A, actualExpectedUptime_B));
+        UpTimeTotals upTimeTotals = UpTimeTotals.sumOfAll(List.of(actualExpectedUptime_A, actualExpectedUptime_B));
 
-        assertThat(upTimeTotal.sumOfExpectedUptime()).isEqualTo(741);
-        assertThat(upTimeTotal.sumOfActualUptime()).isEqualTo(502);
+        assertThat(upTimeTotals.sumOfExpectedUptime()).isEqualTo(741);
+        assertThat(upTimeTotals.sumOfActualUptime()).isEqualTo(502);
     }
 }

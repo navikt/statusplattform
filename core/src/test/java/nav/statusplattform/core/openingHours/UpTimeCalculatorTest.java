@@ -178,10 +178,10 @@ public class UpTimeCalculatorTest {
 
         //Act
         // within opening hours
-        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(toMinusTwoHours, to));
+        UpTimeTotals uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(toMinusTwoHours, to));
 
         TimeSpan timeSpan = new TimeSpan(beforeOpeningHoursStart, to);
-        UpTimeTotal uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, timeSpan);
+        UpTimeTotals uptimeOpenAllTheTime2 = upTimeCalculator.calculateUpTimeForService(serviceId, timeSpan);
 
         //Assert
         //Record under a day within opening hours end time during working hours
@@ -237,7 +237,7 @@ public class UpTimeCalculatorTest {
 
         //Act
         // within opening hours
-        UpTimeTotal uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(fiveDaysBack, backOneDay));
+        UpTimeTotals uptimeOpenAllTheTime1 = upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(fiveDaysBack, backOneDay));
 
         //Assert
         //Record under a day within opening hours end time during working hours

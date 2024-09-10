@@ -16,7 +16,7 @@ record DailyUptime(LocalDate currentDay, List<RecordInterval> recordIntervalsRel
     }
 
     /**
-     * When we apply the Opening Hours to the given DailyUptime, we should get an obect in return that contains both the
+     * When we apply the Opening Hours to the given DailyUptime, we should get an object in return that contains both the
      * expected and actual uptime.
      */
     public ActualExpectedUptime apply(OpeningHoursGroup group) {

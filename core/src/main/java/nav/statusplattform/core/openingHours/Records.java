@@ -26,8 +26,8 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
     }
 
     /**
-     * Loops through all days during a timespan, and looks for matching RecordIntervals from the Records and
-     * apply the opening hours for each day.
+     * Iterates through all days during a timespan, comparing the dates and times, applying
+     * respective opening hours for each RecordIntervals.
      */
     List<ActualExpectedUptime> apply(OpeningHoursGroup openingHoursGroup) {
         return timeSpan.allDaysIncludingStartAndEndDate().stream()
@@ -37,6 +37,9 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
                 .toList();
     }
 
+
+    /* Returns a chronological list of events within a given period containing data about a service's
+    start date/time and availability. */
     static Records fromRecordEntities(List<RecordEntity> records, TimeSpan timeSpan) {
         if (records.isEmpty()) {
             throw new IllegalStateException("There has to be at least one record in the list.");

@@ -238,6 +238,9 @@ public class OpeningHoursRepository {
                 .executeDelete();
     }
 
+    /*
+        Returns a group containing business opening hour rules for a given service
+    */
     public Optional<OpeningHoursGroup> getOHGroupForService(UUID service_id) {
         DbContextTableAlias g = ohGroupTable.alias("g");
         DbContextTableAlias s2g = serviceOHgroupTable.alias("s2g");

@@ -17,6 +17,8 @@ import nav.statusplattform.core.enums.OpsMessageSeverity;
 import nav.statusplattform.core.enums.RuleType;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
+import nav.statusplattform.core.openingHours.TimeSpan;
+import nav.statusplattform.core.openingHours.UpTimeTotals;
 import no.nav.statusplattform.api.TeamKatalogIntegrasjon.TeamKatalogKlient;
 import no.nav.statusplattform.generated.api.AreaDto;
 import no.nav.statusplattform.generated.api.DashboardDto;
@@ -380,5 +382,12 @@ public class EntityDtoMappers {
         entity.setType(ServiceType.fromDb(dto.getType().getValue()));
         entity.setContent(dto.getContent());
         return entity;
+    }
+
+    public static UpTimeTotalsDto toUpTimeTotalsDto(final UpTimeTotals upTimeTotals) {
+        UpTimeTotalsDto dto = new UpTimeTotalsDto();
+        dto.setSumOfActualUptime(upTimeTotals.sumOfActualUptime());
+        dto.setSumOfExpectedUptime(upTimeTotals.sumOfExpectedUptime());
+        return dto;
     }
 }

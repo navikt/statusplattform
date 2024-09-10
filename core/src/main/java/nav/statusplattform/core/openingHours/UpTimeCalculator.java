@@ -24,7 +24,7 @@ public class UpTimeCalculator {
      service's availability for a period requested by the user. For each record, apply the opening times and create a
      chronology of the service's availability events. Finally, sum up the event times to calculate a service's
      actual and expected uptimes.*/
-    public UpTimeTotal calculateUpTimeForService(UUID serviceId, TimeSpan timeSpan) throws IllegalStateException {
+    public UpTimeTotals calculateUpTimeForService(UUID serviceId, TimeSpan timeSpan) throws IllegalStateException {
         OpeningHoursGroup openingHoursGroup = openingHoursRepository.getOHGroupForService(serviceId)
                 .orElseThrow(() -> new IllegalStateException("No timespan assigned for serviceId = %s".formatted(serviceId)));
 
@@ -32,7 +32,7 @@ public class UpTimeCalculator {
         Records records = Records.fromRecordEntities(recordRepository.getRecordsInTimeSpan(serviceId, timeSpan.from(), timeSpan.to()), timeSpan);
         List<ActualExpectedUptime> actualExpectedUptimes = records.apply(openingHoursGroup);
 
-        return UpTimeTotal.sumOfAll(actualExpectedUptimes);
+        return UpTimeTotals.sumOfAll(actualExpectedUptimes);
     }
 
 }
