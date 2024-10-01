@@ -8,10 +8,7 @@ import nav.statusplattform.core.enums.ServiceStatus;
 import org.fluentjdbc.*;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,6 +94,32 @@ public class RecordRepository {
                 .orderBy("created_at DESC")
                 .limit(maxNumberOfRecords)
                 .list(RecordRepository::toRecord);
+    }
+
+    public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, LocalDateTime from, LocalDateTime to) {
+        List<RecordEntity> recordsInTimeSpan = recordTable.where("service_id", serviceId)
+                .whereExpression("created_at >= ?", from.atZone(ZoneId.systemDefault()))
+                .whereExpression("created_at <= ?", to.atZone(ZoneId.systemDefault()))
+                .orderBy("created_at ASC")
+                .list(RecordRepository::toRecord);
+
+
+        try {
+
+            Optional<RecordEntity> recordInTimeSpan = recordTable.where("service_id", serviceId)
+                    .whereExpression("created_at <= ?", from)
+                    .orderBy("created_at DESC")
+                    .limit(1)
+                    .singleObject(RecordRepository::toRecord);
+
+            RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
+
+            recordsInTimeSpan.addFirst(firstRecordInTimeSpan);
+        } catch (Exception e) {
+            return recordsInTimeSpan;
+        }
+
+        return recordsInTimeSpan;
     }
 
     public List<RecordEntity> getAllRecordsFromYesterday(){
