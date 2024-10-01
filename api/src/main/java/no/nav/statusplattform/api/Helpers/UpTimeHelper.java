@@ -26,9 +26,6 @@ public class UpTimeHelper {
         UpTimeCalculator upTimeCalculator =
                 new UpTimeCalculator(recordRepository, openingHoursRepository);
 
-        UpTimeTotals upTimeTotals = upTimeCalculator.calculateUpTimeForService(service_id, timeSpan);
-
-        return EntityDtoMappers
-                .toUpTimeTotalsDto(upTimeTotals);
+        return EntityDtoMappers.toUpTimeTotalsDto(upTimeCalculator.calculateUpTimeForService(service_id, timeSpan));
     }
 }

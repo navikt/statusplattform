@@ -11,7 +11,7 @@ import org.actioncontroller.json.JsonBody;
 import java.util.UUID;
 
 public class UpTimeController {
-    private UpTimeHelper upTimeHelper;
+    private final UpTimeHelper upTimeHelper;
 
     public UpTimeController(UpTimeHelper upTimeHelper) {
         this.upTimeHelper = upTimeHelper;
@@ -20,8 +20,7 @@ public class UpTimeController {
     @GET("UpTime/:Service_id/:TimeSpan")
     @JsonBody
     public UpTimeTotalsDto getServiceUpTimeSums(@PathParam("Service_id") UUID service_id, @PathParam("TimeSpan") TimeSpan timeSpan) {
-        UpTimeTotalsDto upTimeTotalsDto = UpTimeHelper.getServiceUpTimeSums(service_id, timeSpan);
-        return upTimeTotalsDto;
+        return UpTimeHelper.getServiceUpTimeSums(service_id, timeSpan);
     }
 
 }
