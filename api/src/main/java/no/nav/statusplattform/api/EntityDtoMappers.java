@@ -171,6 +171,7 @@ public class EntityDtoMappers {
         return opsMessageEntity;
     }
 
+
     public static ServiceDto toServiceDtoDeep(ServiceEntity service ,List<ServiceEntity> dependencies){
         Map<ServiceEntity, List<ServiceEntity>> map = new HashMap<>();
         map.put(service,dependencies);
@@ -256,6 +257,14 @@ public class EntityDtoMappers {
                 .collect(Collectors.toList()));
         return dto;
     }
+
+    // Convert a list of entries into a list of DashboardDto objects
+    public static List<DashboardDto> toDashboardDtoDeepList(List<Map.Entry<DashboardEntity, List<AreaWithServices>>> dashboardEntries) {
+        return dashboardEntries.stream()
+                .map(EntityDtoMappers::toDashboardDtoDeep) // Using the existing conversion method for each entry
+                .collect(Collectors.toList());
+    }
+
 
     public static DashboardNameIdDto toDashboardDtoShallow(DashboardEntity entity){
         DashboardNameIdDto dto = new DashboardNameIdDto();
