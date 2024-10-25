@@ -20,6 +20,8 @@ import nav.statusplattform.core.enums.ServiceType;
 import nav.statusplattform.core.openingHours.TimeSpan;
 import nav.statusplattform.core.openingHours.UpTimeTotals;
 import no.nav.statusplattform.api.TeamKatalogIntegrasjon.TeamKatalogKlient;
+
+
 import no.nav.statusplattform.generated.api.AreaDto;
 import no.nav.statusplattform.generated.api.DashboardDto;
 import no.nav.statusplattform.generated.api.DashboardNameIdDto;
@@ -34,7 +36,10 @@ import no.nav.statusplattform.generated.api.ServiceDto;
 import no.nav.statusplattform.generated.api.ServiceTypeDto;
 import no.nav.statusplattform.generated.api.StatusDto;
 import no.nav.statusplattform.generated.api.SubAreaDto;
+import no.nav.statusplattform.generated.api.UpTimeTotalsDto;
 
+
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -385,9 +390,10 @@ public class EntityDtoMappers {
     }
 
     public static UpTimeTotalsDto toUpTimeTotalsDto(final UpTimeTotals upTimeTotals) {
-        UpTimeTotalsDto dto = new UpTimeTotalsDto();
-        dto.setSumOfActualUptime(upTimeTotals.sumOfActualUptime());
-        dto.setSumOfExpectedUptime(upTimeTotals.sumOfExpectedUptime());
+        //Orlene: Using BigDecimal as expected by the DTO.
+        var dto = new UpTimeTotalsDto();
+        dto.setSumOfActualUptime(BigDecimal.valueOf(upTimeTotals.sumOfActualUptime()));
+        dto.setSumOfExpectedUptime(BigDecimal.valueOf(upTimeTotals.sumOfExpectedUptime()));
         return dto;
     }
 }

@@ -96,6 +96,10 @@
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                             </configOptions>
+                            <!--  ORLENE: Added explicit type mapping from number (e.g. type: number) to BigDecimal, to import in generated files.  -->
+                            <typeMappings>
+                                <typeMapping>number=java.math.BigDecimal</typeMapping>
+                            </typeMappings>
                         </configuration>
                     </execution>
                 </executions>
@@ -113,5 +117,10 @@
                 <version>2.22.2</version>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>target/generated-sources/openapi-java</directory>
+            </resource>
+        </resources>
     </build>
 </project>

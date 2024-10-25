@@ -15,6 +15,8 @@ public class UpTimeCalculator {
     private final OpeningHoursRepository openingHoursRepository;
 
     public UpTimeCalculator(RecordRepository recordRepository, OpeningHoursRepository openingHoursRepository) {
+        /* ORLENE: If the data from the repositories is static it is retrieved here to avoid accessing
+         the repositories on each call to calculateUpTimeForService.*/
         this.recordRepository = recordRepository;
         this.openingHoursRepository = openingHoursRepository;
     }
