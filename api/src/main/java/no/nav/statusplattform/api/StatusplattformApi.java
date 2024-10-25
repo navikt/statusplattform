@@ -1,14 +1,6 @@
 package no.nav.statusplattform.api;
 
-import no.nav.statusplattform.api.v3.controllers.AreaController;
-import no.nav.statusplattform.api.v3.controllers.DashboardController;
-import no.nav.statusplattform.api.v3.controllers.HealthCheck;
-import no.nav.statusplattform.api.v3.controllers.OpeningHoursController;
-import no.nav.statusplattform.api.v3.controllers.OpsController;
-import no.nav.statusplattform.api.v3.controllers.RecordController;
-import no.nav.statusplattform.api.v3.controllers.ServiceController;
-import no.nav.statusplattform.api.v3.controllers.UserController;
-import no.nav.statusplattform.api.v3.controllers.WcagController;
+import no.nav.statusplattform.api.v3.controllers.*;
 import no.nav.statusplattform.infrastructure.ApiFilter;
 import no.nav.statusplattform.infrastructure.AuthenticationFilter;
 import no.nav.statusplattform.infrastructure.CORSFilter;
@@ -37,6 +29,7 @@ public class StatusplattformApi extends ClasspathWebAppContext {
         corsFilter = new CORSFilter();
         addFilter(new FilterHolder(corsFilter),"/*", EnumSet.of(DispatcherType.REQUEST));
         addServlet(new ServletHolder(new WebJarServlet("swagger-ui")), "/swagger/*");
+        var dbContext = new DbContext();
         addServlet(new ServletHolder(new ApiServlet(List.of(
                 new AreaController(dbContext),
                 new DashboardController(dbContext),
@@ -46,7 +39,8 @@ public class StatusplattformApi extends ClasspathWebAppContext {
                 new OpeningHoursController(dbContext),
                 new HealthCheck(dbContext),
                 new UserController(),
-                new WcagController()
+                new WcagController(),
+                new UpTimeController(dbContext)
         ))), "/*");
 
         addFilter(new FilterHolder( new AuthenticationFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));

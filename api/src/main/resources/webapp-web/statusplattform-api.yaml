@@ -1907,7 +1907,46 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
-
+  /UpTime/{Service_id}/{TimeSpan}:
+    get:
+      tags:
+        - UpTime
+      summary: Hent summen av faktisk og forventet oppetid for en tjeneste
+      description: Hent summen av faktisk og forventet oppetid for en tjeneste
+      operationId: getServiceUpTimeSums
+      parameters:
+        - name: Service_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: TimeSpan
+          in: path
+          required: true
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/TimeSpan'
+      responses:
+        '200':
+          description: actual and expected UpTime totals
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/UpTimeTotals'
+        '401':
+          description: Unauthorized
+          content: { }
+        '403':
+          description: Forbidden
+          content: { }
+        '404':
+          description: Not Found
+          content: { }
+      deprecated: false
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2423,6 +2462,30 @@ components:
           $ref: '#/components/schemas/ServiceType'
         content:
           type: string
+    TimeSpan:
+      title: TimeSpan
+      type: object
+      properties:
+        from:
+          type: string
+          format: date-time
+          example: "2024-08-21T14:30:00Z"
+        to:
+          type: string
+          format: date-time
+          example: "2024-08-28T17:30:00Z"
+    UpTimeTotals:
+      title: UpTimeTotal
+      type: object
+      properties:
+        sumOfActualUptime:
+          type: number
+          example: 853
+        sumOfExpectedUptime:
+          type: number
+          example: 643589
+
+
 
 
   securitySchemes:
