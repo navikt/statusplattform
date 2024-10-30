@@ -54,6 +54,16 @@ public class DashboardController {
         return dashboardRepository.saveExternalDashboard(dashboardId);
     }
 
+    @GET("/Dashboards/external/:dashboardId/services")
+    @JsonBody
+    public List<OPSmessageDto> getServicesByDashboardId(@PathParam("dashboardId") UUID dashboardId) {
+        Map<OpsMessageEntity, List<ServiceEntity>> opsMessagesMap = dashboardRepository.getOpsMessagesByDashboardId(dashboardId);
+
+        return opsMessagesMap.entrySet().stream()
+                .map(entry -> EntityDtoMappers.toOpsMessageDtoDeep(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
     @GET("/Dashboards/external/:dashboardId/messages")
     @JsonBody
     public List<OPSmessageDto> getOpsMessagesByDashboardId(@PathParam("dashboardId") UUID dashboardId) {
