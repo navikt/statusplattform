@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -49,6 +50,7 @@ public class TeamKatalogKlient {
         SimpleTeamInfo simpleTeams;
         try {
             HttpURLConnection connection = createApiConnection(urlString);
+            logger.info("UrlString: {}", urlString);
             String responseBody = readResponseBody(connection);
 
             if(single_team){
@@ -114,8 +116,8 @@ public class TeamKatalogKlient {
             return teamkatalogApiUrl;
         }
 
-        return TEAM_KATALOG_URL + "/team/search/" +
-                URLEncoder.encode(searchParam, StandardCharsets.UTF_8);
+        String encodedParam = URLEncoder.encode(searchParam, StandardCharsets.UTF_8).replace("+", "%20");
+        return TEAM_KATALOG_URL + "/team/search/" + encodedParam;
     }
 
     private static HttpURLConnection createApiConnection(String urlString) throws IOException {
