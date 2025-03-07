@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="StatusplattformServer" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="AZURE_APP_CLIENT_ID" value="local" />
+      <env name="AZURE_APP_CLIENT_SECRET" value="local" />
+      <env name="swagger-api-key" value="key" />
+      <env name="teamkatalogApiUrl" value="https://teamkatalog-api.intern.dev.nav.no" />
+      <env name="ENV" value="dev" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="no.nav.statusplattform.server.StatusplattformServer" />
+    <module name="server" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="no.nav.statusplattform.server.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

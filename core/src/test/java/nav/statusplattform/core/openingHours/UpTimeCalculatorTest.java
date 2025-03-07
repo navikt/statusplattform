@@ -15,10 +15,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +27,9 @@ public class UpTimeCalculatorTest {
 
     private final DbContext dbContext = new DbContext();
     private DbContextConnection connection;
+    private static final ZoneId ZONE_ID = ZoneId.of("Europe/Oslo"); // CATO: Explicit time zone.
+    private static final LocalDateTime STATIC_TIME = LocalDateTime.of(2024, 12, 31, 12, 59, 59);
+
 
     @BeforeEach
     void startConnection() {
@@ -52,14 +52,14 @@ public class UpTimeCalculatorTest {
 
     private LocalDateTime nullDateEntry = null;
 
-    private final LocalDateTime to = LocalDateTime.now();
+    private final LocalDateTime to = STATIC_TIME;
 
     private final LocalDateTime toMinusTwoHours = to.minusHours(2);
 
-    private final LocalDateTime todaysDate = LocalDateTime.now();
+    private final LocalDateTime todaysDate = STATIC_TIME;
     private final LocalDateTime yesterdayDate = todaysDate.minusDays(1);
 
-    private final LocalDateTime backOneDay = LocalDateTime.now().minusDays(1);
+    private final LocalDateTime backOneDay = STATIC_TIME.minusDays(1);
 
     private final LocalDateTime fiveDaysBack = todaysDate.minusDays(5);
 
@@ -74,10 +74,23 @@ public class UpTimeCalculatorTest {
     @Test
     void assertionThrownForADateOFNull() {
         //Arrange
+        OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
+        rule.setName(ruleNames.getFirst());
+        rule.setRule(rules.get(2));
+        UUID ruleId = openingHoursRepository.save(rule);
+        rule.setId(ruleId);
+        //Add rule to group
+        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(ruleId));
+        UUID groupId = openingHoursRepository.saveGroup(group);
+        group.setId(groupId);
+        //Add service
+        //add group to service
         //Add service
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         UUID serviceId = serviceRepository.save(service);
         service.setId(serviceId);
+
+        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
         //Assert
         //Throws an exception if the to and from period is of  yyyy-MM-dd - HH:mm:ss format
         Throwable exception = assertThrows(IllegalStateException.class, () ->
@@ -87,32 +100,26 @@ public class UpTimeCalculatorTest {
 
     @Test
     void assertionThrownForDatEntryGreaterThanCurrentDate() {
-        //Arrange
-        //Add service
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        //Assert
-        //Throws an exception if the date entries are greater than the previousRecordCurrentDay date
-
+        var localYesterdaysDate = LocalDateTime.now().minusDays(1);
+        var localTodaysDate = LocalDateTime.now();
         //Greater than one day
         Throwable exceptionOneDay = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusDays(1))));
+                new TimeSpan(localYesterdaysDate, localTodaysDate.plusDays(1)));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionOneDay.getMessage());
 
         //Greater than one hour
         Throwable exceptionOneHour = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusHours(1))));
+                new TimeSpan(localYesterdaysDate, localTodaysDate.plusHours(1)));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionOneHour.getMessage());
 
         //Greater than two minutes
         Throwable exceptionTwoMinutes = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusMinutes(2))));
+                new TimeSpan(localYesterdaysDate, localTodaysDate.plusMinutes(2)));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionTwoMinutes.getMessage());
 
         //Greater than three seconds
         Throwable exceptionThreeSeconds = assertThrows(IllegalStateException.class, () ->
-                upTimeCalculator.calculateUpTimeForService(serviceId, new TimeSpan(yesterdayDate, todaysDate.plusSeconds(3))));
+                new TimeSpan(localYesterdaysDate, localTodaysDate.plusSeconds(3)));
         assertEquals("Arguments for DateEntry cannot be greater than the previousRecordCurrentDay date and time", exceptionThreeSeconds.getMessage());
     }
 
@@ -185,10 +192,10 @@ public class UpTimeCalculatorTest {
 
         //Assert
         //Record under a day within opening hours end time during working hours
-        Assertions.assertEquals(120, uptimeOpenAllTheTime1.sumOfExpectedUptime());
+        Assertions.assertEquals(120, uptimeOpenAllTheTime1.sumOfExpectedUptime(), "assert1");
 
         //Assertions starts before working hours
-        Assertions.assertEquals(120, uptimeOpenAllTheTime2.sumOfExpectedUptime());
+        Assertions.assertEquals(120, uptimeOpenAllTheTime2.sumOfExpectedUptime(), "assert2");
     }
 
     @Test
@@ -216,7 +223,7 @@ public class UpTimeCalculatorTest {
         records.forEach(record -> {
             int min = 1;
             int max = 1;
-            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime now = STATIC_TIME;
             int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
             record.setCreated_at(fiveDaysBack.atZone(ZoneId.systemDefault()));
             record.setServiceId(service.getId());

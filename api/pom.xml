@@ -121,6 +121,9 @@
             <resource>
                 <directory>target/generated-sources/openapi-java</directory>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
         </resources>
     </build>
 </project>

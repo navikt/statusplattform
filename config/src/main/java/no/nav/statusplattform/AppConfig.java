@@ -5,7 +5,7 @@ import java.util.Optional;
 public class AppConfig {
 
     public static class DbConfig {
-        public final String hostname = getEnvVar("DB_HOST").orElseThrow(IllegalStateException::new);
+        public final String hostname = getEnvVar("DB_HOST").orElse("localhost");
         public final Integer port = getEnvVar("DB_PORT").map(Integer::parseInt).orElse(5432);
         public final String username = getEnvVar("DB_USERNAME").orElse("postgres");
         public final String password = getEnvVar("DB_PASSWORD").orElse("");
@@ -14,7 +14,7 @@ public class AppConfig {
 
     public static class AzureConfig {
         public final String oath2Scope = getEnvVar("ENV").orElseThrow(IllegalStateException::new);
-        public final String tenant = getEnvVar("TENANT").orElseThrow(IllegalStateException::new);
+        public final String tenant = getEnvVar("TENANT").orElse("trygdeetaten.no");
         public final String clientId = getEnvVar("AZURE_APP_CLIENT_ID").orElseThrow(IllegalStateException::new);
         public final String clientSecret = getEnvVar("AZURE_APP_CLIENT_SECRET").orElseThrow(IllegalStateException::new);
     }

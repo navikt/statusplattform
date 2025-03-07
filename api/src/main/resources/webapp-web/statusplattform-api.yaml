@@ -1907,7 +1907,13 @@ paths:
           description: Not Found
           content: { }
       deprecated: false
-  /UpTime/{Service_id}/{TimeSpan}:
+  /UpTime/test:
+    get:
+      summary: Test
+      responses:
+        '200':
+          description: foobar
+  /UpTime/{Service_id}:
     get:
       tags:
         - UpTime
@@ -1920,14 +1926,16 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
-        - name: TimeSpan
-          in: path
+        - name: From
+          in: query
           required: true
           schema:
-            type: object
-            items:
-              $ref: '#/components/schemas/TimeSpan'
+            type: string
+        - name: To
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: actual and expected UpTime totals
