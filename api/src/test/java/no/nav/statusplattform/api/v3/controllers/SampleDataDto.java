@@ -13,8 +13,14 @@ import no.nav.statusplattform.generated.api.ServiceDto;
 import no.nav.statusplattform.generated.api.ServiceTypeDto;
 import no.nav.statusplattform.generated.api.StatusDto;
 import no.nav.statusplattform.generated.api.SubAreaDto;
+import org.assertj.core.internal.bytebuddy.asm.Advice;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.LocalTime;
+import java.util.Random;
+import java.sql.Time;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +28,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -304,6 +310,20 @@ public class SampleDataDto {
         return oHRuleDtos;
     }
 
+    public static List<OHRuleDto> getBasicRule() {
+        LinkedHashMap<String, String> orderedNamesAndRules = new LinkedHashMap<>();
+        orderedNamesAndRules.put("Normal work days", "??.??.???? ? 1-5 08:00-18:00");
+
+        List<String> names = new ArrayList<>(orderedNamesAndRules.keySet());
+        List<OHRuleDto> oHRuleDto = new ArrayList<>();
+        for (int i = 0; i < orderedNamesAndRules.size(); i++) {
+            oHRuleDto.add(new OHRuleDto()
+                    .name(names.get(i))
+                    .rule(orderedNamesAndRules.get(names.get(i))));
+        }
+        return oHRuleDto;
+    }
+
     public static List<OHRuleDto> getOrderedRules() {
         LinkedHashMap<String, String> orderedNamesAndRules = new LinkedHashMap<>();
 
@@ -510,4 +530,6 @@ public class SampleDataDto {
         Random random = new Random();
         return random.nextInt(5) + 1;
     }
+
+
 }

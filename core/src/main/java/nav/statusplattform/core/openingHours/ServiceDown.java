@@ -70,7 +70,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
      */
     private boolean serviceIsDownAndServiceClosedAllDay(OpeningHours openingHours) {
         // Define the time to check
-        LocalTime checkTime = LocalTime.of(0, 0);// 00:30
+        LocalTime checkTime = LocalTime.of(0, 0);// 00:00
         LocalTime openingTime = openingHours.openingTime().toLocalTime();
         LocalTime closingTime = openingHours.closingTime().toLocalTime();
         return openingTime.equals(checkTime) && closingTime.equals(checkTime);
@@ -89,6 +89,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
     /**
      * The service was down between opening hours
      */
+
     private boolean serviceIsDownInsideOfThe(OpeningHours openingHours) {
         return (from.isEqual(openingHours.openingTime()) || from.isAfter(openingHours.openingTime()))
                 && (to.isEqual(openingHours.closingTime()) || to.isBefore(openingHours.closingTime()));

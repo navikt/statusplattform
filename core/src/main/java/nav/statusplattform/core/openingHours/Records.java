@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains a list of RecordIntervals and the given timespan.
@@ -36,7 +37,6 @@ record Records(List<RecordInterval> intervals, TimeSpan timeSpan) {
                 .map(dailyUptime -> dailyUptime.apply(openingHoursGroup))
                 .toList();
     }
-
 
     /* Returns a chronological list of events within a given period containing data about a service's
     start date/time and availability. */
