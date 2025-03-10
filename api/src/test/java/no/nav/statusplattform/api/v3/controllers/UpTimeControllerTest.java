@@ -3,7 +3,6 @@ package no.nav.statusplattform.api.v3.controllers;
 import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.enums.ServiceStatus;
-import nav.statusplattform.core.openingHours.TimeSpan;
 import nav.statusplattform.core.repositories.SampleData;
 import nav.statusplattform.core.repositories.TestDataSource;
 import nav.statusplattform.core.repositories.TestUtil;
@@ -62,7 +61,7 @@ public class UpTimeControllerTest {
             savedOHRulesDtoIds.add(oHRuleDto.getId());
         });
 
-        //Group oppsett
+        //Group set up
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
         UUID groupId = savedOHGroupThinDto.getId();
@@ -93,12 +92,11 @@ public class UpTimeControllerTest {
         record.setServiceId(serviceDto.getId());
 
         //Act
-        TimeSpan timeSpan = new TimeSpan(
-                LocalDateTime.now().minusDays(1),
-                LocalDateTime.now());
 
         UpTimeTotalsDto retrievedUpTimeTotalsDto
-                = upTimeController.getServiceUpTimeSums(serviceDto.getId(), timeSpan);
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                LocalDateTime.now().minusDays(1).toString(),
+                LocalDateTime.now().toString());
 
         //Assert
         System.out.println(retrievedUpTimeTotalsDto.toString());
@@ -117,7 +115,7 @@ public class UpTimeControllerTest {
             savedOHRulesDtoIds.add(oHRuleDto.getId());
         });
 
-        //Group oppsett
+        //Group set up
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
         UUID groupId = savedOHGroupThinDto.getId();
@@ -148,12 +146,11 @@ public class UpTimeControllerTest {
         record.setServiceId(serviceDto.getId());
 
         //Act
-        TimeSpan timeSpan = new TimeSpan(
-                LocalDateTime.now().minusDays(7),
-                LocalDateTime.now());
 
         UpTimeTotalsDto retrievedUpTimeTotalsDto
-                = upTimeController.getServiceUpTimeSums(serviceDto.getId(), timeSpan);
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                LocalDateTime.now().minusDays(7).toString(),
+                LocalDateTime.now().toString());
 
         //Assert
         System.out.println(retrievedUpTimeTotalsDto.toString());
@@ -172,7 +169,7 @@ public class UpTimeControllerTest {
             savedOHRulesDtoIds.add(oHRuleDto.getId());
         });
 
-        //Group oppsett
+        //Group set up
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
         UUID groupId = savedOHGroupThinDto.getId();
@@ -203,12 +200,11 @@ public class UpTimeControllerTest {
         });
 
         //Act
-        TimeSpan timeSpan = new TimeSpan(
-                LocalDateTime.now().minusDays(2),
-                LocalDateTime.now());
-
         UpTimeTotalsDto retrievedUpTimeTotalsDto
-                = upTimeController.getServiceUpTimeSums(serviceDto.getId(), timeSpan);
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                LocalDateTime.now().minusDays(30).toString(),
+                LocalDateTime.now().toString());
+
 
         //Assert
         System.out.println(retrievedUpTimeTotalsDto.toString());
