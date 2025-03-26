@@ -86,4 +86,14 @@ public class OpsControllerHelper {
 
         return  result;
     }
+
+    public List<OPSmessageDto> getOpsMessagesByServiceIds(List<String> serviceIds) {
+        // Convert list of service IDs to UUIDs
+        List<UUID> serviceUUIDs = serviceIds.stream().map(UUID::fromString).collect(Collectors.toList());
+
+        // Fetch messages from the repository
+        return opsRepository.findOpsMessagesByServiceIds(serviceUUIDs).stream()
+                .map(EntityDtoMappers::toOpsMessageDtoShallow)
+                .collect(Collectors.toList());
+    }
 }

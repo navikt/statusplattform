@@ -1,15 +1,21 @@
 package no.nav.statusplattform.api.v3.controllers;
 
+import nav.statusplattform.core.entities.AreaWithServices;
+import nav.statusplattform.core.entities.OpsMessageEntity;
+import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.repositories.DashboardRepository;
+import nav.statusplattform.core.entities.DashboardEntity;
 import no.nav.statusplattform.api.EntityDtoMappers;
 import no.nav.statusplattform.api.Helpers.AreaControllerHelper;
 import no.nav.statusplattform.api.Helpers.DashboardControllerHelper;
 import no.nav.statusplattform.generated.api.*;
 import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
+import org.fluentjdbc.DatabaseRow;
 import org.fluentjdbc.DbContext;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +36,42 @@ public class DashboardController {
     @JsonBody
     public List<DashboardNameIdDto> getDashboards() {
         return EntityDtoMappers.toDashboardDtoShallow(dashboardRepository.getAllDashboardUUIDsAndNames());
+    }
+
+    @GET("/Dashboards/external")
+    @JsonBody
+    public List<DashboardDto> getExternalDashboards() {
+        // Get the list of dashboard entries from the repository
+        List<Map.Entry<DashboardEntity, List<AreaWithServices>>> dashboards = dashboardRepository.getAllExternalDashboards();
+
+        // Convert each entry to DashboardDto using the mapper
+        return EntityDtoMappers.toDashboardDtoDeepList(dashboards);
+    }
+
+    @POST("/Dashboards/external")
+    @JsonBody
+    public UUID createExternalDashboards(@RequestParam("dashboardId") UUID dashboardId) {
+        return dashboardRepository.saveExternalDashboard(dashboardId);
+    }
+
+    @GET("/Dashboards/external/:dashboardId/services")
+    @JsonBody
+    public List<OPSmessageDto> getServicesByDashboardId(@PathParam("dashboardId") UUID dashboardId) {
+        Map<OpsMessageEntity, List<ServiceEntity>> opsMessagesMap = dashboardRepository.getOpsMessagesByDashboardId(dashboardId);
+
+        return opsMessagesMap.entrySet().stream()
+                .map(entry -> EntityDtoMappers.toOpsMessageDtoDeep(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    @GET("/Dashboards/external/:dashboardId/messages")
+    @JsonBody
+    public List<OPSmessageDto> getOpsMessagesByDashboardId(@PathParam("dashboardId") UUID dashboardId) {
+        Map<OpsMessageEntity, List<ServiceEntity>> opsMessagesMap = dashboardRepository.getOpsMessagesByDashboardId(dashboardId);
+
+        return opsMessagesMap.entrySet().stream()
+                .map(entry -> EntityDtoMappers.toOpsMessageDtoDeep(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     @POST("/Dashboard")

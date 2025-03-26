@@ -30,9 +30,9 @@ public class AppConfig {
 
     public final DbConfig dbConfig;
     public final AzureConfig azConfig;
-    public final String teamkatalogApi = System.getenv("teamkatalogApiUrl");
+    public final String teamkatalogApi = System.getenv("TEAMKATALOG_URL");
     public final String frontendCorsValue = System.getenv("FRONTEND_LOCATION");
-    public final String swaggerApiKey = System.getenv("swagger-api-key");
+    public final String swaggerApiKey = System.getenv("SWAGGER_API_KEY");
     public final String host = Optional.ofNullable(System.getenv("HOST")).orElse("localhost");
     public final int port = Optional.ofNullable(System.getenv("HTTP_PLATFORM_PORT")).map(Integer::parseInt).orElse(3005);
 }

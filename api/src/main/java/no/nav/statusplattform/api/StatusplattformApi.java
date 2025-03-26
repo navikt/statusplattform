@@ -40,7 +40,8 @@ public class StatusplattformApi extends ClasspathWebAppContext {
                 new HealthCheck(dbContext),
                 new UserController(),
                 new WcagController(),
-                new UpTimeController(dbContext)
+                new UpTimeController(dbContext),
+                new TeamKatalogController()
         ))), "/*");
 
         addFilter(new FilterHolder( new AuthenticationFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));

@@ -261,4 +261,15 @@ public class OpsRepository {
                 .where("deleted", true)
                 .singleObject(OpsRepository::toOps).isPresent();
     }
+
+    public List<OpsMessageEntity> findOpsMessagesByServiceIds(List<UUID> serviceIds) {
+        DbContextTableAlias ops = opsMessageTable.alias("ops");
+        DbContextTableAlias o2s = opsMessageServiceTable.alias("o2s");
+
+        return ops
+                .leftJoin(ops.column("id"), o2s.column("ops_message_id"))
+                .whereIn(o2s.column("service_id"), serviceIds)
+                .where("deleted", false)
+                .list(OpsRepository::toOps);
+    }
 }
