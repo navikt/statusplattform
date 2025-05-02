@@ -1,4 +1,4 @@
-FROM library/maven:3-amazoncorretto-21 as maven
+FROM library/maven:3-amazoncorretto-21 AS maven
 
 COPY pom.xml pom.xml
 COPY . .

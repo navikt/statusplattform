@@ -6,7 +6,9 @@ import nav.statusplattform.core.entities.OpeningHoursGroup;
 import nav.statusplattform.core.repositories.OpeningHoursRepository;
 import nav.statusplattform.core.repositories.RecordRepository;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class UpTimeCalculator {
@@ -36,6 +38,7 @@ public class UpTimeCalculator {
 
         return UpTimeTotals.sumOfAll(actualExpectedUptimes);
     }
+
 
 }
 

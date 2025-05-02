@@ -1,5 +1,5 @@
-version: '3'
 services:
+
   postgres-db:
     image: library/postgres:12
     environment:
@@ -9,16 +9,16 @@ services:
       PGTZ: Europe/Oslo
       TZ: Europe/Oslo
     ports:
-      # Set to non-standard host port to not crash w/other apps
-      - "3432:5432" 
+      - "5432:5432" # CATO: Changed to default port, for convenience.
     volumes:
       # Persist local test data across container reboots
       - pgdata:/var/lib/postgresql/data
+
   javabackend:
     build:
       context: .
-    # ports:
-    #   - "3005:3005"
+    ports:
+      - "3005:3005"
     environment:
       teamkatalogApiUrl: https://teamkatalog-api.intern.dev.nav.no
       swagger-api-key: key
@@ -30,8 +30,10 @@ services:
       AZURE_APP_CLIENT_ID: foo
       AZURE_APP_CLIENT_SECRET: bar
       ENV: dev # TODO will be replaced by scope
+      TZ: Europe/Oslo # CATO: Added for explicit time zone.
     depends_on:
       - postgres-db
+
   reactfrontend:
     build:
       context: ../statusplattform-frontend
@@ -39,12 +41,13 @@ services:
         # Expecting this env var to be present, containing a token that:
         # - Is a GitHub PAT (classic)
         # - Has SSO access to navikt (or whichever other org your npm packages reside)
-        NPM_AUTH_TOKEN:
+        NPM_AUTH_TOKEN: ${GITHUB_TOKEN} # CATO: I have an environment variable set to my GitHub Personal Access Token.
     ports:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_BACKENDPATH: http://javabackend:3005
       ENV: local
+      TZ: Europe/Oslo # CATO: Added for explicit time zone.
     depends_on:
       - javabackend
 

@@ -1,12 +1,9 @@
 package no.nav.statusplattform.api.v3.controllers;
 
+import nav.statusplattform.core.entities.OpsMessageEntity;
 import no.nav.statusplattform.api.Helpers.OpsControllerHelper;
 import no.nav.statusplattform.generated.api.OPSmessageDto;
-import org.actioncontroller.DELETE;
-import org.actioncontroller.GET;
-import org.actioncontroller.POST;
-import org.actioncontroller.PUT;
-import org.actioncontroller.PathParam;
+import org.actioncontroller.*;
 import org.actioncontroller.json.JsonBody;
 import org.fluentjdbc.DbContext;
 
@@ -52,6 +49,13 @@ public class OpsController {
     @JsonBody
     public void deleteOpsMessage(@PathParam("Ops_id") UUID ops_id ) {
         opsControllerHelper.deleteOps(ops_id);
+    }
+
+
+    @GET("/OpsMessage/services")
+    @JsonBody
+    public List<OPSmessageDto> getOpsMessagesByServiceIds(@RequestParam("service_ids") List<String> serviceIds) {
+        return opsControllerHelper.getOpsMessagesByServiceIds(serviceIds);
     }
 
 }

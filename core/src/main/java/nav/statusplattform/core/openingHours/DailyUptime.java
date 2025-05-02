@@ -4,6 +4,7 @@ import nav.statusplattform.core.entities.OpeningHoursGroup;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.summingLong;
 
@@ -43,6 +44,7 @@ record DailyUptime(LocalDate currentDay, List<RecordInterval> recordIntervalsRel
                 .map(recordInterval -> ServiceDown.from(recordInterval, currentDay))
                 .map(serviceDown -> serviceDown.apply(expectedOpeningHours))
                 .collect(summingLong(Long::longValue));
+
 
         return expectedMinutes - actualDownMinutes;
     }

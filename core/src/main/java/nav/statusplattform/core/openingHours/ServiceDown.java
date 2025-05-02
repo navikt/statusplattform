@@ -2,6 +2,7 @@ package nav.statusplattform.core.openingHours;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * ServiceDown has det responsibility to tell when a service is down.
@@ -32,9 +33,14 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
     /**
      * Returns the number of minutes the service was down during the opening hours.
      *
-     * If it is down before the opening hours, then it will return 0;
+     * If it is down before the opening hours, or closed all day  (Opening hours start time and end time = 00:00)
+     *  then it will return 0;
      */
     long apply(OpeningHours openingHours) {
+        if (serviceIsDownAndServiceClosedAllDay(openingHours)) {
+            return 0;
+        }
+
         if (serviceIsDownOutsideOfThe(openingHours)) {
             return 0;
         }
@@ -60,6 +66,17 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
     }
 
     /**
+     * The service is down and service is closed all day
+     */
+    private boolean serviceIsDownAndServiceClosedAllDay(OpeningHours openingHours) {
+        // Define the time to check
+        LocalTime checkTime = LocalTime.of(0, 0);// 00:00
+        LocalTime openingTime = openingHours.openingTime().toLocalTime();
+        LocalTime closingTime = openingHours.closingTime().toLocalTime();
+        return openingTime.equals(checkTime) && closingTime.equals(checkTime);
+    }
+
+    /**
      * The service was down before or after the opening hours.<br>
      * <br>
      * Either the end of service downtime is before start of opening hours,
@@ -72,6 +89,7 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
     /**
      * The service was down between opening hours
      */
+
     private boolean serviceIsDownInsideOfThe(OpeningHours openingHours) {
         return (from.isEqual(openingHours.openingTime()) || from.isAfter(openingHours.openingTime()))
                 && (to.isEqual(openingHours.closingTime()) || to.isBefore(openingHours.closingTime()));
@@ -88,4 +106,5 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
     private boolean serviceIsDownDuringClosingTime(OpeningHours openingHours) {
         return from.isBefore(openingHours.closingTime()) && to.isAfter(openingHours.closingTime());
     }
+
 }
