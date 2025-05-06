@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
@@ -50,7 +51,8 @@ public class UpTimeController {
     private static LocalDateTime parse(String value)
         throws DateTimeParseException {
         // TODO: Make sure we don't end up with a HTTP 500.
-        return LocalDateTime.parse(value);
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        return LocalDateTime.parse(value, formatter);
     }
 
 }

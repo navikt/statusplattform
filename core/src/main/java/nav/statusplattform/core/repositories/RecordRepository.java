@@ -112,9 +112,18 @@ public class RecordRepository {
                     .limit(1)
                     .singleObject(RecordRepository::toRecord);
 
-            RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
-
-            recordsInTimeSpan.addFirst(firstRecordInTimeSpan);
+            //RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
+            //if the dateentry from time is greater than database , we replace the last record with the new from date entry.
+            if (recordInTimeSpan.isPresent()) {
+                // Create a new RecordEntity using the 'from' time
+                RecordEntity newRecord = new RecordEntity();
+                newRecord.setId(UUID.randomUUID()); // Generate a new UUID or use an appropriate value
+                newRecord.setServiceId(serviceId);
+                newRecord.setCreated_at(from.atZone(ZoneId.systemDefault())); // Use 'from' as the created_at time
+                newRecord.setStatus(recordInTimeSpan.get().getStatus()); // Use the status from the existing record
+                recordsInTimeSpan.addFirst(newRecord); // Add the new record at the beginning of the list
+            }
+            //recordsInTimeSpan.addFirst(firstRecordInTimeSpan);
         } catch (Exception e) {
             return recordsInTimeSpan;
         }

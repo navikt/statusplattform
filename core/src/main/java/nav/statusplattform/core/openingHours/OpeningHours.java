@@ -72,6 +72,7 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
             to = to.plusDays(1).toLocalDate().atStartOfDay();
         }
 
+        long seconds = Duration.between(from, to).getSeconds();
         return Duration.between(from, to).toMinutes();
     }
 }

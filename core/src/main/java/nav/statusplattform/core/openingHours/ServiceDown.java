@@ -83,7 +83,8 @@ record ServiceDown(LocalDateTime from, LocalDateTime to) {
      * or the start of service downtime is after the end of opening hours.
      */
     private boolean serviceIsDownOutsideOfThe(OpeningHours openingHours) {
-        return to.isBefore(openingHours.openingTime()) || from.isAfter(openingHours.closingTime());
+        return (to.isBefore(openingHours.openingTime()) || to.isEqual(openingHours.openingTime())) ||
+                (from.isAfter(openingHours.closingTime()) || from.isEqual(openingHours.closingTime()));
     }
 
     /**
