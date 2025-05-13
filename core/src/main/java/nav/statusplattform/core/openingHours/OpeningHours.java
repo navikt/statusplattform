@@ -49,6 +49,10 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
             to = closingTime;
         }
 
+        if (to.isBefore(from)) { //in some cases, need to adjust the from not after to time
+            from = to;
+        }
+
         return getMinutes(from, to);
     }
 

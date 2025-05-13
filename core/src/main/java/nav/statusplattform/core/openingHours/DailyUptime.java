@@ -23,6 +23,9 @@ record DailyUptime(LocalDate currentDay, List<RecordInterval> recordIntervalsRel
     public ActualExpectedUptime apply(OpeningHoursGroup group) {
         OpeningHours expectedOpeningHours = OpeningHours.from(group, currentDay.atStartOfDay());
 
+        if (expectedOpeningHours.openingTime().isEqual(expectedOpeningHours.closingTime())) {
+            return new ActualExpectedUptime(0, 0);
+        }
         long expectedMinutes = expectedMinutes(expectedOpeningHours);
         long actualMinutes = actualMinutes(expectedOpeningHours, expectedMinutes);
 
@@ -42,9 +45,12 @@ record DailyUptime(LocalDate currentDay, List<RecordInterval> recordIntervalsRel
         long actualDownMinutes = recordIntervalsRelatedToCurrentDay.stream()
                 .filter(recordInterval -> recordInterval.isDown())
                 .map(recordInterval -> ServiceDown.from(recordInterval, currentDay))
-                .map(serviceDown -> serviceDown.apply(expectedOpeningHours))
+                .map(serviceDown -> {
+                    long value = serviceDown.apply(expectedOpeningHours);
+                    System.out.println("ServiceUp minutes: " + value + " for time " + serviceDown.from() + " and " + serviceDown.to());
+                    return value;
+                })
                 .collect(summingLong(Long::longValue));
-
 
         return expectedMinutes - actualDownMinutes;
     }
