@@ -1,5 +1,7 @@
 package no.nav.statusplattform.api.v3.controllers;
 
+import nav.statusplattform.core.entities.RecordEntity;
+import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
 import no.nav.statusplattform.generated.api.AreaDto;
 import no.nav.statusplattform.generated.api.DashboardDto;
@@ -13,14 +15,13 @@ import no.nav.statusplattform.generated.api.ServiceDto;
 import no.nav.statusplattform.generated.api.ServiceTypeDto;
 import no.nav.statusplattform.generated.api.StatusDto;
 import no.nav.statusplattform.generated.api.SubAreaDto;
-import org.assertj.core.internal.bytebuddy.asm.Advice;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.LocalTime;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
-import java.sql.Time;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +30,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SampleDataDto {
+
+    static Logger logger = LoggerFactory.getLogger(SampleDataDto.class);
     static final ArrayList<String> dashboardNames = new ArrayList<>(Arrays.asList("Ekstern", "Intern", "Ekstenpartner", "Dette er et velidig langt navn", "blahblahaa", "blahblahaab", "blahblahaac", "blahblahaad", "blahblahaae", "blahblahaaf", "blahblahaag", "blahblahaah", "blahblahaai", "blahblahaaj", "blahblahaak", "blahblahaal", "blahblahaam", "blahblahaan", "blahblahaao", "blahblahaap", "blahblahaaq", "blahblahaar", "blahblahaas", "blahblahaat"));
 
     static final ArrayList<String> areaNames = new ArrayList<>(Arrays.asList("Permitert igjen", "Pensjon", "Gravid uten å vite om det", "aleneforsørger", "sykemeldt i oppsigelsestiden",
@@ -69,7 +73,7 @@ public class SampleDataDto {
             Map.entry("Early Closing Autumn","19.10.2023 ? ? 07:00-15:00"),
             Map.entry("LastDayOfTheMonth","??.??.???? L ? 07:00-18:00"),
             Map.entry("Specified run days", "??.??.???? 1-5,15-20 ? 07:00-21:00"),
-            Map.entry("Normal work days", "??.??.???? ? 1-5 07:30-17:00"));
+            Map.entry("Normal work days", "??.??.???? ? 1-5 07:00-17:00"));
 
     static final Map<String, String> holidayRules =  Map.ofEntries(
             Map.entry("Good Friday", "07.04.2023 ? ? 00:00-00:00"),
@@ -531,5 +535,33 @@ public class SampleDataDto {
         return random.nextInt(5) + 1;
     }
 
+    public static List<RecordEntity> generateRecordEntitiesFromCSVFile(String filePath, UUID serviceUUID) {
+        List<RecordEntity> records = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssXXX"); // Custom format
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line = br.readLine(); // Skip the first line (column names);
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(","); // Assuming CSV is comma-separated
+                ServiceStatus status = ServiceStatus.valueOf(values[2].replace("\"", "").trim()); // Remove quotes and trim
+                int responseTime = Integer.parseInt(values[3]); // Parse response time
+                ZonedDateTime created = ZonedDateTime.parse(
+                        values[4].replace("\"", "").trim().replaceAll("([+-]\\d{2})$", "$1:00"),
+                        formatter
+                );// Remove quotes and trim
 
+                RecordEntity record = new RecordEntity()
+                        .setServiceId(serviceUUID)
+                        .setCreated_at(created)
+                        .setStatus(status)
+                        .setResponsetime(responseTime);
+
+                records.add(record);
+            }
+        } catch (IOException e) {
+            logger.error("Error reading the CSV file at path: {}", filePath, e);
+        } catch (Exception e) {
+            logger.error("Unexpected error occurred while processing the CSV file", e);
+        }
+        return records;
+    }
 }
