@@ -23,10 +23,7 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class UpTimeControllerTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -214,6 +211,7 @@ public class UpTimeControllerTest {
     }
 
     @Test
+        //Normal work day rule: ??.??.???? ? 1-5 07:00-17:00
     void getServiceUpTime_BasicRule() {
         //Arrange
         //Group set up --give random group name
@@ -223,7 +221,7 @@ public class UpTimeControllerTest {
         savedOHGroupThinDto.setId(groupId);
 
         //Create service
-        //reservice service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
+        //re-service service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
         UUID reservedServiceUUID = UUID.fromString("aafc64ba-70a8-4ae4-896e-69306aab0ab4");
         ServiceEntity service = SampleData.getRandomizedServiceEntity();
         service.setId(reservedServiceUUID);
@@ -293,12 +291,664 @@ public class UpTimeControllerTest {
         Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
                 .isEqualTo(new BigDecimal("0"));
 
-        //Situation2:Normal work days plus weekend, created_at >= Tuesday 2025-04-01T07:00:00' AND created_at  < Wednesday  2025-04-02T07:00:00
+        //Act 1.3Normal work days Monday 2025-03-31T07:00:00' to Tuesday  2025-04-02T07:00:00 - No down time
+        from = "2025-03-31T07:00:00";
+        to = "2025-04-02T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.3
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("1200"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("1200"));
 
+        //Act 1.4Normal work days Wednesday 2025-04-02T12:00:00' to Thursday  2025-04-03T07:00:00
+        //Downtime 2025-04-02T13:00:00 - 2025-04-02T14:00:00
+        from = "2025-04-02T12:00:00";
+        to = "2025-04-03T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.4
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("300"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("240"));
 
-        //Situation3:Normal work days plus weekend plus holiday created_at >= Tuesday 2025-04-01T07:00:00' AND created_at  < Wednesday  2025-04-02T07:00:00
+        //Act 1.5Normal work days Monday 2025-04-07T15:00:00' to Tuesday  2025-04-08T07:00:00
+        //Downtime 2025-04-07 15:00:00 to = 2025-04-08 11:00:00
+        from = "2025-04-07T15:00:00";
+        to = "2025-04-08T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.5
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("120"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
 
+        //Act 1.6Normal work days Monday 2025-04-07T15:00:00' to Tuesday  2025-04-08T15:00:00
+        //Downtime 2025-04-07 15:00:00 to = 2025-04-08 11:00:00
+        from = "2025-04-07T15:00:00";
+        to = "2025-04-08T15:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.6
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("600"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("240"));
+
+        //Act 1.7Normal work days Monday 2025-04-07T15:00:00' to Wednesday  2025-04-09T07:00:00
+        //Downtime 2025-04-07 15:00:00 to = 2025-04-08 11:00:00
+        from = "2025-04-07T15:00:00";
+        to = "2025-04-09T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.7
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("720"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("360"));
+
+        //Act 1.8Normal work days Tuesday 2025-03-25T07:00:00' to Tuesday  2025-03-25T18:00:00
+        //No downtime
+        from = "2025-03-25T07:00:00";
+        to = "2025-03-25T18:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.8
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("600"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("600"));
+
+        //Act 1.9Normal work days Tuesday 2025-03-25T07:00:00' to Wednesday 2025-03-26T08:00:00
+        //No downtime
+        from = "2025-03-25T07:00:00";
+        to = "2025-03-26T08:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.9
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("660"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("660"));
+
+        //Act 1.10Normal work days Tuesday 2025-03-25T17:00:00' to Wednesday 2025-03-26T08:00:00
+        //No downtime
+        from = "2025-03-25T17:00:00";
+        to = "2025-03-26T08:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.10
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.11Normal work days Thursday 2025-03-27T10:00:00' to Thursday 2025-03-27T12:00:00
+        //downtime Thursday "2025-03-27 11:00:00" to "2025-03-27 12:00:00"
+        from = "2025-03-27T10:00:00";
+        to = "2025-03-27T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.11
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("120"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.12Normal work days Thursday 2025-03-27T11:00:00' to Thursday 2025-03-27T12:00:00
+        //downtime Thursday "2025-03-27 11:00:00" to "2025-03-27 12:00:00"
+        from = "2025-03-27T11:00:00";
+        to = "2025-03-27T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.12
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.13Normal work days Thursday 2025-03-27T10:00:00' to Thursday 2025-03-27T11:00:00
+        //downtime Thursday "2025-03-27 11:00:00" to "2025-03-27 12:00:00"
+        from = "2025-03-27T10:00:00";
+        to = "2025-03-27T11:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.13
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.14Normal work days Friday 2025-04-11T06:00:00' to Friday 2025-04-11T18:00:00
+        //No downtime
+        from = "2025-04-11T06:00:00";
+        to = "2025-04-11T18:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.14
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("600"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("600"));
+
+        //Act 1.15Normal work days Friday 2025-04-11T16:00:00' to Monday 2025-04-14T08:00:00
+        //No downtime
+        from = "2025-04-11T16:00:00";
+        to = "2025-04-14T08:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.15
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("120"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("120"));
+
+        //Act 1.16Normal work days Friday 2025-04-11T17:00:00' to Monday 2025-04-14T07:00:00
+        //No downtime
+        from = "2025-04-11T17:00:00";
+        to = "2025-04-14T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.16
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.17Normal work days Friday 2025-04-11T17:00:00' to Monday 2025-04-14T08:00:00
+        //No downtime
+        from = "2025-04-11T17:00:00";
+        to = "2025-04-14T08:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.17
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.18Normal work days Friday 2025-04-11T16:00:00' to Monday 2025-04-14T07:00:00
+        //No downtime
+        from = "2025-04-11T16:00:00";
+        to = "2025-04-14T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.18
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.19Normal work days Friday 2025-04-11T16:00:00' to Saturday 2025-04-12T17:00:00
+        //No downtime
+        from = "2025-04-11T16:00:00";
+        to = "2025-04-12T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.19
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.20Normal work days Friday 2025-04-11T16:00:00' to Saturday 2025-04-12T17:00:00
+        //No downtime
+        from = "2025-04-11T16:00:00";
+        to = "2025-04-12T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.20
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.21Normal work days Friday 2025-04-11T17:00:00' to Saturday 2025-04-12T17:00:00
+        //No downtime
+        from = "2025-04-11T17:00:00";
+        to = "2025-04-12T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.21
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.22Normal work days Monday 2025-04-14T07:00:00' to Monday 2025-04-12T08:00:00
+        //No downtime
+        from = "2025-04-14T07:00:00";
+        to = "2025-04-14T08:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.22
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.23Normal work days Friday 2025-04-11T17:00:00' to Monday 2025-04-14T17:00:00
+        //No downtime
+        from = "2025-04-11T17:00:00";
+        to = "2025-04-14T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.21
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("600"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("600"));
+
+        //Act 1.24Normal work days Friday 2025-04-11T17:00:00' to Friday 2025-04-11T18:00:00
+        //No downtime
+        from = "2025-04-11T17:00:00";
+        to = "2025-04-11T18:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.24
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.25Normal work days Friday 2025-04-11T17:00:00' to Friday 2025-04-11T22:00:00
+        //No downtime
+        from = "2025-04-11T17:00:00";
+        to = "2025-04-11T22:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.25
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.26Normal work days Saturday 2025-04-12T07:00:00' to Saturday 2025-04-12T17:00:00
+        //No downtime
+        from = "2025-04-12T07:00:00";
+        to = "2025-04-12T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.26
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.27Normal work days Sunday 2025-04-13T07:00:00' to Sunday 2025-04-13T17:00:00
+        //No downtime
+        from = "2025-04-13T07:00:00";
+        to = "2025-04-13T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.27
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.27Normal work days Monday 2025-04-14T06:00:00' to Monday 2025-04-14T07:00:00
+        //No downtime
+        from = "2025-04-14T06:00:00";
+        to = "2025-04-14T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.27
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 1.28Normal work days Monday 2025-04-14T06:00:00' to Monday 2025-04-14T08:00:00
+        //No downtime
+        from = "2025-04-14T06:00:00";
+        to = "2025-04-14T08:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.28
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 1.29Normal work days Monday 2025-04-14T06:00:00' to Monday 2025-04-14T17:00:00
+        //No downtime
+        from = "2025-04-14T06:00:00";
+        to = "2025-04-14T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.29
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("600"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("600"));
+    }
+
+    @Test
+        //Normal work day rule: ??.??.???? ? 1-5 07:00-17:00
+    void getServiceUpTime_BasicRuleSaturdayToSunday() {
+        //Arrange
+        //Group set up --give random group name
+        OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
+        OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
+        UUID groupId = savedOHGroupThinDto.getId();
+        savedOHGroupThinDto.setId(groupId);
+
+        //Create service
+        //re-service service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
+        UUID reservedServiceUUID = UUID.fromString("aafc64ba-70a8-4ae4-896e-69306aab0ab4");
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        service.setId(reservedServiceUUID);
+        ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
+
+        //Add group to service
+        openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
+
+        //Create records
+        //march to april, 2025 from csv file.
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
+
+        List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
+                filePath,
+                reservedServiceUUID
+        );
+
+        records.forEach(record -> {
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+
+        //Situation1:Basic rule applicable for weekend only eg Saturday 2025-04-12T10:00:00' AND created_at  < Sunday 2025-04-13T16:00:00
+        //Rules set up : add basic work rule
+        Map<String, String> namesAndRules = Map.ofEntries(
+                Map.entry("Normal work days", "??.??.???? ? 6-7 10:00-16:00"));
+
+        List<String> rules = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> selectedRules = new ArrayList<>();
+        for (String s : rules) {
+            OHRuleDto rule = new OHRuleDto()
+                    .id(UUID.randomUUID())
+                    .name(s)
+                    .rule(namesAndRules.get(s));
+            selectedRules.add(rule);
+            openingHoursController.newRule(rule);
+        }
+        //add rules to already created group
+        savedOHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
+        openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
+        String from, to;
+        UpTimeTotalsDto retrievedUpTimeTotalsDto;
+
+        //Act 2.1Normal work days Tuesday 2025-04-08T11:00:00' to Friday 2025-04-11T17:00:00
+        //No downtime
+        from = "2025-04-08T11:00:00";
+        to = "2025-04-11T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 2.2Saturday 2025-04-05T07:00:00' to Sunday 2025-04-06T17:00:00
+        //Downtime Friday 2025-04-04T15:00:00 to Saturday 2025-04-05 11:00:00
+        from = "2025-04-05T07:00:00";
+        to = "2025-04-06T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.2
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("720"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("660"));
+
+        //Act 2.3Friday 2025-04-04T07:00:00' to Sunday 2025-04-06T17:00:00
+        //Downtime Friday 2025-04-04T15:00:00 to Saturday 2025-04-05 11:00:00
+        from = "2025-04-04T07:00:00";
+        to = "2025-04-06T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.3
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("720"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("660"));
+
+        //Act 2.4Saturday 2025-04-05T09:00:00' to Sunday 2025-04-06T07:00:00
+        //Downtime Friday 2025-04-04T15:00:00 to Saturday 2025-04-05 11:00:00
+        from = "2025-04-05T09:00:00";
+        to = "2025-04-06T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.4
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("360"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("300"));
+
+        //Act 2.5Friday 2025-04-04T14:00:00' to Saturday 2025-04-05T12:00:00
+        //Downtime Friday 2025-04-04T15:00:00 to Saturday 2025-04-05 11:00:00
+        from = "2025-04-04T14:00:00";
+        to = "2025-04-05T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.5
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("120"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 2.6Saturday 2025-04-05T12:00:00' to Sunday 2025-04-06T07:00:00
+        //No downtime
+        from = "2025-04-05T12:00:00";
+        to = "2025-04-06T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.6
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("240"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("240"));
+
+        //Act 2.7Saturday 2025-04-05T12:00:00' to Saturday 2025-04-05T14:00:00
+        //No downtime
+        from = "2025-04-05T12:00:00";
+        to = "2025-04-05T14:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.7
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("120"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("120"));
+
+        //Act 2.8 Saturday 2025-04-05T16:00:00' to Sunday 2025-04-06T07:00:00
+        //No downtime
+        from = "2025-04-05T16:00:00";
+        to = "2025-04-06T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.8
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 2.9 Saturday 2025-04-05T16:00:00' to Sunday 2025-04-06T16:00:00
+        //No downtime
+        from = "2025-04-05T16:00:00";
+        to = "2025-04-06T16:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.9
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("360"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("360"));
+
+        //Act 2.10 Saturday 2025-04-05T16:00:00' to Monday 2025-04-07T12:00:00
+        //No downtime
+        from = "2025-04-05T16:00:00";
+        to = "2025-04-07T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.10
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("360"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("360"));
+
+        //Act 2.11 Sunday 2025-04-06T16:00:00' to Monday 2025-04-07T12:00:00
+        //No downtime
+        from = "2025-04-06T16:00:00";
+        to = "2025-04-07T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.11
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("0"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("0"));
+
+        //Act 2.12 Sunday 2025-04-06T15:00:00' to Monday 2025-04-07T12:00:00
+        //No downtime
+        from = "2025-04-06T15:00:00";
+        to = "2025-04-07T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.12
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("60"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("60"));
+
+        //Act 2.13Friday 2025-04-04T15:00:00' to Sunday 2025-04-06T12:00:00
+        //Downtime Friday 2025-04-04T15:00:00 to Saturday 2025-04-05 11:00:00
+        from = "2025-04-04T15:00:00";
+        to = "2025-04-06T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.13
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("480"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("420"));
+
+        //Act 2.14Saturday 2025-04-05T10:00:00' to Sunday 2025-04-06T16:00:00
+        //Downtime Friday 2025-04-04T15:00:00 to Saturday 2025-04-05 11:00:00
+        from = "2025-04-05T10:00:00";
+        to = "2025-04-06T16:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.14
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("720"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("660"));
+
+        //Act 2.15Saturday 2025-04-05T10:00:00' to Saturday 2025-04-05T16:00:00
+        //Downtime Friday 2025-04-04T15:00:00 to Saturday 2025-04-05 11:00:00
+        from = "2025-04-05T10:00:00";
+        to = "2025-04-05T16:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 2.7
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("360"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("300"));
 
     }
+
+
 
 }
