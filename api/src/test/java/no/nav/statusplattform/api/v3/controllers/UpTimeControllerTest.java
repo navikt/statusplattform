@@ -24,6 +24,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UpTimeControllerTest {
     private final DataSource dataSource = TestDataSource.create();
@@ -1287,13 +1289,19 @@ public class UpTimeControllerTest {
     @Test
         //Maintenance rule: 01.04.2025 ? ? 10:00-12:00
         // Work day rule Monday and Friday only: ??.??.???? ? 1,5 07:00-17:00
-    void getServiceUpTime_MaintenanceAnWorkingWeek() {
+    void getServiceUpTime_MaintenanceAndWorkingWeek() {
         //Arrange
         //Rules set up : add maintenence rule: Early Closing Spring and
         // Work day rule: Normal Work days
-        Map<String, String> namesAndRules = Map.ofEntries(
+        Map<String, String> namesAndRules = Stream.of(
                 Map.entry("Early Closing Spring", "01.04.2025 ? ? 10:00-12:00"),
-                Map.entry("Normal Work days", "??.??.???? ? 1-5 07:00-17:00"));
+                Map.entry("Normal Work days", "??.??.???? ? 1-5 07:00-17:00")
+        ).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+        ));
 
         List<String> rules = new ArrayList<>(namesAndRules.keySet());
         List<OHRuleDto> selectedRules = new ArrayList<>();
@@ -1443,9 +1451,9 @@ public class UpTimeControllerTest {
                 to);
         //Assert 4.7
         Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
-                .isEqualTo(new BigDecimal("1080"));
+                .isEqualTo(new BigDecimal("1620"));
         Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
-                .isEqualTo(new BigDecimal("1020"));
+                .isEqualTo(new BigDecimal("1500"));
 
         //Act 4.8 Maintenance 01.04.2025 ? ? 10:00-12:00  and Basic working week Monday to Friday 07:00-17:00
         //Sunday2025-03-30 07:00:00 to Wednesday 2025-04-02 17:00:00
@@ -1463,6 +1471,65 @@ public class UpTimeControllerTest {
                 .isEqualTo(new BigDecimal("1320"));
         Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
                 .isEqualTo(new BigDecimal("1260"));
+    }
+
+    @Test
+        //Rules: Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        //Easter Monday 21.04.2025 ? ? 00:00-00:00
+        //Basic weekend group:  ??.??.???? ? 1-5 07:00-17:00
+    void getServiceUpTime_EasterAndWorkingWeek() {
+        //Arrange
+        //Group set up --give random group name
+        OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
+        OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
+        UUID groupId = savedOHGroupThinDto.getId();
+        savedOHGroupThinDto.setId(groupId);
+
+        //Create service
+        //re-service service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
+        UUID reservedServiceUUID = UUID.fromString("aafc64ba-70a8-4ae4-896e-69306aab0ab4");
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        service.setId(reservedServiceUUID);
+        ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
+
+        //Add group to service
+        openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
+
+        //Create records
+        //march to april, 2025 from csv file.
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
+
+        List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
+                filePath,
+                reservedServiceUUID
+        );
+
+        records.forEach(record -> {
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+
+        //Work day rule for Monday and Friday only
+        //Rules set up : add Work day rule for Monday and Friday only:
+        Map<String, String> namesAndRules = Map.ofEntries(
+                Map.entry("Basic Monday and Friday only", "??.??.???? ? 1,5 07:00-17:00"));
+
+        List<String> rules = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> selectedRules = new ArrayList<>();
+        for (String s : rules) {
+            OHRuleDto rule = new OHRuleDto()
+                    .id(UUID.randomUUID())
+                    .name(s)
+                    .rule(namesAndRules.get(s));
+            selectedRules.add(rule);
+            openingHoursController.newRule(rule);
+        }
+        //add rules to already created group
+        savedOHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
+        openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
+        String from, to;
+        UpTimeTotalsDto retrievedUpTimeTotalsDto;
+
     }
 
 
