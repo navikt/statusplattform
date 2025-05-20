@@ -248,8 +248,8 @@ public class UpTimeControllerTest {
         //Situation1:Normal work days, created_at >= Tuesday 2025-04-01T07:00:00' AND created_at  < Wednesday  2025-04-02T07:00:00
         //Rules set up : add basic work rule
         Map<String, String> namesAndRules =  Map.ofEntries(
-                Map.entry("Normal work days", "??.??.???? ? 1-5 07:00-17:00"),
-                Map.entry("National day","17.05.???? ? ? 00:00-00:00"));
+                Map.entry("Normal work days", "??.??.???? ? 1-5 07:00-17:00"));
+
 
         List<String> rules = new ArrayList<>(namesAndRules.keySet());
         List<OHRuleDto> selectedRules = new ArrayList<>();
@@ -1478,10 +1478,39 @@ public class UpTimeControllerTest {
         // Good Friday 18.04.2025 ? ? 00:00-00:00,
         //Easter Monday 21.04.2025 ? ? 00:00-00:00
         //Basic weekend group:  ??.??.???? ? 1-5 07:00-17:00
-    void getServiceUpTime_EasterAndWorkingWeek() {
+    void getServiceUpTime_Easter2025AndWorkingWeek() {
         //Arrange
+        //Rules set up :
+        // Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        Map<String, String> namesAndRules = Stream.of(
+                Map.entry("Maundy Thursday", "17.04.2025 ? ? 09:00-12:00"),
+                Map.entry("Good Friday", "18.04.2025 ? ? 00:00-00:00"),
+                Map.entry("Easter Monday", "21.04.2025 ? ? 00:00-00:00"),
+                Map.entry("Normal Work days", "??.??.???? ? 1-5 07:00-17:00")
+        ).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+        ));
+
+        List<String> rules = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> selectedRules = new ArrayList<>();
+        for (String s : rules) {
+            OHRuleDto rule = new OHRuleDto()
+                    .id(UUID.randomUUID())
+                    .name(s)
+                    .rule(namesAndRules.get(s));
+            selectedRules.add(rule);
+            openingHoursController.newRule(rule);
+        }
+
         //Group set up --give random group name
         OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
+        oHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
         OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
         UUID groupId = savedOHGroupThinDto.getId();
         savedOHGroupThinDto.setId(groupId);
@@ -1509,10 +1538,109 @@ public class UpTimeControllerTest {
             record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
         });
 
-        //Work day rule for Monday and Friday only
-        //Rules set up : add Work day rule for Monday and Friday only:
-        Map<String, String> namesAndRules = Map.ofEntries(
-                Map.entry("Basic Monday and Friday only", "??.??.???? ? 1,5 07:00-17:00"));
+        String from, to;
+        UpTimeTotalsDto retrievedUpTimeTotalsDto;
+
+        // Act 5.1 Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        //Wednesday 2025-04-16T07:00:00 to Tuesday 2025-04-22T07:00:00
+        //No downtime
+        from = "2025-04-16T07:00:00";
+        to = "2025-04-22T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 5.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("780"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("780"));
+
+        // Act 5.2 Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        //Wednesday 2025-04-16T17:00:00 to Tuesday 2025-04-22T07:00:00
+        //No downtime
+        from = "2025-04-16T17:00:00";
+        to = "2025-04-22T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 5.2
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("180"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("180"));
+
+        // Act 5.3 Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        //Monday 2025-04-14T06:00:00 to Tuesday 2025-04-22T07:00:00
+        //No downtime
+        from = "2025-04-14T06:00:00";
+        to = "2025-04-22T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 5.3
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("1980"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("1980"));
+
+        // Act 5.4 Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        //Monday 2025-04-14T06:00:00 to Tuesday 2025-04-22T07:00:00
+        //No downtime
+        from = "2025-04-14T06:00:00";
+        to = "2025-04-22T08:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 5.4
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("2040"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("2040"));
+
+    }
+
+    @Test
+        //Easter maintenance 16.04.2025 ? ? 07:00-14:00
+        //Rules: Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        //Good Friday 18.04.2025 ? ? 00:00-00:00,
+        //Easter Monday 21.04.2025 ? ? 00:00-00:00
+        //Basic weekend group:  ??.??.???? ? 1-5 07:00-17:00
+    void getServiceUpTime_MaintenanceEaster2025AndWorkingWeek() {
+        //Arrange
+        // Rules set up :
+        // Easter maintenance 16.04.2025 ? ? 07:00-14:00
+        // Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        Map<String, String> namesAndRules = Stream.of(
+                Map.entry("Easter maintenance", "16.04.2025 ? ? 07:00-14:00"),
+                Map.entry("Maundy Thursday", "17.04.2025 ? ? 09:00-12:00"),
+                Map.entry("Good Friday", "18.04.2025 ? ? 00:00-00:00"),
+                Map.entry("Easter Monday", "21.04.2025 ? ? 00:00-00:00"),
+                Map.entry("Normal Work days", "??.??.???? ? 1-5 07:00-17:00")
+        ).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+        ));
 
         List<String> rules = new ArrayList<>(namesAndRules.keySet());
         List<OHRuleDto> selectedRules = new ArrayList<>();
@@ -1524,12 +1652,99 @@ public class UpTimeControllerTest {
             selectedRules.add(rule);
             openingHoursController.newRule(rule);
         }
-        //add rules to already created group
-        savedOHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
-        openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
+
+        //Group set up --give random group name
+        OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
+        oHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
+        OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
+        UUID groupId = savedOHGroupThinDto.getId();
+        savedOHGroupThinDto.setId(groupId);
+
+        //Create service
+        //re-service service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
+        UUID reservedServiceUUID = UUID.fromString("aafc64ba-70a8-4ae4-896e-69306aab0ab4");
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        service.setId(reservedServiceUUID);
+        ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
+
+        //Add group to service
+        openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
+
+        //Create records
+        //march to april, 2025 from csv file.
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
+
+        List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
+                filePath,
+                reservedServiceUUID
+        );
+
+        records.forEach(record -> {
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+
         String from, to;
         UpTimeTotalsDto retrievedUpTimeTotalsDto;
 
+        // Act 6.1
+        // Easter maintenance 16.04.2025 ? ? 07:00-14:00
+        // Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        //Wednesday 2025-04-16T07:00:00 to Tuesday 2025-04-22T07:00:00
+        //No downtime
+        from = "2025-04-16T07:00:00";
+        to = "2025-04-22T07:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 6.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("600"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("600"));
+
+        // Act 6.2
+        // Easter maintenance 16.04.2025 ? ? 07:00-14:00
+        // Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        //Wednesday 2025-04-16T07:00:00 to Tuesday 2025-04-22T17:00:00
+        //No downtime
+        from = "2025-04-16T07:00:00";
+        to = "2025-04-22T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 6.2
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("1200"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("1200"));
+
+        // Act 6.3
+        // Easter maintenance 16.04.2025 ? ? 07:00-14:00
+        // Easter Maundy Thursday 17.04.2025 ? ? 09:00-12:00,
+        // Good Friday 18.04.2025 ? ? 00:00-00:00,
+        // Easter Monday 21.04.2025 ? ? 00:00-00:00
+        // Basic working week Monday to Friday 07:00-17:00
+        //Wednesday 2025-04-16T07:00:00 to Tuesday 2025-04-22T12:00:00
+        //No downtime
+        from = "2025-04-16T07:00:00";
+        to = "2025-04-22T12:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 6.3
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("900"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("900"));
     }
 
 
