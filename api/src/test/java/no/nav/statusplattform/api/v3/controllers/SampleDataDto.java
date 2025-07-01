@@ -21,6 +21,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
 import java.util.Random;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -537,17 +539,48 @@ public class SampleDataDto {
 
     public static List<RecordEntity> generateRecordEntitiesFromCSVFile(String filePath, UUID serviceUUID) {
         List<RecordEntity> records = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssXXX"); // Custom format
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd HH:mm:ss")
+                .optionalStart()
+                .appendPattern(".SSSSSS")
+                .optionalEnd()
+                .appendPattern("xxx")  // for +HH:MM offset
+                .toFormatter()
+                .withResolverStyle(ResolverStyle.STRICT);
+        // Custom format
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line = br.readLine(); // Skip the first line (column names);
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(","); // Assuming CSV is comma-separated
                 ServiceStatus status = ServiceStatus.valueOf(values[2].replace("\"", "").trim()); // Remove quotes and trim
-                int responseTime = Integer.parseInt(values[3]); // Parse response time
-                ZonedDateTime created = ZonedDateTime.parse(
-                        values[4].replace("\"", "").trim().replaceAll("([+-]\\d{2})$", "$1:00"),
-                        formatter
-                );// Remove quotes and trim
+                int responseTime = Integer.parseInt(values[3].toString().equalsIgnoreCase("NULL") ? "0" : values[3]); // Parse response time
+
+                // Clean and format the datetime string
+                String dateStr = values[4].replace("\"", "").trim();
+
+                // Parse the date based on its format
+                ZonedDateTime created;
+                if (dateStr.contains(".")) {
+                    // Format with microseconds: 2025-03-17 11:32:35.665495+01:00
+                    LocalDateTime localDateTime = LocalDateTime.parse(
+                            dateStr.substring(0, dateStr.indexOf("+")),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+                    );
+                    ZoneOffset offset = ZoneOffset.of(dateStr.substring(dateStr.indexOf("+")));
+                    created = ZonedDateTime.of(localDateTime, offset);
+                } else {
+                    // Format without microseconds: 2025-04-18 12:00:00+02
+                    LocalDateTime localDateTime = LocalDateTime.parse(
+                            dateStr.substring(0, dateStr.indexOf("+")),
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    );
+                    String offsetStr = dateStr.substring(dateStr.indexOf("+"));
+                    if (!offsetStr.contains(":")) {
+                        offsetStr = offsetStr + ":00";
+                    }
+                    ZoneOffset offset = ZoneOffset.of(offsetStr);
+                    created = ZonedDateTime.of(localDateTime, offset);
+                }
 
                 RecordEntity record = new RecordEntity()
                         .setServiceId(serviceUUID)

@@ -214,7 +214,7 @@ public class UpTimeControllerTest {
 
     //Create records
     //march to april, 2025 from csv file.
-    String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
+
 
 
     @Test
@@ -240,7 +240,7 @@ public class UpTimeControllerTest {
         //Create records
         //march to april, 2025 from csv file.
 
-
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
@@ -740,7 +740,7 @@ public class UpTimeControllerTest {
 
         //Create records
         //march to april, 2025 from csv file.
-
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
@@ -1005,7 +1005,7 @@ public class UpTimeControllerTest {
 
         //Create records
         //march to april, 2025 from csv file.
-
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
@@ -1350,7 +1350,7 @@ public class UpTimeControllerTest {
 
         //Create records
         //march to april, 2025 from csv file.
-
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
@@ -1543,7 +1543,7 @@ public class UpTimeControllerTest {
 
         //Create records
         //march to april, 2025 from csv file.
-
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
@@ -1687,6 +1687,7 @@ public class UpTimeControllerTest {
 
         //Create records
         //march to april, 2025 from csv file.
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
@@ -1807,7 +1808,7 @@ public class UpTimeControllerTest {
 
         //Create records
         //march to april, 2025 from csv file.
-
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
@@ -2002,7 +2003,7 @@ public class UpTimeControllerTest {
 
         //Create records
         //march to april, 2025 from csv file.
-
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1747135407286.csv")).getPath();
         List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
                 filePath,
                 reservedServiceUUID
