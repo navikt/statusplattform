@@ -172,7 +172,7 @@ public class UpTimeCalculatorTest {
         //Add record
         List<RecordEntity> records = generateRandomizedRecordEntities(service, 1);
         records.forEach(record -> {
-            record.setCreated_at(daysBackMinusTwohours.atZone(ZONE_ID));
+            record.setCreated_at(daysBackMinusTwohours.atZone(ZoneId.systemDefault()));
             record.setServiceId(service.getId());
             record.setStatus(ServiceStatus.OK);
             record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
@@ -225,7 +225,7 @@ public class UpTimeCalculatorTest {
             int max = 1;
             LocalDateTime now = STATIC_TIME;
             int numberOfDays = ThreadLocalRandom.current().nextInt(min, max + 1);
-            record.setCreated_at(fiveDaysBack.atZone(ZONE_ID));
+            record.setCreated_at(fiveDaysBack.atZone(ZoneId.systemDefault()));
             record.setServiceId(service.getId());
             record.setStatus(ServiceStatus.OK);
             record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
