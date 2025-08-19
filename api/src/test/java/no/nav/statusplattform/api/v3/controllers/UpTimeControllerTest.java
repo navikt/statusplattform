@@ -11,7 +11,6 @@ import no.nav.statusplattform.generated.api.OHGroupThinDto;
 import no.nav.statusplattform.generated.api.OHRuleDto;
 import no.nav.statusplattform.generated.api.ServiceDto;
 import no.nav.statusplattform.generated.api.UpTimeTotalsDto;
-import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -1965,7 +1964,7 @@ public class UpTimeControllerTest {
         //Rules set up : add Mayday - closed all day
         //Work day rule: Normal Work days
         Map<String, String> namesAndRules = Stream.of(
-                Map.entry("Normal Work days", "??.??.???? ? 1-7 00:00-23:59")
+                Map.entry("Open all days", "??.??.???? ? 1-7 00:00-23:59")
         ).collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,
@@ -2091,6 +2090,355 @@ public class UpTimeControllerTest {
         Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
                 .isEqualTo(new BigDecimal("1380"));
     }
+
+    @Test
+        //Normal work day rule: ??.??.???? ? 1-5 07:00-17:00
+    void getServiceUpTime2024_BasicRule() {
+        //Arrange
+        //Group set up --give random group name
+        OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
+        OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
+        UUID groupId = savedOHGroupThinDto.getId();
+        savedOHGroupThinDto.setId(groupId);
+
+        //Create service
+        //re-service service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
+        UUID reservedServiceUUID = UUID.fromString("aafc64ba-70a8-4ae4-896e-69306aab0ab4");
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        service.setId(reservedServiceUUID);
+        ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
+
+        //Add group to service
+        openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
+
+        //Create records
+        //march to april, 2025 from csv file.
+
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1751875240840.csv")).getPath();
+        List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
+                filePath,
+                reservedServiceUUID
+        );
+
+        records.forEach(record -> {
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+
+        //Situation1:Normal work days, created_at >= Tuesday 2024-01-01T07:00:00' AND created_at  < Wednesday  2024-12-31T18:00:00
+        //Rules set up : add basic work rule
+        Map<String, String> namesAndRules = Map.ofEntries(
+                Map.entry("Normal work days", "??.??.???? ? 1-5 07:00-17:00"));
+
+
+        List<String> rules = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> selectedRules = new ArrayList<>();
+        for (int i = 0; i < rules.size(); i++) {
+            OHRuleDto rule = new OHRuleDto()
+                    .id(UUID.randomUUID())
+                    .name(rules.get(i))
+                    .rule(namesAndRules.get(rules.get(i)));
+            selectedRules.add(rule);
+            openingHoursController.newRule(rule);
+        }
+
+        //add rules to already created group
+        savedOHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
+        openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
+        String from, to;
+        UpTimeTotalsDto retrievedUpTimeTotalsDto;
+
+        //Act 9.1
+        //downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        from = "2024-01-01T07:00:00";
+        to = "2024-01-31T18:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("13800"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("13680"));
+
+        //Act 9.2
+        //Downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        //Saturday 2024-10-12 17:00:00 to Sunday 2024-10-13 10:00 = 0
+        //Tuesday 2024-10-29 10:00:00 to Tuesday 2024-10-29 14:00:00 = 240
+        from = "2024-01-01T06:00:00";
+        to = "2024-12-31T17:00:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("157200"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("156840"));
+    }
+
+    @Test
+        //Normal work day rule: ??.??.???? ? 1-5 07:00-17:00
+    void getServiceUpTime2024_HolidaysAndBasicRule() {
+        //Arrange
+        //Group set up --give random group name
+        OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
+        OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
+        UUID groupId = savedOHGroupThinDto.getId();
+        savedOHGroupThinDto.setId(groupId);
+
+        //Create service
+        //re-service service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
+        UUID reservedServiceUUID = UUID.fromString("aafc64ba-70a8-4ae4-896e-69306aab0ab4");
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        service.setId(reservedServiceUUID);
+        ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
+
+        //Add group to service
+        openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
+
+        //Create records
+        //march to april, 2025 from csv file.
+
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1751875240840.csv")).getPath();
+        List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
+                filePath,
+                reservedServiceUUID
+        );
+
+        records.forEach(record -> {
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+
+        //Situation1:2024 holidays  Normal work days, created_at >= Tuesday 2024-01-01T07:00:00' AND created_at  < Wednesday  2024-12-31T18:00:00
+        //Rules set up : add holidays and basic work rule
+
+        Map<String, String> namesAndRules = Stream.of(
+                Map.entry("Maundy Thursday", "28.03.2024 ? ? 07:00-12:00"),
+                Map.entry("Good Friday", "29.03.2024 ? ? 00:00-00:00"),
+                Map.entry("Easter Monday", "01.04.2024 ? ? 00:00-00:00"),
+                Map.entry("Kristi himmelsfartsdag", "09.05.2024 ? ? 00:00-00:00"),
+                Map.entry("Annen Pinse dag", "20.05.2024 ? ? 00:00-00:00"),
+                Map.entry("New years day", "01.01.???? ? ? 00:00-00:00"),
+                Map.entry("May day", "01.05.???? ? ? 00:00-00:00"),
+                Map.entry("National day", "17.05.???? ? ? 00:00-00:00"),
+                Map.entry("Christmas eve", "24.12.???? ? ? 00:00-00:00"),
+                Map.entry("Christmas day", "25.12.???? ? ? 00:00-00:00"),
+                Map.entry("Boxing day", "26.12.???? ? ? 00:00-00:00"),
+                Map.entry("Normal Work days", "??.??.???? ? 1-5 07:00-17:00")
+        ).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+        ));
+
+        List<String> rules = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> selectedRules = new ArrayList<>();
+        for (int i = 0; i < rules.size(); i++) {
+            OHRuleDto rule = new OHRuleDto()
+                    .id(UUID.randomUUID())
+                    .name(rules.get(i))
+                    .rule(namesAndRules.get(rules.get(i)));
+            selectedRules.add(rule);
+            openingHoursController.newRule(rule);
+        }
+
+        //add rules to already created group
+        savedOHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
+        openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
+        String from, to;
+        UpTimeTotalsDto retrievedUpTimeTotalsDto;
+
+        //Act 10.1 Monday 2024-01-01T00:00:00 to Tuesday 2024-01-02T23:59:00
+        //Downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        //Saturday 2024-10-12 17:00:00 to Sunday 2024-10-13 10:00 = 0
+        //Tuesday 2024-10-29 10:00:00 to Tuesday 2024-10-29 14:00:00 = 240
+        from = "2024-01-01T00:00:00";
+        to = "2024-01-02T23:59:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("600"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("600"));
+
+        //Act 10.2 Monday 2024-01-01T00:00:00 to Wednesday 2024-01-31T23:59:00
+        //Downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        //Saturday 2024-10-12 17:00:00 to Sunday 2024-10-13 10:00 = 0
+        //Tuesday 2024-10-29 10:00:00 to Tuesday 2024-10-29 14:00:00 = 240
+        from = "2024-01-01T00:00:00";
+        to = "2024-01-31T23:59:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("13200"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("13080"));
+
+        //Act 10.3 Monday 2024-01-01T00:00:00 to Tuesday 2024-12-31T23:59:00
+        //Downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        //Saturday 2024-10-12 17:00:00 to Sunday 2024-10-13 10:00 = 0
+        //Tuesday 2024-10-29 10:00:00 to Tuesday 2024-10-29 14:00:00 = 240
+        from = "2024-01-01T00:00:00";
+        to = "2024-12-31T23:59:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("150900"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("150540"));
+    }
+
+    @Test
+        //Open all times all days : ??.??.???? ? 1-7 00:00-23:59
+    void getServiceUpTime2024_HolidaysAndOpenAllDaysAndTimesRule() {
+        //Arrange
+        //Group set up --give random group name
+        OHGroupThinDto oHGroupThinDto = SampleDataDto.getRandomizedOHGroupThinDto();
+        OHGroupThinDto savedOHGroupThinDto = openingHoursController.newGroup(oHGroupThinDto);
+        UUID groupId = savedOHGroupThinDto.getId();
+        savedOHGroupThinDto.setId(groupId);
+
+        //Create service
+        //re-service service UUID for testing from csv file service Id aafc64ba-70a8-4ae4-896e-69306aab0ab4
+        UUID reservedServiceUUID = UUID.fromString("aafc64ba-70a8-4ae4-896e-69306aab0ab4");
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        service.setId(reservedServiceUUID);
+        ServiceDto serviceDto = serviceController.newService(EntityDtoMappers.toServiceDtoShallow(service));
+
+        //Add group to service
+        openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
+
+        //Create records
+        //march to april, 2025 from csv file.
+
+        String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("data-1751875240840.csv")).getPath();
+        List<RecordEntity> records = SampleDataDto.generateRecordEntitiesFromCSVFile(
+                filePath,
+                reservedServiceUUID
+        );
+
+        records.forEach(record -> {
+            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        });
+
+        //Situation1:2024 holidays  Open all days and times, created_at >= Tuesday 2024-01-01T00:00:00' AND created_at  < Wednesday  2024-12-31T23:59:00
+        //Rules set up : add holidays and open all days and time rules:
+
+        Map<String, String> namesAndRules = Stream.of(
+                Map.entry("Maundy Thursday", "28.03.2024 ? ? 07:00-12:00"),
+                Map.entry("Good Friday", "29.03.2024 ? ? 00:00-00:00"),
+                Map.entry("Easter Monday", "01.04.2024 ? ? 00:00-00:00"),
+                Map.entry("Kristi himmelsfartsdag", "09.05.2024 ? ? 00:00-00:00"),
+                Map.entry("Annen Pinse dag", "20.05.2024 ? ? 00:00-00:00"),
+                Map.entry("New years day", "01.01.???? ? ? 00:00-00:00"),
+                Map.entry("May day", "01.05.???? ? ? 00:00-00:00"),
+                Map.entry("National day", "17.05.???? ? ? 00:00-00:00"),
+                Map.entry("Christmas eve", "24.12.???? ? ? 00:00-00:00"),
+                Map.entry("Christmas day", "25.12.???? ? ? 00:00-00:00"),
+                Map.entry("Boxing day", "26.12.???? ? ? 00:00-00:00"),
+                Map.entry("Open all times all days", "??.??.???? ? 1-7 00:00-23:59")
+        ).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+        ));
+
+        List<String> rules = new ArrayList<>(namesAndRules.keySet());
+        List<OHRuleDto> selectedRules = new ArrayList<>();
+        for (int i = 0; i < rules.size(); i++) {
+            OHRuleDto rule = new OHRuleDto()
+                    .id(UUID.randomUUID())
+                    .name(rules.get(i))
+                    .rule(namesAndRules.get(rules.get(i)));
+            selectedRules.add(rule);
+            openingHoursController.newRule(rule);
+        }
+
+        //add rules to already created group
+        savedOHGroupThinDto.setRules(selectedRules.stream().map(OHRuleDto::getId).toList());
+        openingHoursController.updateGroup(groupId, savedOHGroupThinDto);
+        String from, to;
+        UpTimeTotalsDto retrievedUpTimeTotalsDto;
+
+        //Act 11.1 Monday 2024-01-01T00:00:00 to Tuesday 2024-01-02T23:59:00
+        //Downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        //Saturday 2024-10-12 17:00:00 to Sunday 2024-10-13 10:00 = 0
+        //Tuesday 2024-10-29 10:00:00 to Tuesday 2024-10-29 14:00:00 = 240
+        from = "2024-01-01T00:00:00";
+        to = "2024-01-02T23:59:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("1440"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("1440"));
+
+        //Act 11.2 Monday 2024-01-01T00:00:00 to Wednesday 2024-01-31T23:59:00
+        //Downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        //Saturday 2024-10-12 17:00:00 to Sunday 2024-10-13 10:00 = 0
+        //Tuesday 2024-10-29 10:00:00 to Tuesday 2024-10-29 14:00:00 = 240
+        from = "2024-01-01T00:00:00";
+        to = "2024-01-31T23:59:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("43200"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("39600"));
+
+        //Act 11.3 Monday 2024-01-01T00:00:00 to Tuesday 2024-12-31T23:59:00
+        //Downtime:
+        // Saturday 2024-01-19 19:00:00 to Monday 2024-01-22 05:00:00 = 0
+        //Tuesday 2024-01-23 08:00:00 to Tuesday 2024-01-23 10:00:00 = 120
+        //Saturday 2024-10-12 17:00:00 to Sunday 2024-10-13 10:00 = 0
+        //Tuesday 2024-10-29 10:00:00 to Tuesday 2024-10-29 14:00:00 = 240
+        from = "2024-01-01T00:00:00";
+        to = "2024-12-31T23:59:00";
+        retrievedUpTimeTotalsDto
+                = upTimeController.getServiceUpTimeSums(serviceDto.getId().toString(),
+                from,
+                to);
+        //Assert 1.1
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfExpectedUptime())
+                .isEqualTo(new BigDecimal("511500"));
+        Assertions.assertThat(retrievedUpTimeTotalsDto.getSumOfActualUptime())
+                .isEqualTo(new BigDecimal("506640"));
+    }
+
+
 }
 
 
