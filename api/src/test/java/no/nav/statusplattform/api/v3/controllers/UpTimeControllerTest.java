@@ -719,8 +719,8 @@ public class UpTimeControllerTest {
                 .isEqualTo(new BigDecimal("156840"));*/
     }
 
+    //Normal weekend rule (Saturday and sunday): ??.??.???? ? 6-7 10:00-16:00
     @Test
-        //Normal weekend rule (Saturday and sunday): ??.??.???? ? 6-7 10:00-16:00
     void getServiceUpTime_BasicRuleSaturdayToSunday() {
         //Arrange
         //Group set up --give random group name
