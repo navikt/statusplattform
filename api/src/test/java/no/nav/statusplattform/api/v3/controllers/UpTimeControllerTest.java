@@ -40,6 +40,7 @@ public class UpTimeControllerTest {
 
     @BeforeEach
     void startConnection() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Oslo"));
         connection = dbContext.startConnection(dataSource);
         TestUtil.clearAllTableData(dbContext);
     }
