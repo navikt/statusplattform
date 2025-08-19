@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class UpTimeControllerTest {
 
         //Create record
         RecordEntity record = SampleData.getRandomizedRecordEntity();
-        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Oslo"));
         ZonedDateTime sevenDaysBack = now.minusHours(now.getHour()).minusDays(7);
         record.setCreated_at(sevenDaysBack);
         record.setServiceId(serviceDto.getId());
@@ -135,7 +136,7 @@ public class UpTimeControllerTest {
 
         //Create record
         RecordEntity record = SampleData.getRandomizedRecordEntity();
-        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Oslo"));
         ZonedDateTime sevenDaysBack = now.minusHours(now.getHour()).minusDays(7);
         record.setCreated_at(sevenDaysBack);
         record.setServiceId(serviceDto.getId());
