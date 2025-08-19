@@ -15,6 +15,7 @@ import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,10 +39,13 @@ public class UpTimeControllerTest {
 
     private final ServiceController serviceController = new ServiceController(dbContext);
 
+    @BeforeAll
+    static void forceOsloTZ() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Oslo"));
+    }
 
     @BeforeEach
     void startConnection() {
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Oslo"));
         connection = dbContext.startConnection(dataSource);
         TestUtil.clearAllTableData(dbContext);
     }
