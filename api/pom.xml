@@ -12,6 +12,13 @@
     <groupId>no.nav.statusplattform</groupId>
     <artifactId>api</artifactId>
 
+    <properties>
+        <!-- Safe defaults; override with -Dtest.timezone=UTC, etc. -->
+        <test.timezone>Europe/Oslo</test.timezone>
+        <test.language>nb</test.language>
+        <test.country>NO</test.country>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>no.nav.statusplattform</groupId>
@@ -111,12 +118,38 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <!-- Unit tests: force timezone/locale; override with -Dtest.timezone=... -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Duser.timezone=${test.timezone} -Duser.language=${test.language} -Duser.country=${test.country}</argLine>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+            </plugin>
+
+            <!-- Integration tests (if applicable) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Duser.timezone=${test.timezone} -Duser.language=${test.language} -Duser.country=${test.country}</argLine>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
+
         <resources>
             <resource>
                 <directory>target/generated-sources/openapi-java</directory>
