@@ -17,7 +17,11 @@ import nav.statusplattform.core.enums.OpsMessageSeverity;
 import nav.statusplattform.core.enums.RuleType;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
+import nav.statusplattform.core.openingHours.TimeSpan;
+import nav.statusplattform.core.openingHours.UpTimeTotals;
 import no.nav.statusplattform.api.TeamKatalogIntegrasjon.TeamKatalogKlient;
+
+
 import no.nav.statusplattform.generated.api.AreaDto;
 import no.nav.statusplattform.generated.api.DashboardDto;
 import no.nav.statusplattform.generated.api.DashboardNameIdDto;
@@ -32,7 +36,10 @@ import no.nav.statusplattform.generated.api.ServiceDto;
 import no.nav.statusplattform.generated.api.ServiceTypeDto;
 import no.nav.statusplattform.generated.api.StatusDto;
 import no.nav.statusplattform.generated.api.SubAreaDto;
+import no.nav.statusplattform.generated.api.UpTimeTotalsDto;
 
+
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -171,6 +178,7 @@ public class EntityDtoMappers {
         return opsMessageEntity;
     }
 
+
     public static ServiceDto toServiceDtoDeep(ServiceEntity service ,List<ServiceEntity> dependencies){
         Map<ServiceEntity, List<ServiceEntity>> map = new HashMap<>();
         map.put(service,dependencies);
@@ -256,6 +264,14 @@ public class EntityDtoMappers {
                 .collect(Collectors.toList()));
         return dto;
     }
+
+    // Convert a list of entries into a list of DashboardDto objects
+    public static List<DashboardDto> toDashboardDtoDeepList(List<Map.Entry<DashboardEntity, List<AreaWithServices>>> dashboardEntries) {
+        return dashboardEntries.stream()
+                .map(EntityDtoMappers::toDashboardDtoDeep) // Using the existing conversion method for each entry
+                .collect(Collectors.toList());
+    }
+
 
     public static DashboardNameIdDto toDashboardDtoShallow(DashboardEntity entity){
         DashboardNameIdDto dto = new DashboardNameIdDto();
@@ -380,5 +396,13 @@ public class EntityDtoMappers {
         entity.setType(ServiceType.fromDb(dto.getType().getValue()));
         entity.setContent(dto.getContent());
         return entity;
+    }
+
+    public static UpTimeTotalsDto toUpTimeTotalsDto(final UpTimeTotals upTimeTotals) {
+        //Orlene: Using BigDecimal as expected by the DTO.
+        var dto = new UpTimeTotalsDto();
+        dto.setSumOfActualUptime(BigDecimal.valueOf(upTimeTotals.sumOfActualUptime()));
+        dto.setSumOfExpectedUptime(BigDecimal.valueOf(upTimeTotals.sumOfExpectedUptime()));
+        return dto;
     }
 }

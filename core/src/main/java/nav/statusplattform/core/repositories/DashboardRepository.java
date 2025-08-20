@@ -7,18 +7,19 @@ import org.fluentjdbc.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DashboardRepository {
 
 
     private final DbContextTable dashboardTable;
     private final DbContextTable dashboardAreaTable;
+    private final DbContextTable externalDashboardTable;
     private final DbContext dbContext;
 
     public DashboardRepository(DbContext dbContext) {
         dashboardTable = dbContext.table("dashboard");
         dashboardAreaTable = dbContext.table("dashboard_area");
+        externalDashboardTable = dbContext.table("external_dashboards");
         this.dbContext = dbContext;
     }
 
@@ -177,4 +178,91 @@ public class DashboardRepository {
     public void deleteDashboard(UUID id) {
         dashboardTable.where("id", id).executeDelete();
     }
+
+
+    // External Dashboards CRUD
+
+    public UUID saveExternalDashboard(UUID dashboardId) {
+        DatabaseSaveResult<UUID> result = externalDashboardTable
+                .newSaveBuilderWithUUID("id", UUID.randomUUID())
+                .setField("dashboard_id", dashboardId)
+                .execute();
+        return result.getId();
+    }
+
+    private DashboardEntity getDashboardEntityById(UUID id) {
+        return dashboardTable.where("id", id)
+                .singleObject(DashboardRepository::toDashboard)
+                .orElseThrow(() -> new IllegalArgumentException("Not found: Dashboard with ID " + id));
+    }
+
+    public List<Map.Entry<DashboardEntity, List<AreaWithServices>>> getAllExternalDashboards() {
+        // Fetch all external dashboard IDs
+        List<UUID> externalDashboardIds = externalDashboardTable
+                .query()
+                .list(row -> row.getUUID("dashboard_id"));
+
+        // For each external dashboard ID, fetch its associated data using the existing retrieveOne method
+        return externalDashboardIds.stream()
+                .map(this::retrieveOne)
+                .collect(Collectors.toList());
+    }
+
+    public void updateExternalDashboard(UUID externalDashboardId, UUID newDashboardId) {
+        externalDashboardTable.where("id", externalDashboardId)
+                .update()
+                .setField("dashboard_id", newDashboardId)
+                .execute();
+    }
+
+    public void deleteExternalDashboard(UUID externalDashboardId) {
+        externalDashboardTable.where("id", externalDashboardId)
+                .executeDelete();
+    }
+
+    public Map<OpsMessageEntity, List<ServiceEntity>> getOpsMessagesByDashboardId(UUID dashboardId) {
+        DbContextTableAlias dashboardAlias = dashboardTable.alias("d");
+        DbContextTableAlias dashboardAreaAlias = dashboardAreaTable.alias("da");
+        DbContextTableAlias areaServiceAlias = dbContext.table("area_service").alias("asr");
+        DbContextTableAlias serviceAlias = dbContext.table("service").alias("s");
+        DbContextTableAlias opsMessageServiceAlias = dbContext.table("ops_message_service").alias("oms");
+        DbContextTableAlias opsMessageAlias = dbContext.table("ops_message").alias("om");
+
+        // Use a map to store each OpsMessageEntity and its associated services
+        Map<OpsMessageEntity, List<ServiceEntity>> opsMessageWithServices = new HashMap<>();
+
+        // Query and populate the result map
+        dashboardAlias.where("id", dashboardId)
+                .leftJoin(dashboardAlias.column("id"), dashboardAreaAlias.column("dashboard_id")) // Join dashboard and dashboard_area on dashboard_id
+                .leftJoin(dashboardAreaAlias.column("area_id"), areaServiceAlias.column("area_id")) // Join dashboard_area and area_service on area_id
+                .leftJoin(areaServiceAlias.column("service_id"), serviceAlias.column("id")) // Join area_service and service on service_id
+                .leftJoin(serviceAlias.column("id"), opsMessageServiceAlias.column("service_id")) // Join service and ops_message_service on service_id
+                .leftJoin(opsMessageServiceAlias.column("ops_message_id"), opsMessageAlias.column("id")) // Join ops_message_service and ops_message on ops_message_id
+                .list(row -> {
+                    // Convert row data to OpsMessageEntity if the opsMessageAlias table is not null
+                    OpsMessageEntity opsMessage = Optional.ofNullable(row.table(opsMessageAlias))
+                            .map(OpsRepository::toOps)
+                            .orElse(null);
+
+                    // Check if the opsMessage is null; if it is, skip this row as it doesn’t have a valid OpsMessage
+                    if (opsMessage == null) {
+                        return null; // Skip rows without a corresponding ops message
+                    }
+
+                    // Convert row data to ServiceEntity if the serviceAlias table is not null
+                    ServiceEntity service = Optional.ofNullable(row.table(serviceAlias))
+                            .map(ServiceRepository::toService)
+                            .orElse(null);
+
+                    // Add the service to the appropriate OpsMessageEntity
+                    if (service != null) {
+                        opsMessageWithServices.computeIfAbsent(opsMessage, k -> new ArrayList<>()).add(service);
+                    }
+
+                    return null;
+                });
+
+        return opsMessageWithServices;
+    }
+
 }

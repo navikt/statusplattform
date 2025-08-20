@@ -27,6 +27,7 @@ public class ServiceRepository {
     private final DbContextTable serviceHistoryTable;
     private final DbContextTable service_openingHoursTable;
     private final DbContextTable serviceOHgroupTable;
+    private final DbContextTable external_services;
 
 
     public ServiceRepository(DbContext dbContext) {
@@ -36,6 +37,7 @@ public class ServiceRepository {
         service_maintenanceTable = dbContext.table("service_maintenance");
         service_openingHoursTable = dbContext.table("service_opening_hours");
         serviceOHgroupTable = dbContext.table("service_oh_group");
+        external_services = dbContext.table("external_services");
     }
 
 
@@ -286,5 +288,14 @@ public class ServiceRepository {
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
         }
+    }
+
+    public List<ServiceEntity> getAllExternalServices() {
+        DbContextTableAlias externalServicesAlias = external_services.alias("es");
+        DbContextTableAlias serviceAlias = serviceTable.alias("s");
+
+        return externalServicesAlias
+                .leftJoin(externalServicesAlias.column("service_id"), serviceAlias.column("id"))
+                .list(row -> ServiceRepository.toService(row.table(serviceAlias))); // Assuming `toService` maps a row to `ServiceEntity`
     }
 }

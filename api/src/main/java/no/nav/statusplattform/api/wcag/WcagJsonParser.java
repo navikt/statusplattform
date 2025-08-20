@@ -56,7 +56,7 @@ public class WcagJsonParser {
             resultDtos.forEach(resultDto -> {
                 List<WcagKravDto> matching = resultDto.getCriterias().stream().filter(krav -> krav.getId().equals(kravId)).collect(Collectors.toList());
                 if(matching.size()== 1) {
-                   result.get(kravId).add(matching.get(0).getSubject());
+                   result.get(kravId).add(matching.getFirst().getSubject());
                 }
                 if(matching.size() > 1){
                     matching.forEach(resultOfKrav -> {

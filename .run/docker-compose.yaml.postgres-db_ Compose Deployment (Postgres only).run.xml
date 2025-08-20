@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="docker-compose.yaml.postgres-db: Compose Deployment (Postgres only)" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="envFilePath" value="" />
+        <option name="services">
+          <list>
+            <option value="postgres-db" />
+          </list>
+        </option>
+        <option name="sourceFilePath" value="docker-compose.yaml" />
+        <option name="upNoDeps" value="true" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>

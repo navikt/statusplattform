@@ -1,5 +1,6 @@
 package no.nav.statusplattform.api.v3.controllers;
 
+import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.repositories.ServiceRepository;
 import no.nav.statusplattform.api.EntityDtoMappers;
 import no.nav.statusplattform.api.Helpers.ServiceControllerHelper;
@@ -201,6 +202,14 @@ public class ServiceController {
 
     }
 
+    @GET("/services/external")
+    @JsonBody
+    public List<ServiceDto> getAllExternalServices() {
+        List<ServiceEntity> services = serviceRepository.getAllExternalServices(); // Or call repository directly if no service layer
+        return services.stream()
+                .map(EntityDtoMappers::toServiceDtoShallow) // Assuming `toServiceDto` maps `ServiceEntity` to `ServiceDto`
+                .collect(Collectors.toList());
+    }
 
 
     private static List<JsonObject> toJson(String str){
@@ -281,6 +290,5 @@ public class ServiceController {
         }
         return con;
     }
-
 
 }
