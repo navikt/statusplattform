@@ -15,6 +15,6 @@ min_replicas: 1
 max_replicas: 1
 
 # Test-only switches (prod defaults remain intact)
-azure_disabled: true
+azure_disabled: false
 sql_disabled: true
 azure_envfrom: false
