@@ -25,30 +25,34 @@ jobs:
           push: true
           tags: ${{ env.docker_image }}
 
-  deploy-test:
-    name: Deploy application to test env
-    needs: build
-    if: github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      # Build and push to GAR (allowed registry in dev-gcp)
-      - id: push
-        uses: nais/docker-build-push@v0
-        with:
-          team: navdig
-          image: europe-north1-docker.pkg.dev/nais-io/nais/images/statusplattform-server
-          tags: ${{ github.sha }}
-      - uses: nais/deploy/actions/deploy@v2
-        with:
-          cluster: dev-gcp
-          team: navdig
-          resource: .nais/nais.yml
-          vars: .nais/test.yml
-          image: ${{ steps.push.outputs.image }}
+deploy-test:
+  name: Deploy application to test env
+  needs: build
+  if: github.ref == 'refs/heads/develop'
+  runs-on: ubuntu-latest
+  permissions:
+    contents: read
+    id-token: write
+  steps:
+    - uses: actions/checkout@v4
+
+    # Build and push to GAR (allowed in dev-gcp)
+    - id: push
+      uses: nais/docker-build-push@v0
+      with:
+        team: navdig
+        image: europe-north1-docker.pkg.dev/nais-io/nais/images/statusplattform-server
+        tags: ${{ github.sha }}
+
+    # Deploy using v2 (pass flags via args)
+    - uses: nais/deploy/actions/deploy@v2
+      with:
+        args: >
+          --cluster dev-gcp
+          --team navdig
+          --resource .nais/nais.yml
+          --vars .nais/test.yml
+          --var image=${{ steps.push.outputs.image }}
 
   deploy-prod:
     name: Deploy application to prod
