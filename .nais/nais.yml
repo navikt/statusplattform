@@ -8,9 +8,9 @@ metadata:
 spec:
   envFrom:
     - secret: swagger-api-konfig
-    { { #if azure_envfrom}}
+    {{#if azure_envfrom}}
     - secret: azure-app
-    {{/if } }
+    {{/if}}
 
   replicas:
     {{#if min_replicas}}min: {{min_replicas}}{{/if}}
