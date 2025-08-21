@@ -36,7 +36,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Build and push to GAR (allowed in dev-gcp)
+      # Optional: verify the resource file is present
+      - name: Verify NAIS files
+        run: |
+          ls -la .nais
+          test -f .nais/nais.yml
+
+      # Build and push to GAR (dev-gcp)
       - id: push
         uses: nais/docker-build-push@v0
         with:
@@ -44,16 +50,18 @@ jobs:
           image: europe-north1-docker.pkg.dev/nais-io/nais/images/statusplattform-server
           tags: ${{ github.sha }}
 
-      # Deploy using v2 (pass flags via args)
-      - uses: nais/deploy/actions/deploy@v2
+      # Deploy using v2: pass flags via args (no entryPoint)
+      - name: Deploy
+        uses: nais/deploy/actions/deploy@v2
         with:
-          entryPoint: deploy
-          args: >
+          args: |
             --cluster dev-gcp
             --team navdig
             --resource .nais/nais.yml
             --vars .nais/test.yml
             --var image=${{ steps.push.outputs.image }}
+            --wait
+            --retry
 
   deploy-prod:
     name: Deploy application to prod
