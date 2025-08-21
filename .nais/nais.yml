@@ -8,6 +8,10 @@ metadata:
 spec:
   envFrom:
     - secret: swagger-api-konfig
+    { { #if azure_envfrom}}
+    - secret: azure-app
+    {{/if } }
+
   replicas:
     {{#if min_replicas}}min: {{min_replicas}}{{/if}}
     {{#if max_replicas}}max: {{max_replicas}}{{/if}}
@@ -16,6 +20,7 @@ spec:
   image: {{ image }}
   port: 3005
   gcp:
+    {{#unless sql_disabled}}
     sqlInstances:
       - name: navstatus
         type: POSTGRES_17
@@ -24,6 +29,9 @@ spec:
         databases:
           - name: navstatus
             envVarPrefix: DB
+    {{/unless}}
+
+  {{#unless azure_disabled}}
   azure:
     application:
       allowAllUsers: true
@@ -33,6 +41,8 @@ spec:
         extra:
           - "NAVident"
           - "azp_name"
+  {{/unless}}
+
   accessPolicy:
     inbound:
       rules:
