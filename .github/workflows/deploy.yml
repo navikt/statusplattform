@@ -47,6 +47,7 @@ jobs:
       # Deploy using v2 (pass flags via args)
       - uses: nais/deploy/actions/deploy@v2
         with:
+          entryPoint: deploy
           args: >
             --cluster dev-gcp
             --team navdig
