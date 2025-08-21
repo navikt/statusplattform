@@ -7,7 +7,7 @@ RUN mvn clean dependency:go-offline -B
 RUN mvn package
 
 
-FROM openjdk:21-jdk-slim
+FROM amazoncorretto:21-jdk-alpine
 
 WORKDIR /adevguide
 EXPOSE 3005
