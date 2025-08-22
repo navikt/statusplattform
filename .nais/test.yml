@@ -16,7 +16,7 @@ max_replicas: 1
 
 # Test-only switches (prod defaults remain intact)
 azure_disabled: false
-azure_envfrom: true
+azure_envfrom: false
 sql_disabled: false
 sql_instance_name: navstatus-dev
 sql_database_name: navstatusdev
