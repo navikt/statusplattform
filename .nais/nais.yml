@@ -24,6 +24,8 @@ spec:
     sqlInstances:
       - name: navstatus
         type: POSTGRES_15
+        tier: db-f1-micro          # REQUIRED (choose small tier for dev)
+        diskSize: 10               # Optional
         databases:
           - name: navstatus
             envVarPrefix: DB
