@@ -12,21 +12,6 @@ spec:
     - secret: azure-app
     {{/if}}
 
-  initContainers:
-    - name: wait-for-db
-      image: busybox:1.36
-      command:
-        - sh
-        - -c
-        - |
-          echo "Waiting for Cloud SQL proxy on 127.0.0.1:5432 ..."
-          for i in $(seq 1 180); do
-            nc -z 127.0.0.1 5432 && echo "DB is up" && exit 0
-            sleep 1
-          done
-          echo "DB not reachable on 127.0.0.1:5432" >&2
-          exit 1
-
   replicas:
     {{#if min_replicas}}min: {{min_replicas}}{{/if}}
     {{#if max_replicas}}max: {{max_replicas}}{{/if}}
