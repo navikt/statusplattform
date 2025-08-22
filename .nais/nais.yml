@@ -23,9 +23,7 @@ spec:
     {{#unless sql_disabled}}
     sqlInstances:
       - name: navstatus
-        type: POSTGRES_17
-        highAvailability: true
-        tier: db-custom-2-3840
+        type: POSTGRES_15
         databases:
           - name: navstatus
             envVarPrefix: DB
