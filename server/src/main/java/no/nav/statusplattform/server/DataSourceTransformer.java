@@ -1,3 +1,4 @@
+// server/src/main/java/no/nav/statusplattform/server/DataSourceTransformer.java
 package no.nav.statusplattform.server;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -14,17 +15,13 @@ public class DataSourceTransformer {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceTransformer.class);
 
     public static DataSource create(DbConfig config) {
-        // Prefer NAIS injected full JDBC URL if present
         String jdbcUrl = System.getenv("DB_JDBC_URL");
         if (jdbcUrl == null || jdbcUrl.isBlank()) {
-            // Fallback build
-            String host = config.hostname == null || config.hostname.isBlank()
-                    ? System.getenv().getOrDefault("DB_HOST", "127.0.0.1")
-                    : config.hostname;
-            String port = String.valueOf(config.port == 0
-                    ? Integer.parseInt(System.getenv().getOrDefault("DB_PORT", "5432"))
-                    : config.port);
-            String db = config.dbName != null ? config.dbName : System.getenv("DB_NAME");
+            String host = blank(config.hostname) ? System.getenv().getOrDefault("DB_HOST", "127.0.0.1") : config.hostname;
+            String port = config.port == 0 ? System.getenv().getOrDefault("DB_PORT", "5432") : String.valueOf(config.port);
+            String db = firstNonBlank(config.dbName,
+                    System.getenv("DB_NAME"),
+                    System.getenv("DB_DATABASE")); // NAIS provides DB_DATABASE
             jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + db;
             if (!jdbcUrl.contains("sslmode=")) {
                 jdbcUrl += "?sslmode=require";
@@ -39,12 +36,11 @@ public class DataSourceTransformer {
         hikari.setUsername(username);
         hikari.setPassword(password);
         hikari.setMaximumPoolSize(32);
-        // Do not fail fast while proxy starts
         hikari.setInitializationFailTimeout(-1);
         hikari.setConnectionTimeout(30_000);
 
-        int maxTries = 30;              // ~60s total worst case
-        Duration baseDelay = Duration.ofMillis(1000);
+        int maxTries = 30;
+        Duration baseDelay = Duration.ofSeconds(1);
         HikariDataSource ds = null;
         for (int attempt = 1; attempt <= maxTries; attempt++) {
             try {
@@ -56,9 +52,8 @@ public class DataSourceTransformer {
                     logger.error("Exhausted attempts creating DataSource", e);
                     throw e;
                 }
-                long sleepMs = baseDelay.toMillis() + (attempt * 200L);
-                logger.warn("DB connect attempt {} failed: {}. Retrying in {} ms",
-                        attempt, e.getMessage(), sleepMs);
+                long sleepMs = baseDelay.toMillis() + attempt * 200L;
+                logger.warn("DB connect attempt {} failed: {}. Retrying in {} ms", attempt, e.getMessage(), sleepMs);
                 try {
                     Thread.sleep(sleepMs);
                 } catch (InterruptedException ie) {
@@ -68,16 +63,16 @@ public class DataSourceTransformer {
             }
         }
 
-        Flyway.configure()
-                .dataSource(ds)
-                .load()
-                .migrate();
-
+        Flyway.configure().dataSource(ds).load().migrate();
         return ds;
     }
 
-    private static String firstNonBlank(String a, String b) {
-        if (a != null && !a.isBlank()) return a;
-        return (b != null && !b.isBlank()) ? b : null;
+    private static boolean blank(String s) { return s == null || s.isBlank(); }
+
+    private static String firstNonBlank(String... vals) {
+        for (String v : vals) {
+            if (v != null && !v.isBlank()) return v;
+        }
+        return null;
     }
 }
