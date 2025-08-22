@@ -19,3 +19,4 @@ azure_disabled: false
 azure_envfrom: true
 sql_disabled: false
 sql_instance_name: navstatus-dev
+sql_database_name: navstatus_dev

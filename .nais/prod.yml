@@ -13,3 +13,4 @@ spec:
 # Necessary due to https://github.com/aymerick/raymond limitations w/booleans || nested var blocks
 min_replicas: 2
 sql_instance_name: navstatus
+sql_database_name: navstatus
