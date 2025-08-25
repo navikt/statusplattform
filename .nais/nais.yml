@@ -23,7 +23,7 @@ spec:
     {{#unless sql_disabled}}
     sqlInstances:
       - name: {{ sql_instance_name }}
-        type: POSTGRES_15
+        type: POSTGRES_17
         tier: db-f1-micro          # REQUIRED (choose small tier for dev)
         databases:
           - name: {{#if sql_database_name}}{{ sql_database_name }}{{else}}navstatus{{/if}}
