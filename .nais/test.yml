@@ -18,5 +18,5 @@ max_replicas: 1
 azure_disabled: false
 azure_envfrom: false
 sql_disabled: false
-sql_instance_name: navstatus
-sql_database_name: navstatus
+sql_instance_name: navstatus-dev
+sql_database_name: navstatusdev
