@@ -19,7 +19,7 @@ spec:
     sqlInstances:
       - name: navstatus-dev
         type: POSTGRES_17
-        tier: db-f1-micro
+        tier: db-g1-small
         databases:
           - name: navstatusdev
             envVarPrefix: DB
@@ -57,5 +57,14 @@ spec:
       value: trygdeetaten.no
     - name: ENV
       value: dev
+      # Used by app for conditional logic
+    - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+      value: "5"
+    - name: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+      value: "1"
+    - name: SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT
+      value: "60000"
+    - name: SPRING_DATASOURCE_HIKARI_MAX_LIFETIME
+      value: "300000"
   ingresses:
     - https://status-api.intern.dev.nav.no
