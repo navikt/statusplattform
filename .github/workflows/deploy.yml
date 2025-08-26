@@ -39,7 +39,7 @@ jobs:
       - name: Verify NAIS files
         run: |
           ls -la .nais
-          test -f .nais/nais.yml
+          test -f .nais/dev.yml
       # Build and push to GAR (dev-gcp)
       - id: push
         uses: nais/docker-build-push@v0
@@ -53,8 +53,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           IMAGE: ${{ steps.push.outputs.image }}
-          RESOURCE: .nais/nais.yml
-          VARS: .nais/test.yml
+          RESOURCE: .nais/dev.yml
 
   deploy-prod:
     name: Deploy application to prod
