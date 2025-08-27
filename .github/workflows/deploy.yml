@@ -4,7 +4,7 @@ on: [push]
 
 env:
   # TODO: Make images sortable ("<iso8601 datetime>-<git rev-list --count REF_NAME>-<git commit short sha>")
-  docker_image: ghcr.io/navikt/statusplattform-server:${{ github.sha }}
+  docker_image: docker.pkg.github.com/navikt/statusplattform/statusplattform-server:${{ github.sha }}
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: docker/login-action@v2
         with:
-          registry: ghcr.io
+          registry: docker.pkg.github.com
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v3
