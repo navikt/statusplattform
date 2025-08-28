@@ -29,6 +29,7 @@ public class StatusplattformApi extends ClasspathWebAppContext {
         corsFilter = new CORSFilter();
         addFilter(new FilterHolder(corsFilter),"/*", EnumSet.of(DispatcherType.REQUEST));
         addServlet(new ServletHolder(new WebJarServlet("swagger-ui")), "/swagger/*");
+        var dbContext = new DbContext();
         addServlet(new ServletHolder(new ApiServlet(List.of(
                 new AreaController(dbContext),
                 new DashboardController(dbContext),
@@ -39,6 +40,7 @@ public class StatusplattformApi extends ClasspathWebAppContext {
                 new HealthCheck(dbContext),
                 new UserController(),
                 new WcagController(),
+                new UpTimeController(dbContext),
                 new TeamKatalogController()
         ))), "/*");
 
