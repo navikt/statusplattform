@@ -9,7 +9,7 @@ services:
       PGTZ: Europe/Oslo
       TZ: Europe/Oslo
     ports:
-      - "3432:5432" # CATO: Changed to default port, for convenience.
+      - "3432:5432"
     volumes:
       # Persist local test data across container reboots
       - pgdata:/var/lib/postgresql/data
