@@ -47,7 +47,7 @@ record DailyUptime(LocalDate currentDay, List<RecordInterval> recordIntervalsRel
                 .map(recordInterval -> ServiceDown.from(recordInterval, currentDay))
                 .map(serviceDown -> {
                     long value = serviceDown.apply(expectedOpeningHours);
-                    System.out.println("ServiceUp minutes: " + value + " for time " + serviceDown.from() + " and " + serviceDown.to());
+                    System.out.println("ServiceDown minutes: " + value + " for down time " + serviceDown.from() + " to down time " + serviceDown.to());
                     return value;
                 })
                 .collect(summingLong(Long::longValue));
