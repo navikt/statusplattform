@@ -14,25 +14,14 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
         String openingHoursResult = OpeningHoursParser.getOpeninghours(localDateTime.toLocalDate(), group);
 
         LocalTime openingTime = OpeningHoursParser.getOpeningTime(openingHoursResult);
-        LocalDateTime expectedOpeningTime = localDateTime.withHour(openingTime.getHour()).withMinute(openingTime.getMinute());
+        LocalDateTime expectedOpeningTime = localDateTime.withHour(openingTime.getHour()).withMinute(openingTime.getMinute()).withSecond(0).withNano(0);
 
         LocalTime closingTime = OpeningHoursParser.getClosingTime(openingHoursResult);
-        LocalDateTime expectedClosingTime = localDateTime.withHour(closingTime.getHour()).withMinute(closingTime.getMinute());
+        LocalDateTime expectedClosingTime = localDateTime.withHour(closingTime.getHour()).withMinute(closingTime.getMinute()).withSecond(0).withNano(0);
 
         return new OpeningHours(expectedOpeningTime, expectedClosingTime);
     }
 
-    static OpeningHours begin(Map<LocalDate, String> openingHoursMap, LocalDateTime localDateTime) {
-        String openingHoursResult = openingHoursMap.get(localDateTime.toLocalDate());
-
-        LocalTime openingTime = OpeningHoursParser.getOpeningTime(openingHoursResult);
-        LocalDateTime expectedOpeningTime = localDateTime.withHour(openingTime.getHour()).withMinute(openingTime.getMinute());
-
-        LocalTime closingTime = OpeningHoursParser.getClosingTime(openingHoursResult);
-        LocalDateTime expectedClosingTime = localDateTime.withHour(closingTime.getHour()).withMinute(closingTime.getMinute());
-
-        return new OpeningHours(expectedOpeningTime, expectedClosingTime);
-    }
 
     long openingHoursInMinutes(LocalDateTime fromDateTime, LocalDateTime toDateTime) {
         LocalDateTime from;
@@ -72,11 +61,16 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
      * This method takes into account that the opening hours could be 23:59 and should be threated as next day.
      */
     private long getMinutes(LocalDateTime from, LocalDateTime to) {
+        from = truncateToMinute(from);
+        to = truncateToMinute(to);
         if (to.toLocalTime().equals(LocalTime.of(23, 59))) {
             to = to.plusDays(1).toLocalDate().atStartOfDay();
         }
 
-        long seconds = Duration.between(from, to).getSeconds();
         return Duration.between(from, to).toMinutes();
+    }
+
+    private static LocalDateTime truncateToMinute(LocalDateTime dateTime) {
+        return dateTime.withSecond(0).withNano(0);
     }
 }
