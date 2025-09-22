@@ -1,7 +1,9 @@
 package nav.statusplattform.core.repositories;
 
-import nav.statusplattform.core.entities.*;
-import nav.statusplattform.core.openingHours.TimeSpan;
+import nav.statusplattform.core.entities.OpeningHoursGroup;
+import nav.statusplattform.core.entities.OpeningHoursGroupEntity;
+import nav.statusplattform.core.entities.OpeningHoursRuleEntity;
+import nav.statusplattform.core.entities.ServiceEntity;
 import org.assertj.core.api.Assertions;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
@@ -10,8 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,7 +40,7 @@ class OpeningHoursRepositoryTest {
             "Skal søke AAP", "Har mistet noen i nær famile", "Sykdom i familien", "Trenger tilrettelegging",
             "Trenger økonomisk sosialhjelp", "Trenger økonomisk rådgivning", "Berørt av EØS-saken", "Ett navn til", "ab", "ac", "ad", "ae", "af", "ag", "ah", "ai", "aj", "ak", "al", "am", "an", "ao", "ap", "aq", "ar", "as", "at"));
 
-    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00", "??.??.???? 1-5,10-L ? 07:00-21:00", "24.12.???? ? 1-5 09:00-14:00", "??.??.???? ? ? 07:00-17:00"));
+    private final ArrayList<String> rules = new ArrayList<>(Arrays.asList("06.04.2023 ? ? 00:00-00:00", "??.??.???? 1-5,10-L ? 07:00-21:00", "24.12.???? ? 1-5 09:00-14:00"));
 
     private final ArrayList<String> groupDescription = new ArrayList<>(Arrays.asList("Local maintenance", "Collaborative maintenance", "Early closing", "National Holidays"));
 
@@ -426,38 +426,6 @@ class OpeningHoursRepositoryTest {
         //Assert
         Assertions.assertThat(retrievedGroup).isPresent();
         Assertions.assertThat(retrievedGroup.get().getId()).isEqualTo(group.getId());
-    }
-
-    @Test
-    void getMapContainingOpeningHoursForTimeSpan() {
-        //Arrange
-        //Add rule
-        OpeningHoursRuleEntity rule = new OpeningHoursRuleEntity();
-        rule.setName(groupDescription.getFirst());
-        rule.setRule(rules.get(3)); //"??.??.???? ? ? 07:00-17:00" open all days
-        UUID ruleId = openingHoursRepository.save(rule);
-        rule.setId(ruleId);
-        //Add rule to group
-        OpeningHoursGroupEntity group = new OpeningHoursGroupEntity().setName("Ny gruppe").setRules(List.of(ruleId));
-        UUID groupId = openingHoursRepository.saveGroup(group);
-        group.setId(groupId);
-        //Add service
-        ServiceEntity service = SampleData.getRandomizedServiceEntity();
-        UUID serviceId = serviceRepository.save(service);
-        service.setId(serviceId);
-        //add group to service
-        openingHoursRepository.setOpeningHoursToService(groupId, serviceId);
-        //Add time duration
-        TimeSpan timeSpan = new TimeSpan(LocalDateTime.now().minusDays(7), LocalDateTime.now());
-        //Act
-        Map<LocalDate, OpeningHours> dateOpeningHoursMap = openingHoursRepository.getMapContainingOpeningHoursForTimeSpan(serviceId, timeSpan);
-        //Assert
-        // using for-each loop for iteration over Map.entrySet()
-        for (Map.Entry<LocalDate, OpeningHours> entry : dateOpeningHoursMap.entrySet()) {
-            System.out.println("Key = " + entry.getKey() +
-                    ", Values = " + entry.getValue().startTime() + " " + entry.getValue().endTime());
-        }
-
     }
 
     private OpeningHoursRuleEntity getRandomizedOpeningRule(ArrayList<String> namesArray, ArrayList<String> rulesArray) {

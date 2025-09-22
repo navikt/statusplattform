@@ -13,8 +13,10 @@ import no.nav.statusplattform.generated.api.OHRuleDto;
 import org.fluentjdbc.DbContext;
 
 import java.time.LocalDate;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OpeningHoursHelper {
@@ -117,5 +119,4 @@ public class OpeningHoursHelper {
         OpeningHoursDailyMap.populateMap(openingHoursRepository);
 
     }
-
 }

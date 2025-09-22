@@ -1,9 +1,10 @@
-FROM library/maven:3-amazoncorretto-21 AS maven
+FROM library/maven:3-amazoncorretto-21 as maven
 
 COPY pom.xml pom.xml
 COPY . .
 
-RUN mvn clean dependency:go-offline package -B
+RUN mvn clean dependency:go-offline -B
+RUN mvn package
 
 
 FROM library/openjdk:21

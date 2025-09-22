@@ -14,7 +14,7 @@ public class AppConfig {
 
     public static class AzureConfig {
         public final String oath2Scope = getEnvVar("ENV").orElseThrow(IllegalStateException::new);
-        public final String tenant = getEnvVar("TENANT").orElse("trygdeetaten.no");
+        public final String tenant = getEnvVar("TENANT").orElseThrow(IllegalStateException::new);
         public final String clientId = getEnvVar("AZURE_APP_CLIENT_ID").orElseThrow(IllegalStateException::new);
         public final String clientSecret = getEnvVar("AZURE_APP_CLIENT_SECRET").orElseThrow(IllegalStateException::new);
     }

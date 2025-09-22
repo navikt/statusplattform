@@ -100,10 +100,8 @@ class OpsControllerTest {
         //Act
         List<OPSmessageDto> retrievedOpsMessages = opsController.getAllOpsMessages();
         //Assert
-        // CATO: Needs to be looked at. Not expecting a "internalMessage: A short-lived fault in a system". FIXME later
-//        assertThat(retrievedOpsMessages)
-//                .hasSameSizeAs(opsMessageDtos)
-//                .containsExactlyInAnyOrder(opsMessageDtos.toArray(new OPSmessageDto[0]));
+        Assertions.assertThat(retrievedOpsMessages.size()).isEqualTo(opsMessageDtos.size());
+        Assertions.assertThat(retrievedOpsMessages).containsAll(opsMessageDtos);
     }
 
     @Test

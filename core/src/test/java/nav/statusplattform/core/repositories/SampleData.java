@@ -4,10 +4,8 @@ import nav.statusplattform.core.entities.*;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
 
-import java.sql.Time;
-import java.time.*;
+import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 
@@ -187,55 +185,6 @@ public class SampleData {
                 .setEnd_time(ZonedDateTime.now().plusDays(numberOfDays + 2));
     }
 
-    public static RecordEntity getRandomizedRecordEntity() {
-        return new RecordEntity()
-                .setCreated_at(ZonedDateTime.now())
-                .setStatus(SampleData.getRandomServiceStatus())
-                .setResponsetime(SampleData.getRandomResponseTime());
-    }
-
-    public static RecordEntity getRandomizedRecordStartingBeforeTimeSpan(LocalDateTime startInclusive) {
-        //Generate an random amount from
-        Random daysBack = new Random();
-        int minusDays = daysBack.nextInt(10) + 1;
-        return new RecordEntity()
-                .setCreated_at(startInclusive.atZone(ZoneId.of("Europe/Oslo")).minusDays(minusDays))
-                .setStatus(SampleData.getRandomServiceStatus())
-                .setResponsetime(SampleData.getRandomResponseTime());
-    }
-
-    public static List<RecordEntity> generateRandomizedRecordEntities(ServiceEntity serviceEntity, int amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("The argument amount refers to size of list, must be a non-zero, positive integer.");
-        }
-        List<RecordEntity> records = new ArrayList<>();
-        for (int i = 0; i < amount; i++) {
-            records.add(SampleData.getRandomizedRecordEntityForService(serviceEntity));
-        }
-        return records;
-    }
-
-    public static List<RecordEntity> generateRecordsEntitiesForTimeSpan
-            (ServiceEntity serviceEntity, LocalDateTime startInclusive, LocalDateTime endExclusive) {
-        //Create random number of Zoned dates and times for period
-        List<ZonedDateTime> zonedDateTimes = zonedDateTimes(startInclusive, endExclusive);
-
-        //Create records and update with a zoned date and time
-        List<RecordEntity> recordEntities = generateRandomizedRecordEntities(serviceEntity, zonedDateTimes.size());
-        List<RecordEntity> recordEntitiesWithZonedDateTimes =
-                updateRecordEntitiesWithZonedDateTimes(recordEntities, zonedDateTimes);
-
-        //Create a record starting before the time period and add it as the first record in the records list
-        recordEntitiesWithZonedDateTimes.addFirst(getRandomizedRecordStartingBeforeTimeSpan(startInclusive));
-
-        /*Update the service status to follow the correct sequence of events: if a prior record is up
-        the next record is down or the prior record is down the next record is up
-        Thereafter return the updated record entities*/
-        return updateRecordServiceStatus(recordEntitiesWithZonedDateTimes);
-    }
-
-
-
     public static int randomNonZeroPositiveInteger(int maxValue) {
         if (maxValue <= 0) {
             throw new IllegalArgumentException("Expected input argument to contain positive integers only");
@@ -248,63 +197,5 @@ public class SampleData {
             return maxValue;
         }
         return randomNumber;
-    }
-
-    public static List<ZonedDateTime> zonedDateTimes(LocalDateTime startInclusive, LocalDateTime endExclusive) {
-        //Generate a random amount from
-        Random rand = new Random();
-        int amount = rand.nextInt(5) + 1;
-
-        List<ZonedDateTime> zonedDateTimes = new ArrayList<>();
-        for (int i = 0; i < amount; i++) {
-            zonedDateTimes.add(getRandomLocalDateTime(startInclusive, endExclusive));
-        }
-        //sorts the dates consecutively, from earliest to latest
-        Collections.sort(zonedDateTimes);
-        return zonedDateTimes;
-    }
-
-    private static List<RecordEntity> updateRecordEntitiesWithZonedDateTimes
-            (List<RecordEntity> recordEntities, List<ZonedDateTime> zonedDateTimes) {
-        for (int i = 0; i < recordEntities.size(); i++) {
-            recordEntities.get(i).setCreated_at(zonedDateTimes.get(i));
-        }
-        return recordEntities;
-    }
-
-    private static List<RecordEntity> updateRecordServiceStatus(List<RecordEntity> recordEntities) {
-        if (recordEntities.size() > 1) {
-            for (int i = 1; i < recordEntities.size(); i++) {
-                if (recordEntities.get(i - 1).getStatus().equals(ServiceStatus.OK)) {
-                    recordEntities.get(i).setStatus(ServiceStatus.DOWN);
-                } else {
-                    recordEntities.get(i).setStatus(ServiceStatus.OK);
-                }
-            }
-        }
-        return recordEntities;
-    }
-
-    public static ZonedDateTime getRandomLocalDateTime(LocalDateTime startInclusive, LocalDateTime endExclusive) {
-        LocalDate randomDate = getRandomDate(startInclusive.toLocalDate(),
-                endExclusive.toLocalDate());
-        LocalTime randomTime = getRandomTime();
-        LocalDateTime localDateTime = LocalDateTime.of(randomDate, randomTime);
-        return localDateTime.atZone(ZoneId.of("Europe/Oslo"));
-    }
-
-    private static LocalDate getRandomDate(LocalDate startInclusive, LocalDate endExclusive) {
-        long startEpochDay = startInclusive.toEpochDay();
-        long endEpochDay = endExclusive.toEpochDay();
-        long randomDay = ThreadLocalRandom
-                .current()
-                .nextLong(startEpochDay, endEpochDay);
-
-        return LocalDate.ofEpochDay(randomDay);
-    }
-
-    private static LocalTime getRandomTime() {
-        Random generator = new Random();
-        return LocalTime.MIN.plusSeconds(generator.nextLong());
     }
 }

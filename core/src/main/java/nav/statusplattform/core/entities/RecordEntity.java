@@ -4,9 +4,6 @@ package nav.statusplattform.core.entities;
 import nav.statusplattform.core.enums.RecordSource;
 import nav.statusplattform.core.enums.ServiceStatus;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -93,18 +90,6 @@ public class RecordEntity {
     public RecordEntity setRecordSource(RecordSource recordSource) {
         this.recordSource = recordSource;
         return this;
-    }
-
-    public LocalDateTime dateTime() {
-        return created_at.toLocalDateTime();
-    }
-
-    public LocalDate date() {
-        return created_at.toLocalDate();
-    }
-
-    public LocalTime time() {
-        return created_at.toLocalTime();
     }
 
     @Override
