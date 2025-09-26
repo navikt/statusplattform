@@ -27,3 +27,4 @@ node_modules
 # Nix stuffs
 /.direnv
 result*
+/.m2/
