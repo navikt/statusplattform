@@ -12,10 +12,10 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
         String openingHoursResult = OpeningHoursParser.getOpeninghours(localDateTime.toLocalDate(), group);
 
         LocalTime openingTime = OpeningHoursParser.getOpeningTime(openingHoursResult);
-        LocalDateTime expectedOpeningTime = localDateTime.withHour(openingTime.getHour()).withMinute(openingTime.getMinute()).withSecond(0).withNano(0);;
+        LocalDateTime expectedOpeningTime = localDateTime.withHour(openingTime.getHour()).withMinute(openingTime.getMinute()).withSecond(0).withNano(0);
 
         LocalTime closingTime = OpeningHoursParser.getClosingTime(openingHoursResult);
-        LocalDateTime expectedClosingTime = localDateTime.withHour(closingTime.getHour()).withMinute(closingTime.getMinute()).withSecond(0).withNano(0);;
+        LocalDateTime expectedClosingTime = localDateTime.withHour(closingTime.getHour()).withMinute(closingTime.getMinute()).withSecond(0).withNano(0);
 
         return new OpeningHours(expectedOpeningTime, expectedClosingTime);
     }
