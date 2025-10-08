@@ -5,6 +5,7 @@ import nav.statusplattform.core.entities.DashboardEntity;
 import nav.statusplattform.core.entities.OpsMessageEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.enums.OpsMessageSeverity;
+import nav.statusplattform.core.enums.OpsMessageStatus;
 import nav.statusplattform.core.exceptionHandling.ExceptionUtil;
 import org.fluentjdbc.*;
 
@@ -41,6 +42,7 @@ public class OpsRepository {
                 .setField("start_time", entity.getStartTime())
                 .setField("end_time", entity.getEndTime())
                 .setField("severity", entity.getSeverity())
+                .setField("status", entity.getStatus())
                 .execute();
         setServicesOnOpsMessage(result.getId(), services);
         return result.getId();
@@ -235,6 +237,7 @@ public class OpsRepository {
                     .setStartTime(row.getZonedDateTime("start_time"))
                     .setEndTime(row.getZonedDateTime("end_time"))
                     .setSeverity(OpsMessageSeverity.fromDb(row.getString("severity")).orElse(null))
+                    .setStatus(OpsMessageStatus.fromDb(row.getString("status")).orElse(null))
                     .setDeleted(row.getBoolean("deleted"));
         } catch (SQLException e) {
             throw ExceptionUtil.soften(e);
@@ -252,6 +255,7 @@ public class OpsRepository {
                 .setField("start_time", opsMessageEntity.getStartTime())
                 .setField("end_time", opsMessageEntity.getEndTime())
                 .setField("severity", opsMessageEntity.getSeverity())
+                .setField("status", opsMessageEntity.getStatus())
                 .execute();
     }
 
