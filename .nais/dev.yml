@@ -9,21 +9,21 @@ spec:
   envFrom:
     - secret: swagger-api-konfig
   replicas:
-    {{#if min_replicas}}min: {{min_replicas}}{{/if}}
-    {{#if max_replicas}}max: {{max_replicas}}{{/if}}
+    min: 1
+    max: 1
   secureLogs:
     enabled: true
   image: {{ image }}
   port: 3005
   gcp:
     sqlInstances:
-      - name: navstatus
+      - name: navstatus-dev
         type: POSTGRES_17
-        highAvailability: true
-        tier: db-custom-2-3840
+        tier: db-g1-small
         databases:
-          - name: navstatus
+          - name: navstatusdev
             envVarPrefix: DB
+
   azure:
     application:
       allowAllUsers: true
@@ -49,11 +49,22 @@ spec:
   env:
     - name: teamkatalogApiUrl
       value: http://team-catalog-backend.org.svc.cluster.local
-    {{#each spec.env}}
-    - name: {{@key}}
-      value: {{this}}
-    {{/each}}
+    - name: FRONTEND_LOCATION
+      value: https://status.dev.nav.no
+    - name: statusholder_url
+      value: https://statusholder.dev-fss-pub.nais.io
+    - name: TENANT
+      value: trygdeetaten.no
+    - name: ENV
+      value: dev
+      # Used by app for conditional logic
+    - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+      value: "5"
+    - name: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+      value: "1"
+    - name: SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT
+      value: "60000"
+    - name: SPRING_DATASOURCE_HIKARI_MAX_LIFETIME
+      value: "300000"
   ingresses:
-    {{#each spec.ingresses as |url|}}
-       - {{url}}
-      {{/each}}
+    - https://status-api.intern.dev.nav.no

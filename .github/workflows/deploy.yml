@@ -30,15 +30,30 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: actions/checkout@v4
+      # Optional: verify the resource file is present
+      - name: Verify NAIS files
+        run: |
+          ls -la .nais
+          test -f .nais/dev.yml
+      # Build and push to GAR (dev-gcp)
+      - id: push
+        uses: nais/docker-build-push@v0
+        with:
+          team: navdig
+          image: europe-north1-docker.pkg.dev/nais-io/nais/images/statusplattform-server
+          tags: ${{ github.sha }}
+      - name: Deploy
+        uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          IMAGE: ${{ env.docker_image }}
-          RESOURCE: .nais/nais.yml
-          VARS: .nais/test.yml
+          IMAGE: ${{ steps.push.outputs.image }}
+          RESOURCE: .nais/dev.yml
 
   deploy-prod:
     name: Deploy application to prod
