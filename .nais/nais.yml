@@ -48,7 +48,7 @@ spec:
           namespace: org
   env:
     - name: teamkatalogApiUrl
-      value: https://teamkatalog-api.intern.nav.no
+      value: http://team-catalog-backend.org.svc.cluster.local
     {{#each spec.env}}
     - name: {{@key}}
       value: {{this}}

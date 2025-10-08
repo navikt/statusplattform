@@ -6,7 +6,7 @@ spec:
     statusholder_url: https://statusholder.dev-fss-pub.nais.io
     TENANT: trygdeetaten.no
     ENV: dev
-    teamkatalogApiUrl: https://teamkatalog-api.intern.nav.no
+    teamkatalogApiUrl: http://team-catalog-backend.org.svc.cluster.local
   ingresses:
     - https://status-api.intern.dev.nav.no
 
