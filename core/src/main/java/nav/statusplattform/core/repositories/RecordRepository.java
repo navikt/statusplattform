@@ -91,6 +91,46 @@ public class RecordRepository {
                 .singleObject(RecordRepository::toRecord);
     }
 
+    public java.util.Map<UUID, RecordEntity> getLatestRecordsForServices(List<UUID> serviceIds) {
+        if (serviceIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+
+        // Get all records for the given service IDs and group by service_id
+        List<RecordEntity> allRecords = recordTable
+                .whereIn("service_id", serviceIds)
+                .orderBy("created_at DESC")
+                .list(RecordRepository::toRecord);
+
+        // Keep only the latest record for each service_id
+        java.util.Map<UUID, RecordEntity> latestRecordsMap = new java.util.HashMap<>();
+        for (RecordEntity record : allRecords) {
+            latestRecordsMap.putIfAbsent(record.getServiceId(), record);
+        }
+
+        return latestRecordsMap;
+    }
+
+    public java.util.Map<UUID, RecordDeltaEntity> getLatestRecordDiffsForServices(List<UUID> serviceIds) {
+        if (serviceIds.isEmpty()) {
+            return new java.util.HashMap<>();
+        }
+
+        // Get all record diffs for the given service IDs and group by service_id
+        List<RecordDeltaEntity> allRecordDiffs = recordDeltaTable
+                .whereIn("service_id", serviceIds)
+                .orderBy("created_at DESC")
+                .list(RecordRepository::toRecordDelta);
+
+        // Keep only the latest record diff for each service_id
+        java.util.Map<UUID, RecordDeltaEntity> latestRecordDiffsMap = new java.util.HashMap<>();
+        for (RecordDeltaEntity recordDiff : allRecordDiffs) {
+            latestRecordDiffsMap.putIfAbsent(recordDiff.getServiceId(), recordDiff);
+        }
+
+        return latestRecordDiffsMap;
+    }
+
     //TODO denne skal bli paginert
     public List<RecordEntity> getRecordHistory(UUID serviceId, int maxNumberOfRecords) {
         return recordTable.where("service_id", serviceId)

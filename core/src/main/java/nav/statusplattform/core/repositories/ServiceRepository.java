@@ -233,6 +233,30 @@ public class ServiceRepository {
                 .stream(ServiceRepository::toService).collect(Collectors.toList());
     }
 
+    public Map<UUID, List<ServiceEntity>> getAllServicesDependantOnComponents(List<UUID> component_ids) {
+        if (component_ids.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        DbContextTableAlias serviceAlias = serviceTable.alias("service");
+        DbContextTableAlias s2k = service_serviceTable.alias("s2k");
+
+        Map<UUID, List<ServiceEntity>> result = new HashMap<>();
+
+        serviceAlias
+                .leftJoin(serviceAlias.column("id"), s2k.column("service1_id"))
+                .whereIn("s2k.service2_id", component_ids)
+                .orderBy(serviceAlias.column("name"))
+                .list(row -> {
+                    UUID componentId = row.getUUID("service2_id");
+                    ServiceEntity service = ServiceRepository.toService(row.table(serviceAlias));
+                    result.computeIfAbsent(componentId, k -> new ArrayList<>()).add(service);
+                    return null;
+                });
+
+        return result;
+    }
+
     public List<ServiceEntity> retrieveServicesWithPollingGcp() {
         return serviceTable.query().whereExpression("polling_url is not null")
                 .where("polling_on_prem", false)

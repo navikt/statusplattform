@@ -68,9 +68,22 @@ public class ServiceControllerHelper {
     public List<ServiceDto> getAllComponents() {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllComponents();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).toList();
-        result.forEach(componentDto -> componentDto.setServicesDependentOnThisComponent(getServicesDependantOnComponent(componentDto.getId())));
-        //TODO status skal hentes i dbspørringer, ikke slik som dette:
-        result.forEach(this::settStatusOnService);
+
+        // Batch fetch all services dependent on components
+        List<UUID> componentIds = result.stream().map(ServiceDto::getId).collect(Collectors.toList());
+        Map<UUID, List<ServiceEntity>> dependentServicesMap = serviceRepository.getAllServicesDependantOnComponents(componentIds);
+        result.forEach(componentDto -> {
+            List<ServiceEntity> dependentServices = dependentServicesMap.getOrDefault(componentDto.getId(), new ArrayList<>());
+            componentDto.setServicesDependentOnThisComponent(
+                dependentServices.stream()
+                    .map(EntityDtoMappers::toServiceDtoShallow)
+                    .collect(Collectors.toList())
+            );
+        });
+
+        // Batch fetch all records - status skal hentes i dbspørringer
+        setStatusOnServicesOptimized(result);
+
         return result.stream()
                 .sorted(serviceDtoComparator)
                 .collect(Collectors.toList());
@@ -91,8 +104,10 @@ public class ServiceControllerHelper {
         Map<ServiceEntity, List<ServiceEntity>> services = serviceRepository.retrieveAllServices();
         List<ServiceDto> result = services.entrySet().stream().map(EntityDtoMappers::toServiceDtoDeep).toList();
         result.forEach(serviceDto -> serviceDto.setAreasContainingThisService(getAreasContainingService(serviceDto.getId())));
-        //TODO status skal hentes i dbspørringer, ikke slik som dette:
-        result.forEach(this::settStatusOnService);
+
+        // Batch fetch all records - status skal hentes i dbspørringer
+        setStatusOnServicesOptimized(result);
+
         return result.stream()
                 .sorted(serviceDtoComparator)
                 .collect(Collectors.toList());
@@ -109,6 +124,50 @@ public class ServiceControllerHelper {
         }
 
         else {
+            service.setRecord(new RecordDto());
+        }
+    }
+
+    private void setStatusOnServicesOptimized(List<ServiceDto> services) {
+        // Collect all service IDs including dependencies
+        List<UUID> allServiceIds = new ArrayList<>();
+        services.forEach(service -> {
+            allServiceIds.add(service.getId());
+            service.getServiceDependencies().stream()
+                .map(ServiceDto::getId)
+                .forEach(allServiceIds::add);
+            service.getComponentDependencies().stream()
+                .map(ServiceDto::getId)
+                .forEach(allServiceIds::add);
+        });
+
+        // Batch fetch all records and record diffs
+        Map<UUID, nav.statusplattform.core.entities.RecordEntity> latestRecordsMap =
+            recordRepository.getLatestRecordsForServices(allServiceIds);
+        Map<UUID, nav.statusplattform.core.entities.RecordDeltaEntity> latestRecordDiffsMap =
+            recordRepository.getLatestRecordDiffsForServices(allServiceIds);
+
+        // Apply records to all services
+        services.forEach(service -> setStatusOnServiceOptimized(service, latestRecordsMap, latestRecordDiffsMap));
+    }
+
+    private void setStatusOnServiceOptimized(
+        ServiceDto service,
+        Map<UUID, nav.statusplattform.core.entities.RecordEntity> latestRecordsMap,
+        Map<UUID, nav.statusplattform.core.entities.RecordDeltaEntity> latestRecordDiffsMap
+    ) {
+        // Recursively set status on dependencies
+        service.getServiceDependencies().forEach(dep ->
+            setStatusOnServiceOptimized(dep, latestRecordsMap, latestRecordDiffsMap));
+        service.getComponentDependencies().forEach(dep ->
+            setStatusOnServiceOptimized(dep, latestRecordsMap, latestRecordDiffsMap));
+
+        // Set record for current service
+        if (latestRecordsMap.containsKey(service.getId())) {
+            service.setRecord(EntityDtoMappers.toRecordDto(latestRecordsMap.get(service.getId())));
+        } else if (latestRecordDiffsMap.containsKey(service.getId())) {
+            service.setRecord(EntityDtoMappers.toRecordDtoFromRecordDelta(latestRecordDiffsMap.get(service.getId())));
+        } else {
             service.setRecord(new RecordDto());
         }
     }
