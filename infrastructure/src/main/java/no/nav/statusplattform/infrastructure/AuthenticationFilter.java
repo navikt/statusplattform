@@ -31,7 +31,7 @@ public class AuthenticationFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
     private static String SWAGGER_API_KEY_HEADERNAME = "Apikey";
     // TODO: Replace w/AppConfig
-    private static String SWAGGER_API_KEY= System.getenv("swagger-api-key");
+    private static String SWAGGER_API_KEY= System.getenv("SWAGGER_API_KEY");
     private final Oauth2TokenValidator oauth2TokenValidator = new Oauth2TokenValidator();
 
     @Override

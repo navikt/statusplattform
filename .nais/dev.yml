@@ -48,7 +48,7 @@ spec:
           namespace: org
   env:
     - name: teamkatalogApiUrl
-      value: http://team-catalog-backend.org.svc.cluster.local
+      value: https://teamkatalog-api.intern.nav.no
     - name: FRONTEND_LOCATION
       value: https://status.dev.nav.no
     - name: statusholder_url

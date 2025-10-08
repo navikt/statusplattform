@@ -20,7 +20,7 @@ services:
     ports:
       - "3005:3005"
     environment:
-      teamkatalogApiUrl: https://teamkatalog-api.intern.dev.nav.no
+      teamkatalogApiUrl: https://teamkatalog-api.intern.nav.no
       swagger-api-key: key
       DB_USERNAME: postgres
       DB_PORT: 5432

@@ -10,6 +10,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class TeamKatalogController {
+    @GET("/teams")
+    @JsonBody
+    public Map<UUID, String> getAllTeams() {
+        return TeamKatalogKlient.getTeams();
+    }
+
     @GET("/teams/search/{name}")
     @JsonBody
     public Map<UUID, String> searchTeamsByName(@PathParam("name") String name) {
