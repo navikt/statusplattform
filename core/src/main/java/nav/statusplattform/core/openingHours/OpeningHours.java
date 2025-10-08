@@ -3,10 +3,8 @@ package nav.statusplattform.core.openingHours;
 import nav.statusplattform.core.entities.OpeningHoursGroup;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Map;
 
 record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
 
@@ -21,7 +19,6 @@ record OpeningHours(LocalDateTime openingTime, LocalDateTime closingTime) {
 
         return new OpeningHours(expectedOpeningTime, expectedClosingTime);
     }
-
 
     long openingHoursInMinutes(LocalDateTime fromDateTime, LocalDateTime toDateTime) {
         LocalDateTime from;

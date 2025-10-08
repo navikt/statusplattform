@@ -14,6 +14,7 @@ import nav.statusplattform.core.entities.RecordEntity;
 import nav.statusplattform.core.entities.ServiceEntity;
 import nav.statusplattform.core.entities.SubAreaEntity;
 import nav.statusplattform.core.enums.OpsMessageSeverity;
+import nav.statusplattform.core.enums.OpsMessageStatus;
 import nav.statusplattform.core.enums.RuleType;
 import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.enums.ServiceType;
@@ -146,10 +147,14 @@ public class EntityDtoMappers {
         dto.setSeverity(entity.getSeverity() != null?
                 OPSmessageDto.SeverityEnum.fromValue(entity.getSeverity().getDbRepresentation())
                 :null);
+        dto.setStatus(entity.getStatus() != null?
+                OPSmessageDto.StatusEnum.fromValue(entity.getStatus().getDbRepresentation())
+                :null);
         boolean isActive = entity.getStartTime() != null && entity.getEndTime() != null &&
                 entity.getStartTime().isBefore(ZonedDateTime.now()) && entity.getEndTime().isAfter(ZonedDateTime.now());
         dto.setIsActive(isActive);
-        dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());return dto;
+        dto.setOnlyShowForNavEmployees(entity.getOnlyShowForNavEmployees());
+        return dto;
     }
 
     public static OPSmessageDto toOpsMessageDtoDeep(OpsMessageEntity entity, List<ServiceEntity> services) {
@@ -167,6 +172,9 @@ public class EntityDtoMappers {
         opsMessageEntity.setInternalText(opsMessageDto.getInternalMessage());
         opsMessageEntity.setSeverity(opsMessageDto.getSeverity() != null?
                 OpsMessageSeverity.valueOf((opsMessageDto.getSeverity().getValue())):
+                null);
+        opsMessageEntity.setStatus(opsMessageDto.getStatus() != null?
+                OpsMessageStatus.valueOf((opsMessageDto.getStatus().getValue())):
                 null);
         opsMessageEntity.setOnlyShowForNavEmployees(opsMessageDto.getOnlyShowForNavEmployees());
         opsMessageEntity.setStartTime(opsMessageDto.getStartTime() != null?

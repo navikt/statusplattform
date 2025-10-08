@@ -50,7 +50,13 @@ public class OpsControllerHelper {
         opsRepository.setServicesOnOpsMessage(opsMessageDto.getId(), opsMessageDto.getAffectedServices().stream()
                 .map(ServiceDto::getId).collect(Collectors.toList()));
 
-        opsRepository.updateOpsMessage(EntityDtoMappers.toOpsMessageEntity(opsMessageDto));
+        // If status is changed to SOLVED, update endTime to now
+        OpsMessageEntity entityToUpdate = EntityDtoMappers.toOpsMessageEntity(opsMessageDto);
+        if (opsMessageDto.getStatus() != null && opsMessageDto.getStatus().toString().equals("SOLVED")) {
+            entityToUpdate.setEndTime(java.time.ZonedDateTime.now());
+        }
+
+        opsRepository.updateOpsMessage(entityToUpdate);
         Map.Entry<OpsMessageEntity, List<ServiceEntity>> opsMessage = opsRepository.retrieveOne(opsMessageDto.getId());
 
         return EntityDtoMappers.toOpsMessageDtoDeep(opsMessage.getKey(), opsMessage.getValue());
@@ -91,9 +97,14 @@ public class OpsControllerHelper {
         // Convert list of service IDs to UUIDs
         List<UUID> serviceUUIDs = serviceIds.stream().map(UUID::fromString).collect(Collectors.toList());
 
-        // Fetch messages from the repository
-        return opsRepository.findOpsMessagesByServiceIds(serviceUUIDs).stream()
-                .map(EntityDtoMappers::toOpsMessageDtoShallow)
-                .collect(Collectors.toList());
+        // Fetch messages WITH their affected services from the repository
+        Map<OpsMessageEntity, List<ServiceEntity>> messagesWithServices = opsRepository.retrieveAllForServices(serviceUUIDs);
+
+        // Convert to DTOs with proper affectedServices populated
+        List<OPSmessageDto> result = new ArrayList<>();
+        messagesWithServices.forEach((opsMessage, services) ->
+                result.add(EntityDtoMappers.toOpsMessageDtoDeep(opsMessage, services)));
+
+        return result;
     }
 }
