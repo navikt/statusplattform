@@ -97,7 +97,7 @@ public class UpTimeControllerTest {
         record.setCreated_at(sevenDaysBack);
         record.setServiceId(serviceDto.getId());
         record.setStatus(ServiceStatus.OK);
-        record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
 
         //Add group to service
         openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
@@ -258,7 +258,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         //Situation1:Normal work days, created_at >= Tuesday 2025-04-01T07:00:00' AND created_at  < Wednesday  2025-04-02T07:00:00
@@ -758,7 +758,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         //Situation1:Basic rule applicable for weekend only eg Saturday 2025-04-12T10:00:00' AND created_at  < Sunday 2025-04-13T16:00:00
@@ -1023,7 +1023,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         //Work day rule for Monday and Friday only
@@ -1368,7 +1368,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         String from, to;
@@ -1561,7 +1561,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         String from, to;
@@ -1705,7 +1705,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         String from, to;
@@ -1826,7 +1826,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         String from, to;
@@ -2021,7 +2021,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         String from, to;
@@ -2133,7 +2133,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         //Situation1:Normal work days, created_at >= Tuesday 2024-01-01T07:00:00' AND created_at  < Wednesday  2024-12-31T18:00:00
@@ -2224,7 +2224,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         //Situation1:2024 holidays  Normal work days, created_at >= Tuesday 2024-01-01T07:00:00' AND created_at  < Wednesday  2024-12-31T18:00:00
@@ -2352,7 +2352,7 @@ public class UpTimeControllerTest {
         );
 
         records.forEach(record -> {
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         //Situation1:2024 holidays  Open all days and times, created_at >= Tuesday 2024-01-01T00:00:00' AND created_at  < Wednesday  2024-12-31T23:59:00
