@@ -140,20 +140,20 @@ public class RecordRepository {
     }
 
     public final List<RecordEntity> getRecordsInTimeSpan(UUID serviceId, LocalDateTime from, LocalDateTime to) {
-        List<RecordEntity> recordsInTimeSpan = recordTable.where("service_id", serviceId)
+        List<RecordEntity> recordsInTimeSpan = recordDeltaTable.where("service_id", serviceId)
                 .whereExpression("created_at >= ?", from.atZone(ZoneId.systemDefault()))
                 .whereExpression("created_at <= ?", to.atZone(ZoneId.systemDefault()))
                 .orderBy("created_at ASC")
-                .list(RecordRepository::toRecord);
+                .list(RecordRepository::toRecordFromDelta);
 
 
         try {
 
-            Optional<RecordEntity> recordInTimeSpan = recordTable.where("service_id", serviceId)
+            Optional<RecordEntity> recordInTimeSpan = recordDeltaTable.where("service_id", serviceId)
                     .whereExpression("created_at <= ?", from)
                     .orderBy("created_at DESC")
                     .limit(1)
-                    .singleObject(RecordRepository::toRecord);
+                    .singleObject(RecordRepository::toRecordFromDelta);
 
             //RecordEntity firstRecordInTimeSpan = recordInTimeSpan.orElseThrow();
             //if the dateentry from time is greater than database , we replace the last record with the new from date entry.
@@ -261,5 +261,17 @@ public class RecordRepository {
     public void deleteRecordsOlderThan48hours() {
         recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusHours(48))
                 .executeDelete();
+    }
+
+    private static RecordEntity toRecordFromDelta(DatabaseRow row) throws SQLException {
+        return new RecordEntity()
+                .setId(row.getUUID("id"))
+                .setServiceId(row.getUUID("service_id"))
+                .setStatus(ServiceStatus.fromDb(row.getString("status")).orElse(ServiceStatus.ISSUE))
+                .setCreated_at(row.getZonedDateTime("created_at"))
+                .setResponsetime(200)          // Default or null value as it's not in RecordDeltaEntity
+                .setDescription(null)          // Default or null value
+                .setLogglink(null)             // Default or null value
+                .setRecordSource(null); // Set RecordSource to DELTA
     }
 }

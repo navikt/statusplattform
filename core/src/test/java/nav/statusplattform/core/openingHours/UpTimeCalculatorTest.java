@@ -175,7 +175,7 @@ public class UpTimeCalculatorTest {
             record.setCreated_at(daysBackMinusTwohours.atZone(ZoneId.systemDefault()));
             record.setServiceId(service.getId());
             record.setStatus(ServiceStatus.OK);
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
         List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(0);
         for (RecordEntity r : retrievedRecordsBefore) {
@@ -228,7 +228,7 @@ public class UpTimeCalculatorTest {
             record.setCreated_at(fiveDaysBack.atZone(ZoneId.systemDefault()));
             record.setServiceId(service.getId());
             record.setStatus(ServiceStatus.OK);
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
         List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThan(0);
         for (RecordEntity r : retrievedRecordsBefore) {
