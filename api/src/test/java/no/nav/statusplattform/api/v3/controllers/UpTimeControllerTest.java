@@ -151,7 +151,7 @@ public class UpTimeControllerTest {
         record.setCreated_at(sevenDaysBack);
         record.setServiceId(serviceDto.getId());
         record.setStatus(ServiceStatus.OK);
-        record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+        record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
 
         //Add group to service
         openingHoursController.setOpeningHoursToService(savedOHGroupThinDto.getId(), serviceDto.getId());
@@ -209,7 +209,7 @@ public class UpTimeControllerTest {
 
         records.forEach(record -> {
             record.setServiceId(serviceDto.getId());
-            record.setId(TestUtil.saveRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         //Act
