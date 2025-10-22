@@ -96,4 +96,19 @@ public class TestUtil {
                 .execute();
         return result.getId();
     }
+
+    public static UUID saveDeltaRecordBackInTime(RecordEntity entity, DbContext dbContext) {
+        DbContextTable serviceStatusDeltaTable = dbContext.table(new DatabaseTableImpl("service_status_delta"));
+        DatabaseSaveResult<UUID> result = serviceStatusDeltaTable.newSaveBuilderWithUUID("id", entity.getId())
+                .setField("service_id", entity.getServiceId())
+                .setField("created_at", entity.getCreated_at())
+                .setField("status", entity.getStatus())
+                //.setField("description", "GENERATED MOCK")
+                //.setField("logglink", entity.getLogglink())
+                //.setField("response_time", entity.getResponsetime())
+                .execute();
+        return result.getId();
+    }
+
+
 }

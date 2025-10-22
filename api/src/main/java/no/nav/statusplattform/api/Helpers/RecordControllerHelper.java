@@ -24,6 +24,10 @@ public class RecordControllerHelper {
         recordRepository.deleteRecordsOlderThan48hours();
     }
 
+    public void deleteDeltaRecordsOlderThanThreeYears() {
+        recordRepository.deleteDeltaRecordsOlderThanThreeYears();
+    }
+
     public void updateRecords(List<RecordDto> dtos){
         dtos.forEach(this::updateRecordForService);
     }
@@ -59,10 +63,6 @@ public class RecordControllerHelper {
                 .setResponsetime(recordDto.getResponseTime())
                 .setRecordSource(source);
     }
-
-
-
-
 
 
 }

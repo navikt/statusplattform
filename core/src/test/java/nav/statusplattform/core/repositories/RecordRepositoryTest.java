@@ -16,6 +16,8 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static nav.statusplattform.core.repositories.SampleData.generateRandomizedRecordEntities;
+
 class RecordRepositoryTest {
 
     private final DataSource dataSource = TestDataSource.create();
@@ -281,6 +283,93 @@ class RecordRepositoryTest {
         List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThan(2);
         Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
         Assertions.assertThat(retrievedRecordsAfter).isEmpty();
+    }
+
+    @Test
+    void deleteDeltaRecordsOlderThenThreeYears() {
+        //Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        List<RecordEntity> records = generateRandomizedRecordEntities(service, 12);
+        records.forEach(record -> {
+            int minYears = 3; // At least 3 years back
+            int maxYears = 6; // Up to 6 years back
+            ZonedDateTime now = ZonedDateTime.now();
+            int numberOfYears = ThreadLocalRandom.current().nextInt(minYears, maxYears + 1);
+            ZonedDateTime yearsBack = now.minusYears(numberOfYears);
+            record.setCreated_at(yearsBack);
+            record.setServiceId(service.getId());
+            record.setId(TestUtil.saveDeltaRecordBackInTime(record, dbContext));
+        });
+        // Act
+        List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThanYears(3);
+        recordRepository.deleteDeltaRecordsOlderThanThreeYears();
+        List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThanYears(3);
+        // Assert
+        Assertions.assertThat(retrievedRecordsBefore).isNotEmpty();
+        Assertions.assertThat(retrievedRecordsAfter).isEmpty();
+    }
+
+    @Test
+    void deleteDeltaRecordsOlderThanThreeYears_NoRecordsOlderThanThreeYears() {
+        // Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+        List<RecordEntity> records = generateRandomizedRecordEntities(service, 12);
+        records.forEach(record -> {
+            ZonedDateTime now = ZonedDateTime.now();
+            ZonedDateTime withinThreeYears = now.minusYears(2); // Less than 3 years back
+            record.setCreated_at(withinThreeYears);
+            record.setServiceId(service.getId());
+            record.setId(TestUtil.saveDeltaRecordBackInTime(record, dbContext));
+        });
+
+        // Act
+        List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThanYears(3);
+        recordRepository.deleteDeltaRecordsOlderThanThreeYears();
+        List<RecordEntity> retrievedRecordsAfter = recordRepository.getRecordsOlderThanYears(3);
+
+        // Assert
+        Assertions.assertThat(retrievedRecordsBefore).isEmpty(); // No records older than 3 years
+        Assertions.assertThat(retrievedRecordsAfter).isEmpty(); // Nothing should be deleted
+    }
+
+
+    /*This test will interact with the database to verify the behavior of the method when there
+    is no endpoint.*/
+    @Test
+    void testDeleteDeltaRecordsOlderThanThreeYears() {
+        // Arrange
+        ServiceEntity service = SampleData.getRandomizedServiceEntity();
+        UUID serviceId = serviceRepository.save(service);
+        service.setId(serviceId);
+
+        // Insert records older and newer than three years
+        List<RecordEntity> records = generateRandomizedRecordEntities(service, 10);
+        records.forEach(record -> {
+            ZonedDateTime now = ZonedDateTime.now();
+            ZonedDateTime timestamp = ThreadLocalRandom.current().nextBoolean()
+                    ? now.minusYears(4) // Older than 3 years
+                    : now.minusYears(2); // Newer than 3 years
+            record.setCreated_at(timestamp);
+            record.setServiceId(service.getId());
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
+        });
+
+        // Act
+        List<RecordEntity> recordsBefore = recordRepository.getRecordsOlderThanYears(3);
+        recordRepository.deleteDeltaRecordsOlderThanThreeYears();
+        List<RecordEntity> recordsAfter = recordRepository.getRecordsOlderThanYears(3);
+
+        // Assert
+        Assertions.assertThat(recordsBefore).isNotEmpty(); // Records older than 3 years exist
+        Assertions.assertThat(recordsAfter).isEmpty(); // Older records should be deleted
+        List<RecordEntity> remainingRecords = recordRepository.getRecordsOlderThanYears(0);
+        Assertions.assertThat(remainingRecords).allMatch(record ->
+                record.getCreated_at().isAfter(ZonedDateTime.now().minusYears(3))
+        ); // Newer records remain
     }
 
     private RecordEntity getRandomizedRecordEntity() {
