@@ -6,6 +6,7 @@ import nav.statusplattform.core.openingHours.OpeningHoursDailyMap;
 import nav.statusplattform.core.openingHours.OpeningHoursDisplayData;
 import nav.statusplattform.core.openingHours.OpeningHoursParser;
 import nav.statusplattform.core.repositories.AreaRepository;
+import nav.statusplattform.core.repositories.OpeningHoursRepository;
 import nav.statusplattform.core.repositories.RecordRepository;
 import nav.statusplattform.core.repositories.ServiceRepository;
 import no.nav.statusplattform.api.EntityDtoMappers;
@@ -35,7 +36,9 @@ public class ServiceControllerHelper {
     ServiceRepository serviceRepository;
     RecordRepository recordRepository;
     AreaRepository areaRepository;
+    OpeningHoursRepository openingHoursRepository;
     RecordControllerHelper recordControllerHelper;
+
 
     Comparator<ServiceDto> serviceDtoComparator
             = Comparator.comparing(a -> a.getName().toLowerCase());
@@ -44,6 +47,7 @@ public class ServiceControllerHelper {
         this.areaRepository = new AreaRepository(context);
         this.serviceRepository = new ServiceRepository(context);
         this.recordRepository = new RecordRepository(context);
+        this.openingHoursRepository = new OpeningHoursRepository(context);
         this.recordControllerHelper = new RecordControllerHelper(context);
     }
 
@@ -116,6 +120,9 @@ public class ServiceControllerHelper {
     public ServiceDto saveNewService(ServiceDto serviceDto){
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);
         service.setId(serviceRepository.save(service));
+
+        //Adding default opening hours to service open 24/7 all year round
+        openingHoursRepository.setDefaultOpeningHoursToService(service.getId());
 
         //Komponenter og tjenester modeleres som forskjellige objektyper i frontend.
         //Adding dependencies to service:

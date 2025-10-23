@@ -233,6 +233,18 @@ public class OpeningHoursRepository {
                 .execute();
     }
 
+    //Set a default group contain open 24/7 all year around
+    public void setDefaultOpeningHoursToService(UUID serviceId) {
+        serviceOHgroupTable.where("service_id", serviceId)
+                .executeDelete();
+        ohGroupTable.where("name", "default opening hours")
+                .singleObject(row -> row.getUUID("id"))
+                .ifPresent(groupId -> serviceOHgroupTable.insert()
+                        .setField("service_id", serviceId)
+                        .setField("group_id", groupId)
+                        .execute());
+    }
+
     public void removeOpeningHoursFromService(UUID serviceId) {
         serviceOHgroupTable.where("service_id", serviceId)
                 .executeDelete();
@@ -318,6 +330,5 @@ public class OpeningHoursRepository {
             throw ExceptionUtil.soften(e);
         }
     }
-
 
 }
