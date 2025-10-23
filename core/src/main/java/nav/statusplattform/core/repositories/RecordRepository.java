@@ -226,7 +226,11 @@ public class RecordRepository {
         return result.getId();
     }
 
-
+    public List<RecordEntity> getRecordsOlderThanYears(int yearsOld) {
+        return recordDeltaTable
+                .whereExpression("created_at <= ?", ZonedDateTime.now().minusYears(yearsOld))
+                .list(RecordRepository::toRecordFromDelta);
+    }
 
     private static RecordEntity toRecord(DatabaseRow row) throws SQLException {
         return new RecordEntity()
@@ -260,6 +264,11 @@ public class RecordRepository {
 
     public void deleteRecordsOlderThan48hours() {
         recordTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusHours(48))
+                .executeDelete();
+    }
+
+    public void deleteDeltaRecordsOlderThanThreeYears() {
+        recordDeltaTable.whereExpression("created_at <= ?", ZonedDateTime.now().minusYears(3))
                 .executeDelete();
     }
 
