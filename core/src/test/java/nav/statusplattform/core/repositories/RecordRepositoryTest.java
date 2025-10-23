@@ -16,7 +16,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static nav.statusplattform.core.repositories.SampleData.generateRandomizedRecordEntities;
 
 class RecordRepositoryTest {
 
@@ -300,7 +299,7 @@ class RecordRepositoryTest {
             ZonedDateTime yearsBack = now.minusYears(numberOfYears);
             record.setCreated_at(yearsBack);
             record.setServiceId(service.getId());
-            record.setId(TestUtil.saveDeltaRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
         // Act
         List<RecordEntity> retrievedRecordsBefore = recordRepository.getRecordsOlderThanYears(3);
@@ -323,7 +322,7 @@ class RecordRepositoryTest {
             ZonedDateTime withinThreeYears = now.minusYears(2); // Less than 3 years back
             record.setCreated_at(withinThreeYears);
             record.setServiceId(service.getId());
-            record.setId(TestUtil.saveDeltaRecordBackInTime(record, dbContext));
+            record.setId(TestUtil.saveRecordBackInTimeForServiceStatusDeltatable(record, dbContext));
         });
 
         // Act
