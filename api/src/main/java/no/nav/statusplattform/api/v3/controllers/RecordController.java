@@ -56,6 +56,7 @@ public class RecordController {
         //Endpoint used by poller job, see https://github.com/navikt/statusportal-gcp-poll.git
         recordControllerHelper.updateRecords(recordDtos);
         recordControllerHelper.deleteRecordsOlderThan48Hours();
+        recordControllerHelper.deleteDeltaRecordsOlderThanThreeYears();
     }
 
     @GET("/ServiceStatus/:Service_id")
@@ -83,8 +84,6 @@ public class RecordController {
         }
         return new AlertDto();
     }
-
-
 
     private RecordDto generateServiceStatusFromAlert(AlertDto alertDto){
         if(AlertStatusDto.RESOLVED.equals(alertDto.getStatus())){
@@ -117,9 +116,5 @@ public class RecordController {
         else throw new IllegalArgumentException("Malformed alert received");
 
     }
-
-
-
-
 
 }
