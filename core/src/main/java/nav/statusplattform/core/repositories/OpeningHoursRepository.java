@@ -245,6 +245,13 @@ public class OpeningHoursRepository {
                         .execute());
     }
 
+    //Used by UpTimeCalculator to get default opening hours
+    public Optional<OpeningHoursGroup> getOHGroupByName(String name) {
+        return ohGroupTable.where("name", "default opening hours")
+                .singleObject(OpeningHoursRepository::toOpeningHoursGroupEntity)
+                .map(this::getGroupFromEntity);
+    }
+
     public void removeOpeningHoursFromService(UUID serviceId) {
         serviceOHgroupTable.where("service_id", serviceId)
                 .executeDelete();

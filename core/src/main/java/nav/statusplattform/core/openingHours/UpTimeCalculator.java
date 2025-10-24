@@ -30,7 +30,8 @@ public class UpTimeCalculator {
      actual and expected uptimes.*/
     public UpTimeTotals calculateUpTimeForService(UUID serviceId, TimeSpan timeSpan) throws IllegalStateException {
         OpeningHoursGroup openingHoursGroup = openingHoursRepository.getOHGroupForService(serviceId)
-                .orElseThrow(() -> new IllegalStateException("No timespan assigned for serviceId = %s".formatted(serviceId)));
+                .or(() -> openingHoursRepository.getOHGroupByName("default opening hours"))
+                .orElseThrow(() -> new IllegalStateException("No opening hours group assigned for serviceId = %s and no default opening hours found".formatted(serviceId)));
 
 
         Records records = Records.fromRecordEntities(recordRepository.getRecordsInTimeSpan(serviceId, timeSpan.from(), timeSpan.to()), timeSpan);
