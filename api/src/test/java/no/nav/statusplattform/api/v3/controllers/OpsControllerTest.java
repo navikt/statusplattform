@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.ZoneOffset;
 import java.util.List;
 
 
@@ -125,6 +126,8 @@ class OpsControllerTest {
         List<OPSmessageDto> opsMessageDtos = SampleDataDto.getRandomLengthListOfOPSMessageDto();
         opsMessageDtos.forEach(dto -> {
             dto.setAffectedServices(List.of(serviceDto));
+            dto.setStartTime(dto.getStartTime().withOffsetSameInstant(ZoneOffset.of("+01:00")));
+            dto.setEndTime(dto.getEndTime().withOffsetSameInstant(ZoneOffset.of("+01:00")));
             dto.setId(opsController.createOpsMessage(dto).getId());
         });
 
