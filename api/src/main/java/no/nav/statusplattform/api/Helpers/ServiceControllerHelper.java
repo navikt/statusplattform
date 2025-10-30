@@ -121,9 +121,6 @@ public class ServiceControllerHelper {
         ServiceEntity service = EntityDtoMappers.toServiceEntity(serviceDto);
         service.setId(serviceRepository.save(service));
 
-        //Adding default opening hours to service open 24/7 all year round
-        openingHoursRepository.setDefaultOpeningHoursToService(service.getId());
-
         //Komponenter og tjenester modeleres som forskjellige objektyper i frontend.
         //Adding dependencies to service:
         List<ServiceEntity> dependencies = serviceDto.getServiceDependencies()
