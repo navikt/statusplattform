@@ -6,7 +6,7 @@ COPY . .
 RUN mvn clean dependency:go-offline package -B
 
 
-FROM library/openjdk:21
+FROM library/eclipse-temurin:21-jdk
 
 WORKDIR /adevguide
 EXPOSE 3005
