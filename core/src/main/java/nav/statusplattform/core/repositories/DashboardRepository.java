@@ -86,7 +86,8 @@ public class DashboardRepository {
                             .ifPresent(area -> areasInDashboard.add(new AreaWithServices(area, areaEntityListMap.get(area),Collections.emptyList())));
                     return null;
                 });
-        result.entrySet().stream().findFirst().get().getValue().forEach(this::settSubAreasOnArea);
+        result.entrySet().stream().findFirst().ifPresent(entry ->
+                entry.getValue().forEach(this::settSubAreasOnArea));
         return result.entrySet().stream().findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Not found: Dashboard with UUID " + id));
     }
