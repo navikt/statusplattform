@@ -7,9 +7,12 @@ import nav.statusplattform.core.enums.ServiceStatus;
 import nav.statusplattform.core.repositories.RecordRepository;
 import no.nav.statusplattform.generated.api.RecordDto;
 import org.fluentjdbc.DbContext;
+import org.jsonbuddy.JsonObject;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class RecordControllerHelper {
 
@@ -52,6 +55,17 @@ public class RecordControllerHelper {
         }
         recordRepository.save(newRecord);
     }
+
+    public List<JsonObject> getAllStatusesFromStatusholder(List<JsonObject> body) {
+        // Fetch descriptions for each status holder
+        return body.stream().map(status -> {
+            UUID serviceId = UUID.fromString(status.requiredString("serviceId"));
+            Optional<RecordEntity> recordEntity = recordRepository.getLatestRecord(serviceId);
+            String description = recordEntity.map(RecordEntity::getDescription).orElse("");
+            return status.put("description", description);
+        }).collect(Collectors.toList());
+    }
+
     private RecordEntity mapToRecordEntity(RecordDto recordDto) {
         RecordSource source = recordDto.getSource()== null? RecordSource.UNKNOWN: RecordSource.valueOf(recordDto.getSource().getValue());
         return new RecordEntity()

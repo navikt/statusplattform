@@ -243,17 +243,12 @@ public class ServiceController {
         return content.toString();
     }
 
-
-
     private List<JsonObject> getAllStatusesFromStatusholder() throws IOException  {
         HttpURLConnection con = getAllStatusesFromStatusholderConnection();
         String stringBody = readBody(con);
         List<JsonObject> body = toJson(stringBody);
-        return body;
+        return serviceControllerHelper.getAllStatusesFromStatusholder(body);
     }
-
-
-
 
     private HttpURLConnection getAllStatusesFromStatusholderConnection() throws IOException {
         URL url = new URL(STATUSHOLDER_URL+"/status");
@@ -262,18 +257,11 @@ public class ServiceController {
         return con;
     }
 
-
-
-
-
     private int putToStatusholder(UUID id, String status) throws IOException {
         HttpURLConnection con = putToStatusholderConnection(id, status);
         return con.getResponseCode();
 
     }
-
-
-
 
     private HttpURLConnection putToStatusholderConnection(UUID id, String status) throws IOException {
         //Logikken under må bort på et tidspunkt. Dette er for polling av mock data.
