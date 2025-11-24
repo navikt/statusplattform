@@ -20,6 +20,7 @@ import no.nav.statusplattform.generated.api.ServiceHistoryDto;
 import no.nav.statusplattform.generated.api.ServiceHistoryMonthEntryDto;
 import no.nav.statusplattform.generated.api.StatusDto;
 import org.fluentjdbc.DbContext;
+import org.jsonbuddy.JsonObject;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -312,13 +313,29 @@ public class ServiceControllerHelper {
         List<ServiceEntity> services = serviceRepository.retrieveServicesWithPollingGcp();
         //If polling is onprem, updated status is on statusholder
         services.forEach(s -> {if(s.getPollingOnPrem()) s.setPolling_url("STATUSHOLDER");});
-        services = services.stream().filter(s -> s.getPolling_url() != null && !s.getPolling_url().equals("")).collect(Collectors.toList());
-        return services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList();
+        services = services.stream().filter(s -> s.getPolling_url() != null && !s.getPolling_url().isEmpty()).toList();
+        return setLatestRecordForServices(services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList());
     }
 
     public List<ServiceDto> retrieveServicesWithPollingOnPrem() {
         List<ServiceEntity> services = serviceRepository.retrieveServicesWithPollingOnPrem();
-        services = services.stream().filter(s -> s.getPolling_url() != null && !s.getPolling_url().equals("")).collect(Collectors.toList());
-        return services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList();
+        services = services.stream().filter(s -> s.getPolling_url() != null && !s.getPolling_url().isEmpty()).toList();
+        return setLatestRecordForServices(services.stream().map(EntityDtoMappers::toServiceDtoShallow).toList());
+    }
+
+    public List<JsonObject> getAllStatusesFromStatusholder(List<JsonObject> body) {
+        // Fetch descriptions for each status holder
+        return recordControllerHelper.getAllStatusesFromStatusholder(body);
+    }
+
+    private List<ServiceDto> setLatestRecordForServices(List<ServiceDto> services) {
+        services.forEach(service -> {
+            UUID serviceId = service.getId();
+            recordRepository.getLatestRecord(serviceId).ifPresentOrElse(
+                    recordEntity -> service.setRecord(EntityDtoMappers.toRecordDto(recordEntity)),
+                    () -> service.setRecord(new RecordDto()) // Set an empty RecordDto if no record is found
+            );
+        });
+        return services;
     }
 }
