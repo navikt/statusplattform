@@ -2501,5 +2501,11 @@ components:
       type: apiKey
       in: header       # can be "header", "query" or "cookie"
       name: Apikey  # name of the header, query parameter or cookie
+    AuthorizationJson:
+      type: apiKey
+      in: header
+      name: authorization
+      description: 'Value must be a JSON object: {"access_token":"<JWT>"}'
 security:
   - ApiKeyAuth: [ ]
+  - AuthorizationJson: []
