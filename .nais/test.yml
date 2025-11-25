@@ -3,7 +3,7 @@ spec:
   # This section maps 1-1 with reference spec, because it can be copy-pasted in-place and work
   env:
     FRONTEND_LOCATION: https://status.dev.nav.no
-    statusholder_url: https://statusholder.dev-fss-pub.nais.io
+    statusholder_url: https://statusholder.prod-fss-pub.nais.io
     TENANT: trygdeetaten.no
     ENV: dev
     teamkatalogApiUrl: http://team-catalog-backend.org.svc.cluster.local
