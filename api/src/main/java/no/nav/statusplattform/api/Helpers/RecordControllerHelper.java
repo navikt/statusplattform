@@ -62,7 +62,8 @@ public class RecordControllerHelper {
             UUID serviceId = UUID.fromString(status.requiredString("serviceId"));
             Optional<RecordEntity> recordEntity = recordRepository.getLatestRecord(serviceId);
             String description = recordEntity.map(RecordEntity::getDescription).orElse("");
-            return status.put("description", description);
+            String loglink = recordEntity.map(RecordEntity::getLogglink).orElse("");
+            return status.put("description", description).put("loglink", loglink);
         }).collect(Collectors.toList());
     }
 
