@@ -43,6 +43,9 @@ spec:
           cluster: "{{ spec.env.ENV }}-fss"
         - application: statusplattform-nais-operator
     outbound:
+      external:
+        - host: graph.microsoft.com
+        - host: login.microsoftonline.com
       rules:
         - application: team-catalog-backend
           namespace: org
