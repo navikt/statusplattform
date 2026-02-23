@@ -1,11 +1,11 @@
 CREATE TABLE subscription (
-    id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id              UUID NOT NULL PRIMARY KEY,
     email           VARCHAR(255) NOT NULL UNIQUE,
     email_verified  BOOLEAN NOT NULL DEFAULT FALSE,
-    unsubscribe_token UUID NOT NULL DEFAULT gen_random_uuid(),
+    unsubscribe_token UUID NOT NULL,
     is_internal     BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ
+    created_at      timestamp with time zone NOT NULL DEFAULT NOW(),
+    updated_at      timestamp with time zone
 );
 
 CREATE TABLE subscription_service (
@@ -15,13 +15,13 @@ CREATE TABLE subscription_service (
 );
 
 CREATE TABLE otp_verification (
-    id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id          UUID NOT NULL PRIMARY KEY,
     email       VARCHAR(255) NOT NULL,
     otp_code    VARCHAR(6) NOT NULL,
-    expires_at  TIMESTAMPTZ NOT NULL,
+    expires_at  timestamp with time zone NOT NULL,
     verified    BOOLEAN NOT NULL DEFAULT FALSE,
     attempts    INTEGER NOT NULL DEFAULT 0,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at  timestamp with time zone NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_otp_email_code ON otp_verification(email, otp_code);
