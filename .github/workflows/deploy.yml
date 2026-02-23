@@ -2,28 +2,27 @@ name: Build, push, and deploy
 
 on: [push]
 
-env:
-  # TODO: Make images sortable ("<iso8601 datetime>-<git rev-list --count REF_NAME>-<git commit short sha>")
-  docker_image: ghcr.io/navikt/statusplattform-server:${{ github.sha }}
+permissions:
+  contents: read
+  id-token: write
+  packages: write
 
 jobs:
   build:
     name: Build and push Docker container
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
+    outputs:
+      image: ${{ steps.docker-push.outputs.image }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker/login-action@v2
+      - uses: actions/checkout@v4
+
+      - name: Build and push docker image to GAR
+        uses: nais/docker-build-push@main
+        id: docker-push
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ${{ env.docker_image }}
+          team: navdig
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
 
   deploy-test:
     name: Deploy application to test env
@@ -31,14 +30,12 @@ jobs:
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          IMAGE: ${{ env.docker_image }}
-          RESOURCE: .nais/nais.yml
-          VARS: .nais/test.yml
+          RESOURCE: .nais/dev.yml
+          VAR: image=${{ needs.build.outputs.image }}
 
   deploy-prod:
     name: Deploy application to prod
@@ -46,11 +43,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          IMAGE: ${{ env.docker_image }}
           RESOURCE: .nais/nais.yml
           VARS: .nais/prod.yml
+          VAR: image=${{ needs.build.outputs.image }}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{SUBJECT}}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f4f4;">
+        <tr>
+            <td align="center" style="padding: 40px 20px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #0067C5; padding: 24px 40px; border-radius: 8px 8px 0 0;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 600;">NAV Statusplattform</h1>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px;">
+                            <h2 style="margin: 0 0 16px 0; color: #262626; font-size: 22px; font-weight: 600;">{{SUBJECT}}</h2>
+                            <div style="margin: 0 0 32px 0; color: #4f4f4f; font-size: 16px; line-height: 1.6;">
+                                {{BODY}}
+                            </div>
+                            <!-- CTA Button -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center" style="padding: 8px 0 32px 0;">
+                                        <a href="{{STATUS_PAGE_URL}}" style="display: inline-block; background-color: #0067C5; color: #ffffff; text-decoration: none; padding: 12px 32px; border-radius: 4px; font-size: 16px; font-weight: 600;">Se statusoppdateringer</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 24px 40px; border-top: 1px solid #e0e0e0;">
+                            <p style="margin: 0 0 8px 0; color: #707070; font-size: 12px; line-height: 1.5; text-align: center;">
+                                Du mottar denne e-posten fordi du abonnerer på statusoppdateringer fra <a href="{{STATUS_PAGE_URL}}" style="color: #0067C5; text-decoration: none;">status.nav.no</a>
+                            </p>
+                            <p style="margin: 0; color: #707070; font-size: 12px; line-height: 1.5; text-align: center;">
+                                <a href="{{UNSUBSCRIBE_URL}}" style="color: #707070; text-decoration: underline;">Avmeld statusoppdateringer</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

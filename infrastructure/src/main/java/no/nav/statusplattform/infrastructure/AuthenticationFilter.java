@@ -41,6 +41,15 @@ public class AuthenticationFilter implements Filter {
             MDC.clear();
             return;
         }
+
+        // Subscription endpoints are open for external users (OTP + unsubscribe token auth)
+        String requestURI = ((HttpServletRequest) request).getRequestURI();
+        if(requestURI != null && requestURI.contains("/Subscription")){
+            chain.doFilter(request, response);
+            MDC.clear();
+            return;
+        }
+
         JWTClaimsSet jwtTokenClaims = oauth2TokenValidator.validateTokenAndGetClaims(request);
         if(List.of("POST","PUT","DELETE").contains(((HttpServletRequest) request).getMethod())
                 && jwtTokenClaims == null){

@@ -2,6 +2,7 @@ package nav.statusplattform.core.entities;
 
 import nav.statusplattform.core.enums.OpsMessageSeverity;
 import nav.statusplattform.core.enums.OpsMessageState;
+import nav.statusplattform.core.enums.OpsMessageStatus;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class OpsMessageEntity {
     private ZonedDateTime endTime;
     private OpsMessageSeverity severity;
     private OpsMessageState state;
+    private OpsMessageStatus status;
 
     private boolean deleted;
 
@@ -108,6 +110,24 @@ public class OpsMessageEntity {
 
     public OpsMessageEntity setSeverity(OpsMessageSeverity severity) {
         this.severity = severity;
+        return this;
+    }
+
+    public OpsMessageState getState() {
+        return state;
+    }
+
+    public OpsMessageEntity setState(OpsMessageState state) {
+        this.state = state;
+        return this;
+    }
+
+    public OpsMessageStatus getStatus() {
+        return status;
+    }
+
+    public OpsMessageEntity setStatus(OpsMessageStatus status) {
+        this.status = status;
         return this;
     }
 

@@ -2193,6 +2193,13 @@ components:
             - OK
             - ISSUE
             - DOWN
+        status:
+          type: string
+          enum:
+            - EXAMINING
+            - MAITENANCE
+            - SOLVING
+            - SOLVED
       required:
         - internalMessage
         - internalHeader

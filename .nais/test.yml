@@ -13,3 +13,10 @@ spec:
 # Necessary due to https://github.com/aymerick/raymond limitations w/booleans || nested var blocks
 min_replicas: 1
 max_replicas: 1
+
+# Test-only switches (prod defaults remain intact)
+azure_disabled: false
+azure_envfrom: false
+sql_disabled: false
+sql_instance_name: navstatus-dev
+sql_database_name: navstatusdev

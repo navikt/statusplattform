@@ -9,6 +9,8 @@ import no.nav.statusplattform.generated.api.DashboardDto;
 import no.nav.statusplattform.generated.api.OPSmessageDto;
 import no.nav.statusplattform.generated.api.ServiceDto;
 import org.fluentjdbc.DbContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +19,32 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OpsControllerHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(OpsControllerHelper.class);
+
     private final OpsRepository opsRepository;
+    private final NotificationQueueHelper notificationQueueHelper;
 
     public OpsControllerHelper(DbContext dbContext) {
         this.opsRepository = new OpsRepository(dbContext);
+        this.notificationQueueHelper = new NotificationQueueHelper(dbContext);
     }
 
 
 
 
     public OPSmessageDto newOps(OPSmessageDto opsMessageDto){
-        UUID uuid = opsRepository.save(EntityDtoMappers.toOpsMessageEntity(opsMessageDto), opsMessageDto.getAffectedServices().stream().map(ServiceDto::getId).toList());
+        List<UUID> serviceIds = opsMessageDto.getAffectedServices().stream().map(ServiceDto::getId).toList();
+        UUID uuid = opsRepository.save(EntityDtoMappers.toOpsMessageEntity(opsMessageDto), serviceIds);
         Map.Entry<OpsMessageEntity, List<ServiceEntity>> ops = opsRepository.retrieveOne(uuid);
+
+        // Queue notifications for subscribers
+        try {
+            notificationQueueHelper.queueOpsMessageNotifications(ops.getKey(), serviceIds);
+        } catch (Exception e) {
+            logger.error("Failed to queue ops message notifications for ops {}", uuid, e);
+        }
+
         return EntityDtoMappers.toOpsMessageDtoDeep(ops.getKey(), ops.getValue());
     }
 
@@ -47,11 +63,25 @@ public class OpsControllerHelper {
 
 
     public OPSmessageDto updateOpsMessage(OPSmessageDto opsMessageDto){
-        opsRepository.setServicesOnOpsMessage(opsMessageDto.getId(), opsMessageDto.getAffectedServices().stream()
-                .map(ServiceDto::getId).collect(Collectors.toList()));
+        List<UUID> serviceIds = opsMessageDto.getAffectedServices().stream()
+                .map(ServiceDto::getId).collect(Collectors.toList());
+        opsRepository.setServicesOnOpsMessage(opsMessageDto.getId(), serviceIds);
 
-        opsRepository.updateOpsMessage(EntityDtoMappers.toOpsMessageEntity(opsMessageDto));
+        // If status is changed to SOLVED, update endTime to now
+        OpsMessageEntity entityToUpdate = EntityDtoMappers.toOpsMessageEntity(opsMessageDto);
+        if (opsMessageDto.getStatus() != null && opsMessageDto.getStatus().toString().equals("SOLVED")) {
+            entityToUpdate.setEndTime(java.time.ZonedDateTime.now());
+        }
+
+        opsRepository.updateOpsMessage(entityToUpdate);
         Map.Entry<OpsMessageEntity, List<ServiceEntity>> opsMessage = opsRepository.retrieveOne(opsMessageDto.getId());
+
+        // Queue notifications for subscribers
+        try {
+            notificationQueueHelper.queueOpsMessageNotifications(opsMessage.getKey(), serviceIds);
+        } catch (Exception e) {
+            logger.error("Failed to queue ops message notifications for ops {}", opsMessageDto.getId(), e);
+        }
 
         return EntityDtoMappers.toOpsMessageDtoDeep(opsMessage.getKey(), opsMessage.getValue());
     }
@@ -91,9 +121,14 @@ public class OpsControllerHelper {
         // Convert list of service IDs to UUIDs
         List<UUID> serviceUUIDs = serviceIds.stream().map(UUID::fromString).collect(Collectors.toList());
 
-        // Fetch messages from the repository
-        return opsRepository.findOpsMessagesByServiceIds(serviceUUIDs).stream()
-                .map(EntityDtoMappers::toOpsMessageDtoShallow)
-                .collect(Collectors.toList());
+        // Fetch messages WITH their affected services from the repository
+        Map<OpsMessageEntity, List<ServiceEntity>> messagesWithServices = opsRepository.retrieveAllForServices(serviceUUIDs);
+
+        // Convert to DTOs with proper affectedServices populated
+        List<OPSmessageDto> result = new ArrayList<>();
+        messagesWithServices.forEach((opsMessage, services) ->
+                result.add(EntityDtoMappers.toOpsMessageDtoDeep(opsMessage, services)));
+
+        return result;
     }
 }
