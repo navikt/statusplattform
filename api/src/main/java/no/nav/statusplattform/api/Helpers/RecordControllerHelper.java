@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class RecordControllerHelper {
 
@@ -75,6 +77,18 @@ public class RecordControllerHelper {
         }
         recordRepository.save(newRecord);
     }
+
+    public List<JsonObject> getAllStatusesFromStatusholder(List<JsonObject> body) {
+        // Fetch descriptions for each status holder
+        return body.stream().map(status -> {
+            UUID serviceId = UUID.fromString(status.requiredString("serviceId"));
+            Optional<RecordEntity> recordEntity = recordRepository.getLatestRecord(serviceId);
+            String description = recordEntity.map(RecordEntity::getDescription).orElse("");
+            String loglink = recordEntity.map(RecordEntity::getLogglink).orElse("");
+            return status.put("description", description).put("loglink", loglink);
+        }).collect(Collectors.toList());
+    }
+
     private RecordEntity mapToRecordEntity(RecordDto recordDto) {
         RecordSource source = recordDto.getSource()== null? RecordSource.UNKNOWN: RecordSource.valueOf(recordDto.getSource().getValue());
         return new RecordEntity()

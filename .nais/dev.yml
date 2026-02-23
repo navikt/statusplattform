@@ -46,6 +46,9 @@ spec:
       rules:
         - application: team-catalog-backend
           namespace: org
+      external:
+        - host: statusholder.dev-fss-pub.nais.io
+        - host: statusholder.prod-fss-pub.nais.io
   env:
     - name: teamkatalogApiUrl
       value: http://team-catalog-backend.org.svc.cluster.local
