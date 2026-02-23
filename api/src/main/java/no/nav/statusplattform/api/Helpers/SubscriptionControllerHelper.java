@@ -77,15 +77,21 @@ public class SubscriptionControllerHelper {
     public JsonObject createSubscription(String email, List<UUID> serviceIds, boolean isInternal) {
         Optional<SubscriptionEntity> existingOpt = subscriptionRepository.findByEmail(email);
 
+        boolean emailVerified = isInternal || otpRepository.hasVerifiedOtp(email);
+
         SubscriptionEntity subscription;
         if (existingOpt.isPresent()) {
             subscription = existingOpt.get();
+            if (emailVerified && !subscription.isEmailVerified()) {
+                subscriptionRepository.markEmailVerified(email);
+                subscription.setEmailVerified(true);
+            }
             subscriptionRepository.setServicesOnSubscription(subscription.getId(), serviceIds);
             logger.info("Updated existing subscription for {}", email);
         } else {
             subscription = new SubscriptionEntity()
                     .setEmail(email)
-                    .setEmailVerified(false)
+                    .setEmailVerified(emailVerified)
                     .setInternal(isInternal);
             UUID id = subscriptionRepository.save(subscription);
             subscription.setId(id);
