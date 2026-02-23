@@ -52,19 +52,29 @@ public class NotificationQueueRepository {
     }
 
     public void markFailed(UUID id) {
+        int currentAttempts = notificationQueueTable.where("id", id)
+                .singleObject(row -> {
+                    try { return row.getInt("attempts"); }
+                    catch (SQLException e) { throw ExceptionUtil.soften(e); }
+                }).orElse(0);
         notificationQueueTable.where("id", id)
                 .update()
                 .setField("status", NotificationStatus.FAILED.getDbRepresentation())
-                .setFieldExpression("attempts", "attempts + 1")
+                .setField("attempts", currentAttempts + 1)
                 .setField("last_attempted", ZonedDateTime.now())
                 .execute();
     }
 
     public void markPendingForRetry(UUID id) {
+        int currentAttempts = notificationQueueTable.where("id", id)
+                .singleObject(row -> {
+                    try { return row.getInt("attempts"); }
+                    catch (SQLException e) { throw ExceptionUtil.soften(e); }
+                }).orElse(0);
         notificationQueueTable.where("id", id)
                 .update()
                 .setField("status", NotificationStatus.PENDING.getDbRepresentation())
-                .setFieldExpression("attempts", "attempts + 1")
+                .setField("attempts", currentAttempts + 1)
                 .setField("last_attempted", ZonedDateTime.now())
                 .execute();
     }

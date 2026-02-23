@@ -51,9 +51,14 @@ public class OtpRepository {
     }
 
     public void incrementAttempts(UUID id) {
+        int currentAttempts = otpTable.where("id", id)
+                .singleObject(row -> {
+                    try { return row.getInt("attempts"); }
+                    catch (SQLException e) { throw ExceptionUtil.soften(e); }
+                }).orElse(0);
         otpTable.where("id", id)
                 .update()
-                .setFieldExpression("attempts", "attempts + 1")
+                .setField("attempts", currentAttempts + 1)
                 .execute();
     }
 
@@ -88,13 +93,20 @@ public class OtpRepository {
     }
 
     public void incrementRateLimit(String email) {
-        int updated = rateLimitTable.where("email", email)
+        int currentCount = rateLimitTable.where("email", email)
                 .whereExpression("window_start > ?", ZonedDateTime.now().minusMinutes(15))
-                .update()
-                .setFieldExpression("send_count", "send_count + 1")
-                .execute();
+                .singleObject(row -> {
+                    try { return row.getInt("send_count"); }
+                    catch (SQLException e) { throw ExceptionUtil.soften(e); }
+                }).orElse(-1);
 
-        if (updated == 0) {
+        if (currentCount >= 0) {
+            rateLimitTable.where("email", email)
+                    .whereExpression("window_start > ?", ZonedDateTime.now().minusMinutes(15))
+                    .update()
+                    .setField("send_count", currentCount + 1)
+                    .execute();
+        } else {
             // Delete old entry if exists and create new window
             rateLimitTable.where("email", email).executeDelete();
             rateLimitTable.insert()
