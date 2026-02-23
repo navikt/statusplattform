@@ -70,6 +70,7 @@ public class StatusplattformServer {
 
     private void setDataSource(DataSource dataSource) {
         jobHandler.setDataSource(dataSource);
+        jobHandler.setEmailSender(statusplattformApi.getEmailService()::sendNotificationEmail);
         statusplattformApi.setDataSource(dataSource);
     }
 
