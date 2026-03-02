@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: portalserver
+  name: statusplattform-api
   namespace: navdig
   labels:
     team: navdig
@@ -15,6 +15,12 @@ spec:
     enabled: true
   image: {{ image }}
   port: 3005
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 50m
+      memory: 512Mi
   gcp:
     sqlInstances:
       - name: navstatus
@@ -36,7 +42,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: portal
+        - application: statusplattform-frontend
         - application: statuspoll
         - application: promstatusproxy
         - application: onpremstatuspoll
