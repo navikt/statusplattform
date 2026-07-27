@@ -25,5 +25,21 @@
         <maven.compiler.source>21</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <revision>0.1-SNAPSHOT</revision>
+        <netty.version>4.1.136.Final</netty.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Pin Netty to override the vulnerable 4.1.118.Final pulled in transitively
+                 via azure-identity -> azure-core-http-netty. Fixes CVE-2026-42584 and
+                 CVE-2026-42581 (netty-codec-http), addressed in 4.1.133.Final. -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
