@@ -40,7 +40,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: statusplattform-frontend
+        - application: portal
         - application: statuspoll
         - application: promstatusproxy
         - application: onpremstatuspoll
