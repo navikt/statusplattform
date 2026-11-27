@@ -12,21 +12,26 @@ frontend, som er et eget prosjekt.
 
 ## Hvordan fungerer det?
 
-1. **Status kommer inn.** En ekstern poller (en jobb som jevnlig sjekker tjenester)
-   sender resultater til API-et. API-et kan også ta imot enkeltvise statusmeldinger.
-   Backend er altså ikke selve polleren.
-2. **Status og historikk lagres.** PostgreSQL lagrer tjenestene, statusmeldingene
-   og endringene i status, slik at man kan se både nåsituasjonen og tidligere problemer.
-3. **Oversikten settes sammen.** Backend henter siste status og samler tjenester
-   i områder og dashbord. Et område får den dårligste statusen blant tjenestene sine.
-   API-et tilbyr også avhengigheter, åpningstider, driftsmeldinger og planlagt vedlikehold.
-4. **Frontend viser resultatet.** Nettsiden henter data fra REST-API-et under `/rest`.
-   Ved statusendringer fra polleren legges e-postvarsler i kø for abonnenter;
-   en bakgrunnsjobb sender dem.
+1. **Backend får beskjed om hvordan tjenestene fungerer.** Et eget program sjekker
+   tjenestene jevnlig og sender resultatene til backend. Dette programmet kalles
+   en poller og kjører utenfor backend. Backend kan også ta imot én statusmelding om gangen.
+2. **Informasjonen lagres i databasen.** Backend lagrer statusen for hver tjeneste
+   i PostgreSQL. Den tar også vare på tidligere meldinger og statusendringer,
+   slik at man kan se hvordan tjenesten fungerer nå, og når det har vært problemer.
+3. **Backend lager en samlet oversikt.** Den henter den siste kjente statusen for
+   tjenestene og grupperer dem i områder på en oversiktsside, kalt et dashbord.
+   Statusen for et område følger tjenesten som har størst problemer.
+   Backend gir i tillegg informasjon om hvilke tjenester som er avhengige av
+   hverandre, åpningstider, driftsmeldinger og planlagt vedlikehold.
+4. **Nettsiden viser oversikten, og abonnenter kan få beskjed.** Nettsiden henter
+   informasjonen fra backend gjennom API-et under `/rest` og viser den til brukeren.
+   Når polleren melder om en statusendring, gjør backend klar e-postvarsler til dem
+   som abonnerer på tjenesten. En egen jobb sender ut varslene.
 
-For eksempel: Når polleren melder at en tjeneste er nede, lagres den nye statusen.
-Neste gang nettsiden henter dashbordet, vises problemet både på tjenesten og på
-området den tilhører. Abonnenter kan få beskjed uten å følge med på nettsiden hele tiden.
+For eksempel: Hvis polleren melder at en tjeneste ikke fungerer, lagrer backend
+den nye statusen. Neste gang nettsiden henter oversikten, vises problemet på både
+tjenesten og området den tilhører. De som abonnerer på tjenesten, kan få en e-post
+og slipper å følge med på nettsiden hele tiden.
 
 ## Hvor finner jeg koden?
 
