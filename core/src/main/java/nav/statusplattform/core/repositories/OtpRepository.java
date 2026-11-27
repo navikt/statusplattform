@@ -68,6 +68,12 @@ public class OtpRepository {
                 .getCount();
     }
 
+    public boolean hasVerifiedOtp(String email) {
+        return otpTable.where("email", email)
+                .where("verified", true)
+                .getCount() > 0;
+    }
+
     public void cleanupExpired() {
         otpTable.whereExpression("expires_at < ?", ZonedDateTime.now())
                 .executeDelete();

@@ -19,9 +19,13 @@ public class SubscriptionRepository {
     }
 
     public UUID save(SubscriptionEntity entity) {
+        if (entity.getUnsubscribeToken() == null) {
+            entity.setUnsubscribeToken(UUID.randomUUID());
+        }
         DatabaseSaveResult<UUID> result = subscriptionTable.newSaveBuilderWithUUID("id", entity.getId())
                 .setField("email", entity.getEmail())
                 .setField("email_verified", entity.isEmailVerified())
+                .setField("unsubscribe_token", entity.getUnsubscribeToken())
                 .setField("is_internal", entity.isInternal())
                 .execute();
         return result.getId();

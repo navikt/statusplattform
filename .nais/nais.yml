@@ -11,10 +11,14 @@ spec:
   replicas:
     {{#if min_replicas}}min: {{min_replicas}}{{/if}}
     {{#if max_replicas}}max: {{max_replicas}}{{/if}}
-  secureLogs:
-    enabled: true
   image: {{ image }}
   port: 3005
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 50m
+      memory: 512Mi
   gcp:
     sqlInstances:
       - name: navstatus

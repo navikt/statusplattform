@@ -2,3 +2,6 @@
 frontend
 gen
 node_modules
+target
+**/target
+.git

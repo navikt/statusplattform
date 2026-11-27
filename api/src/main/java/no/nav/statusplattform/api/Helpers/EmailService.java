@@ -1,4 +1,3 @@
-
 package no.nav.statusplattform.api.Helpers;
 
 import com.azure.identity.ClientSecretCredentialBuilder;
@@ -25,7 +24,7 @@ public class EmailService {
         String clientSecret = System.getenv("AZURE_APP_CLIENT_SECRET");
         String tenantId = System.getenv("AZURE_APP_TENANT_ID");
 
-        this.mailbox = System.getenv().getOrDefault("NOTIFICATION_MAILBOX", "statusplattform@nav.no");
+        this.mailbox = System.getenv().getOrDefault("NOTIFICATION_MAILBOX", "statusplattformen@nav.no");
         this.statusPageUrl = System.getenv().getOrDefault("STATUS_PAGE_URL", "https://status.nav.no");
 
         var credential = new ClientSecretCredentialBuilder()
